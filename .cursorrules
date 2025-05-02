@@ -1,0 +1,140 @@
+# Eventy360 Project Rules
+
+## Project Patterns
+
+### Naming Conventions
+- Use PascalCase for React components: `EventCard.tsx`, `SubmissionForm.tsx`
+- Use camelCase for functions, variables, and file names (except components)
+- Use kebab-case for CSS class names with Tailwind
+- Use UPPER_SNAKE_CASE for constants
+- Prefix interfaces with `I` and types with `T`: `IUser`, `TSubmissionStatus`
+- Use prefix `use` for custom hooks: `useEventData`, `useSubmissionStatus`
+- Use `page.tsx` suffix for Next.js App Router pages
+- Use `layout.tsx` for layout components in the App Router
+
+### File Organization
+- Group files by feature rather than type
+- Place reusable components in `components/common`
+- Feature-specific components go in feature-specific folders
+- Keep pages clean by moving logic to hooks and components
+- Use barrel exports (index.ts) to simplify imports
+- Place server actions in `/app/actions` directory
+- Keep validation schemas in `/lib/validations` directory
+- Store types and interfaces in `/types` directory
+
+### Code Style
+- Prefer functional components with hooks over class components
+- Use TypeScript for all new code
+- Destructure props at the beginning of components
+- Add explicit return types to functions
+- Use async/await for asynchronous operations
+- Prefer named exports over default exports
+- Organize imports in groups separated by blank lines:
+  1. React and Next.js imports
+  2. Third-party library imports
+  3. Project imports
+
+### State Management
+- Use React Context for shared state where appropriate
+- Prefer local state with useState for component-specific state
+- Use Server Components where possible to reduce client-side state
+- Implement optimistic UI updates when possible
+- Use Supabase Realtime for live updates
+
+### Database Patterns
+- Use Row Level Security (RLS) policies for access control
+- Create helper functions for common database operations
+- Follow normalization principles for schema design
+- Document relationships between tables
+- Use PostgreSQL enums for predefined values
+- Use appropriate indexes for frequently queried columns
+- Add Supabase webhooks for important data changes
+- Implement soft deletes when appropriate
+
+### Component Patterns
+- Split components into Server and Client components appropriately
+- Implement error boundaries at appropriate levels
+- Use skeletons for loading states
+- Implement proper form validation with React Hook Form and Zod
+- Design components to be responsive by default
+- Create separate components for different subscription tiers
+- Use Shadcn UI as the foundation for consistent design
+
+### Internationalization Patterns
+- Use next-intl for all user-facing text
+- Keep translation files organized by feature
+- Support RTL layout for Arabic language
+- Use locale-specific formatting for dates, numbers, and currency
+- Implement language switching with persistent preferences
+
+### Documentation Patterns
+- Keep memory bank files updated with current project state
+- Document implementation decisions in code comments
+- Update .cursorrules with new patterns as they emerge
+- Create implementation guides for complex features
+- Document all database schema changes
+
+## User Preferences
+- Keep explanations concise and focused on implementation
+- Organize code with clear separation of concerns
+- Document complex logic with inline comments
+- Prefer explicit, readable code over clever, compact code
+- Maintain consistent multilingual support across all features
+
+## Known Challenges
+- Balancing feature complexity with user experience
+- Ensuring performance with potentially large datasets
+- Managing secure file uploads and downloads
+- Implementing a scalable verification process
+- Supporting RTL layout for Arabic interface
+- Optimizing for both desktop and mobile experiences
+- Integrating Algerian payment methods effectively
+
+## Tech Stack
+
+### Frontend
+- Next.js (App Router)
+- React
+- TypeScript
+- Tailwind CSS
+- Shadcn UI
+- next-intl for internationalization
+- React Hook Form
+- Zod for validation
+
+### Backend
+- Supabase (comprehensive backend platform):
+  - PostgreSQL database
+  - Supabase Auth
+  - Supabase Storage
+  - Supabase Edge Functions
+  - Supabase Realtime
+  - Supabase Scheduled Functions
+  - Row Level Security (RLS)
+
+### Payment Processing
+- **Current Implementation (Priority)**: 
+  - Offline payment tracking system for traditional methods (bank transfers, checks)
+  - Manual verification workflow by administrators
+  - Payment reference code generation
+  - Email notifications for payment instructions and status updates
+- **Future Implementation**:
+  - Chargily Pay for Algerian online payment methods
+  - Custom reconciliation with Supabase
+
+### Analytics
+- Custom analytics solution built on Supabase
+- Privacy-focused event tracking
+
+### Deployment
+- Vercel for frontend hosting
+- Supabase Cloud for backend services
+- GitHub Actions for CI/CD
+
+## Project Evolution
+- Starting with core event discovery and submission features
+- Implementing offline payment system first, online payments later
+- Planning to add advanced search and filtering later
+- Will enhance the research repository as usage grows
+- Initial focus on Algeria with international expansion planned
+- Current payment focus on offline methods, with online payment integration later 
