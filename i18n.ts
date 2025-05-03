@@ -2,12 +2,18 @@ import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async ({locale}) => {
   // Validate that the incoming `locale` parameter is valid
-  if (locale !== 'ar') {
-    // Optionally handle invalid locales here, e.g., throw an error or redirect
-    // For now, we assume only 'ar' will be passed due to middleware.
+  // Provide a fallback for locale to ensure it's always 'ar'
+  const finalLocale = locale === 'ar' ? locale : 'ar';
+
+  if (finalLocale !== 'ar') {
+    // This should ideally not be reached due to the fallback and middleware,
+    // but kept for robustness.
+    console.error('Invalid locale detected in getRequestConfig despite fallback:', locale);
+    // Handle error appropriately, e.g., throw new Error('Invalid locale');
   }
 
   return {
-    messages: (await import(`./messages/${locale}.json`)).default
+    locale: finalLocale,
+    messages: (await import(`./messages/${finalLocale}.json`)).default
   };
-}); 
+});
