@@ -52,14 +52,14 @@
       "id": "8f29d321-a431-4e19-9094-1bc45e59ae70",
       "name": "Setup Shadcn UI & Tailwind",
       "description": "Initialize Shadcn UI, which configures Tailwind CSS according to project standards.",
-      "status": "待處理",
+      "status": "進行中",
       "dependencies": [
         {
           "taskId": "36d18a7c-e993-44b1-b289-70c97e465a03"
         }
       ],
       "createdAt": "2025-05-03T15:50:46.959Z",
-      "updatedAt": "2025-05-03T15:50:46.959Z",
+      "updatedAt": "2025-05-03T16:05:09.951Z",
       "implementationGuide": "Run `npx shadcn-ui@latest init`. Follow the prompts, accepting defaults or configuring as needed (e.g., selecting style, base color, CSS variables). Commit changes: `git add .` and `git commit -m \"build: Initialize Shadcn UI and configure Tailwind\"`.",
       "verificationCriteria": "Shadcn UI initialization completes successfully. Tailwind configuration files (`tailwind.config.ts`, `postcss.config.js`, `globals.css`) are updated/created. `components.json` exists. Changes are committed.",
       "analysisResult": "The initial solution concept is technically feasible and follows established practices for setting up a modern web application stack. \nKey steps involve:\n1. **Next.js Init:** Use `create-next-app` for boilerplate (TS, Tailwind, App Router).\n2. **Git Init:** Standard Git setup with `.gitignore`.\n3. **Supabase Project Creation:** Requires user action to create the project (UI or CLI) and provide the Project ID/Ref.\n4. **Supabase CLI Linking:** Use `supabase login` and `supabase link --project-ref <PROJECT_ID>` to connect local development.\n5. **UI Setup:** Use `shadcn-ui init` for Tailwind configuration and base component setup.\n6. **i18n Setup:** Install `next-intl`, create `messages/ar.json`, configure `middleware.ts`, `i18n.ts`, and update `layout.tsx` for the `ar` locale and `dir=\"rtl\"`.\n7. **GitHub Repo Creation:** Requires user action to create the repository and provide the URL.\n8. **Git Remote & Push:** Standard Git commands to connect and push the initial structure.\n\n**Dependencies:** User needs to provide Supabase Project ID and GitHub Repository URL. Node.js, npm, Git, and Supabase CLI must be installed.\n**Acceptance Criteria:** A Next.js project exists, linked to a Supabase project, configured with Tailwind/Shadcn, set up for basic Arabic/RTL rendering via next-intl, and the initial code is pushed to a GitHub repository."
