@@ -1,470 +1,74 @@
 {
   "tasks": [
     {
-      "id": "e5d33195-e6e3-40ea-b1ed-9b28e0bca488",
-      "name": "Initialize Next.js App Router Project",
-      "description": "Set up a new Next.js project using the App Router architecture with TypeScript. Configure the project structure according to the best practices and project requirements.",
+      "id": "339cb5e6-daf4-4bb9-88e2-d14f253accde",
+      "name": "Set up email service provider integration",
+      "description": "Integrate a proper email delivery service like SendGrid, Resend, or Amazon SES through a Supabase Edge Function that handles authentication and API integration.",
       "status": "待處理",
       "dependencies": [],
-      "createdAt": "2025-05-02T11:20:28.515Z",
-      "updatedAt": "2025-05-02T11:20:28.515Z",
-      "implementationGuide": "1. Create a new Next.js project with the App Router using `npx create-next-app@latest` with TypeScript option\n2. Set up the folder structure following Next.js App Router conventions with `/app` directory\n3. Configure the root layout using the recommended structure from Next.js docs\n4. Set up basic metadata for the application\n5. Create environment variables and configuration files"
+      "createdAt": "2025-05-02T20:54:48.701Z",
+      "updatedAt": "2025-05-02T20:54:48.701Z",
+      "implementationGuide": "Create a Supabase Edge Function that connects to the chosen email provider API. This should include environment variable configuration for API keys and setup of base email templates with merge field capabilities."
     },
     {
-      "id": "c2824c53-a4fe-4114-b92b-c28c8e139bd8",
-      "name": "Configure Tailwind CSS and Shadcn UI",
-      "description": "Set up Tailwind CSS and integrate Shadcn UI components. Establish a consistent design system by configuring theme variables, responsive layouts, and component styles.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "e5d33195-e6e3-40ea-b1ed-9b28e0bca488"
-        }
-      ],
-      "createdAt": "2025-05-02T11:20:28.515Z",
-      "updatedAt": "2025-05-02T11:20:28.515Z",
-      "implementationGuide": "1. Install Tailwind CSS dependencies\n2. Configure `tailwind.config.js` to include all relevant paths including app directory\n3. Set up global styles in `globals.css` with proper CSS variables for theming\n4. Install and configure Shadcn UI using the CLI: `npx shadcn@latest init`\n5. Add the `cn` utility function for component styling\n6. Install and configure first core UI components (Button, Card, Input)"
-    },
-    {
-      "id": "6fbe4ccf-9016-4a35-972f-c7fbb835e8f8",
-      "name": "Set up Supabase Project and Database",
-      "description": "Create a Supabase project, set up the database schema, authentication, storage, and security policies according to the project requirements.",
+      "id": "a83f92b4-a88b-461c-b32b-bc8059d528b2",
+      "name": "Create structured email template system",
+      "description": "Implement a flexible template system using JSON files stored in the Supabase storage bucket, with support for HTML and text versions, and variables.",
       "status": "待處理",
       "dependencies": [],
-      "createdAt": "2025-05-02T11:20:28.515Z",
-      "updatedAt": "2025-05-02T11:20:28.515Z",
-      "implementationGuide": "1. Create a new Supabase project\n2. Define the database schema for core tables (users, events, submissions, etc.)\n3. Create necessary custom types and enums\n4. Set up initial Row Level Security (RLS) policies\n5. Configure storage buckets with appropriate permissions\n6. Generate and save API keys and project URL for application integration"
+      "createdAt": "2025-05-02T20:54:48.701Z",
+      "updatedAt": "2025-05-02T20:54:48.701Z",
+      "implementationGuide": "Store email templates as JSON files in Supabase storage, with a structure containing translations for all supported languages. Each template should include subject, HTML content, text content, and metadata fields. Create a helper function to retrieve and process templates."
     },
     {
-      "id": "10d57248-daf1-43c5-aa9f-948ab0398419",
-      "name": "Integrate Supabase with Next.js",
-      "description": "Set up the Supabase client in the Next.js application and configure authentication, database, and storage functionality.",
+      "id": "1170af2e-d10d-424c-81d3-6f8f9a4b49ab",
+      "name": "Implement email queue table in database",
+      "description": "Create a streamlined email queue table that stores recipient information, template reference, variables, and status - but not the complete email content.",
       "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "e5d33195-e6e3-40ea-b1ed-9b28e0bca488"
-        },
-        {
-          "taskId": "6fbe4ccf-9016-4a35-972f-c7fbb835e8f8"
-        }
-      ],
-      "createdAt": "2025-05-02T11:20:28.515Z",
-      "updatedAt": "2025-05-02T11:20:28.515Z",
-      "implementationGuide": "1. Install Supabase JS client: `npm install @supabase/supabase-js`\n2. Create a utility file for the Supabase client configuration\n3. Set up environment variables for Supabase URL and API keys\n4. Configure server-side and client-side Supabase instances\n5. Create helper functions for common database operations\n6. Implement auth state management hooks"
+      "dependencies": [],
+      "createdAt": "2025-05-02T20:54:48.701Z",
+      "updatedAt": "2025-05-02T20:54:48.701Z",
+      "implementationGuide": "Create a table with fields for recipient, template_id, language_preference, variables (as JSONB), status, retry_count, next_retry, and metadata. This should be minimal and focused on tracking, not content storage."
     },
     {
-      "id": "5ada5b51-67b0-4fa0-92e6-f9c7cbab556f",
-      "name": "Implement Internationalization with next-intl",
-      "description": "Set up internationalization for the application using next-intl. Configure language detection, translation files, and routing for multiple languages.",
+      "id": "8d83765e-54c0-4ab3-9f50-151638b39983",
+      "name": "Create email sending edge function",
+      "description": "Develop an Edge Function that processes the email queue, renders templates with provided variables, and sends via the email service provider.",
       "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "e5d33195-e6e3-40ea-b1ed-9b28e0bca488"
-        }
-      ],
-      "createdAt": "2025-05-02T11:20:28.515Z",
-      "updatedAt": "2025-05-02T11:20:28.515Z",
-      "implementationGuide": "1. Install next-intl: `npm install next-intl`\n2. Create a middleware file using `createMiddleware` from next-intl\n3. Set up locale detection and routing configuration\n4. Create translation files for English, Arabic, and French\n5. Configure the root layout with `NextIntlClientProvider`\n6. Add `setRequestLocale` to enable static rendering\n7. Create shared navigation functions using `createNavigation`"
+      "dependencies": [],
+      "createdAt": "2025-05-02T20:54:48.701Z",
+      "updatedAt": "2025-05-02T20:54:48.701Z",
+      "implementationGuide": "The function should query the email queue table, load appropriate templates from storage, merge variables, send via email provider API, and update status. It should handle errors gracefully with proper logging and retry logic."
     },
     {
-      "id": "b623c102-8238-4cf3-a9ae-5dbc24b199f0",
-      "name": "Set up Authentication System",
-      "description": "Implement user authentication and authorization using Supabase Auth. Create sign-up, sign-in, and sign-out functionality with email verification.",
+      "id": "d64702cd-de4f-40f6-9ca9-1611df5fd83d",
+      "name": "Add database triggers for email events",
+      "description": "Implement lightweight database triggers that simply add entries to the email queue when important events occur.",
       "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "10d57248-daf1-43c5-aa9f-948ab0398419"
-        }
-      ],
-      "createdAt": "2025-05-02T11:20:43.588Z",
-      "updatedAt": "2025-05-02T11:20:43.588Z",
-      "implementationGuide": "1. Implement sign-up form with email and password using React Hook Form and Zod validation\n2. Create sign-in form with error handling and validation\n3. Implement email verification flow\n4. Create auth state provider component to track authentication status\n5. Implement sign-out functionality\n6. Add password reset functionality\n7. Set up protected routes and authentication middleware"
+      "dependencies": [],
+      "createdAt": "2025-05-02T20:54:48.701Z",
+      "updatedAt": "2025-05-02T20:54:48.701Z",
+      "implementationGuide": "Create database triggers for events like verification approval, payment confirmation, etc. These should only insert minimal data into the queue table (recipient, template ID, variables) rather than processing templates directly."
     },
     {
-      "id": "a77d5f13-d395-4e0c-aa2e-ebe9c8b64d61",
-      "name": "Create User Profile Management",
-      "description": "Build user profile pages and functionality allowing users to view and edit their profile information, preferences, and account settings.",
+      "id": "136805eb-3a3b-4b1c-8d13-0feb5dd9d7c5",
+      "name": "Set up scheduled function for email processing",
+      "description": "Configure a Supabase scheduled function to process the email queue at regular intervals.",
       "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "b623c102-8238-4cf3-a9ae-5dbc24b199f0"
-        }
-      ],
-      "createdAt": "2025-05-02T11:20:43.588Z",
-      "updatedAt": "2025-05-02T11:20:43.588Z",
-      "implementationGuide": "1. Create user profile database schema with necessary fields\n2. Implement profile page layout and components\n3. Build edit profile form with validation\n4. Create avatar/image upload functionality using Supabase storage\n5. Implement profile data fetching and updating\n6. Add user preference settings (notifications, language, etc.)\n7. Implement account deletion functionality"
+      "dependencies": [],
+      "createdAt": "2025-05-02T20:54:48.701Z",
+      "updatedAt": "2025-05-02T20:54:48.701Z",
+      "implementationGuide": "Create a scheduled function that runs every few minutes to check for new emails in the queue, process batches of emails with rate limiting considerations, and handle retries for failed deliveries."
     },
     {
-      "id": "694388fb-05ea-492f-add5-dac8451b6f5f",
-      "name": "Implement Role-Based Access Control",
-      "description": "Create a role-based access control system to manage permissions for different user types (admin, organizer, attendee) throughout the application.",
+      "id": "4f7efb3a-c8cb-4a77-877d-a46fc76508f4",
+      "name": "Implement email tracking and analytics",
+      "description": "Add support for tracking email delivery, opens, clicks, and other engagement metrics.",
       "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "b623c102-8238-4cf3-a9ae-5dbc24b199f0"
-        }
-      ],
-      "createdAt": "2025-05-02T11:20:43.588Z",
-      "updatedAt": "2025-05-02T11:20:43.588Z",
-      "implementationGuide": "1. Define role and permission schemas in the database\n2. Create admin interface for managing roles and permissions\n3. Implement server-side authorization checks\n4. Create client-side role-based UI rendering\n5. Implement Row Level Security policies in Supabase for each role\n6. Add role assignment and management functionality\n7. Create custom hooks for role-based UI components"
-    },
-    {
-      "id": "40ad295a-c385-4845-8fcf-1bdeb23a0ee6",
-      "name": "Develop Subscription Tier System",
-      "description": "Implement subscription tier management with different feature access levels. Create subscription management pages and enforce subscription-based feature access.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "694388fb-05ea-492f-add5-dac8451b6f5f"
-        }
-      ],
-      "createdAt": "2025-05-02T11:20:43.588Z",
-      "updatedAt": "2025-05-02T11:20:43.588Z",
-      "implementationGuide": "1. Define subscription tier schema with feature availability flags\n2. Create subscription management pages for users\n3. Implement subscription tier enforcement using middleware\n4. Build admin interface for managing subscription tiers\n5. Create upgrade/downgrade flows\n6. Implement feature access control based on subscription level\n7. Add subscription expiration handling and notifications"
-    },
-    {
-      "id": "12124a70-358f-48bb-aea6-ad1d122e0a33",
-      "name": "Build Event Creation Interface",
-      "description": "Create a comprehensive event creation interface allowing users to input event details, upload images, specify categories, and set event parameters.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "10d57248-daf1-43c5-aa9f-948ab0398419"
-        },
-        {
-          "taskId": "c2824c53-a4fe-4114-b92b-c28c8e139bd8"
-        }
-      ],
-      "createdAt": "2025-05-02T11:20:43.588Z",
-      "updatedAt": "2025-05-02T11:20:43.588Z",
-      "implementationGuide": "1. Design event data schema with all required fields\n2. Create multi-step event creation form with validation\n3. Implement image upload for event banners and galleries\n4. Add rich text editor for event descriptions\n5. Implement event category and tag selection\n6. Create draft saving functionality\n7. Add event preview before submission"
-    },
-    {
-      "id": "1a4f3388-63c7-45d3-bc54-a4c502b2a7ae",
-      "name": "Implement Event Management Dashboard",
-      "description": "Create a dashboard for event organizers to manage their events, view statistics, and perform administrative actions. Implement filtering, sorting, and search functionality.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "12124a70-358f-48bb-aea6-ad1d122e0a33"
-        }
-      ],
-      "createdAt": "2025-05-02T11:20:57.836Z",
-      "updatedAt": "2025-05-02T11:20:57.836Z",
-      "implementationGuide": "1. Design the event management dashboard layout\n2. Implement event listing with pagination, sorting, and filtering\n3. Create event status management (publish, unpublish, delete)\n4. Add event statistics display (views, submissions, etc.)\n5. Implement event search functionality\n6. Create event duplication functionality\n7. Add bulk actions for event management"
-    },
-    {
-      "id": "0aeb4543-7559-487f-a236-d542ebc30086",
-      "name": "Build Event Detail Pages",
-      "description": "Create detailed event pages displaying all event information, registration options, gallery, and related events. Implement SEO optimization and social sharing.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "12124a70-358f-48bb-aea6-ad1d122e0a33"
-        },
-        {
-          "taskId": "5ada5b51-67b0-4fa0-92e6-f9c7cbab556f"
-        }
-      ],
-      "createdAt": "2025-05-02T11:20:57.836Z",
-      "updatedAt": "2025-05-02T11:20:57.836Z",
-      "implementationGuide": "1. Design and implement event detail page layout\n2. Create dynamic metadata generation for SEO\n3. Implement image gallery with lightbox functionality\n4. Add registration/submission section\n5. Create related events section\n6. Implement social sharing buttons\n7. Add internationalization for event content\n8. Implement event bookmarking functionality"
-    },
-    {
-      "id": "d63357c6-880e-4717-9eb0-40f0d99e3f00",
-      "name": "Create Submission Forms System",
-      "description": "Build a dynamic form system for event submissions. Include form validation, file uploads, and multi-step submission processes.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "0aeb4543-7559-487f-a236-d542ebc30086"
-        },
-        {
-          "taskId": "c2824c53-a4fe-4114-b92b-c28c8e139bd8"
-        }
-      ],
-      "createdAt": "2025-05-02T11:20:57.836Z",
-      "updatedAt": "2025-05-02T11:20:57.836Z",
-      "implementationGuide": "1. Design submission form data schema\n2. Implement multi-step form interface with validation\n3. Create file upload components for documents and media\n4. Add form state management and persistence\n5. Implement form submission and confirmation\n6. Create draft saving functionality\n7. Add submission editing for users\n8. Implement form field conditional logic"
-    },
-    {
-      "id": "0b456235-7ea1-42d3-9e17-b525851d882c",
-      "name": "Develop Submission Management",
-      "description": "Create interfaces for users and administrators to manage, review, and track submissions. Implement status updates and communication features.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "d63357c6-880e-4717-9eb0-40f0d99e3f00"
-        }
-      ],
-      "createdAt": "2025-05-02T11:20:57.836Z",
-      "updatedAt": "2025-05-02T11:20:57.836Z",
-      "implementationGuide": "1. Design submission management dashboard\n2. Create submission listing with filtering and sorting\n3. Implement submission detail view\n4. Add status update functionality\n5. Create admin review interface\n6. Implement notification system for status changes\n7. Add commenting and feedback functionality\n8. Create submission export features"
-    },
-    {
-      "id": "6919b382-e716-4c98-b764-d57827eed9a4",
-      "name": "Implement Document Verification System",
-      "description": "Build a system for document verification requests, uploads, and admin review processes. Implement secure document storage and access controls.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "0b456235-7ea1-42d3-9e17-b525851d882c"
-        },
-        {
-          "taskId": "694388fb-05ea-492f-add5-dac8451b6f5f"
-        }
-      ],
-      "createdAt": "2025-05-02T11:20:57.836Z",
-      "updatedAt": "2025-05-02T11:20:57.836Z",
-      "implementationGuide": "1. Design document verification workflow\n2. Create verification request forms\n3. Implement document upload with type validation\n4. Build admin verification interface\n5. Create document approval/rejection flows\n6. Implement secure document storage with access controls\n7. Add verification status tracking\n8. Create notification system for status updates"
-    },
-    {
-      "id": "163d4b27-26c7-473d-bf6e-1b78e579a0e5",
-      "name": "Set up Language Translation Files",
-      "description": "Create translation files for all supported languages (English, Arabic, French). Implement a structured approach to translations with namespaces for different sections of the application.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "5ada5b51-67b0-4fa0-92e6-f9c7cbab556f"
-        }
-      ],
-      "createdAt": "2025-05-02T11:21:13.730Z",
-      "updatedAt": "2025-05-02T11:21:13.730Z",
-      "implementationGuide": "1. Create a structured folder for translations (`/i18n/locales/`)\n2. Set up translation files for English (base language)\n3. Create corresponding translation files for Arabic with proper RTL support\n4. Add translation files for French\n5. Organize translations into logical namespaces (common, auth, events, etc.)\n6. Implement pluralization and formatting for dates, numbers, and currencies\n7. Create helper functions for common translation patterns"
-    },
-    {
-      "id": "406ba102-56f1-4ab3-8da4-1c6268d3742d",
-      "name": "Implement Language Switching UI",
-      "description": "Create UI components for language switching and ensure proper locale persistence. Implement language detection and preference saving.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "163d4b27-26c7-473d-bf6e-1b78e579a0e5"
-        },
-        {
-          "taskId": "c2824c53-a4fe-4114-b92b-c28c8e139bd8"
-        }
-      ],
-      "createdAt": "2025-05-02T11:21:13.730Z",
-      "updatedAt": "2025-05-02T11:21:13.730Z",
-      "implementationGuide": "1. Create a language switcher component\n2. Implement locale change functionality using next-intl\n3. Add locale persistence in cookies or local storage\n4. Implement auto-detection of user's preferred language\n5. Create language preference settings in user profile\n6. Add appropriate language indicators in UI\n7. Implement proper URL handling for language switching"
-    },
-    {
-      "id": "20b295a8-fa0d-4552-88b5-861f5897cab0",
-      "name": "Implement RTL Layout Support",
-      "description": "Add Right-to-Left (RTL) layout support for Arabic language. Ensure proper text alignment, directional UI elements, and consistent styling.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "163d4b27-26c7-473d-bf6e-1b78e579a0e5"
-        },
-        {
-          "taskId": "c2824c53-a4fe-4114-b92b-c28c8e139bd8"
-        }
-      ],
-      "createdAt": "2025-05-02T11:21:13.730Z",
-      "updatedAt": "2025-05-02T11:21:13.730Z",
-      "implementationGuide": "1. Configure Tailwind CSS for RTL support\n2. Create RTL versions of layout components\n3. Implement directional CSS variables and utilities\n4. Add RTL-specific component variants\n5. Set up proper text alignment and bidirectional text support\n6. Test and fix layout issues in RTL mode\n7. Ensure proper form and input element behavior in RTL mode"
-    },
-    {
-      "id": "3f1a994b-45ac-4a6c-835a-da47e86e89d3",
-      "name": "Build Offline Payment Tracking System",
-      "description": "Implement a system for tracking and managing offline payments. Create payment reference generation, payment status tracking, and verification workflows.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "694388fb-05ea-492f-add5-dac8451b6f5f"
-        },
-        {
-          "taskId": "163d4b27-26c7-473d-bf6e-1b78e579a0e5"
-        }
-      ],
-      "createdAt": "2025-05-02T11:21:13.730Z",
-      "updatedAt": "2025-05-02T11:21:13.730Z",
-      "implementationGuide": "1. Design payment tracking database schema\n2. Create payment reference code generation system\n3. Implement payment instruction page with localization\n4. Build payment status tracking interface\n5. Create payment verification workflow for administrators\n6. Implement email notifications for payment status updates\n7. Add payment history and receipts functionality"
-    },
-    {
-      "id": "00f10e9e-6224-49a8-8022-e17bbc3e30c7",
-      "name": "Create Admin Dashboard",
-      "description": "Build a comprehensive admin dashboard with user management, content moderation, system statistics, and administrative functions.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "694388fb-05ea-492f-add5-dac8451b6f5f"
-        },
-        {
-          "taskId": "c2824c53-a4fe-4114-b92b-c28c8e139bd8"
-        }
-      ],
-      "createdAt": "2025-05-02T11:21:13.730Z",
-      "updatedAt": "2025-05-02T11:21:13.730Z",
-      "implementationGuide": "1. Design admin dashboard layout and navigation\n2. Implement user management section (list, edit, delete users)\n3. Create event moderation section with approval workflows\n4. Add submission review and management section\n5. Implement system statistics and analytics displays\n6. Create settings and configuration section\n7. Add audit logs and activity tracking"
-    },
-    {
-      "id": "f78964ee-1d0e-45cb-a925-919999419891",
-      "name": "Design Research Repository Schema",
-      "description": "Design the database schema and architecture for the research repository. Define paper metadata, categorization, access controls, and relationships.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "6fbe4ccf-9016-4a35-972f-c7fbb835e8f8"
-        }
-      ],
-      "createdAt": "2025-05-02T11:21:28.974Z",
-      "updatedAt": "2025-05-02T11:21:28.974Z",
-      "implementationGuide": "1. Define the requirements for the research repository\n2. Design database schema for research papers and metadata\n3. Create taxonomy and categorization system\n4. Define relationships between papers, authors, events, etc.\n5. Set up access control rules for different user types\n6. Create versioning system for paper updates\n7. Plan search indexing strategy"
-    },
-    {
-      "id": "f5167e36-2c73-4b5b-b1fa-b30130a26fa2",
-      "name": "Implement Research Paper Submission",
-      "description": "Create the interface and backend functionality for users to submit research papers. Implement metadata entry, file uploads, and review process.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "f78964ee-1d0e-45cb-a925-919999419891"
-        },
-        {
-          "taskId": "d63357c6-880e-4717-9eb0-40f0d99e3f00"
-        }
-      ],
-      "createdAt": "2025-05-02T11:21:28.974Z",
-      "updatedAt": "2025-05-02T11:21:28.974Z",
-      "implementationGuide": "1. Design research paper submission form\n2. Implement file upload for papers (PDF, DOCX)\n3. Create metadata entry form (title, authors, abstract, keywords, etc.)\n4. Add validation for required fields and file types\n5. Implement draft saving functionality\n6. Create submission confirmation and tracking\n7. Add review queue for administrators"
-    },
-    {
-      "id": "81e06b8c-1c25-40d0-aa4c-93db76390732",
-      "name": "Build Research Repository Frontend",
-      "description": "Create the user interface for browsing, searching, and viewing research papers. Implement filtering, sorting, and paper detail views.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "f5167e36-2c73-4b5b-b1fa-b30130a26fa2"
-        },
-        {
-          "taskId": "c2824c53-a4fe-4114-b92b-c28c8e139bd8"
-        }
-      ],
-      "createdAt": "2025-05-02T11:21:28.974Z",
-      "updatedAt": "2025-05-02T11:21:28.974Z",
-      "implementationGuide": "1. Design repository main page with featured papers\n2. Implement paper listing with filtering and sorting\n3. Create paper detail page with metadata and download options\n4. Add author and category browsing interfaces\n5. Implement paper statistics (views, downloads)\n6. Create user library for saved papers\n7. Add social sharing functionality"
-    },
-    {
-      "id": "a7ab741e-7304-4391-a8a5-92b13b4623f0",
-      "name": "Implement Advanced Search Functionality",
-      "description": "Create an advanced search system for the entire application with filters, saved searches, and relevant results ranking.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "81e06b8c-1c25-40d0-aa4c-93db76390732"
-        },
-        {
-          "taskId": "0aeb4543-7559-487f-a236-d542ebc30086"
-        }
-      ],
-      "createdAt": "2025-05-02T11:21:28.974Z",
-      "updatedAt": "2025-05-02T11:21:28.974Z",
-      "implementationGuide": "1. Design search data model and indexing strategy\n2. Implement basic search functionality with text matching\n3. Create advanced search interface with multiple filters\n4. Add search result ranking algorithm\n5. Implement saved searches functionality\n6. Create search analytics tracking\n7. Add search suggestion and autocomplete features"
-    },
-    {
-      "id": "6c341927-d26a-41a4-9905-5e2b9382fba2",
-      "name": "Create Testing Framework and Write Tests",
-      "description": "Set up a comprehensive testing framework and write tests for critical application functionality. Include unit tests, integration tests, and end-to-end tests.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "e5d33195-e6e3-40ea-b1ed-9b28e0bca488"
-        }
-      ],
-      "createdAt": "2025-05-02T11:21:28.975Z",
-      "updatedAt": "2025-05-02T11:21:28.975Z",
-      "implementationGuide": "1. Set up testing framework (Jest, React Testing Library)\n2. Create test utilities and helpers\n3. Implement unit tests for critical functions\n4. Add integration tests for key workflows\n5. Create end-to-end tests for main user journeys\n6. Implement API testing\n7. Set up test coverage reporting\n8. Create testing documentation"
-    },
-    {
-      "id": "85a0cd2c-aa79-49a5-90b5-56456cd85b94",
-      "name": "Configure CI/CD Pipeline",
-      "description": "Set up continuous integration and continuous deployment pipelines for automatic testing, building, and deployment of the application.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "6c341927-d26a-41a4-9905-5e2b9382fba2"
-        }
-      ],
-      "createdAt": "2025-05-02T11:21:44.502Z",
-      "updatedAt": "2025-05-02T11:21:44.502Z",
-      "implementationGuide": "1. Configure GitHub Actions or another CI/CD service\n2. Set up linting and formatting checks\n3. Configure test running in CI\n4. Set up build process for production\n5. Implement automatic deployment to Vercel\n6. Configure branch protection rules\n7. Set up environment-specific deployments\n8. Create deployment notifications"
-    },
-    {
-      "id": "d1e2cec5-8624-4c09-90e2-e58278e7898c",
-      "name": "Implement Analytics and Monitoring",
-      "description": "Set up analytics for tracking user behavior and monitoring for application performance and errors. Create dashboards for monitoring key metrics.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "00f10e9e-6224-49a8-8022-e17bbc3e30c7"
-        }
-      ],
-      "createdAt": "2025-05-02T11:21:44.502Z",
-      "updatedAt": "2025-05-02T11:21:44.502Z",
-      "implementationGuide": "1. Design analytics tracking strategy\n2. Implement privacy-focused event tracking\n3. Set up error monitoring and reporting\n4. Create custom analytics dashboard\n5. Implement performance monitoring\n6. Add user flow tracking\n7. Set up alerting for critical issues\n8. Create reporting functionality for key metrics"
-    },
-    {
-      "id": "834baa9d-0683-4376-9fcf-06a0ab2ece5e",
-      "name": "Build Recommendation System",
-      "description": "Create a recommendation system for events, papers, and other content based on user interests, behavior, and similarities.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "a7ab741e-7304-4391-a8a5-92b13b4623f0"
-        },
-        {
-          "taskId": "0aeb4543-7559-487f-a236-d542ebc30086"
-        }
-      ],
-      "createdAt": "2025-05-02T11:21:44.502Z",
-      "updatedAt": "2025-05-02T11:21:44.502Z",
-      "implementationGuide": "1. Design recommendation algorithm and strategy\n2. Implement user interest tracking\n3. Create content similarity analysis\n4. Build recommendation display components\n5. Implement personalized home page\n6. Add email recommendations\n7. Create recommendation feedback loop\n8. Set up A/B testing for recommendation effectiveness"
-    },
-    {
-      "id": "eb9b18df-4096-4b9c-9da8-04111b76960d",
-      "name": "Create User Documentation",
-      "description": "Create comprehensive user documentation, tutorials, and help center for the application. Include guides for different user roles and features.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "a7ab741e-7304-4391-a8a5-92b13b4623f0"
-        },
-        {
-          "taskId": "00f10e9e-6224-49a8-8022-e17bbc3e30c7"
-        },
-        {
-          "taskId": "6919b382-e716-4c98-b764-d57827eed9a4"
-        },
-        {
-          "taskId": "3f1a994b-45ac-4a6c-835a-da47e86e89d3"
-        }
-      ],
-      "createdAt": "2025-05-02T11:21:44.502Z",
-      "updatedAt": "2025-05-02T11:21:44.502Z",
-      "implementationGuide": "1. Design documentation structure and organization\n2. Create getting started guides for each user role\n3. Implement feature-specific documentation\n4. Add tutorial videos and walkthroughs\n5. Create FAQ section\n6. Implement help search functionality\n7. Add contextual help throughout the application\n8. Create documentation for API and integrations"
-    },
-    {
-      "id": "d4f65957-026e-4285-8156-a40cbb205703",
-      "name": "Optimize Performance and Accessibility",
-      "description": "Audit and optimize the application for performance, accessibility, and SEO. Implement improvements to ensure fast loading, accessibility compliance, and good search engine visibility.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "0aeb4543-7559-487f-a236-d542ebc30086"
-        },
-        {
-          "taskId": "81e06b8c-1c25-40d0-aa4c-93db76390732"
-        },
-        {
-          "taskId": "20b295a8-fa0d-4552-88b5-861f5897cab0"
-        }
-      ],
-      "createdAt": "2025-05-02T11:21:44.502Z",
-      "updatedAt": "2025-05-02T11:21:44.502Z",
-      "implementationGuide": "1. Perform performance audit and optimization\n2. Run accessibility audit and implement fixes\n3. Optimize image loading and processing\n4. Implement code splitting and lazy loading\n5. Add proper focus management and keyboard navigation\n6. Ensure proper ARIA attributes and screen reader support\n7. Optimize meta tags and structured data for SEO\n8. Implement performance monitoring and improvement process"
+      "dependencies": [],
+      "createdAt": "2025-05-02T20:54:48.701Z",
+      "updatedAt": "2025-05-02T20:54:48.701Z",
+      "implementationGuide": "Integrate with email provider's tracking features, store tracking data in a dedicated analytics table, and create helper functions to query and analyze email performance."
     }
   ]
 }
