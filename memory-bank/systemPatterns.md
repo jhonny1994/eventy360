@@ -1,236 +1,90 @@
-# System Patterns
+# System Patterns & Architecture: Eventy360
 
-## Architecture Overview
+## 1. Overall Architecture
 
-Eventy360 follows a modern web application architecture with clear separation of concerns:
+*   **Model**: Jamstack frontend + BaaS backend.
+*   **Frontend**: Next.js (App Router) hosted on Vercel.
+*   **Backend**: Supabase Platform (PostgreSQL DB, Auth, Storage, Edge Functions, Cron Jobs) hosted on Supabase Cloud.
+*   **Communication**: Frontend uses Supabase client libraries (JS) for direct DB interaction (leveraging RLS), Auth, and Storage. Calls to Supabase Edge Functions via HTTPS for specific backend logic/external API interaction (Resend).
 
-```mermaid
-flowchart TD
-    Client[Next.js Client] <--> API[Next.js API Routes]
-    API <--> Auth[Supabase Auth]
-    API <--> DB[Supabase PostgreSQL]
-    API <--> Storage[Supabase Storage]
-    API <--> Functions[Supabase Edge Functions]
-    Client <--> Realtime[Supabase Realtime]
-```
+## 2. Key Backend Components & Patterns (Supabase)
 
-## Core System Components
+*   **Database (PostgreSQL)**:
+    *   **Schema**: Relational model with tables like `profiles`, `events`, `submissions`, `subscriptions`, `payments`, `topics`, `email_templates`, `email_log`, `notification_queue`, `wilayas`, `dairas`.
+    *   **Data Types**: Extensive use of PostgreSQL `ENUM` types (e.g., `user_type_enum`, `event_status_enum`, `subscription_tier_enum`, `payment_status_enum`) for data integrity.
+    *   **Data Seeding**: `wilayas` and `dairas` tables populated initially from `wilayas.json` via a one-time script (Node.js/Python recommended).
+    *   **Security**: Row Level Security (RLS) is the primary authorization mechanism. Policies grant users access to their own data, organizers to their event data, and admins broader access based on defined needs.
+    *   **Automation**: DB Functions & Triggers:
+        *   `handle_new_user()`: Triggered by Supabase Auth Hook on new sign-ups to create corresponding profile and initial subscription records.
+        *   `handle_payment_verification()`: Triggered by admin updating `payments` status to 'verified'; creates/updates the `subscriptions` record accordingly.
+        *   Notification Triggers: Inserts tasks into `notification_queue` upon relevant data changes (e.g., new user, payment verified, submission status update, event change).
+    *   **Data Integrity**: Foreign key constraints, `NOT NULL` where applicable.
+    *   **Metadata**: `JSONB` used for flexible data like file metadata (`submissions` table).
+*   **Authentication**: Supabase Auth for email/password login and session management.
+*   **Storage**: Supabase Storage for user uploads (profile pics, event logos, submission files - PDF/DOC/DOCX, 5MB limit).
+*   **Edge Functions (Deno Runtime)**:
+    *   `send-email`: Internal core logic (not directly exposed) called by other functions/triggers (via queue) to fetch templates from `email_templates`, personalize, and send emails via Resend API. Logs results to `email_log`.
+    *   `process-notification-queue` (Scheduled via Supabase Cron - e.g., every minute): Reads pending tasks from `notification_queue`, invokes `send-email`, updates task status.
+    *   `check-deadlines` (Scheduled via Supabase Cron - e.g., daily): Queries `events` for upcoming deadlines, inserts tasks into `notification_queue`.
+    *   `check-subscriptions-expiry` (Scheduled via Supabase Cron - e.g., daily): Queries `subscriptions` for expired/expiring trials/paid periods, updates status, inserts tasks into `notification_queue`.
+    *   `retry-failed-emails` (Scheduled via Supabase Cron - e.g., hourly): Attempts to resend emails marked 'failed' in `email_log` (limited retries).
+    *   `purge-deleted-events` (Scheduled via Supabase Cron - e.g., daily/weekly after grace period): Permanently deletes events marked 'canceled' and associated data.
+    *   File Upload Handler: Secure endpoint to validate (size/type) and upload files to Storage.
+    *   Password Reset Logic: Handles token generation/validation and triggers reset email (likely via `notification_queue`).
+*   **Cron Jobs**: Supabase scheduled functions drive asynchronous tasks (queue processing, checks, retries, purging).
 
-### User Management System
+## 3. Key System Workflow Patterns
 
-```mermaid
-flowchart TD
-    Auth[Authentication] --> Profiles[User Profiles]
-    Profiles --> Researcher[Researcher Profiles]
-    Profiles --> Organizer[Organizer Profiles]
-    Profiles --> Admin[Admin Profiles]
-    Profiles --> Verification[Verification System]
-    Profiles --> Subscription[Subscription System]
-```
+*   **Manual Verification/Payment (MVP)**: Relies on Admin intervention. Email communication initiates the process, but the state change and subsequent logic (notifications, subscription activation) are triggered by the Admin updating records (`profiles.is_verified`, `payments.status`) via the Admin Panel.
+*   **Asynchronous Email Notifications**: Decoupled sending via `notification_queue` table and scheduled processing function (`process-notification-queue`) for reliability.
+*   **State Management**: Uses `ENUM` status fields in tables (`events`, `submissions`, `subscriptions`, `payments`) to track lifecycle, updated by user actions, admin actions, or scheduled jobs.
+*   **Tier Limit Enforcement**: Checks implemented in backend logic (likely DB functions/triggers during event creation/publishing) based on organizer's `subscriptions` tier/status.
+*   **Soft Deletion**: For canceled events, marked via status change, hidden via RLS/queries, then permanently removed by `purge-deleted-events` job.
 
-- **Authentication Flow**: Managed by Supabase Auth
-- **Profile Creation**: Creates base profile and role-specific profile
-- **Verification Process**: Status transitions from submitted → under_review → approved/rejected
-- **Profile Types**: Each user type has specialized profile fields and capabilities
+## 4. Database Design Patterns
 
-### Subscription System
+*   **Relational Schema**: Clear tables with foreign key relationships (e.g., `profiles` to `researcher_profiles`, `events` to `submissions`).
+*   **Internationalization (i18n)**:
+    *   **Strategy (Mixed)**:
+        *   Use `JSONB` columns for dynamic, user-generated translatable text fields (e.g., `event_name_translations`, `topic_name_translations`, `profile_bio_translations`) to facilitate future multi-language support (`en`, `fr`).
+        *   Use standard `TEXT` columns (`name_ar`, `name_other`) for static, seeded location data (`wilayas`, `dairas`).
+    *   **JSONB Structure**: Store translations as key-value pairs (e.g., `{"ar": "...", "en": "...", "fr": "..."}`).
+    *   **MVP Implementation (JSONB Fields)**: For the MVP, only the Arabic (`ar`) key will be populated and queried in JSONB columns. The structure allows future expansion without schema changes for these fields.
+    *   **MVP Implementation (TEXT Fields)**: `wilayas.name_ar`, `wilayas.name_other`, `dairas.name_ar`, `dairas.name_other` are populated directly during seeding.
+    *   **Primary Language**: Arabic (`ar`) is the primary language. Its key **must** be present in JSONB fields for MVP. `name_ar` must be populated for location tables.
+    *   **Querying (MVP)**: Application logic queries `translations_column ->> 'ar'` for JSONB fields, and `name_ar` for location tables.
+    *   **Querying (Future - JSONB Fields)**: When `en`/`fr` are added to JSONB fields, application logic will query the requested locale (e.g., `translations_column ->> 'en'`) and **must** implement fallback logic to Arabic (`translations_column ->> 'ar'`) if the requested locale's value is null or the key is missing.
+    *   **Querying (Future - TEXT Fields)**: `name_other` column in `wilayas`/`dairas` will be used for French/English display.
+    *   **Indexing**: Utilize GIN indexes on JSONB columns. Standard indexes on `name_ar`, `name_other`.
+*   **ENUM Types**: Extensive use of PostgreSQL ENUMs for constrained categorical data (e.g., `user_type_enum`, `event_status_enum`, `submission_status_enum`) ensures data integrity.
+*   **Row Level Security (RLS)**: Primary mechanism for enforcing data access rules. Policies are defined to allow users to manage their own data, organizers to manage their events/submissions, and admins broader access based on operational needs.
+*   **Database Functions & Triggers**: Used for automation and enforcing complex logic directly within the database:
+    *   `handle_new_user()`: Triggered on new user authentication to create corresponding profile entries.
+    *   `handle_payment_verification()`: Triggered on payment verification to update/create subscription records.
+    *   Notification Queue Triggers: Insert tasks into `notification_queue` on relevant data changes.
+*   **Soft Deletes**: Implemented for certain data types (e.g., canceled events) initially, with scheduled functions for eventual permanent deletion.
+*   **JSONB for Metadata**: Storing flexible *non-translatable* metadata associated with files (e.g., `abstract_file_metadata`).
+*   **Data Seeding**: Initial population of static data like `wilayas` and `dairas` from `wilayas.json` using a one-time script, populating their `name_ar` and `name_other` TEXT columns.
 
-```mermaid
-flowchart TD
-    Registration[User Registration] --> Trial[14-day Trial]
-    Trial --> Payment[Payment Submission]
-    Payment --> Verification[Payment Verification]
-    Verification --> Active[Active Subscription]
-    Active --> Expiry[Subscription Expiry]
-    Expiry --> Renewal[Renewal]
-```
+## 5. Key System Workflows & Patterns
 
-- **Default Subscription**: Free researcher tier assigned automatically
-- **Trial Period**: All users get 14-day trial access to paid features
-- **Payment Flow**: Submit payment proof → Admin verification → Subscription activation
-- **Subscription Tiers**: free_researcher, paid_researcher, paid_organizer
-- **Status Flow**: trial → pending → active → expired
+*   **Manual Verification (MVP)**: Core processes like user verification and payment confirmation rely on administrator intervention via email communication and subsequent manual updates within the platform's admin interface. Platform actions (e.g., updating `is_verified`, marking `payments` as verified) trigger associated system logic (applying badges, updating subscriptions, sending notifications).
+*   **Asynchronous Notifications**: A dedicated `notification_queue` table and scheduled Edge Functions (`process-notification-queue`) handle email sending asynchronously, improving resilience and decoupling email logic from core operations.
+*   **Scheduled Tasks (Cron)**: Supabase Cron jobs drive regular maintenance and checks (deadline reminders, subscription expiry, failed email retries, data purging).
+*   **Tiered Feature Access**: Logic checks (primarily backend/database level, potentially via RLS or DB functions/triggers) enforce feature limits based on user subscription tier (e.g., number of active events for organizers).
+*   **State Management**: Event and Submission lifecycles are managed via status fields (`event_status_enum`, `submission_status_enum`) updated through user actions or automated processes.
+*   **Loading State Management**: Provide visual feedback during data fetching and asynchronous operations.
+    *   **App Router (Server Components)**: Use Next.js convention `loading.js`/`tsx` files alongside pages for automatic Suspense boundaries.
+    *   **Client Components/Forms**: Use React state (`useState`) or library features (e.g., SWR `isLoading`) to conditionally render loaders (spinners, skeletons).
+*   **Error Handling**: Standardized approach across the stack.
+    *   **Frontend (App Router)**: Use `error.js`/`tsx` for segment-level Server Component errors, `global-error.js`/`tsx` for root layout errors, `notFound()` for missing data.
+    *   **Frontend (Client Components)**: Use `try...catch`, state management for errors, user-facing Toasts/Alerts.
+    *   **Backend (Edge Functions)**: Use `try...catch`, return structured JSON error responses with appropriate HTTP status codes, log detailed errors.
 
-### Event Management System
+## 6. Payment Strategy Pattern (MVP)
 
-```mermaid
-flowchart TD
-    Creation[Event Creation] --> Publication[Event Publication]
-    Publication --> Active[Active Event]
-    Active --> Completion[Event Completion]
-    Publication --> Cancellation[Event Cancellation]
-    Active --> Cancellation
-```
-
-- **Creation Restrictions**: Only verified organizers with active subscriptions
-- **Event Limits**: Maximum 5 active events per organizer
-- **Status Flow**: published → active → completed (or canceled)
-- **Event Topics**: Events are tagged with research topics for discoverability
-- **Access Control**: Published events visible to all, management restricted to creators
-
-### Submission System
-
-```mermaid
-flowchart TD
-    Abstract[Abstract Submission] --> Review[Under Review]
-    Review --> Accepted[Acceptance]
-    Review --> Rejected[Rejection]
-    Accepted --> FullPaper[Full Paper Submission]
-```
-
-- **Submission Eligibility**: Only paid researchers can submit papers
-- **File Types**: Support for abstract and full paper files
-- **Status Flow**: received → under_review → accepted/rejected
-- **Review Process**: Organizers review submissions and provide feedback
-- **Notification System**: Status changes trigger email notifications
-
-### Verification System
-
-```mermaid
-flowchart TD
-    Request[Verification Request] --> Review[Admin Review]
-    Review --> Approval[Approval]
-    Review --> Rejection[Rejection with Reason]
-    Rejection --> Resubmission[Resubmission]
-```
-
-- **Verification Types**: Separate flows for researchers and organizers
-- **Document Requirements**: Institutional email and proof document required
-- **Admin Review**: Specialized interface for administrators to review requests
-- **Badge System**: Verified users receive visual indicator on profiles
-
-### Notification System
-
-```mermaid
-flowchart TD
-    Trigger[System Event] --> Template[Email Template]
-    Template --> Queue[Email Queue]
-    Queue --> Delivery[Email Delivery]
-    Delivery --> Logs[Email Logs]
-```
-
-- **Email-Based**: Primary notification method is email
-- **Template-Based**: Pre-defined templates with variable substitution
-- **Queuing System**: Reliable delivery with retry mechanism
-- **Logging**: Comprehensive tracking of all notification attempts
-- **Trigger Events**: User registration, verification status changes, payment status changes, submission reviews
-
-## Data Flows
-
-### User Registration Flow
-
-```mermaid
-sequenceDiagram
-    User->>+Auth: Register with email/password
-    Auth-->>-User: Account created
-    Auth->>+Profiles: Create base profile
-    Profiles->>+RoleProfile: Create role-specific profile
-    RoleProfile->>+Subscription: Create default subscription
-    Subscription-->>-User: 14-day trial activated
-```
-
-### Event Creation Flow
-
-```mermaid
-sequenceDiagram
-    Organizer->>+Events: Submit event details
-    Events->>+EventCheck: Verify eligibility & limits
-    EventCheck-->>-Events: Verification passed
-    Events->>+EventTopics: Associate with topics
-    Events-->>-Organizer: Event published
-```
-
-### Submission Flow
-
-```mermaid
-sequenceDiagram
-    Researcher->>+Submissions: Submit paper
-    Submissions->>+Storage: Upload file
-    Submissions-->>-Researcher: Submission received
-    
-    Organizer->>+Submissions: Review submission
-    Submissions->>+Notifications: Send status update
-    Notifications-->>-Researcher: Status changed email
-```
-
-### Payment Verification Flow
-
-```mermaid
-sequenceDiagram
-    User->>+Payments: Upload payment proof
-    Payments->>+ReferenceGen: Generate reference code
-    ReferenceGen-->>-User: Payment reference provided
-    
-    Admin->>+Payments: Verify payment
-    Payments->>+Subscription: Activate subscription
-    Subscription->>+Notifications: Send confirmation
-    Notifications-->>-User: Payment verified email
-```
-
-## Feature Organization
-
-### Component Architecture
-
-- **Page Components**: Main route entry points
-- **Feature Components**: Specialized for specific functionality
-- **Common Components**: Reusable UI elements
-- **Layout Components**: Page structure and navigation
-
-### Data Access Patterns
-
-- **Server Components**: Direct database access via Supabase server-side SDK
-- **Client Components**: Access via authenticated API routes
-- **API Routes**: Middleware validation and error handling
-- **Database Views**: Pre-composed queries for common data access
-- **RLS Policies**: Fine-grained access control at the database level
-
-### State Management
-
-- **Server State**: Primarily handled through database
-- **Client State**: Local React state for UI concerns
-- **Shared State**: React Context for cross-component coordination
-- **Realtime Updates**: Supabase Realtime for live data synchronization
-
-## System Boundaries
-
-### User Types and Permissions
-
-- **Researcher Capabilities**:
-  - Browse and search events
-  - Submit papers to events (paid tier)
-  - Track submission status
-  - Download accepted papers (paid tier)
-
-- **Organizer Capabilities**:
-  - Create and manage events
-  - Review submissions
-  - Update submission status
-  - Communicate with submitters
-
-- **Admin Capabilities**:
-  - Verify users
-  - Process payments
-  - Manage system settings
-  - Access analytics and reporting
-
-### Integration Points
-
-- **Email Delivery**: Integrated email service
-- **File Storage**: Supabase Storage
-- **Search System**: PostgreSQL full-text search
-- **Payment Processing**: Manual verification (initial), payment gateway integration (future)
-
-## Error Handling
-
-- **Validation Errors**: Client and server-side validation with Zod
-- **Authentication Errors**: Redirect to login with error messages
-- **Authorization Errors**: Clear permission denied messages
-- **System Errors**: Graceful degradation with appropriate status codes
-- **Database Constraints**: Proper error handling for uniqueness and referential integrity
-
-## Monitoring and Analytics
-
-- **User Analytics**: Tracking user engagement and behavior
-- **Performance Monitoring**: Page load times and API response times
-- **Error Tracking**: Centralized error collection and reporting
-- **Audit Logging**: Tracking critical operations for security and debugging
+*   **Offline Payment**: Users initiate payment requests via email.
+*   **Manual Admin Verification**: Admins verify payment receipt offline.
+*   **Platform Record Keeping**: Admins record payment details (`payments` table) and mark as verified.
+*   **Automated Subscription Activation**: A database trigger/function (`handle_payment_verification`) on the `payments` table manages the creation/update of the corresponding `subscriptions` record.
+*   **Scheduled Expiry Management**: Cron job (`check-subscriptions-expiry`) handles automatic status updates for expired trials/subscriptions. 

@@ -1,86 +1,38 @@
 # Project Brief: Eventy360
 
-## Project Overview
+## 1. Project Goal
+To create a centralized SaaS platform for academic event management and research discovery specifically tailored for the Algerian academic community, addressing issues of information fragmentation, trust, and inefficient workflows.
 
-Eventy360 is a comprehensive SaaS platform designed to revolutionize academic event management and research discovery in Algeria. The platform connects researchers with academic events, streamlines the submission process, and creates a centralized repository for research papers. It solves the critical problems of information fragmentation, lack of trust mechanisms, and inefficient submission workflows in the Algerian academic ecosystem.
+## 2. Core Problems Addressed
+Based on the Algerian academic context:
+1.  **Information Fragmentation**: Event announcements are scattered across university sites, social media, etc., making discovery difficult.
+2.  **Limited Trust**: Difficulty distinguishing reputable, high-quality academic events.
+3.  **Manual Submissions**: Reliance on email/manual tracking for paper submissions is inefficient for organizers and researchers.
+4.  **Research Access Barriers**: Post-event research papers are hard to find and access.
+5.  **Organizer Workflow Inefficiency**: Lack of integrated tools forces organizers to use disconnected systems.
 
-## Core Objectives
+## 3. Target Audience
+*   **Researchers (Algeria)**: Students (all levels), professors, scientists needing to find events, submit papers, and access research.
+*   **Organizing Institutions (Algeria)**: Universities, research centers, national schools, labs, activity services, research teams hosting events.
+*   **Administrators**: Platform managers handling quality control, manual user/payment verification (MVP), and system maintenance.
 
-1. Create a **centralized discovery platform** for academic events across Algeria
-2. Implement a **trust verification system** for both organizers and researchers
-3. Provide an **integrated submission workflow** from abstract to full paper
-4. Build a **searchable repository** of accepted research papers
-5. Deliver a **multilingual experience** supporting Arabic, French, and English
-6. Establish a **sustainable business model** through tiered subscriptions
+## 4. MVP Scope & Key Features
+*   **User Management**: 3 roles (researcher, organizer, admin), profiles, manual admin verification (email comms -> platform update), **Arabic UI only for MVP**. Full RTL support.
+*   **Subscription System**: Tiered (free/paid/trial for researcher/organizer), 1-month trial, manual offline payment processing (bank/check/cash) & admin verification -> platform update, verification badge.
+*   **Event Management**: Detailed event creation (multi-type/format), topic association, lifecycle (published -> active -> completed). **No editing after publish in MVP.**
+*   **Submission System**: Abstract/full paper workflow (PDF/DOC/DOCX, 5MB limit), status tracking, email notifications (incl. mandatory rejection feedback). **No editing after submission.**
+*   **Research Repository**: Centralized storage of accepted papers, MVP search (title, abstract), MVP filter (topic, event_id).
+*   **Search/Discovery**: Arabic full-text search, advanced filters, topic recommendations, bookmarking.
+*   **Verification System**: Manual admin check (email -> platform status update), verified badges.
+*   **Notification System**: Email-based (**Arabic templates only for MVP**, stored in DB `email_templates` using JSONB fields populated with the `ar` key for future i18n), triggered by key actions (registration, verification, payment, submission status, deadlines) via DB triggers -> `notification_queue` -> processed by scheduled Edge Function (`process-notification-queue`) using core `send-email` logic (Resend API); scheduled checks for deadlines/expiry (`check-deadlines`, `check-subscriptions-expiry`); logging (`email_log`); Admin visibility.
+*   **Admin Panel**: MVP features include dashboard, user management (view, verify, suspend), payment/subscription management (manual recording/activation), event/submission oversight (view, admin edits, delete), topic CRUD, email template editing (Arabic only via `ar` key in JSONB), email log viewing.
+*   **Database i18n Structure**: Implement dynamic user-facing translatable fields (e.g., event names, bios, topic names) using JSONB columns from the start (e.g., `name_translations`), but **populate and query only the 'ar' key for MVP**. Static location data (`wilayas`, `dairas`) uses simple `name_ar` and `name_other` text fields.
 
-## Target Audience
-
-- **Researchers**: Students, professors, scientists seeking academic events and research opportunities
-- **Organizing Institutions**: Universities, research centers, and academic departments hosting events
-- **Administrators**: Platform managers ensuring quality, processing verifications, and maintaining the system
-
-## Key Features
-
-### User Management
-- Three distinct user types: researchers, organizers, and administrators
-- Comprehensive profile systems for each user type
-- Verification system with institutional validation
-- Multilingual user interface (Arabic, French, English)
-
-### Subscription System
-- Tiered model: free_researcher, paid_researcher, paid_organizer
-- 14-day trial period for all new users
-- Offline payment processing with manual verification
-- Clear feature differentiation between tiers
-
-### Event Management
-- Detailed event creation with comprehensive information fields
-- Support for multiple event types and formats
-- Topic association for improved discoverability
-- Event lifecycle management (published → active → completed)
-
-### Submission System
-- Streamlined paper submission workflow
-- Abstract and full paper handling
-- Multistage review process
-- Status tracking and notifications
-
-### Research Repository
-- Centralized storage of accepted papers
-- Metadata-based search and discovery
-- Download tracking and analytics
-- Associated event context for each paper
-
-### Search and Discovery
-- Multilingual full-text search
-- Advanced filtering capabilities
-- Topic-based recommendations
-- Saved searches and bookmarking
-
-## Technical Foundation
-
-- **Frontend**: Next.js App Router with TypeScript, Tailwind CSS, and Shadcn UI
-- **Backend**: Supabase platform (PostgreSQL, Auth, Storage, Edge Functions, Realtime)
-- **Database**: Comprehensive PostgreSQL schema with RLS policies
-- **Security**: Row-level security, verification processes, and audit logging
-- **Internationalization**: Complete support for Arabic, French, and English
-
-## Success Criteria
-
-1. **User Adoption**: Significant uptake among Algerian academic institutions
-2. **Subscription Conversion**: Healthy conversion rate from free to paid tiers
-3. **Content Growth**: Steady increase in events and research papers
-4. **Platform Trust**: Establishment of Eventy360 as a trusted academic platform
-5. **Operational Sustainability**: Subscription revenue covering operational costs
-
-## Development Approach
-
-- Staged rollout of features, starting with core functionality
-- Initial focus on traditional payment methods, with digital payments later
-- Emphasis on multilingual support from day one
-- Strong verification processes to build trust
-- Mobile-responsive design, with native applications planned for future
-
-## Unique Value Proposition
-
-Eventy360 is the first platform to offer a comprehensive solution specifically designed for the Algerian academic ecosystem, addressing unique challenges such as language requirements, payment systems, and institutional structures. It brings together event discovery, paper submission, and research repository into a single, integrated platform that builds trust through verification processes and delivers a seamless multilingual experience. 
+## 5. Non-Goals (for MVP)
+*   **Multi-language Support (UI & Content)**: English and French support is planned for a future phase. MVP is Arabic only.
+*   Automated online payment processing (Future: Chargily Pay).
+*   Automated user verification.
+*   Real-time features beyond basic notifications.
+*   Advanced analytics beyond simple admin dashboard metrics.
+*   Event editing by organizers after publishing.
+*   Submission editing after submitting. 

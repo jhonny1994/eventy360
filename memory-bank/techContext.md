@@ -1,198 +1,82 @@
-# Technical Context
+# Technical Context: Eventy360
 
-## Database Schema
+## 1. Core Technologies
 
-The Eventy360 platform is built on a comprehensive PostgreSQL database schema managed through Supabase with the following key components:
+*   **Frontend Framework**: Next.js (App Router)
+*   **UI Language**: React with TypeScript
+*   **Styling**: Tailwind CSS
+*   **UI Components**: Shadcn UI
+*   **Internationalization (i18n)**: `next-intl` (Configured for Arabic `ar` locale **only in MVP**, supporting RTL via `dir="rtl"` attribute on `<html>` or relevant container). English/French locales to be added later.
+*   **Forms**: React Hook Form
+*   **Validation**: Zod (Used with React Hook Form for client-side and potentially Edge Function input validation).
+*   **Backend Platform**: Supabase (Cloud hosted)
+    *   **Database**: PostgreSQL (Version provided by Supabase)
+    *   **Authentication**: Supabase Auth (Email/Password)
+    *   **File Storage**: Supabase Storage
+    *   **Serverless Functions**: Supabase Edge Functions (Deno Runtime, TypeScript)
+    *   **Scheduling**: Supabase Cron Jobs
+*   **Email Service**: Resend (API integrated via `send-email` Edge Function logic).
 
-### Core Data Types
-- **ENUMs**: We use PostgreSQL ENUMs for strictly typed data categorization:
-  - `user_type_enum`: researcher, organizer, admin
-  - `language_enum`: ar, fr, en
-  - `institution_type_enum`: university, university_center, national_school, research_center, research_laboratory, activities_service, research_team
-  - `event_type_enum`: scientific_event, cultural_event, sports_event, competition
-  - `event_format_enum`: physical, virtual, hybrid
-  - `event_status_enum`: published, active, completed, canceled
-  - `submission_status_enum`: received, under_review, accepted, rejected
-  - `subscription_tier_enum`: free_researcher, paid_researcher, paid_organizer
-  - `subscription_status_enum`: active, inactive, pending, trial, expired
-  - `payment_status_enum`: pending, verified, rejected
-  - `payment_method_enum`: bank_transfer, check, cash, online_payment
-  - `verification_status_enum`: submitted, under_review, approved, rejected
-  - `verification_type_enum`: researcher, organizer
-  - `file_type_enum`: abstract, full_paper
-  - `template_type_enum`: welcome, verification, payment, submission, event
-  - `email_status_enum`: pending, sent, failed
+## 2. Development Environment & Setup
 
-### Key Tables
-- **User-related tables**: profiles, researcher_profiles, organizer_profiles, admin_profiles
-- **Subscription-related tables**: subscriptions, payments
-- **Event-related tables**: events, event_topics, saved_events
-- **Submission-related tables**: submissions, submission_keywords, submission_files
-- **Verification tables**: verification_requests
-- **Topic management tables**: topics, user_interests
-- **Email system tables**: email_templates, email_queue, email_logs
-- **Analytics tables**: analytics_events, audit_logs
+*   **Package Manager**: `npm` (or `yarn`, confirm project setup)
+*   **Node.js**: Specify required version range (e.g., >= 18.x).
+*   **Supabase CLI**: Required for local development (DB migrations, local function testing, environment management).
+*   **Code Repository**: Git, hosted on GitHub.
+*   **Environment Variables**: Managed via `.env.local` (ignored by Git) for local development and Vercel/Supabase UI for deployment.
+    *   `NEXT_PUBLIC_SUPABASE_URL`
+    *   `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+    *   `SUPABASE_SERVICE_ROLE_KEY` (Server-side/Edge Function use only)
+    *   `RESEND_API_KEY` (Server-side/Edge Function use only)
+    *   `SUPABASE_DB_PASSWORD` (For local dev via Supabase CLI)
+    *   Potentially others (e.g., JWT secret if needed beyond Supabase Auth defaults).
 
-### Database Functions
-The schema implements several PostgreSQL functions to automate common operations:
-- `update_updated_at_column()`: Automatically updates timestamps
-- `create_default_subscription()`: Creates a default subscription for new users
-- `handle_verification_approval()`: Processes verification approvals
-- `handle_payment_verification()`: Processes payment verifications 
-- `generate_payment_reference()`: Creates unique payment reference codes
-- `handle_submission_status_change()`: Manages submission status updates
-- `check_active_events_limit()`: Enforces organizer event limits
-- `soft_delete_record()`: Implements soft deletion
+## 3. Deployment & Infrastructure
 
-### Database Views
-Pre-defined views for common access patterns:
-- `upcoming_events`: Events with future dates
-- `events_open_for_submissions`: Events with open submission deadlines
-- `recent_submissions`: Latest submissions with event and researcher details
-- `pending_verifications`: Verification requests awaiting review
-- `pending_payments`: Payment verifications awaiting processing
-- `user_dashboard_summary`: User-specific dashboard information
+*   **Frontend**: Vercel (connected to GitHub repo).
+*   **Backend**: Supabase Cloud.
+*   **CI/CD**: GitHub Actions workflow:
+    *   Triggered on push/merge to main branch.
+    *   Builds Next.js application.
+    *   Deploys frontend to Vercel.
+    *   (Optional/Manual initially) Deploys Supabase migrations/functions if changes detected.
 
-### Security Model
-- Row Level Security (RLS) policies for all tables
-- Policies based on user roles, subscription status, and ownership
-- Soft deletion support for data retention
-- Audit logging for critical operations
+## 4. Key Technical Constraints & Considerations
 
-## Tech Stack
+*   **Arabic Language & RTL**: Requires careful implementation in UI components, CSS, and `next-intl` configuration.
+*   **Manual MVP Processes**: Backend logic must correctly handle state changes initiated by admin actions reflecting offline verification/payment.
+*   **RLS Complexity**: Requires thorough design and testing of policies for all user roles and data interactions.
+*   **Edge Function Environment**: Deno runtime, specific available APIs, cold starts, execution limits (time/memory).
+*   **Database Migrations**: Strict adherence to using Supabase CLI (`supabase db diff`, `supabase migration new`, apply locally/remotely) for schema evolution.
+*   **State Management (Frontend)**: Choose appropriate strategy (e.g., React Context, Zustand, Valtio) if global state beyond basic props/hooks is needed. Libraries like SWR/TanStack Query manage their own request state.
+*   **Loading State Strategy**:
+    *   **App Router (`loading.js`/`tsx`)**: Use the built-in Next.js file convention to show instant loading UI (e.g., Skeletons from Shadcn UI) while Server Component data loads. Define `loading.tsx` in relevant route segments.
+    *   **Client Components (Data Fetching)**: Use loading states provided by data fetching libraries (e.g., `isLoading` from SWR/TanStack Query) or manual `useState` hooks to conditionally render loading indicators (spinners, skeletons).
+    *   **Client Components (Mutations/Forms)**: Use `useState` (e.g., `isSubmitting`) to track the state of form submissions or other mutations. Disable buttons and show indicators while loading.
+*   **Error Handling Strategy**:
+    *   **Frontend (App Router Boundaries)**: Implement `error.tsx` (must be Client Component) in route segments to catch errors from nested Server Components, display fallback UI (use Shadcn Alert/Toast), and provide a `reset` function. Implement `global-error.tsx` for the root layout.
+    *   **Frontend (Not Found)**: Use `notFound()` from `next/navigation` within Server Components when data fetching returns no result for a required resource (e.g., viewing a specific event by ID).
+    *   **Frontend (Client Components)**: Use `try...catch` in event handlers/async functions. Manage error state with `useState`. Display errors using Shadcn Toast or Alert components. Data fetching libraries (SWR/TanStack Query) provide `error` objects.
+    *   **Frontend (Forms)**: Use React Hook Form with Zod for client-side validation errors shown inline. Handle submission errors via state management as above.
+    *   **Backend (Edge Functions)**: Wrap logic in `try...catch`. Return standardized JSON error objects (`{ "error": "Error message" }`) with appropriate HTTP status codes (e.g., 400, 401, 403, 404, 500). Use `console.error` for logging detailed errors to Supabase logs.
+    *   **Backend (Input Validation)**: Use Zod or similar validation within Edge Functions for request bodies/params, return 400 status on failure.
+*   **Security**: Protect service role keys, manage RLS policies carefully, validate inputs (client & server), handle file uploads securely.
 
-### Frontend
-- **Framework**: Next.js (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: Shadcn UI
-- **Internationalization**: next-intl
-- **Form Handling**: React Hook Form with Zod validation
-- **State Management**: React Context
-- **Component Architecture**: Mixture of Server and Client Components
+## 5. Data Handling Specifics
 
-### Backend
-- **Supabase Platform**:
-  - PostgreSQL database
-  - Supabase Auth for authentication
-  - Supabase Storage for file storage
-  - Supabase Edge Functions for serverless functions
-  - Supabase Realtime for live updates
-  - Supabase Scheduled Functions for background tasks
-  - Row Level Security (RLS) for access control
-
-### Deployment
-- **Frontend**: Vercel
-- **Backend**: Supabase Cloud
-- **CI/CD**: GitHub Actions
-
-## Authentication & Authorization
-
-### Authentication
-- JWT-based authentication through Supabase Auth
-- Email/password authentication
-- Email verification
-- Token refresh strategy
-- Session management
-
-### Authorization
-- Role-based access control (researcher, organizer, admin)
-- Subscription tier access limitations
-- Row-level security policies
-- Route protection with Next.js middleware
-- Server-side authorization checks
-
-## File Storage
-
-- Supabase Storage for all file uploads
-- Bucket organization:
-  - `verification_documents`: For user verification documents
-  - `submission_files`: For research paper uploads
-  - `event_assets`: For event logos, banners, etc.
-  - `payment_proofs`: For payment verification documents
-- Access control via RLS policies
-- File type validation
-- Size limits enforcement
-- File metadata tracking
-
-## Internationalization
-
-- Three supported languages: Arabic (ar), French (fr), English (en)
-- RTL layout support for Arabic
-- Translation files organized by feature
-- Locale-specific formatting for:
-  - Dates
-  - Numbers
-  - Currency (DZD)
-- User language preference persistence
-
-## Payment Processing
-
-### Current Implementation
-- Offline payment processing for traditional methods:
-  - Bank transfers
-  - Checks
-  - Cash
-- Manual verification workflow:
-  1. User uploads payment proof
-  2. Payment reference code is generated
-  3. Admin verifies payment details
-  4. Subscription is activated upon verification
-- Email notifications for payment status updates
-
-### Future Implementation
-- Integration with Chargily Pay for online payment methods
-- Automated payment verification
-
-## Development Environment
-
-### Required Tools
-- Node.js (v16+)
-- npm or yarn
-- Git
-- Supabase CLI
-- VS Code with recommended extensions
-
-### Local Setup
-- Supabase local development
-- Environment variable configuration
-- Local database seeding
-- Development server
-- Hot module reloading
-
-## Testing Strategy
-
-- Component testing with React Testing Library
-- API testing with Jest
-- End-to-end testing with Playwright
-- Database testing with Supabase test helpers
-- Internationalization testing
-- Mobile responsiveness testing
-
-## Performance Optimization
-
-- Server Components for improved rendering
-- Image optimization with Next.js Image
-- API route caching strategies
-- Database query optimization
-- Full-text search indexes
-- Pagination for large datasets
-- Lazy loading for components and routes
-
-## Security Measures
-
-- CSRF protection
-- XSS prevention
-- SQL injection protection through Supabase
-- Content Security Policy (CSP)
-- Rate limiting for sensitive operations
-- HTTPS enforcement
-- Regular security audits
-
-## Technical Constraints
-
-- Supabase limits for database and storage
-- Vercel deployment constraints
-- File size limitations for uploads
-- Active events limit per organizer (5)
-- API rate limiting
+*   **Translatable Content (Dynamic)**: Fields like event names/descriptions, topic names, profile bios use `JSONB` columns (e.g., `event_name_translations JSONB`).
+    *   JSONB structure designed for `{"ar": "...", "en": "...", "fr": "..."}`.
+    *   **MVP Implementation**: Only the `ar` key is populated and queried (e.g., `{"ar": "نص عربي"}`).
+    *   Application layer queries `translations_column ->> 'ar'` for MVP.
+    *   **Fallback Mechanism (Future Requirement for JSONB fields)**: When `en`/`fr` support is added, queries must implement fallback to `ar` if the requested locale is missing.
+        ```sql
+        -- Example for future use
+        SELECT COALESCE(translations_column ->> :user_locale, translations_column ->> 'ar') AS translated_text FROM ...;
+        ```
+    *   Data input forms for MVP provide fields only for Arabic content for these fields.
+*   **Location Data (`wilayas`, `dairas`)**: Static data seeded from `wilayas.json`.
+    *   Uses standard `TEXT` columns: `name_ar` and `name_other`.
+    *   Seeding script populates these columns directly from `arabic_name` and `name` fields in the JSON.
+    *   MVP Application queries `name_ar` for display.
+    *   Future i18n will use the `name_other` field for French/English display.
+*   **File Uploads**: Validate file type (PDF, DOC, DOCX) and size (max 5MB) on both client and server (Edge Function). Store files in Supabase Storage under structured paths (e.g., `submissions/{event_id}/{submission_id}/abstract.pdf`). Store URL and potentially metadata (`filesize`, `mimetype`, `uploaded_at`) in the database (`submissions` table fields). 

@@ -1,74 +1,99 @@
 {
   "tasks": [
     {
-      "id": "339cb5e6-daf4-4bb9-88e2-d14f253accde",
-      "name": "Set up email service provider integration",
-      "description": "Integrate a proper email delivery service like SendGrid, Resend, or Amazon SES through a Supabase Edge Function that handles authentication and API integration.",
+      "id": "88b4676e-7af6-4535-91f2-a8c659a73f17",
+      "name": "Initialize Next.js Project",
+      "description": "Create the initial Next.js project structure using create-next-app.",
       "status": "待處理",
       "dependencies": [],
-      "createdAt": "2025-05-02T20:54:48.701Z",
-      "updatedAt": "2025-05-02T20:54:48.701Z",
-      "implementationGuide": "Create a Supabase Edge Function that connects to the chosen email provider API. This should include environment variable configuration for API keys and setup of base email templates with merge field capabilities."
+      "createdAt": "2025-05-03T15:50:46.959Z",
+      "updatedAt": "2025-05-03T15:50:46.959Z",
+      "implementationGuide": "Run `npx create-next-app@latest eventy360 --typescript --tailwind --eslint --app --src-dir --use-npm --import-alias=\"@/*\"`. Accept defaults or adjust based on prompts, ensuring App Router is selected.",
+      "verificationCriteria": "A directory named `eventy360` exists containing a functional Next.js project structure with TypeScript, Tailwind, ESLint, and App Router configured.",
+      "analysisResult": "The initial solution concept is technically feasible and follows established practices for setting up a modern web application stack. \nKey steps involve:\n1. **Next.js Init:** Use `create-next-app` for boilerplate (TS, Tailwind, App Router).\n2. **Git Init:** Standard Git setup with `.gitignore`.\n3. **Supabase Project Creation:** Requires user action to create the project (UI or CLI) and provide the Project ID/Ref.\n4. **Supabase CLI Linking:** Use `supabase login` and `supabase link --project-ref <PROJECT_ID>` to connect local development.\n5. **UI Setup:** Use `shadcn-ui init` for Tailwind configuration and base component setup.\n6. **i18n Setup:** Install `next-intl`, create `messages/ar.json`, configure `middleware.ts`, `i18n.ts`, and update `layout.tsx` for the `ar` locale and `dir=\"rtl\"`.\n7. **GitHub Repo Creation:** Requires user action to create the repository and provide the URL.\n8. **Git Remote & Push:** Standard Git commands to connect and push the initial structure.\n\n**Dependencies:** User needs to provide Supabase Project ID and GitHub Repository URL. Node.js, npm, Git, and Supabase CLI must be installed.\n**Acceptance Criteria:** A Next.js project exists, linked to a Supabase project, configured with Tailwind/Shadcn, set up for basic Arabic/RTL rendering via next-intl, and the initial code is pushed to a GitHub repository."
     },
     {
-      "id": "a83f92b4-a88b-461c-b32b-bc8059d528b2",
-      "name": "Create structured email template system",
-      "description": "Implement a flexible template system using JSON files stored in the Supabase storage bucket, with support for HTML and text versions, and variables.",
+      "id": "36d18a7c-e993-44b1-b289-70c97e465a03",
+      "name": "Initialize Git Repository",
+      "description": "Set up local Git version control and create a standard .gitignore file.",
       "status": "待處理",
-      "dependencies": [],
-      "createdAt": "2025-05-02T20:54:48.701Z",
-      "updatedAt": "2025-05-02T20:54:48.701Z",
-      "implementationGuide": "Store email templates as JSON files in Supabase storage, with a structure containing translations for all supported languages. Each template should include subject, HTML content, text content, and metadata fields. Create a helper function to retrieve and process templates."
+      "dependencies": [
+        {
+          "taskId": "88b4676e-7af6-4535-91f2-a8c659a73f17"
+        }
+      ],
+      "createdAt": "2025-05-03T15:50:46.959Z",
+      "updatedAt": "2025-05-03T15:50:46.959Z",
+      "implementationGuide": "Navigate into the `eventy360` directory. Run `git init`. Create a `.gitignore` file (e.g., using `npx gitignore node`) and commit it: `git add .gitignore` followed by `git commit -m \"Initial commit: Add .gitignore\"`.",
+      "verificationCriteria": "The `eventy360` directory is a Git repository (`.git` folder exists). A `.gitignore` file exists and is committed.",
+      "analysisResult": "The initial solution concept is technically feasible and follows established practices for setting up a modern web application stack. \nKey steps involve:\n1. **Next.js Init:** Use `create-next-app` for boilerplate (TS, Tailwind, App Router).\n2. **Git Init:** Standard Git setup with `.gitignore`.\n3. **Supabase Project Creation:** Requires user action to create the project (UI or CLI) and provide the Project ID/Ref.\n4. **Supabase CLI Linking:** Use `supabase login` and `supabase link --project-ref <PROJECT_ID>` to connect local development.\n5. **UI Setup:** Use `shadcn-ui init` for Tailwind configuration and base component setup.\n6. **i18n Setup:** Install `next-intl`, create `messages/ar.json`, configure `middleware.ts`, `i18n.ts`, and update `layout.tsx` for the `ar` locale and `dir=\"rtl\"`.\n7. **GitHub Repo Creation:** Requires user action to create the repository and provide the URL.\n8. **Git Remote & Push:** Standard Git commands to connect and push the initial structure.\n\n**Dependencies:** User needs to provide Supabase Project ID and GitHub Repository URL. Node.js, npm, Git, and Supabase CLI must be installed.\n**Acceptance Criteria:** A Next.js project exists, linked to a Supabase project, configured with Tailwind/Shadcn, set up for basic Arabic/RTL rendering via next-intl, and the initial code is pushed to a GitHub repository."
     },
     {
-      "id": "1170af2e-d10d-424c-81d3-6f8f9a4b49ab",
-      "name": "Implement email queue table in database",
-      "description": "Create a streamlined email queue table that stores recipient information, template reference, variables, and status - but not the complete email content.",
+      "id": "0e1e7192-89e7-45ca-9278-c30b2d513564",
+      "name": "Create & Link Supabase Project",
+      "description": "User creates a Supabase project and provides the Project ID/Ref. Link the local development environment to the Supabase project using the CLI.",
       "status": "待處理",
-      "dependencies": [],
-      "createdAt": "2025-05-02T20:54:48.701Z",
-      "updatedAt": "2025-05-02T20:54:48.701Z",
-      "implementationGuide": "Create a table with fields for recipient, template_id, language_preference, variables (as JSONB), status, retry_count, next_retry, and metadata. This should be minimal and focused on tracking, not content storage."
+      "dependencies": [
+        {
+          "taskId": "36d18a7c-e993-44b1-b289-70c97e465a03"
+        }
+      ],
+      "createdAt": "2025-05-03T15:50:46.959Z",
+      "updatedAt": "2025-05-03T15:50:46.959Z",
+      "implementationGuide": "User interaction required: User needs to create a Supabase project (via Supabase dashboard or CLI) and provide the Project Reference ID. Then, run `supabase login` (if not already logged in) followed by `supabase link --project-ref <PROVIDED_PROJECT_ID>`. Initialize Supabase locally: `supabase init`. Commit changes: `git add .` and `git commit -m \"build: Link Supabase project\"`.",
+      "verificationCriteria": "Supabase CLI successfully links to the provided project ID. The `supabase` directory is created locally and committed to Git. Requires user to provide Supabase Project ID.",
+      "analysisResult": "The initial solution concept is technically feasible and follows established practices for setting up a modern web application stack. \nKey steps involve:\n1. **Next.js Init:** Use `create-next-app` for boilerplate (TS, Tailwind, App Router).\n2. **Git Init:** Standard Git setup with `.gitignore`.\n3. **Supabase Project Creation:** Requires user action to create the project (UI or CLI) and provide the Project ID/Ref.\n4. **Supabase CLI Linking:** Use `supabase login` and `supabase link --project-ref <PROJECT_ID>` to connect local development.\n5. **UI Setup:** Use `shadcn-ui init` for Tailwind configuration and base component setup.\n6. **i18n Setup:** Install `next-intl`, create `messages/ar.json`, configure `middleware.ts`, `i18n.ts`, and update `layout.tsx` for the `ar` locale and `dir=\"rtl\"`.\n7. **GitHub Repo Creation:** Requires user action to create the repository and provide the URL.\n8. **Git Remote & Push:** Standard Git commands to connect and push the initial structure.\n\n**Dependencies:** User needs to provide Supabase Project ID and GitHub Repository URL. Node.js, npm, Git, and Supabase CLI must be installed.\n**Acceptance Criteria:** A Next.js project exists, linked to a Supabase project, configured with Tailwind/Shadcn, set up for basic Arabic/RTL rendering via next-intl, and the initial code is pushed to a GitHub repository."
     },
     {
-      "id": "8d83765e-54c0-4ab3-9f50-151638b39983",
-      "name": "Create email sending edge function",
-      "description": "Develop an Edge Function that processes the email queue, renders templates with provided variables, and sends via the email service provider.",
+      "id": "8f29d321-a431-4e19-9094-1bc45e59ae70",
+      "name": "Setup Shadcn UI & Tailwind",
+      "description": "Initialize Shadcn UI, which configures Tailwind CSS according to project standards.",
       "status": "待處理",
-      "dependencies": [],
-      "createdAt": "2025-05-02T20:54:48.701Z",
-      "updatedAt": "2025-05-02T20:54:48.701Z",
-      "implementationGuide": "The function should query the email queue table, load appropriate templates from storage, merge variables, send via email provider API, and update status. It should handle errors gracefully with proper logging and retry logic."
+      "dependencies": [
+        {
+          "taskId": "36d18a7c-e993-44b1-b289-70c97e465a03"
+        }
+      ],
+      "createdAt": "2025-05-03T15:50:46.959Z",
+      "updatedAt": "2025-05-03T15:50:46.959Z",
+      "implementationGuide": "Run `npx shadcn-ui@latest init`. Follow the prompts, accepting defaults or configuring as needed (e.g., selecting style, base color, CSS variables). Commit changes: `git add .` and `git commit -m \"build: Initialize Shadcn UI and configure Tailwind\"`.",
+      "verificationCriteria": "Shadcn UI initialization completes successfully. Tailwind configuration files (`tailwind.config.ts`, `postcss.config.js`, `globals.css`) are updated/created. `components.json` exists. Changes are committed.",
+      "analysisResult": "The initial solution concept is technically feasible and follows established practices for setting up a modern web application stack. \nKey steps involve:\n1. **Next.js Init:** Use `create-next-app` for boilerplate (TS, Tailwind, App Router).\n2. **Git Init:** Standard Git setup with `.gitignore`.\n3. **Supabase Project Creation:** Requires user action to create the project (UI or CLI) and provide the Project ID/Ref.\n4. **Supabase CLI Linking:** Use `supabase login` and `supabase link --project-ref <PROJECT_ID>` to connect local development.\n5. **UI Setup:** Use `shadcn-ui init` for Tailwind configuration and base component setup.\n6. **i18n Setup:** Install `next-intl`, create `messages/ar.json`, configure `middleware.ts`, `i18n.ts`, and update `layout.tsx` for the `ar` locale and `dir=\"rtl\"`.\n7. **GitHub Repo Creation:** Requires user action to create the repository and provide the URL.\n8. **Git Remote & Push:** Standard Git commands to connect and push the initial structure.\n\n**Dependencies:** User needs to provide Supabase Project ID and GitHub Repository URL. Node.js, npm, Git, and Supabase CLI must be installed.\n**Acceptance Criteria:** A Next.js project exists, linked to a Supabase project, configured with Tailwind/Shadcn, set up for basic Arabic/RTL rendering via next-intl, and the initial code is pushed to a GitHub repository."
     },
     {
-      "id": "d64702cd-de4f-40f6-9ca9-1611df5fd83d",
-      "name": "Add database triggers for email events",
-      "description": "Implement lightweight database triggers that simply add entries to the email queue when important events occur.",
+      "id": "c09ddc99-0785-4ef2-8d61-06d4e99f3cc5",
+      "name": "Configure next-intl for Arabic/RTL",
+      "description": "Install and configure next-intl for the Arabic (`ar`) locale only, ensuring RTL layout.",
       "status": "待處理",
-      "dependencies": [],
-      "createdAt": "2025-05-02T20:54:48.701Z",
-      "updatedAt": "2025-05-02T20:54:48.701Z",
-      "implementationGuide": "Create database triggers for events like verification approval, payment confirmation, etc. These should only insert minimal data into the queue table (recipient, template ID, variables) rather than processing templates directly."
+      "dependencies": [
+        {
+          "taskId": "8f29d321-a431-4e19-9094-1bc45e59ae70"
+        }
+      ],
+      "createdAt": "2025-05-03T15:50:46.959Z",
+      "updatedAt": "2025-05-03T15:50:46.959Z",
+      "implementationGuide": "1. Install: `npm install next-intl`. \n2. Create `messages/ar.json` with basic structure: `{}`. \n3. Create `i18n.ts` (or similar config file) specifying `locales = ['ar']` and `defaultLocale = 'ar'`. Configure `getRequestConfig`. \n4. Create `middleware.ts` using `createMiddleware` from `next-intl`, passing the i18n config.\n5. Update `app/[locale]/layout.tsx`: Wrap content with `NextIntlClientProvider`, import messages, set `<html lang={locale} dir=\"rtl\">`. \n6. Commit changes: `git add .` and `git commit -m \"feat: Configure next-intl for Arabic/RTL\"`.",
+      "verificationCriteria": "`next-intl` is installed. `messages/ar.json`, `i18n.ts`, `middleware.ts` are created and configured correctly. The root layout applies `dir=\"rtl\"` and uses the `NextIntlClientProvider`. Changes are committed.",
+      "analysisResult": "The initial solution concept is technically feasible and follows established practices for setting up a modern web application stack. \nKey steps involve:\n1. **Next.js Init:** Use `create-next-app` for boilerplate (TS, Tailwind, App Router).\n2. **Git Init:** Standard Git setup with `.gitignore`.\n3. **Supabase Project Creation:** Requires user action to create the project (UI or CLI) and provide the Project ID/Ref.\n4. **Supabase CLI Linking:** Use `supabase login` and `supabase link --project-ref <PROJECT_ID>` to connect local development.\n5. **UI Setup:** Use `shadcn-ui init` for Tailwind configuration and base component setup.\n6. **i18n Setup:** Install `next-intl`, create `messages/ar.json`, configure `middleware.ts`, `i18n.ts`, and update `layout.tsx` for the `ar` locale and `dir=\"rtl\"`.\n7. **GitHub Repo Creation:** Requires user action to create the repository and provide the URL.\n8. **Git Remote & Push:** Standard Git commands to connect and push the initial structure.\n\n**Dependencies:** User needs to provide Supabase Project ID and GitHub Repository URL. Node.js, npm, Git, and Supabase CLI must be installed.\n**Acceptance Criteria:** A Next.js project exists, linked to a Supabase project, configured with Tailwind/Shadcn, set up for basic Arabic/RTL rendering via next-intl, and the initial code is pushed to a GitHub repository."
     },
     {
-      "id": "136805eb-3a3b-4b1c-8d13-0feb5dd9d7c5",
-      "name": "Set up scheduled function for email processing",
-      "description": "Configure a Supabase scheduled function to process the email queue at regular intervals.",
+      "id": "465a3767-2af7-4ce1-87dc-27ed4335a21f",
+      "name": "Create GitHub Repo & Push Initial Commit",
+      "description": "User creates a GitHub repository and provides the URL. Add the remote to the local Git repository and push the initial project structure.",
       "status": "待處理",
-      "dependencies": [],
-      "createdAt": "2025-05-02T20:54:48.701Z",
-      "updatedAt": "2025-05-02T20:54:48.701Z",
-      "implementationGuide": "Create a scheduled function that runs every few minutes to check for new emails in the queue, process batches of emails with rate limiting considerations, and handle retries for failed deliveries."
-    },
-    {
-      "id": "4f7efb3a-c8cb-4a77-877d-a46fc76508f4",
-      "name": "Implement email tracking and analytics",
-      "description": "Add support for tracking email delivery, opens, clicks, and other engagement metrics.",
-      "status": "待處理",
-      "dependencies": [],
-      "createdAt": "2025-05-02T20:54:48.701Z",
-      "updatedAt": "2025-05-02T20:54:48.701Z",
-      "implementationGuide": "Integrate with email provider's tracking features, store tracking data in a dedicated analytics table, and create helper functions to query and analyze email performance."
+      "dependencies": [
+        {
+          "taskId": "0e1e7192-89e7-45ca-9278-c30b2d513564"
+        },
+        {
+          "taskId": "c09ddc99-0785-4ef2-8d61-06d4e99f3cc5"
+        }
+      ],
+      "createdAt": "2025-05-03T15:50:46.959Z",
+      "updatedAt": "2025-05-03T15:50:46.959Z",
+      "implementationGuide": "User interaction required: User creates a new repository on GitHub and provides the HTTPS or SSH URL. Then, run `git remote add origin <PROVIDED_REPO_URL>`. Verify remote: `git remote -v`. Push initial commit: `git push -u origin main` (or the default branch name).",
+      "verificationCriteria": "Git remote `origin` points to the provided GitHub URL. The initial project structure is successfully pushed to the main/default branch on GitHub. Requires user to provide GitHub Repo URL.",
+      "analysisResult": "The initial solution concept is technically feasible and follows established practices for setting up a modern web application stack. \nKey steps involve:\n1. **Next.js Init:** Use `create-next-app` for boilerplate (TS, Tailwind, App Router).\n2. **Git Init:** Standard Git setup with `.gitignore`.\n3. **Supabase Project Creation:** Requires user action to create the project (UI or CLI) and provide the Project ID/Ref.\n4. **Supabase CLI Linking:** Use `supabase login` and `supabase link --project-ref <PROJECT_ID>` to connect local development.\n5. **UI Setup:** Use `shadcn-ui init` for Tailwind configuration and base component setup.\n6. **i18n Setup:** Install `next-intl`, create `messages/ar.json`, configure `middleware.ts`, `i18n.ts`, and update `layout.tsx` for the `ar` locale and `dir=\"rtl\"`.\n7. **GitHub Repo Creation:** Requires user action to create the repository and provide the URL.\n8. **Git Remote & Push:** Standard Git commands to connect and push the initial structure.\n\n**Dependencies:** User needs to provide Supabase Project ID and GitHub Repository URL. Node.js, npm, Git, and Supabase CLI must be installed.\n**Acceptance Criteria:** A Next.js project exists, linked to a Supabase project, configured with Tailwind/Shadcn, set up for basic Arabic/RTL rendering via next-intl, and the initial code is pushed to a GitHub repository."
     }
   ]
 }
