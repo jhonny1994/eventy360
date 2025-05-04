@@ -2,58 +2,59 @@
 
 ## Current Status
 
-*   **Phase**: Initialization & Setup
-*   **Overall Progress**: Memory Bank refined. Project structure setup is the next immediate step.
+*   **Phase**: Authentication & Basic Profiles
+*   **Overall Progress**: Database schema and core automation fully implemented according to MVP specs. Ready to build user-facing authentication and profile features.
 
 ## What Works (Functionality Implemented)
 
-*   Memory Bank files created and refined with project-specific details.
+*   Memory Bank files created and refined.
+*   Next.js (App Router) project initialized.
+*   Essential dependencies installed.
+*   Shadcn UI initialized and configured.
+*   Supabase project setup and environment variables configured.
+*   `next-intl` configured for Arabic (`ar`) locale and RTL.
+*   Git repository established.
+*   **Full MVP Database Schema Applied**: All required tables (`wilayas`, `dairas`, `profiles`, `subscriptions`, `payments`, `events`, `submissions`, `topics`, `bookmarks`, profile extensions, email tables) and ENUMs created via migrations.
+*   **Location Data Seeded**: `wilayas` and `dairas` populated from `wilayas.json` (via user-executed script).
+*   **Core DB Automation Implemented**: `handle_new_user` and `handle_payment_verification` functions/triggers created.
+*   **Initial RLS Policies Applied**: Security enabled for core tables with basic access rules.
 
 ## What's Left to Build (MVP Focus - High-Level)
 
-1.  **Core Project Setup**:
-    *   Initialize Next.js (App Router) project.
-    *   Setup Supabase project (DB, Auth, Storage).
-    *   Implement base Tailwind CSS configuration with Shadcn UI.
-    *   Configure `next-intl` for Arabic (`ar`) locale and RTL **only**. Static UI text goes in `messages/ar.json`.
-    *   Establish Git repository on GitHub and initial commit.
-2.  **Database Implementation**:
-    *   Define and apply initial DB schema using Supabase migrations. Use `JSONB` columns (e.g., `name_translations`) for dynamic translatable fields; use `TEXT` columns (`name_ar`, `name_other`) for `wilayas`/`dairas`.
-    *   Create seeding script (Node.js/Python) to populate `wilayas` and `dairas` (`name_ar`, `name_other`). **Populate only `ar` key for JSONB fields in other tables for MVP.**
-    *   Implement DB functions: `handle_new_user`, `handle_payment_verification`.
-    *   Define initial RLS policies.
-    *   Implement query logic (in application layer) using `->> 'ar'` for JSONB fields and selecting `name_ar` for location tables for MVP.
-3.  **Authentication & Basic Profiles**:
+1.  **Database Implementation (Completed)**
+    *   *(Future Task)*: Define RLS policies for secondary tables.
+    *   *(Future Task)*: Implement application-layer query logic for i18n fields (`->> 'ar'`).
+2.  **Authentication & Basic Profiles**:
     *   Implement Supabase Auth for email/password registration and login.
     *   Create basic profile pages (view/edit) for Researcher and Organizer roles, inputting/displaying Arabic text only. Location selection uses seeded `wilayas`/`dairas` data (displaying `name_ar`).
     *   Implement loading state UI (e.g., skeletons) for profile data fetching.
     *   Implement error handling UI (e.g., toasts) for profile updates.
-4.  **Manual Verification & Payment/Subscription Workflow (Core Logic)**:
+3.  **Manual Verification & Payment/Subscription Workflow (Core Logic)**:
     *   Implement Admin Panel UI controls to update user `is_verified` status.
     *   Implement Admin Panel UI to record payment details (`payments` table) and mark status as `verified`.
     *   Ensure `handle_payment_verification` trigger correctly updates/creates `subscriptions` record.
     *   Display verification status/badge on user profiles.
     *   Implement scheduled function `check-subscriptions-expiry`.
     *   Implement loading/error states for Admin actions.
-5.  **Event Management (Core)**:
+4.  **Event Management (Core)**:
     *   Implement Event creation form for Organizers (respecting tier limits). Include form validation, loading/error states.
     *   Implement public Event listing and detail pages, including `loading.tsx` and `error.tsx` boundaries.
     *   Implement Organizer dashboard view for their events, with loading/error states.
-6.  **Submission System (Core)**:
+5.  **Submission System (Core)**:
     *   Implement Submission form for paid Researchers (abstract upload). Include validation, loading/error states for submission & file upload.
     *   Implement file upload logic (client-side validation + Edge Function handler for Supabase Storage) with progress/error feedback.
     *   Implement Organizer view for submissions (list, download files, update status, add rejection feedback), with loading/error states.
     *   Implement Researcher view for their submission status, with loading/error states.
-7.  **Notification System (Core)**:
+6.  **Notification System (Core)**:
     *   Setup `email_templates`, `email_log`, `notification_queue` tables.
     *   Populate `email_templates` with Arabic content in the `ar` key of the JSONB columns.
     *   Implement DB triggers to populate `notification_queue` for key events.
     *   Implement `send-email` internal Edge Function logic using Resend (fetching `ar` text from templates), including error handling and logging to `email_log`.
     *   Implement `process-notification-queue` scheduled Edge Function, including error handling.
-8.  **Admin Panel (MVP Features)**:
+7.  **Admin Panel (MVP Features)**:
     *   Implement basic CRUD/Management interfaces as defined in `projectbrief.md`. Input/Display Arabic content only where applicable (e.g., Topic names, Email templates).
     *   Ensure all Admin actions have appropriate loading indicators and error feedback.
-9.  **Deployment & CI/CD**: Setup Vercel deployment, Supabase environment variables, basic GitHub Actions workflow.
+8.  **Deployment & CI/CD**: Setup Vercel deployment, Supabase environment variables, basic GitHub Actions workflow.
 
 ## Known Issues & Blockers
 
@@ -61,4 +62,7 @@
 
 ## Completed Milestones
 
-*   Memory Bank Initialized & Refined ([Current Date]) 
+*   Memory Bank Initialized & Refined
+*   Core Project Setup Completed
+*   **Full MVP DB Schema & Automation Defined & Applied** (Migrations: `init_core_schema`, `implement_handle_new_user_trigger`, `implement_handle_payment_verification_trigger`, `define_initial_rls_policies`, `define_secondary_schema`) - [Current Date]
+*   **Location Data Seeded** (Manually by user) - [Current Date] 

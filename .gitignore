@@ -120,4 +120,5 @@ dist
 .pnp.*
 
 # Supabase local development files
-supabase/
+# SpecStory explanation file
+.specstory/.what-is-this.md

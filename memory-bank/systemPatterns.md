@@ -13,11 +13,13 @@
     *   **Schema**: Relational model with tables like `profiles`, `events`, `submissions`, `subscriptions`, `payments`, `topics`, `email_templates`, `email_log`, `notification_queue`, `wilayas`, `dairas`.
     *   **Data Types**: Extensive use of PostgreSQL `ENUM` types (e.g., `user_type_enum`, `event_status_enum`, `subscription_tier_enum`, `payment_status_enum`) for data integrity.
     *   **Data Seeding**: `wilayas` and `dairas` tables populated initially from `wilayas.json` via a one-time script (Node.js/Python recommended).
-    *   **Security**: Row Level Security (RLS) is the primary authorization mechanism. Policies grant users access to their own data, organizers to their event data, and admins broader access based on defined needs.
-    *   **Automation**: DB Functions & Triggers:
-        *   `handle_new_user()`: Triggered by Supabase Auth Hook on new sign-ups to create corresponding profile and initial subscription records.
+    *   **Security**: Row Level Security (RLS) is the primary authorization mechanism. Policies grant users access to their own data, organizers to their event data, and admins broader access based on defined needs. Policies implemented for initial tables (`wilayas`, `dairas`, `profiles`, `subscriptions`, `payments`).
+    *   **Automation**: DB Functions & Triggers (PL/pgSQL):
+        *   `handle_new_user()`: Triggered by Supabase Auth Hook on new sign-ups to create corresponding profile and initial trial subscription records.
         *   `handle_payment_verification()`: Triggered by admin updating `payments` status to 'verified'; creates/updates the `subscriptions` record accordingly.
-        *   Notification Triggers: Inserts tasks into `notification_queue` upon relevant data changes (e.g., new user, payment verified, submission status update, event change).
+        *   `billing_period_to_interval()`: Helper function used by `handle_payment_verification`.
+        *   `is_admin()`: Helper function used within RLS policies to check admin status.
+        *   *(Future)* Notification Triggers: Inserts tasks into `notification_queue` upon relevant data changes (e.g., new user, payment verified, submission status update, event change).
     *   **Data Integrity**: Foreign key constraints, `NOT NULL` where applicable.
     *   **Metadata**: `JSONB` used for flexible data like file metadata (`submissions` table).
 *   **Authentication**: Supabase Auth for email/password login and session management.
@@ -57,11 +59,11 @@
     *   **Querying (Future - TEXT Fields)**: `name_other` column in `wilayas`/`dairas` will be used for French/English display.
     *   **Indexing**: Utilize GIN indexes on JSONB columns. Standard indexes on `name_ar`, `name_other`.
 *   **ENUM Types**: Extensive use of PostgreSQL ENUMs for constrained categorical data (e.g., `user_type_enum`, `event_status_enum`, `submission_status_enum`) ensures data integrity.
-*   **Row Level Security (RLS)**: Primary mechanism for enforcing data access rules. Policies are defined to allow users to manage their own data, organizers to manage their events/submissions, and admins broader access based on operational needs.
+*   **Row Level Security (RLS)**: Primary mechanism for enforcing data access rules. Policies defined for initial tables (`wilayas`, `dairas`, `profiles`, `subscriptions`, `payments`) allow user self-management and admin oversight. Helper function `is_admin()` used.
 *   **Database Functions & Triggers**: Used for automation and enforcing complex logic directly within the database:
-    *   `handle_new_user()`: Triggered on new user authentication to create corresponding profile entries.
-    *   `handle_payment_verification()`: Triggered on payment verification to update/create subscription records.
-    *   Notification Queue Triggers: Insert tasks into `notification_queue` on relevant data changes.
+    *   `handle_new_user()`: Triggered on new user authentication to create corresponding profile and initial subscription.
+    *   `handle_payment_verification()`: Triggered on payment verification to update/create subscription records. Uses `billing_period_to_interval()` helper.
+    *   *(Future)* Notification Queue Triggers: Insert tasks into `notification_queue` on relevant data changes.
 *   **Soft Deletes**: Implemented for certain data types (e.g., canceled events) initially, with scheduled functions for eventual permanent deletion.
 *   **JSONB for Metadata**: Storing flexible *non-translatable* metadata associated with files (e.g., `abstract_file_metadata`).
 *   **Data Seeding**: Initial population of static data like `wilayas` and `dairas` from `wilayas.json` using a one-time script, populating their `name_ar` and `name_other` TEXT columns.

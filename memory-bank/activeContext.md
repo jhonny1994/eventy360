@@ -2,20 +2,27 @@
 
 ## Current Focus
 
-Refining the initial Memory Bank files with project-specific details.
+Initiating the **Authentication & Basic Profiles** phase. Tasks involve setting up Supabase Auth UI components and creating the initial profile view/edit pages for researchers and organizers.
 
 ## Recent Changes
 
-*   Initialized core Memory Bank files with generic content derived from the project summary.
-*   Refined `projectbrief.md` and `productContext.md` with more specific details based on `Eventy360_Project_Summary.md`.
+*   Completed the **Database Implementation** phase.
+    *   Initial schema, core automation (triggers/functions), and RLS policies applied.
+    *   Secondary schema migration applied, defining all remaining MVP tables and ENUMs.
+    *   Location data (`wilayas`/`dairas`) seeded manually by user.
+*   Updated Memory Bank (`progress.md`, `systemPatterns.md`, `techContext.md`) to reflect DB completion.
 
 ## Next Steps
 
-*   Refine `systemPatterns.md`, `techContext.md`, and `progress.md` with specific details.
-*   Begin core project setup tasks (e.g., Next.js project structure, Supabase project setup, basic database schema definition).
+*   Plan and define tasks for the **Authentication & Basic Profiles** phase:
+    *   Implement registration/login forms using Supabase Auth.
+    *   Create profile display page.
+    *   Create profile edit form (handling text inputs, location selection using seeded data).
+    *   Implement loading/error states for auth and profile operations.
 
 ## Active Decisions & Considerations
 
-*   Ensuring Memory Bank accurately reflects the MVP scope and constraints defined in the project summary.
-*   Noting the importance of the manual verification/payment workflow for MVP implementation.
-*   Acknowledging the dependency on `wilayas.json` for location data seeding. 
+*   Prioritizing core auth flow (signup, login, logout).
+*   Focusing on Researcher/Organizer profile structure based on the extended profile tables (`researcher_profiles`, `organizer_profiles`).
+*   Ensuring UI components handle Arabic text input/display and RTL layout correctly.
+*   Planning how to fetch and display `wilayas`/`dairas` data (`name_ar`) for location selection. 

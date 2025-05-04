@@ -10,7 +10,7 @@
 *   **Forms**: React Hook Form
 *   **Validation**: Zod (Used with React Hook Form for client-side and potentially Edge Function input validation).
 *   **Backend Platform**: Supabase (Cloud hosted)
-    *   **Database**: PostgreSQL (Version provided by Supabase)
+    *   **Database**: PostgreSQL (Version provided by Supabase), utilizing ENUMs, Functions (PL/pgSQL), Triggers, and Row Level Security (RLS) policies.
     *   **Authentication**: Supabase Auth (Email/Password)
     *   **File Storage**: Supabase Storage
     *   **Serverless Functions**: Supabase Edge Functions (Deno Runtime, TypeScript)
