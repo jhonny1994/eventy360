@@ -310,7 +310,7 @@
       },
       {
         "id": "3006",
-        "name": "Hassi R'Mel",
+        "name": "Hassi R''Mel",
         "arabic_name": "حاسي الرمل"
       },
       {
@@ -390,7 +390,7 @@
       },
       {
         "id": "3022",
-        "name": "Oued M'Zi",
+        "name": "Oued M''Zi",
         "arabic_name": "وادي مزي"
       },
       {
@@ -422,7 +422,7 @@
       },
       {
         "id": "4003",
-        "name": "Ain M'lila",
+        "name": "Ain M''lila",
         "arabic_name": "عين مليلة"
       },
       {
@@ -834,7 +834,7 @@
       },
       {
         "id": "5055",
-        "name": "M'doukel",
+        "name": "M''doukel",
         "arabic_name": "أمدوكال"
       },
       {
@@ -916,7 +916,7 @@
       },
       {
         "id": "6009",
-        "name": "M'cisna",
+        "name": "M''cisna",
         "arabic_name": "مسيسنة"
       },
       {
@@ -1011,7 +1011,7 @@
       },
       {
         "id": "6028",
-        "name": "Ait R'zine",
+        "name": "Ait R''zine",
         "arabic_name": "آيت أرزين"
       },
       {
@@ -1116,7 +1116,7 @@
       },
       {
         "id": "6049",
-        "name": "Tizi N'berber",
+        "name": "Tizi N''berber",
         "arabic_name": "تيزى نبربر"
       },
       {
@@ -1258,7 +1258,7 @@
       },
       {
         "id": "7025",
-        "name": "M'lili",
+        "name": "M''lili",
         "arabic_name": "مليلي"
       },
       {
@@ -1273,7 +1273,7 @@
       },
       {
         "id": "7028",
-        "name": "M'ziraa",
+        "name": "M''ziraa",
         "arabic_name": "مزيرعة"
       },
       {
@@ -3118,7 +3118,7 @@
       },
       {
         "id": "17013",
-        "name": "M'Liliha",
+        "name": "M''Liliha",
         "arabic_name": "المليليحة"
       },
       {
@@ -3365,7 +3365,7 @@
       },
       {
         "id": "18026",
-        "name": "Bordj T'her",
+        "name": "Bordj T''her",
         "arabic_name": "برج الطهر"
       },
       {
@@ -5045,7 +5045,7 @@
   },
   {
     "id": 28,
-    "name": "M'Sila",
+    "name": "M''Sila",
     "arabic_name": "المسيلة",
     "communes": [
       {
@@ -5085,7 +5085,7 @@
       },
       {
         "id": "28008",
-        "name": "M'cif",
+        "name": "M''cif",
         "arabic_name": "مسيف"
       },
       {
@@ -7837,7 +7837,7 @@
   },
   {
     "id": 49,
-    "name": "El M'ghair",
+    "name": "El M''ghair",
     "arabic_name": "المغير",
     "communes": [
       {
