@@ -1,5 +1,8 @@
 {
   "Placeholder": {
     "message": "أهلاً بالعالم!"
+  },
+  "HomePage": {
+    "title": "مرحباً بالعالم"
   }
-} 
+}

@@ -98,8 +98,10 @@ Eventy360 is a comprehensive SaaS platform designed to revolutionize academic ev
 ### Frontend
 - Next.js (App Router)
 - React with TypeScript
-- Tailwind CSS with Shadcn UI
-- next-intl for internationalization
+- Tailwind CSS v4
+- Flowbite (UI Components)
+- next-themes (Theme Switching)
+- next-intl for internationalization (Arabic MVP)
 - React Hook Form with Zod validation
 
 ### Backend
@@ -125,7 +127,7 @@ Eventy360 is a comprehensive SaaS platform designed to revolutionize academic ev
 - GitHub Actions for CI/CD
 
 ### UI/UX Approach
-- Utilize Shadcn UI components as building blocks.
+- Utilize Flowbite components as building blocks.
 - Prioritize functional implementation based on user flows.
 - Ensure RTL support (`dir="rtl"`) for Arabic from the start.
 - Implement clear loading indicators (e.g., skeletons, spinners) during data fetching and operations.

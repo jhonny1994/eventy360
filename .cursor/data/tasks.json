@@ -1,111 +1,236 @@
 {
   "tasks": [
     {
-      "id": "be01cc33-4b05-4b73-9eca-a9d91a3a43e9",
-      "name": "Define Initial Schema Migration",
-      "description": "Create the first Supabase migration file defining core tables (`profiles`, `subscriptions`, `payments`, `wilayas`, `dairas`) and necessary ENUM types (`user_type_enum`, `subscription_tier_enum`, `payment_status_enum`). Implement the mixed i18n strategy (JSONB `_translations` with only `ar` key populated, TEXT `name_ar`/`name_other` for locations).",
-      "status": "已完成",
+      "id": "0285b53f-57e1-439d-b538-6e6c3eab187b",
+      "name": "Setup Supabase Browser Client & Auth Provider",
+      "description": "Create a Supabase client instance specifically for browser usage and set up a React Context provider to manage and distribute authentication state (session, user) throughout the application.",
+      "status": "待處理",
       "dependencies": [],
-      "createdAt": "2025-05-03T17:10:14.238Z",
-      "updatedAt": "2025-05-03T17:12:31.769Z",
-      "implementationGuide": "1. Run `supabase migration new init_core_schema`.\n2. Edit the generated SQL file in `supabase/migrations`.\n3. Add `CREATE TYPE ... AS ENUM (...)` statements for required enums.\n4. Add `CREATE TABLE` statements for `wilayas`, `dairas`, `profiles` (referencing `auth.users`), `payments`, `subscriptions`.\n5. Define columns with correct types (e.g., `UUID`, `TEXT`, `TIMESTAMP WITH TIME ZONE`, `JSONB`, relevant ENUMs).\n6. Add constraints: `PRIMARY KEY`, `FOREIGN KEY`, `NOT NULL`, `DEFAULT`.\n7. For `profiles.bio_translations` (example), use `JSONB`.\n8. For `wilayas`/`dairas`, use `name_ar TEXT`, `name_other TEXT`.\n9. Test locally: `supabase db reset` or `supabase migration up`.",
-      "verificationCriteria": "Migration applies successfully locally. Tables `profiles`, `subscriptions`, `payments`, `wilayas`, `dairas`, and associated ENUMs exist in the schema with correct columns, types, and constraints. JSONB fields exist for translatable text, TEXT fields for location names.",
-      "analysisResult": "The planned sequence of Supabase migrations (Initial Schema -> Functions/Triggers -> RLS -> Secondary Schema) and the Node.js seeding script provide a logical flow for implementing the database foundation.\n\n**Technical Details:**\n- **Migrations:** Use Supabase CLI (`supabase migration new <name>`) to create SQL files in `supabase/migrations`. Each migration should contain the specific DDL (CREATE TABLE, CREATE TYPE, CREATE FUNCTION, CREATE TRIGGER, ALTER TABLE, CREATE POLICY) for that step.\n- **Schema:** Carefully define column types, constraints (NOT NULL, FOREIGN KEY), and defaults. For JSONB i18n fields (e.g., `name_translations`), ensure structure is `{\"ar\": \"...\"}` for MVP. For `wilayas`/`dairas`, use `name_ar TEXT`, `name_other TEXT`.\n- **Seeding:** The Node.js script needs `dotenv` to load DB connection details (`SUPABASE_DB_URL` or individual host/user/pass/port vars), `fs` to read `wilayas.json`, and a PG client like `pg`. Use parameterized queries or batch inserts for efficiency.\n- **Functions/Triggers:** Ensure PL/pgSQL logic correctly handles insertions/updates based on trigger events. Test function logic thoroughly.\n- **RLS:** Initial policies should cover basic user self-management (`profiles`) and admin access. More granular policies for events/submissions can be added later.\n\n**Interface Dependencies:**\n- Relies on Supabase connection details (env vars).\n- Relies on `wilayas.json` structure.\n- Downstream dependency for subsequent application phases (Auth, Profiles, etc.).\n\n**Implementation Strategy:**\n- Develop migrations incrementally using Supabase CLI.\n- Apply migrations locally (`supabase db reset` or `supabase migration up`) for testing.\n- Develop and test the seeding script locally against the migrated DB.\n- Commit migration files and seeding script to Git.\n\n**Acceptance Criteria:**\n- All planned migrations apply successfully locally and (eventually) remotely.\n- `wilayas` and `dairas` tables are correctly populated by the seeding script.\n- `handle_new_user` trigger successfully creates profile/subscription on new auth user creation.\n- `handle_payment_verification` trigger successfully updates subscription on payment verification.\n- Basic RLS prevents unauthorized access to profile data (tested via SQL queries with different roles/UIDs).\n- Schema includes all required MVP tables and fields with correct types/constraints.",
-      "completedAt": "2025-05-03T17:12:31.765Z",
-      "summary": "Created the initial Supabase migration file (20250503171204_init_core_schema.sql) defining core ENUMs (user_type, subscription_tier, payment_status) and tables (wilayas, dairas, profiles, payments, subscriptions) with appropriate columns, types, constraints, and the specified i18n strategy."
-    },
-    {
-      "id": "b70342ea-8e5a-4a5d-aa07-dbb3cced6d36",
-      "name": "Create Wilayas/Dairas Seeding Script",
-      "description": "Develop a Node.js script to read `wilayas.json` and populate the `wilayas` and `dairas` tables with their respective `name_ar` and `name_other` data.",
-      "status": "已完成",
-      "dependencies": [
+      "createdAt": "2025-05-05T13:26:42.894Z",
+      "updatedAt": "2025-05-05T13:26:42.894Z",
+      "relatedFiles": [
         {
-          "taskId": "be01cc33-4b05-4b73-9eca-a9d91a3a43e9"
-        }
-      ],
-      "createdAt": "2025-05-03T17:10:14.238Z",
-      "updatedAt": "2025-05-04T17:46:05.636Z",
-      "implementationGuide": "1. Create a script file (e.g., `scripts/seed-locations.mjs`).\n2. Install necessary packages (`npm install pg dotenv`).\n3. Use `dotenv` to load database connection variables (`SUPABASE_DB_URL` or individual vars).\n4. Use Node.js `fs` module to read and parse `wilayas.json`.\n5. Connect to the database using the `pg` client.\n6. Iterate through the JSON data.\n7. Construct `INSERT` statements for `wilayas` and `dairas` tables, inserting `arabic_name` into `name_ar` and `name` into `name_other`.\n8. Use parameterized queries or batch inserts for safety and efficiency.\n9. Execute the script (`node scripts/seed-locations.mjs`).\n10. Ensure script handles potential errors during file reading or DB insertion.",
-      "verificationCriteria": "Script runs without errors. `wilayas` and `dairas` tables are populated with data matching `wilayas.json`. `name_ar` column contains Arabic names, `name_other` contains other names.",
-      "analysisResult": "The planned sequence of Supabase migrations (Initial Schema -> Functions/Triggers -> RLS -> Secondary Schema) and the Node.js seeding script provide a logical flow for implementing the database foundation.\n\n**Technical Details:**\n- **Migrations:** Use Supabase CLI (`supabase migration new <name>`) to create SQL files in `supabase/migrations`. Each migration should contain the specific DDL (CREATE TABLE, CREATE TYPE, CREATE FUNCTION, CREATE TRIGGER, ALTER TABLE, CREATE POLICY) for that step.\n- **Schema:** Carefully define column types, constraints (NOT NULL, FOREIGN KEY), and defaults. For JSONB i18n fields (e.g., `name_translations`), ensure structure is `{\"ar\": \"...\"}` for MVP. For `wilayas`/`dairas`, use `name_ar TEXT`, `name_other TEXT`.\n- **Seeding:** The Node.js script needs `dotenv` to load DB connection details (`SUPABASE_DB_URL` or individual host/user/pass/port vars), `fs` to read `wilayas.json`, and a PG client like `pg`. Use parameterized queries or batch inserts for efficiency.\n- **Functions/Triggers:** Ensure PL/pgSQL logic correctly handles insertions/updates based on trigger events. Test function logic thoroughly.\n- **RLS:** Initial policies should cover basic user self-management (`profiles`) and admin access. More granular policies for events/submissions can be added later.\n\n**Interface Dependencies:**\n- Relies on Supabase connection details (env vars).\n- Relies on `wilayas.json` structure.\n- Downstream dependency for subsequent application phases (Auth, Profiles, etc.).\n\n**Implementation Strategy:**\n- Develop migrations incrementally using Supabase CLI.\n- Apply migrations locally (`supabase db reset` or `supabase migration up`) for testing.\n- Develop and test the seeding script locally against the migrated DB.\n- Commit migration files and seeding script to Git.\n\n**Acceptance Criteria:**\n- All planned migrations apply successfully locally and (eventually) remotely.\n- `wilayas` and `dairas` tables are correctly populated by the seeding script.\n- `handle_new_user` trigger successfully creates profile/subscription on new auth user creation.\n- `handle_payment_verification` trigger successfully updates subscription on payment verification.\n- Basic RLS prevents unauthorized access to profile data (tested via SQL queries with different roles/UIDs).\n- Schema includes all required MVP tables and fields with correct types/constraints.",
-      "completedAt": "2025-05-04T17:46:05.629Z",
-      "summary": "Provided user with a PL/pgSQL script to manually seed wilayas and dairas tables from wilayas.json content."
-    },
-    {
-      "id": "8150e8a2-4cd9-4117-b703-3701699f0c4f",
-      "name": "Implement handle_new_user Function/Trigger",
-      "description": "Create a migration file to define the `handle_new_user` PostgreSQL function (inserts into `profiles` and `subscriptions`) and set up the trigger on `auth.users`.",
-      "status": "已完成",
-      "dependencies": [
-        {
-          "taskId": "be01cc33-4b05-4b73-9eca-a9d91a3a43e9"
-        }
-      ],
-      "createdAt": "2025-05-03T17:10:14.238Z",
-      "updatedAt": "2025-05-04T18:02:04.245Z",
-      "implementationGuide": "1. Run `supabase migration new add_handle_new_user_function`.\n2. Edit the generated SQL file.\n3. Define the `handle_new_user()` function using `CREATE FUNCTION ... RETURNS TRIGGER AS $$ BEGIN ... END; $$ LANGUAGE plpgsql SECURITY DEFINER;`.\n4. Inside the function: `INSERT INTO public.profiles (id, email, user_type) VALUES (NEW.id, NEW.email, 'researcher');` (adjust default user_type if needed).\n5. Also inside: `INSERT INTO public.subscriptions (profile_id, tier, status, expires_at) VALUES (NEW.id, 'trial', 'active', NOW() + INTERVAL '1 month');` (adjust trial details if needed).\n6. `RETURN NEW;`\n7. Create the trigger: `CREATE TRIGGER on_auth_user_created AFTER INSERT ON auth.users FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();`.\n8. Test locally by signing up a new user via Supabase Auth UI/API and checking `profiles`/`subscriptions` tables.",
-      "verificationCriteria": "Migration applies successfully. Creating a new user via Supabase Auth results in corresponding records being automatically created in the `profiles` and `subscriptions` tables with correct default values.",
-      "analysisResult": "The planned sequence of Supabase migrations (Initial Schema -> Functions/Triggers -> RLS -> Secondary Schema) and the Node.js seeding script provide a logical flow for implementing the database foundation.\n\n**Technical Details:**\n- **Migrations:** Use Supabase CLI (`supabase migration new <name>`) to create SQL files in `supabase/migrations`. Each migration should contain the specific DDL (CREATE TABLE, CREATE TYPE, CREATE FUNCTION, CREATE TRIGGER, ALTER TABLE, CREATE POLICY) for that step.\n- **Schema:** Carefully define column types, constraints (NOT NULL, FOREIGN KEY), and defaults. For JSONB i18n fields (e.g., `name_translations`), ensure structure is `{\"ar\": \"...\"}` for MVP. For `wilayas`/`dairas`, use `name_ar TEXT`, `name_other TEXT`.\n- **Seeding:** The Node.js script needs `dotenv` to load DB connection details (`SUPABASE_DB_URL` or individual host/user/pass/port vars), `fs` to read `wilayas.json`, and a PG client like `pg`. Use parameterized queries or batch inserts for efficiency.\n- **Functions/Triggers:** Ensure PL/pgSQL logic correctly handles insertions/updates based on trigger events. Test function logic thoroughly.\n- **RLS:** Initial policies should cover basic user self-management (`profiles`) and admin access. More granular policies for events/submissions can be added later.\n\n**Interface Dependencies:**\n- Relies on Supabase connection details (env vars).\n- Relies on `wilayas.json` structure.\n- Downstream dependency for subsequent application phases (Auth, Profiles, etc.).\n\n**Implementation Strategy:**\n- Develop migrations incrementally using Supabase CLI.\n- Apply migrations locally (`supabase db reset` or `supabase migration up`) for testing.\n- Develop and test the seeding script locally against the migrated DB.\n- Commit migration files and seeding script to Git.\n\n**Acceptance Criteria:**\n- All planned migrations apply successfully locally and (eventually) remotely.\n- `wilayas` and `dairas` tables are correctly populated by the seeding script.\n- `handle_new_user` trigger successfully creates profile/subscription on new auth user creation.\n- `handle_payment_verification` trigger successfully updates subscription on payment verification.\n- Basic RLS prevents unauthorized access to profile data (tested via SQL queries with different roles/UIDs).\n- Schema includes all required MVP tables and fields with correct types/constraints.",
-      "completedAt": "2025-05-04T18:02:04.241Z",
-      "summary": "Completed by creating and applying a migration for the handle_new_user function and its trigger on auth.users to automate profile/subscription creation."
-    },
-    {
-      "id": "64256018-3f5c-4e28-bc00-a49af4335f82",
-      "name": "Implement handle_payment_verification Function/Trigger",
-      "description": "Create a migration file to define the `handle_payment_verification` PostgreSQL function (updates/creates `subscriptions`) and set up the trigger on `payments` table update.",
-      "status": "已完成",
-      "dependencies": [
-        {
-          "taskId": "be01cc33-4b05-4b73-9eca-a9d91a3a43e9"
+          "path": "src/lib/supabase/client.ts",
+          "type": "CREATE",
+          "description": "Supabase browser client instance"
         },
         {
-          "taskId": "8150e8a2-4cd9-4117-b703-3701699f0c4f"
+          "path": "src/components/providers/AuthProvider.tsx",
+          "type": "CREATE",
+          "description": "React Context provider for auth state"
+        },
+        {
+          "path": "src/app/[locale]/layout.tsx",
+          "type": "TO_MODIFY",
+          "description": "Wrap layout with AuthProvider"
         }
       ],
-      "createdAt": "2025-05-03T17:10:14.238Z",
-      "updatedAt": "2025-05-04T18:02:12.941Z",
-      "implementationGuide": "1. Run `supabase migration new add_handle_payment_verification_function`.\n2. Edit the generated SQL file.\n3. Define the `handle_payment_verification()` function using `CREATE FUNCTION ... RETURNS TRIGGER AS $$ DECLARE sub_duration INTERVAL; BEGIN ... END; $$ LANGUAGE plpgsql SECURITY DEFINER;`.\n4. Inside function: Determine subscription duration based on `NEW.amount` or `NEW.plan_details` (define logic).\n5. `UPDATE public.subscriptions SET tier = 'paid', status = 'active', expires_at = NOW() + sub_duration WHERE profile_id = NEW.profile_id;` (Add logic to handle potential INSERT if no subscription exists, though `handle_new_user` should create one).\n6. `RETURN NEW;`\n7. Create the trigger: `CREATE TRIGGER on_payment_verified AFTER UPDATE OF status ON public.payments FOR EACH ROW WHEN (OLD.status IS DISTINCT FROM 'verified' AND NEW.status = 'verified') EXECUTE FUNCTION public.handle_payment_verification();`.\n8. Test locally by inserting a payment record, then updating its status to 'verified' and checking the corresponding `subscriptions` record.",
-      "verificationCriteria": "Migration applies successfully. Updating a `payments` record status from non-verified to 'verified' correctly updates the corresponding `subscriptions` record (tier, status, expires_at).",
-      "analysisResult": "The planned sequence of Supabase migrations (Initial Schema -> Functions/Triggers -> RLS -> Secondary Schema) and the Node.js seeding script provide a logical flow for implementing the database foundation.\n\n**Technical Details:**\n- **Migrations:** Use Supabase CLI (`supabase migration new <name>`) to create SQL files in `supabase/migrations`. Each migration should contain the specific DDL (CREATE TABLE, CREATE TYPE, CREATE FUNCTION, CREATE TRIGGER, ALTER TABLE, CREATE POLICY) for that step.\n- **Schema:** Carefully define column types, constraints (NOT NULL, FOREIGN KEY), and defaults. For JSONB i18n fields (e.g., `name_translations`), ensure structure is `{\"ar\": \"...\"}` for MVP. For `wilayas`/`dairas`, use `name_ar TEXT`, `name_other TEXT`.\n- **Seeding:** The Node.js script needs `dotenv` to load DB connection details (`SUPABASE_DB_URL` or individual host/user/pass/port vars), `fs` to read `wilayas.json`, and a PG client like `pg`. Use parameterized queries or batch inserts for efficiency.\n- **Functions/Triggers:** Ensure PL/pgSQL logic correctly handles insertions/updates based on trigger events. Test function logic thoroughly.\n- **RLS:** Initial policies should cover basic user self-management (`profiles`) and admin access. More granular policies for events/submissions can be added later.\n\n**Interface Dependencies:**\n- Relies on Supabase connection details (env vars).\n- Relies on `wilayas.json` structure.\n- Downstream dependency for subsequent application phases (Auth, Profiles, etc.).\n\n**Implementation Strategy:**\n- Develop migrations incrementally using Supabase CLI.\n- Apply migrations locally (`supabase db reset` or `supabase migration up`) for testing.\n- Develop and test the seeding script locally against the migrated DB.\n- Commit migration files and seeding script to Git.\n\n**Acceptance Criteria:**\n- All planned migrations apply successfully locally and (eventually) remotely.\n- `wilayas` and `dairas` tables are correctly populated by the seeding script.\n- `handle_new_user` trigger successfully creates profile/subscription on new auth user creation.\n- `handle_payment_verification` trigger successfully updates subscription on payment verification.\n- Basic RLS prevents unauthorized access to profile data (tested via SQL queries with different roles/UIDs).\n- Schema includes all required MVP tables and fields with correct types/constraints.",
-      "completedAt": "2025-05-04T18:02:12.937Z",
-      "summary": "Completed by creating and applying a migration for the handle_payment_verification function (with billing_period_to_interval helper) and its trigger on public.payments to automate subscription updates upon payment verification."
+      "implementationGuide": "1. Create `src/lib/supabase/client.ts`. Initialize Supabase client using `createBrowserClient` with public env vars.\n2. Create `src/components/providers/AuthProvider.tsx`. Use React Context API (`createContext`, `useContext`).\n3. Manage session state using Supabase `onAuthStateChange`. Provide `session`, `user`, `loading` state via context.\n4. Wrap the root layout (`src/app/[locale]/layout.tsx`) with this provider.",
+      "verificationCriteria": "Auth state (session, user, loading) is accessible via a hook (`useAuth`) in client components. Session updates correctly on login/logout.",
+      "analysisResult": "1.  **Supabase Client Setup**: Need a browser client instance. Can be placed in a utility file (e.g., `src/lib/supabase/client.ts`).\n2.  **Auth Context**: A React Context (`src/components/providers/AuthProvider.tsx`?) is suitable for managing session/user state globally, making it accessible via a custom hook (e.g., `useAuth`).\n3.  **Auth UI**: Login (`src/app/[locale]/login/page.tsx`) and Register (`src/app/[locale]/register/page.tsx`) pages with dedicated form components (`src/app/[locale]/ui/auth/LoginForm.tsx`, `RegisterForm.tsx`). Use Flowbite, RHF, Zod. Need clear loading (button disable/spinner) and error display (Toast/Alert).\n4.  **Route Protection**: Update existing `middleware.ts`. Check for session on protected routes (e.g., `/profile`, `/dashboard`). Redirect to `/login` if no session.\n5.  **Profile Data Fetching**: A client-side approach is appropriate. Use SWR or TanStack Query for caching and state management. Fetch from `profiles`, `researcher_profiles`, `organizer_profiles` based on user ID from auth context. Implement in a custom hook (`src/hooks/useUserProfile.ts`?).\n6.  **Profile View**: Component (`src/app/[locale]/ui/profile/ProfileView.tsx`) displaying data from the fetching hook. Handle loading state (skeletons?) and errors.\n7.  **Profile Edit Form**: Component (`src/app/[locale]/ui/profile/ProfileEditForm.tsx`). Use RHF/Zod. Fetch `wilayas` (name_ar) for the first dropdown. Fetch `dairas` (name_ar) dynamically based on selected wilaya. Update `profiles` table via Supabase client call. Handle loading/submission state and errors (Toast).\n8.  **Role-Specific Fields**: Conditionally render input fields within `ProfileEditForm.tsx` based on user type from profile data. Update respective tables (`researcher_profiles`, `organizer_profiles`) in the same update function, potentially using an RPC call if logic becomes complex.\n9.  **UI/RTL**: Ensure `dir=\"rtl\"` is applied correctly (likely in `layout.tsx`). Use Flowbite components which should handle RTL via Tailwind. Test thoroughly.\n10. **Dependencies**: Need `react-hook-form`, `zod`, `@hookform/resolvers` (if not already installed). SWR/TanStack Query if chosen for data fetching.\n11. **Acceptance Criteria**: User can register, login, logout. Profile page is protected. Profile data (common + role-specific + location) is displayed correctly. User can update profile information, including selecting Wilaya/Daira. Loading and error states are shown appropriately. UI is RTL-compliant."
     },
     {
-      "id": "238ddd60-4520-409e-9ead-fee8a3c214a3",
-      "name": "Define Initial RLS Policies",
-      "description": "Create a migration file to define the initial Row Level Security policies, focusing on granting users access to their own `profiles` data and basic admin access.",
-      "status": "已完成",
+      "id": "48dc807e-dcc6-4e50-a8e0-4aedf4e5fd0e",
+      "name": "Create Login Page & Form Component",
+      "description": "Implement the user login page and its associated form component using Flowbite, React Hook Form, and Zod for validation. Handle Supabase email/password login.",
+      "status": "待處理",
       "dependencies": [
         {
-          "taskId": "be01cc33-4b05-4b73-9eca-a9d91a3a43e9"
+          "taskId": "0285b53f-57e1-439d-b538-6e6c3eab187b"
         }
       ],
-      "createdAt": "2025-05-03T17:10:14.238Z",
-      "updatedAt": "2025-05-04T18:02:21.559Z",
-      "implementationGuide": "1. Run `supabase migration new add_initial_rls_policies`.\n2. Edit the generated SQL file.\n3. Enable RLS for relevant tables: `ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;` (repeat for others like `subscriptions`, `payments` as needed).\n4. Create policy for users to access own profile: `CREATE POLICY \"Allow individual user access\" ON public.profiles FOR SELECT USING (auth.uid() = id);`\n5. Create policy for users to update own profile: `CREATE POLICY \"Allow individual user update\" ON public.profiles FOR UPDATE USING (auth.uid() = id) WITH CHECK (auth.uid() = id);`\n6. Define broader access policies for an admin role if defined (e.g., `CREATE POLICY \"Allow admin full access\" ON public.profiles FOR ALL USING (is_admin(auth.uid()));` - requires helper function `is_admin`). Start simple if admin role logic isn't ready.\n7. Test locally by querying tables using different authenticated user roles (`SET ROLE authenticated; SELECT set_config('request.jwt.claims', '{\"sub\":\"<user_uuid>\", \"role\":\"authenticated\"}', true); SELECT * FROM profiles;`).",
-      "verificationCriteria": "Migration applies successfully. RLS is enabled on `profiles`. Authenticated users can select/update their own profile row but not others. Admin role (if tested) has broader access. Unauthenticated access is blocked.",
-      "analysisResult": "The planned sequence of Supabase migrations (Initial Schema -> Functions/Triggers -> RLS -> Secondary Schema) and the Node.js seeding script provide a logical flow for implementing the database foundation.\n\n**Technical Details:**\n- **Migrations:** Use Supabase CLI (`supabase migration new <name>`) to create SQL files in `supabase/migrations`. Each migration should contain the specific DDL (CREATE TABLE, CREATE TYPE, CREATE FUNCTION, CREATE TRIGGER, ALTER TABLE, CREATE POLICY) for that step.\n- **Schema:** Carefully define column types, constraints (NOT NULL, FOREIGN KEY), and defaults. For JSONB i18n fields (e.g., `name_translations`), ensure structure is `{\"ar\": \"...\"}` for MVP. For `wilayas`/`dairas`, use `name_ar TEXT`, `name_other TEXT`.\n- **Seeding:** The Node.js script needs `dotenv` to load DB connection details (`SUPABASE_DB_URL` or individual host/user/pass/port vars), `fs` to read `wilayas.json`, and a PG client like `pg`. Use parameterized queries or batch inserts for efficiency.\n- **Functions/Triggers:** Ensure PL/pgSQL logic correctly handles insertions/updates based on trigger events. Test function logic thoroughly.\n- **RLS:** Initial policies should cover basic user self-management (`profiles`) and admin access. More granular policies for events/submissions can be added later.\n\n**Interface Dependencies:**\n- Relies on Supabase connection details (env vars).\n- Relies on `wilayas.json` structure.\n- Downstream dependency for subsequent application phases (Auth, Profiles, etc.).\n\n**Implementation Strategy:**\n- Develop migrations incrementally using Supabase CLI.\n- Apply migrations locally (`supabase db reset` or `supabase migration up`) for testing.\n- Develop and test the seeding script locally against the migrated DB.\n- Commit migration files and seeding script to Git.\n\n**Acceptance Criteria:**\n- All planned migrations apply successfully locally and (eventually) remotely.\n- `wilayas` and `dairas` tables are correctly populated by the seeding script.\n- `handle_new_user` trigger successfully creates profile/subscription on new auth user creation.\n- `handle_payment_verification` trigger successfully updates subscription on payment verification.\n- Basic RLS prevents unauthorized access to profile data (tested via SQL queries with different roles/UIDs).\n- Schema includes all required MVP tables and fields with correct types/constraints.",
-      "completedAt": "2025-05-04T18:02:21.554Z",
-      "summary": "Completed by creating and applying a migration that enabled RLS on initial tables (wilayas, dairas, profiles, subscriptions, payments) and defined policies for user self-management and admin access, including the is_admin() helper function."
+      "createdAt": "2025-05-05T13:26:42.894Z",
+      "updatedAt": "2025-05-05T13:26:42.894Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/login/page.tsx",
+          "type": "CREATE",
+          "description": "Login page route"
+        },
+        {
+          "path": "src/app/[locale]/ui/auth/LoginForm.tsx",
+          "type": "CREATE",
+          "description": "Login form component"
+        }
+      ],
+      "implementationGuide": "1. Create route `src/app/[locale]/login/page.tsx`.\n2. Create form component `src/app/[locale]/ui/auth/LoginForm.tsx`.\n3. Use Flowbite inputs, button.\n4. Use RHF (`useForm`) and Zod (`zodResolver`) for email/password fields.\n5. On submit, call Supabase `signInWithPassword`. Handle loading state (disable button, show spinner) and errors (display using Toast/Alert). Redirect on success (e.g., to profile page).",
+      "verificationCriteria": "User can enter email/password. Validation errors show. User can successfully log in. Loading/error states function correctly. UI uses Flowbite and supports RTL.",
+      "analysisResult": "1.  **Supabase Client Setup**: Need a browser client instance. Can be placed in a utility file (e.g., `src/lib/supabase/client.ts`).\n2.  **Auth Context**: A React Context (`src/components/providers/AuthProvider.tsx`?) is suitable for managing session/user state globally, making it accessible via a custom hook (e.g., `useAuth`).\n3.  **Auth UI**: Login (`src/app/[locale]/login/page.tsx`) and Register (`src/app/[locale]/register/page.tsx`) pages with dedicated form components (`src/app/[locale]/ui/auth/LoginForm.tsx`, `RegisterForm.tsx`). Use Flowbite, RHF, Zod. Need clear loading (button disable/spinner) and error display (Toast/Alert).\n4.  **Route Protection**: Update existing `middleware.ts`. Check for session on protected routes (e.g., `/profile`, `/dashboard`). Redirect to `/login` if no session.\n5.  **Profile Data Fetching**: A client-side approach is appropriate. Use SWR or TanStack Query for caching and state management. Fetch from `profiles`, `researcher_profiles`, `organizer_profiles` based on user ID from auth context. Implement in a custom hook (`src/hooks/useUserProfile.ts`?).\n6.  **Profile View**: Component (`src/app/[locale]/ui/profile/ProfileView.tsx`) displaying data from the fetching hook. Handle loading state (skeletons?) and errors.\n7.  **Profile Edit Form**: Component (`src/app/[locale]/ui/profile/ProfileEditForm.tsx`). Use RHF/Zod. Fetch `wilayas` (name_ar) for the first dropdown. Fetch `dairas` (name_ar) dynamically based on selected wilaya. Update `profiles` table via Supabase client call. Handle loading/submission state and errors (Toast).\n8.  **Role-Specific Fields**: Conditionally render input fields within `ProfileEditForm.tsx` based on user type from profile data. Update respective tables (`researcher_profiles`, `organizer_profiles`) in the same update function, potentially using an RPC call if logic becomes complex.\n9.  **UI/RTL**: Ensure `dir=\"rtl\"` is applied correctly (likely in `layout.tsx`). Use Flowbite components which should handle RTL via Tailwind. Test thoroughly.\n10. **Dependencies**: Need `react-hook-form`, `zod`, `@hookform/resolvers` (if not already installed). SWR/TanStack Query if chosen for data fetching.\n11. **Acceptance Criteria**: User can register, login, logout. Profile page is protected. Profile data (common + role-specific + location) is displayed correctly. User can update profile information, including selecting Wilaya/Daira. Loading and error states are shown appropriately. UI is RTL-compliant."
     },
     {
-      "id": "71b000db-ce27-459c-a851-8658ac582542",
-      "name": "Define Secondary Schema Migration",
-      "description": "Create a migration file defining the remaining tables required for the MVP (`events`, `submissions`, `topics`, `email_templates`, `email_log`, `notification_queue`), including necessary ENUMs and relationships, adhering to the i18n strategy.",
-      "status": "已完成",
+      "id": "cec629f6-b58d-4f34-bc88-7e1fe298b2b4",
+      "name": "Create Registration Page & Form Component",
+      "description": "Implement the user registration page and form using Flowbite, RHF, and Zod. Handle Supabase email/password sign-up.",
+      "status": "待處理",
       "dependencies": [
         {
-          "taskId": "be01cc33-4b05-4b73-9eca-a9d91a3a43e9"
+          "taskId": "0285b53f-57e1-439d-b538-6e6c3eab187b"
         }
       ],
-      "createdAt": "2025-05-03T17:10:14.238Z",
-      "updatedAt": "2025-05-04T18:02:31.493Z",
-      "implementationGuide": "1. Run `supabase migration new add_secondary_tables`.\n2. Edit the generated SQL file.\n3. Add any new `CREATE TYPE ... AS ENUM (...)` statements needed (e.g., `event_status_enum`, `submission_status_enum`).\n4. Add `CREATE TABLE` statements for `topics`, `events`, `submissions`, `email_templates`, `email_log`, `notification_queue`.\n5. Define columns with correct types, constraints, and foreign keys referencing previously created tables (e.g., `events.organizer_id` references `profiles.id`).\n6. Ensure `JSONB` `_translations` fields are used for translatable text (e.g., `topics.name_translations`, `events.title_translations`) and TEXT fields are used appropriately (e.g., `submissions.file_url`).\n7. Test locally: `supabase db reset` or `supabase migration up`.",
-      "verificationCriteria": "Migration applies successfully. Tables `events`, `submissions`, `topics`, `email_templates`, `email_log`, `notification_queue` and associated ENUMs exist with correct schema, types, constraints, and relationships. i18n strategy is consistently applied.",
-      "analysisResult": "The planned sequence of Supabase migrations (Initial Schema -> Functions/Triggers -> RLS -> Secondary Schema) and the Node.js seeding script provide a logical flow for implementing the database foundation.\n\n**Technical Details:**\n- **Migrations:** Use Supabase CLI (`supabase migration new <name>`) to create SQL files in `supabase/migrations`. Each migration should contain the specific DDL (CREATE TABLE, CREATE TYPE, CREATE FUNCTION, CREATE TRIGGER, ALTER TABLE, CREATE POLICY) for that step.\n- **Schema:** Carefully define column types, constraints (NOT NULL, FOREIGN KEY), and defaults. For JSONB i18n fields (e.g., `name_translations`), ensure structure is `{\"ar\": \"...\"}` for MVP. For `wilayas`/`dairas`, use `name_ar TEXT`, `name_other TEXT`.\n- **Seeding:** The Node.js script needs `dotenv` to load DB connection details (`SUPABASE_DB_URL` or individual host/user/pass/port vars), `fs` to read `wilayas.json`, and a PG client like `pg`. Use parameterized queries or batch inserts for efficiency.\n- **Functions/Triggers:** Ensure PL/pgSQL logic correctly handles insertions/updates based on trigger events. Test function logic thoroughly.\n- **RLS:** Initial policies should cover basic user self-management (`profiles`) and admin access. More granular policies for events/submissions can be added later.\n\n**Interface Dependencies:**\n- Relies on Supabase connection details (env vars).\n- Relies on `wilayas.json` structure.\n- Downstream dependency for subsequent application phases (Auth, Profiles, etc.).\n\n**Implementation Strategy:**\n- Develop migrations incrementally using Supabase CLI.\n- Apply migrations locally (`supabase db reset` or `supabase migration up`) for testing.\n- Develop and test the seeding script locally against the migrated DB.\n- Commit migration files and seeding script to Git.\n\n**Acceptance Criteria:**\n- All planned migrations apply successfully locally and (eventually) remotely.\n- `wilayas` and `dairas` tables are correctly populated by the seeding script.\n- `handle_new_user` trigger successfully creates profile/subscription on new auth user creation.\n- `handle_payment_verification` trigger successfully updates subscription on payment verification.\n- Basic RLS prevents unauthorized access to profile data (tested via SQL queries with different roles/UIDs).\n- Schema includes all required MVP tables and fields with correct types/constraints.",
-      "completedAt": "2025-05-04T18:02:31.489Z",
-      "summary": "Completed by creating and applying a migration defining the remaining MVP tables (events, submissions, topics, bookmarks, profile extensions, email tables) and associated ENUMs, adhering to the i18n strategy."
+      "createdAt": "2025-05-05T13:26:42.894Z",
+      "updatedAt": "2025-05-05T13:26:42.894Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/register/page.tsx",
+          "type": "CREATE",
+          "description": "Registration page route"
+        },
+        {
+          "path": "src/app/[locale]/ui/auth/RegisterForm.tsx",
+          "type": "CREATE",
+          "description": "Registration form component"
+        }
+      ],
+      "implementationGuide": "1. Create route `src/app/[locale]/register/page.tsx`.\n2. Create form component `src/app/[locale]/ui/auth/RegisterForm.tsx`.\n3. Use Flowbite inputs (email, password, confirm password), button.\n4. Use RHF/Zod for validation (ensure passwords match).\n5. On submit, call Supabase `signUp`. Handle loading state and errors (Toast/Alert). Show success message (e.g., \"Check email for verification\").",
+      "verificationCriteria": "User can enter registration details. Validation errors show (including password mismatch). User can successfully register. Loading/error/success states function correctly. UI uses Flowbite and supports RTL.",
+      "analysisResult": "1.  **Supabase Client Setup**: Need a browser client instance. Can be placed in a utility file (e.g., `src/lib/supabase/client.ts`).\n2.  **Auth Context**: A React Context (`src/components/providers/AuthProvider.tsx`?) is suitable for managing session/user state globally, making it accessible via a custom hook (e.g., `useAuth`).\n3.  **Auth UI**: Login (`src/app/[locale]/login/page.tsx`) and Register (`src/app/[locale]/register/page.tsx`) pages with dedicated form components (`src/app/[locale]/ui/auth/LoginForm.tsx`, `RegisterForm.tsx`). Use Flowbite, RHF, Zod. Need clear loading (button disable/spinner) and error display (Toast/Alert).\n4.  **Route Protection**: Update existing `middleware.ts`. Check for session on protected routes (e.g., `/profile`, `/dashboard`). Redirect to `/login` if no session.\n5.  **Profile Data Fetching**: A client-side approach is appropriate. Use SWR or TanStack Query for caching and state management. Fetch from `profiles`, `researcher_profiles`, `organizer_profiles` based on user ID from auth context. Implement in a custom hook (`src/hooks/useUserProfile.ts`?).\n6.  **Profile View**: Component (`src/app/[locale]/ui/profile/ProfileView.tsx`) displaying data from the fetching hook. Handle loading state (skeletons?) and errors.\n7.  **Profile Edit Form**: Component (`src/app/[locale]/ui/profile/ProfileEditForm.tsx`). Use RHF/Zod. Fetch `wilayas` (name_ar) for the first dropdown. Fetch `dairas` (name_ar) dynamically based on selected wilaya. Update `profiles` table via Supabase client call. Handle loading/submission state and errors (Toast).\n8.  **Role-Specific Fields**: Conditionally render input fields within `ProfileEditForm.tsx` based on user type from profile data. Update respective tables (`researcher_profiles`, `organizer_profiles`) in the same update function, potentially using an RPC call if logic becomes complex.\n9.  **UI/RTL**: Ensure `dir=\"rtl\"` is applied correctly (likely in `layout.tsx`). Use Flowbite components which should handle RTL via Tailwind. Test thoroughly.\n10. **Dependencies**: Need `react-hook-form`, `zod`, `@hookform/resolvers` (if not already installed). SWR/TanStack Query if chosen for data fetching.\n11. **Acceptance Criteria**: User can register, login, logout. Profile page is protected. Profile data (common + role-specific + location) is displayed correctly. User can update profile information, including selecting Wilaya/Daira. Loading and error states are shown appropriately. UI is RTL-compliant."
+    },
+    {
+      "id": "fdbbe239-2ac6-483d-87f8-fa34e816d4d2",
+      "name": "Implement Route Protection Middleware",
+      "description": "Update the Next.js middleware to protect specific routes (e.g., profile) by redirecting unauthenticated users to the login page.",
+      "status": "待處理",
+      "dependencies": [
+        {
+          "taskId": "48dc807e-dcc6-4e50-a8e0-4aedf4e5fd0e"
+        }
+      ],
+      "createdAt": "2025-05-05T13:26:42.894Z",
+      "updatedAt": "2025-05-05T13:26:42.894Z",
+      "relatedFiles": [
+        {
+          "path": "middleware.ts",
+          "type": "TO_MODIFY",
+          "description": "Add auth checks for protected routes"
+        }
+      ],
+      "implementationGuide": "1. Open `middleware.ts`.\n2. Use Supabase `createMiddlewareClient`.\n3. Get session using `supabase.auth.getSession()`.\n4. Define protected routes (e.g., `/profile`, `/dashboard`).\n5. Check if the current request path matches a protected route and if `session` is null.\n6. If protected and no session, redirect to `/login` (`NextResponse.redirect`).",
+      "verificationCriteria": "Unauthenticated users accessing `/profile` are redirected to `/login`. Authenticated users can access `/profile`.",
+      "analysisResult": "1.  **Supabase Client Setup**: Need a browser client instance. Can be placed in a utility file (e.g., `src/lib/supabase/client.ts`).\n2.  **Auth Context**: A React Context (`src/components/providers/AuthProvider.tsx`?) is suitable for managing session/user state globally, making it accessible via a custom hook (e.g., `useAuth`).\n3.  **Auth UI**: Login (`src/app/[locale]/login/page.tsx`) and Register (`src/app/[locale]/register/page.tsx`) pages with dedicated form components (`src/app/[locale]/ui/auth/LoginForm.tsx`, `RegisterForm.tsx`). Use Flowbite, RHF, Zod. Need clear loading (button disable/spinner) and error display (Toast/Alert).\n4.  **Route Protection**: Update existing `middleware.ts`. Check for session on protected routes (e.g., `/profile`, `/dashboard`). Redirect to `/login` if no session.\n5.  **Profile Data Fetching**: A client-side approach is appropriate. Use SWR or TanStack Query for caching and state management. Fetch from `profiles`, `researcher_profiles`, `organizer_profiles` based on user ID from auth context. Implement in a custom hook (`src/hooks/useUserProfile.ts`?).\n6.  **Profile View**: Component (`src/app/[locale]/ui/profile/ProfileView.tsx`) displaying data from the fetching hook. Handle loading state (skeletons?) and errors.\n7.  **Profile Edit Form**: Component (`src/app/[locale]/ui/profile/ProfileEditForm.tsx`). Use RHF/Zod. Fetch `wilayas` (name_ar) for the first dropdown. Fetch `dairas` (name_ar) dynamically based on selected wilaya. Update `profiles` table via Supabase client call. Handle loading/submission state and errors (Toast).\n8.  **Role-Specific Fields**: Conditionally render input fields within `ProfileEditForm.tsx` based on user type from profile data. Update respective tables (`researcher_profiles`, `organizer_profiles`) in the same update function, potentially using an RPC call if logic becomes complex.\n9.  **UI/RTL**: Ensure `dir=\"rtl\"` is applied correctly (likely in `layout.tsx`). Use Flowbite components which should handle RTL via Tailwind. Test thoroughly.\n10. **Dependencies**: Need `react-hook-form`, `zod`, `@hookform/resolvers` (if not already installed). SWR/TanStack Query if chosen for data fetching.\n11. **Acceptance Criteria**: User can register, login, logout. Profile page is protected. Profile data (common + role-specific + location) is displayed correctly. User can update profile information, including selecting Wilaya/Daira. Loading and error states are shown appropriately. UI is RTL-compliant."
+    },
+    {
+      "id": "c8a7cbc3-54f3-4d53-8f62-be623747a542",
+      "name": "Create Profile Data Fetching Hook",
+      "description": "Implement a custom React hook to fetch the authenticated user's profile data (from `profiles`, `researcher_profiles`, `organizer_profiles`) using the Supabase client.",
+      "status": "待處理",
+      "dependencies": [
+        {
+          "taskId": "0285b53f-57e1-439d-b538-6e6c3eab187b"
+        }
+      ],
+      "createdAt": "2025-05-05T13:26:42.894Z",
+      "updatedAt": "2025-05-05T13:26:42.894Z",
+      "relatedFiles": [
+        {
+          "path": "src/hooks/useUserProfile.ts",
+          "type": "CREATE",
+          "description": "Custom hook for fetching user profile data"
+        },
+        {
+          "path": "src/lib/supabase/client.ts",
+          "type": "REFERENCE",
+          "description": "Supabase client needed for fetching"
+        },
+        {
+          "path": "src/components/providers/AuthProvider.tsx",
+          "type": "REFERENCE",
+          "description": "Provides user ID"
+        }
+      ],
+      "implementationGuide": "1. Create `src/hooks/useUserProfile.ts`.\n2. Use the `useAuth` hook to get the user ID.\n3. Use `useEffect` and Supabase client (`client.ts`) OR integrate SWR/TanStack Query.\n4. Fetch data from `profiles` table where `id` matches user ID. Include related data from `researcher_profiles` or `organizer_profiles` via joins or separate queries.\n5. Return profile data, loading state, and error state.",
+      "verificationCriteria": "Hook returns correct profile data for the logged-in user, including role-specific details. Loading and error states are accurate.",
+      "analysisResult": "1.  **Supabase Client Setup**: Need a browser client instance. Can be placed in a utility file (e.g., `src/lib/supabase/client.ts`).\n2.  **Auth Context**: A React Context (`src/components/providers/AuthProvider.tsx`?) is suitable for managing session/user state globally, making it accessible via a custom hook (e.g., `useAuth`).\n3.  **Auth UI**: Login (`src/app/[locale]/login/page.tsx`) and Register (`src/app/[locale]/register/page.tsx`) pages with dedicated form components (`src/app/[locale]/ui/auth/LoginForm.tsx`, `RegisterForm.tsx`). Use Flowbite, RHF, Zod. Need clear loading (button disable/spinner) and error display (Toast/Alert).\n4.  **Route Protection**: Update existing `middleware.ts`. Check for session on protected routes (e.g., `/profile`, `/dashboard`). Redirect to `/login` if no session.\n5.  **Profile Data Fetching**: A client-side approach is appropriate. Use SWR or TanStack Query for caching and state management. Fetch from `profiles`, `researcher_profiles`, `organizer_profiles` based on user ID from auth context. Implement in a custom hook (`src/hooks/useUserProfile.ts`?).\n6.  **Profile View**: Component (`src/app/[locale]/ui/profile/ProfileView.tsx`) displaying data from the fetching hook. Handle loading state (skeletons?) and errors.\n7.  **Profile Edit Form**: Component (`src/app/[locale]/ui/profile/ProfileEditForm.tsx`). Use RHF/Zod. Fetch `wilayas` (name_ar) for the first dropdown. Fetch `dairas` (name_ar) dynamically based on selected wilaya. Update `profiles` table via Supabase client call. Handle loading/submission state and errors (Toast).\n8.  **Role-Specific Fields**: Conditionally render input fields within `ProfileEditForm.tsx` based on user type from profile data. Update respective tables (`researcher_profiles`, `organizer_profiles`) in the same update function, potentially using an RPC call if logic becomes complex.\n9.  **UI/RTL**: Ensure `dir=\"rtl\"` is applied correctly (likely in `layout.tsx`). Use Flowbite components which should handle RTL via Tailwind. Test thoroughly.\n10. **Dependencies**: Need `react-hook-form`, `zod`, `@hookform/resolvers` (if not already installed). SWR/TanStack Query if chosen for data fetching.\n11. **Acceptance Criteria**: User can register, login, logout. Profile page is protected. Profile data (common + role-specific + location) is displayed correctly. User can update profile information, including selecting Wilaya/Daira. Loading and error states are shown appropriately. UI is RTL-compliant."
+    },
+    {
+      "id": "ca0dfc0a-6921-4d71-b93f-0471f145aba7",
+      "name": "Create Profile View Component & Page",
+      "description": "Create a component to display the fetched user profile data. Include handling for loading and error states.",
+      "status": "待處理",
+      "dependencies": [
+        {
+          "taskId": "c8a7cbc3-54f3-4d53-8f62-be623747a542"
+        }
+      ],
+      "createdAt": "2025-05-05T13:26:53.941Z",
+      "updatedAt": "2025-05-05T13:26:53.941Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/ui/profile/ProfileView.tsx",
+          "type": "CREATE",
+          "description": "Component to display profile data"
+        },
+        {
+          "path": "src/app/[locale]/profile/page.tsx",
+          "type": "CREATE",
+          "description": "Profile page route"
+        },
+        {
+          "path": "src/hooks/useUserProfile.ts",
+          "type": "REFERENCE",
+          "description": "Hook providing profile data"
+        }
+      ],
+      "implementationGuide": "1. Create component `src/app/[locale]/ui/profile/ProfileView.tsx`.\n2. Use the `useUserProfile` hook to get data, loading, error states.\n3. Display loading state (e.g., Flowbite Skeletons).\n4. Display error state (e.g., Flowbite Alert).\n5. Display profile data (full_name, bio, website, email from session, role, location, role-specific fields) using Flowbite components.\n6. Create the profile page route `src/app/[locale]/profile/page.tsx` and use this component.",
+      "verificationCriteria": "Profile page displays user data correctly. Loading skeletons show while data fetches. Error message appears if fetching fails. UI uses Flowbite and supports RTL."
+    },
+    {
+      "id": "f19918df-8bbf-45b7-a59e-614696ec177f",
+      "name": "Create Profile Edit Form (Common Fields & Location)",
+      "description": "Create the profile editing form component, handling common profile fields (`profiles` table) and location selection (`wilayas`, `dairas`).",
+      "status": "待處理",
+      "dependencies": [
+        {
+          "taskId": "c8a7cbc3-54f3-4d53-8f62-be623747a542"
+        }
+      ],
+      "createdAt": "2025-05-05T13:26:53.941Z",
+      "updatedAt": "2025-05-05T13:26:53.941Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/ui/profile/ProfileEditForm.tsx",
+          "type": "CREATE",
+          "description": "Profile edit form component"
+        },
+        {
+          "path": "src/hooks/useUserProfile.ts",
+          "type": "REFERENCE",
+          "description": "Hook providing profile data"
+        },
+        {
+          "path": "wilayas.json",
+          "type": "REFERENCE",
+          "description": "Reference for location data structure"
+        }
+      ],
+      "implementationGuide": "1. Create component `src/app/[locale]/ui/profile/ProfileEditForm.tsx`.\n2. Use RHF/Zod for form state and validation (full_name, bio, website, wilaya_id, daira_id).\n3. Fetch `wilayas` (id, name_ar) for the first select dropdown. Populate it.\n4. On wilaya change, fetch corresponding `dairas` (id, name_ar) and populate the second dropdown.\n5. Pre-fill form with data from `useUserProfile` hook.\n6. On submit, call a Supabase client function to update the `profiles` table. Handle loading state (disable button) and errors (Toast).",
+      "verificationCriteria": "Edit form displays pre-filled data. Wilaya dropdown populates. Daira dropdown populates based on Wilaya selection. User can update common fields and location. Loading/error states function."
+    },
+    {
+      "id": "74fd7d29-ce2f-4a73-99cb-e92743f2d862",
+      "name": "Add Role-Specific Fields to Edit Form",
+      "description": "Extend the profile edit form to include fields specific to Researcher and Organizer roles, updating the corresponding extension tables (`researcher_profiles`, `organizer_profiles`).",
+      "status": "待處理",
+      "dependencies": [
+        {
+          "taskId": "f19918df-8bbf-45b7-a59e-614696ec177f"
+        }
+      ],
+      "createdAt": "2025-05-05T13:26:53.941Z",
+      "updatedAt": "2025-05-05T13:26:53.941Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/ui/profile/ProfileEditForm.tsx",
+          "type": "TO_MODIFY",
+          "description": "Extend form with role fields"
+        },
+        {
+          "path": "src/hooks/useUserProfile.ts",
+          "type": "REFERENCE",
+          "description": "Hook providing user role"
+        }
+      ],
+      "implementationGuide": "1. Modify `src/app/[locale]/ui/profile/ProfileEditForm.tsx`.\n2. Get user type from `useUserProfile` data.\n3. Conditionally render input fields based on user type (e.g., `institution`, `job_title` for researcher; `organization_name`, `activity_domain` for organizer).\n4. Add these fields to RHF/Zod schema.\n5. Modify the submission handler to also update `researcher_profiles` or `organizer_profiles` table along with the `profiles` table (consider a Supabase RPC function for atomicity if needed).",
+      "verificationCriteria": "Role-specific fields appear based on user type. User can update these fields. Data is saved to correct extension tables."
     }
   ]
 }

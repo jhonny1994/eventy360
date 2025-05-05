@@ -6,6 +6,7 @@
 *   **Frontend**: Next.js (App Router) hosted on Vercel.
 *   **Backend**: Supabase Platform (PostgreSQL DB, Auth, Storage, Edge Functions, Cron Jobs) hosted on Supabase Cloud.
 *   **Communication**: Frontend uses Supabase client libraries (JS) for direct DB interaction (leveraging RLS), Auth, and Storage. Calls to Supabase Edge Functions via HTTPS for specific backend logic/external API interaction (Resend).
+*   **Frontend Theming**: Uses Tailwind CSS v4. Base theme colors and fonts are defined in `globals.css` using the `@theme` directive. CSS variables are defined in `:root` and `.dark` within `@layer base` for theme switching logic. `next-themes` manages the application of the `.dark` class to the `<html>` tag. UI components from Flowbite utilize Tailwind utility classes generated from the `@theme` configuration and respond to the dark mode class.
 
 ## 2. Key Backend Components & Patterns (Supabase)
 

@@ -4,8 +4,9 @@
 
 *   **Frontend Framework**: Next.js (App Router)
 *   **UI Language**: React with TypeScript
-*   **Styling**: Tailwind CSS
-*   **UI Components**: Shadcn UI
+*   **Styling**: Tailwind CSS v4 (Configured via `postcss.config.mjs` and `@theme` directive in `globals.css`)
+*   **UI Components**: Flowbite (using Tailwind plugin and potentially React components)
+*   **Theme Switching**: `next-themes` (managing light/dark mode via `class` strategy)
 *   **Internationalization (i18n)**: `next-intl` (Configured for Arabic `ar` locale **only in MVP**, supporting RTL via `dir="rtl"` attribute on `<html>` or relevant container). English/French locales to be added later.
 *   **Forms**: React Hook Form
 *   **Validation**: Zod (Used with React Hook Form for client-side and potentially Edge Function input validation).
@@ -50,13 +51,13 @@
 *   **Database Migrations**: Strict adherence to using Supabase CLI (`supabase db diff`, `supabase migration new`, apply locally/remotely) for schema evolution.
 *   **State Management (Frontend)**: Choose appropriate strategy (e.g., React Context, Zustand, Valtio) if global state beyond basic props/hooks is needed. Libraries like SWR/TanStack Query manage their own request state.
 *   **Loading State Strategy**:
-    *   **App Router (`loading.js`/`tsx`)**: Use the built-in Next.js file convention to show instant loading UI (e.g., Skeletons from Shadcn UI) while Server Component data loads. Define `loading.tsx` in relevant route segments.
+    *   **App Router (`loading.js`/`tsx`)**: Use the built-in Next.js file convention to show instant loading UI (e.g., Skeletons from Flowbite) while Server Component data loads. Define `loading.tsx` in relevant route segments.
     *   **Client Components (Data Fetching)**: Use loading states provided by data fetching libraries (e.g., `isLoading` from SWR/TanStack Query) or manual `useState` hooks to conditionally render loading indicators (spinners, skeletons).
     *   **Client Components (Mutations/Forms)**: Use `useState` (e.g., `isSubmitting`) to track the state of form submissions or other mutations. Disable buttons and show indicators while loading.
 *   **Error Handling Strategy**:
-    *   **Frontend (App Router Boundaries)**: Implement `error.tsx` (must be Client Component) in route segments to catch errors from nested Server Components, display fallback UI (use Shadcn Alert/Toast), and provide a `reset` function. Implement `global-error.tsx` for the root layout.
+    *   **Frontend (App Router Boundaries)**: Implement `error.tsx` (must be Client Component) in route segments to catch errors from nested Server Components, display fallback UI (use Flowbite Alert/Toast), and provide a `reset` function. Implement `global-error.tsx` for the root layout.
     *   **Frontend (Not Found)**: Use `notFound()` from `next/navigation` within Server Components when data fetching returns no result for a required resource (e.g., viewing a specific event by ID).
-    *   **Frontend (Client Components)**: Use `try...catch` in event handlers/async functions. Manage error state with `useState`. Display errors using Shadcn Toast or Alert components. Data fetching libraries (SWR/TanStack Query) provide `error` objects.
+    *   **Frontend (Client Components)**: Use `try...catch` in event handlers/async functions. Manage error state with `useState`. Display errors using Flowbite Toast or Alert components. Data fetching libraries (SWR/TanStack Query) provide `error` objects.
     *   **Frontend (Forms)**: Use React Hook Form with Zod for client-side validation errors shown inline. Handle submission errors via state management as above.
     *   **Backend (Edge Functions)**: Wrap logic in `try...catch`. Return standardized JSON error objects (`{ "error": "Error message" }`) with appropriate HTTP status codes (e.g., 400, 401, 403, 404, 500). Use `console.error` for logging detailed errors to Supabase logs.
     *   **Backend (Input Validation)**: Use Zod or similar validation within Edge Functions for request bodies/params, return 400 status on failure.

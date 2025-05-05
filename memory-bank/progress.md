@@ -10,7 +10,6 @@
 *   Memory Bank files created and refined.
 *   Next.js (App Router) project initialized.
 *   Essential dependencies installed.
-*   Shadcn UI initialized and configured.
 *   Supabase project setup and environment variables configured.
 *   `next-intl` configured for Arabic (`ar`) locale and RTL.
 *   Git repository established.
@@ -25,10 +24,16 @@
     *   *(Future Task)*: Define RLS policies for secondary tables.
     *   *(Future Task)*: Implement application-layer query logic for i18n fields (`->> 'ar'`).
 2.  **Authentication & Basic Profiles**:
-    *   Implement Supabase Auth for email/password registration and login.
-    *   Create basic profile pages (view/edit) for Researcher and Organizer roles, inputting/displaying Arabic text only. Location selection uses seeded `wilayas`/`dairas` data (displaying `name_ar`).
-    *   Implement loading state UI (e.g., skeletons) for profile data fetching.
-    *   Implement error handling UI (e.g., toasts) for profile updates.
+    *   Setup Supabase Browser Client & Auth Provider
+    *   Create Login Page & Form Component
+    *   Create Registration Page & Form Component
+    *   Implement Route Protection Middleware
+    *   Create Profile Data Fetching Hook
+    *   Create Profile View Component & Page
+    *   Create Profile Edit Form (Common Fields & Location)
+    *   Add Role-Specific Fields to Edit Form
+    *   *(Implied)* Implement loading/error states throughout auth & profile components.
+    *   *(Implied)* Ensure Arabic/RTL compliance.
 3.  **Manual Verification & Payment/Subscription Workflow (Core Logic)**:
     *   Implement Admin Panel UI controls to update user `is_verified` status.
     *   Implement Admin Panel UI to record payment details (`payments` table) and mark status as `verified`.
@@ -65,4 +70,5 @@
 *   Memory Bank Initialized & Refined
 *   Core Project Setup Completed
 *   **Full MVP DB Schema & Automation Defined & Applied** (Migrations: `init_core_schema`, `implement_handle_new_user_trigger`, `implement_handle_payment_verification_trigger`, `define_initial_rls_policies`, `define_secondary_schema`) - [Current Date]
-*   **Location Data Seeded** (Manually by user) - [Current Date] 
+*   **Location Data Seeded** (Manually by user) - [Current Date]
+*   **Styling & Theme Implementation**: Upgraded to Tailwind v4, integrated Flowbite, implemented custom theme with dynamic light/dark mode using `next-themes`.

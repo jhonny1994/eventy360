@@ -10,15 +10,24 @@ Initiating the **Authentication & Basic Profiles** phase. Tasks involve setting 
     *   Initial schema, core automation (triggers/functions), and RLS policies applied.
     *   Secondary schema migration applied, defining all remaining MVP tables and ENUMs.
     *   Location data (`wilayas`/`dairas`) seeded manually by user.
-*   Updated Memory Bank (`progress.md`, `systemPatterns.md`, `techContext.md`) to reflect DB completion.
+*   Refactored Styling & Theming:
+    *   Upgraded to Tailwind CSS v4.
+    *   Replaced Shadcn UI with Flowbite.
+    *   Implemented new custom theme palette via `@theme` and CSS variables in `globals.css`.
+    *   Configured `next-themes` for dynamic light/dark mode switching.
+*   Updated Memory Bank (`progress.md`, `systemPatterns.md`, `techContext.md`) to reflect DB completion and styling refactor.
 
 ## Next Steps
 
-*   Plan and define tasks for the **Authentication & Basic Profiles** phase:
-    *   Implement registration/login forms using Supabase Auth.
-    *   Create profile display page.
-    *   Create profile edit form (handling text inputs, location selection using seeded data).
-    *   Implement loading/error states for auth and profile operations.
+*   Execute planned tasks for the **Authentication & Basic Profiles** phase:
+    1.  **Setup Supabase Browser Client & Auth Provider**: Configure Supabase client and React Context for auth state.
+    2.  **Create Login Page & Form Component**: Implement the login UI and logic.
+    3.  **Create Registration Page & Form Component**: Implement the registration UI and logic.
+    4.  **Implement Route Protection Middleware**: Secure profile/dashboard routes.
+    5.  **Create Profile Data Fetching Hook**: Implement hook to get user profile data.
+    6.  **Create Profile View Component & Page**: Display the user's profile information.
+    7.  **Create Profile Edit Form (Common Fields & Location)**: Implement form for basic profile fields and location selection.
+    8.  **Add Role-Specific Fields to Edit Form**: Extend the edit form for researcher/organizer specific fields.
 
 ## Active Decisions & Considerations
 

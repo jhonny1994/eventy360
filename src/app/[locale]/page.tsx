@@ -1,103 +1,78 @@
-import Image from "next/image";
+"use client"; // Required for hooks like useTranslations and event handlers
+
+import { useTranslations } from 'next-intl';
+import { useTheme } from "next-themes";
+import { useEffect, useState } from 'react';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const t = useTranslations('HomePage');
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+  // Ensure component is mounted before rendering theme-dependent UI
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div className="p-24">Loading...</div>; // Added a simple loading state
+  }
+
+  return (
+    <main className="flex min-h-screen flex-col items-center gap-8 p-12 md:p-24">
+      {/* Theme Toggle - Use neutral colors for base */}
+      <div className="fixed top-4 right-4 z-50">
+        <button 
+          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+          // Card background (White/Darker Surface), Neutral border, Neutral text
+          className="p-2 rounded-md border bg-background text-foreground shadow-md"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
+          Toggle: {theme}
+        </button>
+      </div>
+
+      {/* Use foreground color for heading */}
+      <h1 className="text-4xl font-bold text-foreground">{t('title')} - New Theme</h1>
+
+      {/* Buttons using New Theme Guidelines */}
+      <div className="flex flex-wrap gap-4">
+        {/* Primary Button: bg Primary, text White / bg Primary-Dark, text Neutral Dark */}
+        <button type="button" className="text-white bg-primary hover:opacity-90 focus:ring-4 focus:ring-primary/50 font-medium rounded-lg text-sm px-5 py-2.5 dark:text-neutral-dark dark:bg-primary dark:hover:opacity-90 dark:focus:ring-primary/50">
+          Primary Button
+        </button>
+        {/* Secondary Button: bg Secondary, text Neutral Dark / bg Secondary-Dark, text Neutral Dark */}
+        <button type="button" className="text-neutral-dark bg-secondary hover:opacity-90 focus:ring-4 focus:ring-secondary/50 font-medium rounded-lg text-sm px-5 py-2.5 dark:text-neutral-dark dark:bg-secondary dark:hover:opacity-90 dark:focus:ring-secondary/50">
+          Secondary Button
+        </button>
+        {/* Link Text Example (using primary colors) */}
+        <a href="#" className="text-primary hover:underline dark:text-primary">
+          Link Text
         </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </div>
+
+      {/* Simple Card Example - Use explicit background */}
+      <div className="w-full max-w-md p-6 bg-background border rounded-lg shadow-md">
+        <h2 className="text-xl font-semibold mb-2 text-foreground">Dummy Card</h2>
+        {/* Secondary text: ~60% opacity on Neutral Dark / Neutral Light */}
+        <p className="text-neutral-dark/60 dark:text-neutral-light/60">
+          This card uses the specific card background (white / #121212) and neutral border/text colors.
+        </p>
+      </div>
+
+      {/* Alerts using New Theme Guidelines */}
+      <div className="w-full max-w-md p-4 bg-accent-success border text-white rounded-lg dark:bg-accent-success dark:text-neutral-dark">
+        <p><strong className="font-bold">Success:</strong> Alert using Accent/Success color.</p>
+      </div>
+      <div className="w-full max-w-md p-4 bg-info border text-white rounded-lg dark:bg-info dark:text-neutral-dark">
+        <p><strong className="font-bold">Info:</strong> Alert using Info color.</p>
+      </div>
+      <div className="w-full max-w-md p-4 bg-warning border text-neutral-dark rounded-lg dark:bg-warning dark:text-neutral-dark">
+        <p><strong className="font-bold">Warning:</strong> Alert using Warning color.</p>
+      </div>
+       <div className="w-full max-w-md p-4 bg-error border text-white rounded-lg dark:bg-error dark:text-neutral-dark">
+        <p><strong className="font-bold">Error:</strong> Alert using Error color.</p>
+      </div>
+
+    </main>
   );
 } 
