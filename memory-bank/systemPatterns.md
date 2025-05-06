@@ -52,10 +52,10 @@
         *   Use `JSONB` columns for dynamic, user-generated translatable text fields (e.g., `event_name_translations`, `topic_name_translations`, `profile_bio_translations`) to facilitate future multi-language support (`en`, `fr`).
         *   Use standard `TEXT` columns (`name_ar`, `name_other`) for static, seeded location data (`wilayas`, `dairas`).
     *   **JSONB Structure**: Store translations as key-value pairs (e.g., `{"ar": "...", "en": "...", "fr": "..."}`).
-    *   **MVP Implementation (JSONB Fields)**: For the MVP, only the Arabic (`ar`) key will be populated and queried in JSONB columns. The structure allows future expansion without schema changes for these fields.
+    *   **MVP Implementation (JSONB Fields)**: For the MVP, **strictly** only the Arabic (`ar`) key will be populated and queried in JSONB columns. This structure allows future expansion but **mandates** Arabic-only data handling initially.
     *   **MVP Implementation (TEXT Fields)**: `wilayas.name_ar`, `wilayas.name_other`, `dairas.name_ar`, `dairas.name_other` are populated directly during seeding.
-    *   **Primary Language**: Arabic (`ar`) is the primary language. Its key **must** be present in JSONB fields for MVP. `name_ar` must be populated for location tables.
-    *   **Querying (MVP)**: Application logic queries `translations_column ->> 'ar'` for JSONB fields, and `name_ar` for location tables.
+    *   **Primary Language**: Arabic (`ar`) is the primary language. Its key **must** be present and populated in JSONB fields for MVP. `name_ar` must be populated for location tables.
+    *   **Querying (MVP)**: Application logic **must** query `translations_column ->> 'ar'` for JSONB fields, and `name_ar` for location tables. No other keys are accessed.
     *   **Querying (Future - JSONB Fields)**: When `en`/`fr` are added to JSONB fields, application logic will query the requested locale (e.g., `translations_column ->> 'en'`) and **must** implement fallback logic to Arabic (`translations_column ->> 'ar'`) if the requested locale's value is null or the key is missing.
     *   **Querying (Future - TEXT Fields)**: `name_other` column in `wilayas`/`dairas` will be used for French/English display.
     *   **Indexing**: Utilize GIN indexes on JSONB columns. Standard indexes on `name_ar`, `name_other`.
@@ -76,6 +76,8 @@
 *   **Scheduled Tasks (Cron)**: Supabase Cron jobs drive regular maintenance and checks (deadline reminders, subscription expiry, failed email retries, data purging).
 *   **Tiered Feature Access**: Logic checks (primarily backend/database level, potentially via RLS or DB functions/triggers) enforce feature limits based on user subscription tier (e.g., number of active events for organizers).
 *   **State Management**: Event and Submission lifecycles are managed via status fields (`event_status_enum`, `submission_status_enum`) updated through user actions or automated processes.
+*   **Internationalized Validation Schemas**: Zod schemas for forms are defined with a base structure and generated via a function that accepts the `next-intl` translation function (`t`). This allows validation error messages to be easily translated.
+    *   Example: `getLoginSchema(t)` returns the Zod schema with messages like `t('Validations.email')`.
 *   **Loading State Management**: Provide visual feedback during data fetching and asynchronous operations.
     *   **App Router (Server Components)**: Use Next.js convention `loading.js`/`tsx` files alongside pages for automatic Suspense boundaries.
     *   **Client Components/Forms**: Use React state (`useState`) or library features (e.g., SWR `isLoading`) to conditionally render loaders (spinners, skeletons).

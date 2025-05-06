@@ -1,0 +1,127 @@
+{
+  "LoginPage": {
+    "title": "Sign in to your account",
+    "noAccountPrompt": "Don't have an account?",
+    "registerLink": "Register here",
+    "illustrationAlt": "People connecting through technology"
+  },
+  "RegisterPage": {
+    "title": "Create your account",
+    "haveAccountPrompt": "Already have an account?",
+    "loginLink": "Sign in here",
+    "illustrationAlt": "Person creating an account profile"
+  },
+  "LoginForm": {
+    "emailLabel": "Email address",
+    "emailPlaceholder": "name@company.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "••••••••",
+    "forgotPasswordLink": "Forgot password?",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "submitButton": "Sign in",
+    "loading": "Signing in...",
+    "submitting": "Submitting...",
+    "loginFailed": "Login failed",
+    "loginSuccessToast": "Login successful! Redirecting...",
+    "unexpectedError": "An unexpected error occurred."
+  },
+  "RegisterForm": {
+    "emailLabel": "Email address",
+    "emailPlaceholder": "name@company.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "••••••••",
+    "confirmPasswordLabel": "Confirm Password",
+    "confirmPasswordPlaceholder": "••••••••",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "submitButton": "Create account",
+    "loading": "Creating account...",
+    "submitting": "Submitting...",
+    "registrationFailed": "Registration failed",
+    "registrationSuccessToast": "Registration successful! Please check your email to verify your account.",
+    "registrationSuccessMessage": "Success! Please check your email inbox (and spam folder) for a verification link to activate your account.",
+    "unexpectedError": "An unexpected error occurred.",
+    "userTypeLabel": "Account Type",
+    "userTypeResearcher": "Researcher",
+    "userTypeOrganizer": "Organizer"
+  },
+  "Validations": {
+    "email": "Invalid email address",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 6 characters",
+    "passwordsDontMatch": "Passwords don't match",
+    "userTypeRequired": "Please select your account type"
+  },
+  "AriaLabels": {
+    "loggingIn": "Logging in",
+    "submittingRegistration": "Submitting registration",
+    "toggleTheme": "Toggle light/dark theme"
+  },
+  "HomePage": {
+    "title": "Welcome to Eventy360",
+    "loading": "Loading...",
+    "dummyCardTitle": "Dummy Card",
+    "dummyCardContent": "This is some placeholder content for the card.",
+    "alertSuccessPrefix": "Success:",
+    "alertSuccessContent": "Alert using Accent/Success color.",
+    "alertInfoPrefix": "Info:",
+    "alertInfoContent": "Alert using Info color.",
+    "alertWarningPrefix": "Warning:",
+    "alertWarningContent": "Alert using Warning color.",
+    "alertErrorPrefix": "Error:",
+    "alertErrorContent": "Alert using Error color.",
+    "primaryButton": "Primary Button",
+    "secondaryButton": "Secondary Button",
+    "linkExample": "Example Link"
+  },
+  "Auth": {
+    "LoginPage": {
+      "title": "Sign in to your account",
+      "noAccountPrompt": "Don't have an account?",
+      "registerLink": "Register here",
+      "illustrationAlt": "People connecting through technology"
+    },
+    "RegisterPage": {
+      "title": "Create your account",
+      "haveAccountPrompt": "Already have an account?",
+      "loginLink": "Sign in here",
+      "illustrationAlt": "Person creating an account profile"
+    },
+    "LoginForm": {
+      "emailLabel": "Email address",
+      "emailPlaceholder": "name@company.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "forgotPasswordLink": "Forgot password?",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "submitButton": "Sign in",
+      "loading": "Signing in...",
+      "submitting": "Submitting...",
+      "loginFailed": "Login failed",
+      "loginSuccessToast": "Login successful! Redirecting...",
+      "unexpectedError": "An unexpected error occurred."
+    },
+    "RegisterForm": {
+      "emailLabel": "Email address",
+      "emailPlaceholder": "name@company.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "confirmPasswordLabel": "Confirm Password",
+      "confirmPasswordPlaceholder": "••••••••",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "submitButton": "Create account",
+      "loading": "Creating account...",
+      "submitting": "Submitting...",
+      "registrationFailed": "Registration failed",
+      "registrationSuccessToast": "Registration successful! Please check your email to verify your account.",
+      "registrationSuccessMessage": "Success! Please check your email inbox (and spam folder) for a verification link to activate your account.",
+      "unexpectedError": "An unexpected error occurred.",
+      "userTypeLabel": "Account Type",
+      "userTypeResearcher": "Researcher",
+      "userTypeOrganizer": "Organizer"
+    }
+  }
+} 

@@ -1,0 +1,127 @@
+{
+  "LoginPage": {
+    "title": "Connectez-vous à votre compte",
+    "noAccountPrompt": "Vous n'avez pas de compte ?",
+    "registerLink": "Inscrivez-vous ici",
+    "illustrationAlt": "Personnes se connectant via la technologie"
+  },
+  "RegisterPage": {
+    "title": "Créez votre compte",
+    "haveAccountPrompt": "Vous avez déjà un compte ?",
+    "loginLink": "Connectez-vous ici",
+    "illustrationAlt": "Personne créant un profil de compte"
+  },
+  "LoginForm": {
+    "emailLabel": "Adresse e-mail",
+    "emailPlaceholder": "nom@entreprise.com",
+    "passwordLabel": "Mot de passe",
+    "passwordPlaceholder": "••••••••",
+    "forgotPasswordLink": "Mot de passe oublié ?",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe",
+    "submitButton": "Se connecter",
+    "loading": "Connexion en cours...",
+    "submitting": "Envoi en cours...",
+    "loginFailed": "Échec de la connexion",
+    "loginSuccessToast": "Connexion réussie ! Redirection...",
+    "unexpectedError": "Une erreur inattendue s'est produite."
+  },
+  "RegisterForm": {
+    "emailLabel": "Adresse e-mail",
+    "emailPlaceholder": "nom@entreprise.com",
+    "passwordLabel": "Mot de passe",
+    "passwordPlaceholder": "••••••••",
+    "confirmPasswordLabel": "Confirmer le mot de passe",
+    "confirmPasswordPlaceholder": "••••••••",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe",
+    "submitButton": "Créer le compte",
+    "loading": "Création du compte...",
+    "submitting": "Envoi en cours...",
+    "registrationFailed": "L'inscription a échoué",
+    "registrationSuccessToast": "Inscription réussie ! Veuillez vérifier votre e-mail pour vérifier votre compte.",
+    "registrationSuccessMessage": "Succès ! Veuillez consulter votre boîte de réception (et le dossier spam) pour un lien de vérification afin d'activer votre compte.",
+    "unexpectedError": "Une erreur inattendue s'est produite.",
+    "userTypeLabel": "Type de compte",
+    "userTypeResearcher": "Chercheur",
+    "userTypeOrganizer": "Organisateur"
+  },
+  "Validations": {
+    "email": "Adresse e-mail invalide",
+    "passwordRequired": "Le mot de passe est requis",
+    "passwordMinLength": "Le mot de passe doit contenir au moins 6 caractères",
+    "passwordsDontMatch": "Les mots de passe ne correspondent pas",
+    "userTypeRequired": "Veuillez sélectionner votre type de compte"
+  },
+  "AriaLabels": {
+    "loggingIn": "Connexion en cours",
+    "submittingRegistration": "Envoi de l'inscription",
+    "toggleTheme": "Basculer le thème clair/sombre"
+  },
+  "HomePage": {
+    "title": "Bienvenue à Eventy360",
+    "loading": "Chargement...",
+    "dummyCardTitle": "Carte Fictive",
+    "dummyCardContent": "Ceci est un contenu de remplacement pour la carte.",
+    "alertSuccessPrefix": "Succès :",
+    "alertSuccessContent": "Alerte utilisant la couleur Accent/Succès.",
+    "alertInfoPrefix": "Info :",
+    "alertInfoContent": "Alerte utilisant la couleur Info.",
+    "alertWarningPrefix": "Attention :",
+    "alertWarningContent": "Alerte utilisant la couleur Attention.",
+    "alertErrorPrefix": "Erreur :",
+    "alertErrorContent": "Alerte utilisant la couleur Erreur.",
+    "primaryButton": "Bouton Primaire",
+    "secondaryButton": "Bouton Secondaire",
+    "linkExample": "Exemple de Lien"
+  },
+  "Auth": {
+    "LoginPage": {
+      "title": "Connectez-vous à votre compte",
+      "noAccountPrompt": "Vous n'avez pas de compte ?",
+      "registerLink": "Inscrivez-vous ici",
+      "illustrationAlt": "Personnes se connectant via la technologie"
+    },
+    "RegisterPage": {
+      "title": "Créez votre compte",
+      "haveAccountPrompt": "Vous avez déjà un compte ?",
+      "loginLink": "Connectez-vous ici",
+      "illustrationAlt": "Personne créant un profil de compte"
+    },
+    "LoginForm": {
+      "emailLabel": "Adresse e-mail",
+      "emailPlaceholder": "nom@entreprise.com",
+      "passwordLabel": "Mot de passe",
+      "passwordPlaceholder": "••••••••",
+      "forgotPasswordLink": "Mot de passe oublié ?",
+      "showPassword": "Afficher le mot de passe",
+      "hidePassword": "Masquer le mot de passe",
+      "submitButton": "Se connecter",
+      "loading": "Connexion en cours...",
+      "submitting": "Envoi en cours...",
+      "loginFailed": "Échec de la connexion",
+      "loginSuccessToast": "Connexion réussie ! Redirection...",
+      "unexpectedError": "Une erreur inattendue s'est produite."
+    },
+    "RegisterForm": {
+      "emailLabel": "Adresse e-mail",
+      "emailPlaceholder": "nom@entreprise.com",
+      "passwordLabel": "Mot de passe",
+      "passwordPlaceholder": "••••••••",
+      "confirmPasswordLabel": "Confirmer le mot de passe",
+      "confirmPasswordPlaceholder": "••••••••",
+      "showPassword": "Afficher le mot de passe",
+      "hidePassword": "Masquer le mot de passe",
+      "submitButton": "Créer le compte",
+      "loading": "Création du compte...",
+      "submitting": "Envoi en cours...",
+      "registrationFailed": "L'inscription a échoué",
+      "registrationSuccessToast": "Inscription réussie ! Veuillez vérifier votre e-mail pour vérifier votre compte.",
+      "registrationSuccessMessage": "Succès ! Veuillez consulter votre boîte de réception (et le dossier spam) pour un lien de vérification afin d'activer votre compte.",
+      "unexpectedError": "Une erreur inattendue s'est produite.",
+      "userTypeLabel": "Type de compte",
+      "userTypeResearcher": "Chercheur",
+      "userTypeOrganizer": "Organisateur"
+    }
+  }
+} 

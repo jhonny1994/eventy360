@@ -7,7 +7,7 @@
 *   **Styling**: Tailwind CSS v4 (Configured via `postcss.config.mjs` and `@theme` directive in `globals.css`)
 *   **UI Components**: Flowbite (using Tailwind plugin and potentially React components)
 *   **Theme Switching**: `next-themes` (managing light/dark mode via `class` strategy)
-*   **Internationalization (i18n)**: `next-intl` (Configured for Arabic `ar` locale **only in MVP**, supporting RTL via `dir="rtl"` attribute on `<html>` or relevant container). English/French locales to be added later.
+*   **Internationalization (i18n)**: `next-intl` (Configured **strictly** for Arabic `ar` locale only in MVP, supporting RTL via `dir="rtl"` attribute on `<html>` or relevant container). English/French locales are **not** part of the MVP scope.
 *   **Forms**: React Hook Form
 *   **Validation**: Zod (Used with React Hook Form for client-side and potentially Edge Function input validation).
 *   **Backend Platform**: Supabase (Cloud hosted)
@@ -44,7 +44,7 @@
 
 ## 4. Key Technical Constraints & Considerations
 
-*   **Arabic Language & RTL**: Requires careful implementation in UI components, CSS, and `next-intl` configuration.
+*   **Arabic Language & RTL (Core Requirement)**: Requires meticulous implementation in UI components, CSS, data handling, and `next-intl` configuration. All user-facing elements **must** be in Arabic and correctly laid out for RTL during the MVP phase.
 *   **Manual MVP Processes**: Backend logic must correctly handle state changes initiated by admin actions reflecting offline verification/payment.
 *   **RLS Complexity**: Requires thorough design and testing of policies for all user roles and data interactions.
 *   **Edge Function Environment**: Deno runtime, specific available APIs, cold starts, execution limits (time/memory).
@@ -67,7 +67,7 @@
 
 *   **Translatable Content (Dynamic)**: Fields like event names/descriptions, topic names, profile bios use `JSONB` columns (e.g., `event_name_translations JSONB`).
     *   JSONB structure designed for `{"ar": "...", "en": "...", "fr": "..."}`.
-    *   **MVP Implementation**: Only the `ar` key is populated and queried (e.g., `{"ar": "نص عربي"}`).
+    *   **MVP Implementation**: **Strictly** only the `ar` key is populated and queried (e.g., `{"ar": "نص عربي"}`). **Accessing or populating other keys is forbidden in MVP code.**
     *   Application layer queries `translations_column ->> 'ar'` for MVP.
     *   **Fallback Mechanism (Future Requirement for JSONB fields)**: When `en`/`fr` support is added, queries must implement fallback to `ar` if the requested locale is missing.
         ```sql
@@ -78,6 +78,6 @@
 *   **Location Data (`wilayas`, `dairas`)**: Static data seeded from `wilayas.json`.
     *   Uses standard `TEXT` columns: `name_ar` and `name_other`.
     *   Seeding script populates these columns directly from `arabic_name` and `name` fields in the JSON.
-    *   MVP Application queries `name_ar` for display.
+    *   MVP Application queries **only** `name_ar` for display.
     *   Future i18n will use the `name_other` field for French/English display.
 *   **File Uploads**: Validate file type (PDF, DOC, DOCX) and size (max 5MB) on both client and server (Edge Function). Store files in Supabase Storage under structured paths (e.g., `submissions/{event_id}/{submission_id}/abstract.pdf`). Store URL and potentially metadata (`filesize`, `mimetype`, `uploaded_at`) in the database (`submissions` table fields). 

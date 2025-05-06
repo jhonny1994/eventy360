@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import { Inter, Tajawal } from "next/font/google"; // Uncommented font imports
-import "../globals.css"; // Ensure this line is uncommented
+import { Inter, Noto_Kufi_Arabic } from "next/font/google"; // Uncommented font imports
 import { NextIntlClientProvider } from 'next-intl';
-import { ThemeProvider } from "@/components/providers/theme-provider"; // Import ThemeProvider
-import { routing } from '@/i18n/routing'; // Assuming path alias or correct relative path
+import { getMessages } from 'next-intl/server';
+import "../globals.css"; // Ensure this line is uncommented
 import { notFound } from 'next/navigation';
+import { routing } from '@/i18n/routing'; // Assuming path alias or correct relative path
+import { AuthProvider } from '@/components/providers/AuthProvider';
+import { ThemeProvider } from '@/components/providers/theme-provider';
+import { ToastProvider } from '@/components/providers/ToastProvider';
 
 // Font configuration uncommented
 // Configure Inter for Latin script
@@ -13,62 +16,68 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-// Configure Tajawal for Arabic script
-const tajawal = Tajawal({
-  variable: "--font-tajawal",
+// Configure Noto Kufi Arabic for Arabic script
+const notoKufiArabic = Noto_Kufi_Arabic({
+  variable: "--font-noto-kufi-arabic",
   subsets: ["arabic"],
-  weight: ['400', '500', '700'], 
+  weight: ['400', '700'], 
 });
+
+const locales = routing.locales;
 
 export const metadata: Metadata = {
   title: "Eventy360", // Update title
-  description: "Your Central Hub for Algerian Academic Events", // Update description
+  description: "Algerian Academic Event Platform", // Update description0
 };
 
-// Define the props type including locale
-type RootLayoutProps = {
+interface RootLayoutProps {
   children: React.ReactNode;
-  // params might be a promise
-  params: { locale: string } | Promise<{ locale: string }>; 
+  params: { locale: string };
 }
 
-export default async function RootLayout({ children, params }: RootLayoutProps) { // Make component async
-  // Await params before destructuring
-  const awaitedParams = await params;
-  const locale = awaitedParams.locale;
+// Make layout async again
+export default async function RootLayout({ children, params }: RootLayoutProps) {
+
+  // Explicitly await the params object (as suggested by some sources for v15)
+  const resolvedParams = await params;
+  const locale = resolvedParams.locale;
 
   // Validate locale
-  if (!routing.locales.includes(locale as 'ar')) { // Use literal type 'ar'
+  if (!locales.includes(locale as typeof locales[number])) {
     notFound();
   }
 
-  // Fetch messages
+  // Fetch messages for the locale
   let messages;
   try {
-    messages = (await import(`../../../messages/${locale}.json`)).default;
+    messages = await getMessages();
   } catch (error) {
-    console.error("Failed to load locale messages:", error); // Log the error
-    notFound();
+    console.error("Failed to load messages for locale:", locale, error);
+    notFound(); // Fail if messages can't be loaded
   }
 
   return (
-    // Add suppressHydrationWarning back
     <html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} suppressHydrationWarning>
       <body
-        // Re-add font variables to className
-        className={`${inter.variable} ${tajawal.variable} antialiased`}
+        className={`${inter.variable} ${notoKufiArabic.variable} font-sans bg-background text-foreground antialiased`}
       >
-        {/* Wrap with ThemeProvider */}
+        {/* Render providers directly, Intl first */}
+        <NextIntlClientProvider locale={locale} messages={messages}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <NextIntlClientProvider locale={locale} messages={messages}>
-            {children}
+            <AuthProvider>
+              <ToastProvider>
+                 <div className="relative flex min-h-screen flex-col">
+                   <main className="flex-1">{children}</main>
+                 </div>
+              </ToastProvider>
+            </AuthProvider>
+          </ThemeProvider>
           </NextIntlClientProvider>
-        </ThemeProvider>
       </body>
     </html>
   );

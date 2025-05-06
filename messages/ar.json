@@ -1,8 +1,80 @@
 {
-  "Placeholder": {
-    "message": "أهلاً بالعالم!"
-  },
   "HomePage": {
-    "title": "مرحباً بالعالم"
+    "title": "مرحباً بك في Eventy360",
+    "loading": "جارٍ التحميل...",
+    "dummyCardTitle": "بطاقة وهمية",
+    "dummyCardContent": "هذا محتوى نائب للبطاقة.",
+    "alertSuccessPrefix": "نجاح:",
+    "alertSuccessContent": "تنبيه باستخدام لون التمييز/النجاح.",
+    "alertInfoPrefix": "معلومة:",
+    "alertInfoContent": "تنبيه باستخدام لون المعلومات.",
+    "alertWarningPrefix": "تحذير:",
+    "alertWarningContent": "تنبيه باستخدام لون التحذير.",
+    "alertErrorPrefix": "خطأ:",
+    "alertErrorContent": "تنبيه باستخدام لون الخطأ.",
+    "primaryButton": "زر أساسي",
+    "secondaryButton": "زر ثانوي",
+    "linkExample": "مثال على رابط"
+  },
+  "Auth": {
+    "LoginPage": {
+      "title": "تسجيل الدخول إلى حسابك",
+      "noAccountPrompt": "ليس لديك حساب؟",
+      "registerLink": "سجل هنا",
+      "illustrationAlt": "أشخاص يتصلون عبر التكنولوجيا"
+    },
+    "RegisterPage": {
+      "title": "أنشئ حسابك",
+      "haveAccountPrompt": "هل لديك حساب بالفعل؟",
+      "loginLink": "تسجيل الدخول هنا",
+      "illustrationAlt": "شخص ينشئ ملف تعريف حساب"
+    },
+    "LoginForm": {
+      "emailLabel": "عنوان البريد الإلكتروني",
+      "emailPlaceholder": "name@company.com",
+      "passwordLabel": "كلمة المرور",
+      "passwordPlaceholder": "••••••••",
+      "forgotPasswordLink": "هل نسيت كلمة المرور؟",
+      "showPassword": "إظهار كلمة المرور",
+      "hidePassword": "إخفاء كلمة المرور",
+      "submitButton": "تسجيل الدخول",
+      "loading": "تسجيل الدخول...",
+      "submitting": "جارٍ الإرسال...",
+      "loginFailed": "فشل تسجيل الدخول",
+      "loginSuccessToast": "تم تسجيل الدخول بنجاح! جارٍ إعادة التوجيه...",
+      "unexpectedError": "حدث خطأ غير متوقع."
+    },
+    "RegisterForm": {
+      "emailLabel": "عنوان البريد الإلكتروني",
+      "emailPlaceholder": "name@company.com",
+      "passwordLabel": "كلمة المرور",
+      "passwordPlaceholder": "••••••••",
+      "confirmPasswordLabel": "تأكيد كلمة المرور",
+      "confirmPasswordPlaceholder": "••••••••",
+      "showPassword": "إظهار كلمة المرور",
+      "hidePassword": "إخفاء كلمة المرور",
+      "submitButton": "إنشاء حساب",
+      "loading": "جارٍ إنشاء الحساب...",
+      "submitting": "جارٍ الإرسال...",
+      "registrationFailed": "فشل التسجيل",
+      "registrationSuccessToast": "تم التسجيل بنجاح! يرجى التحقق من بريدك الإلكتروني لتفعيل حسابك.",
+      "registrationSuccessMessage": "نجاح! يرجى مراجعة صندوق الوارد الخاص بك (والمجلد العشوائي) للحصول على رابط التحقق لتنشيط حسابك.",
+      "unexpectedError": "حدث خطأ غير متوقع.",
+      "userTypeLabel": "نوع الحساب",
+      "userTypeResearcher": "باحث",
+      "userTypeOrganizer": "منظم"
+    }
+  },
+  "Validations": {
+    "email": "عنوان بريد إلكتروني غير صالح",
+    "passwordRequired": "كلمة المرور مطلوبة",
+    "passwordMinLength": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
+    "passwordsDontMatch": "كلمات المرور غير متطابقة",
+    "userTypeRequired": "يرجى تحديد نوع حسابك"
+  },
+  "AriaLabels": {
+    "loggingIn": "جارٍ تسجيل الدخول",
+    "submittingRegistration": "جارٍ إرسال التسجيل",
+    "toggleTheme": "تبديل المظهر الفاتح/الداكن"
   }
 }

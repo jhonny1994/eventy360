@@ -17,23 +17,28 @@
 *   **Location Data Seeded**: `wilayas` and `dairas` populated from `wilayas.json` (via user-executed script).
 *   **Core DB Automation Implemented**: `handle_new_user` and `handle_payment_verification` functions/triggers created.
 *   **Initial RLS Policies Applied**: Security enabled for core tables with basic access rules.
+*   **Core Authentication Implemented**:
+    *   Setup Supabase Browser Client & Auth Provider (`AuthProvider`, `useAuth` hook).
+    *   Implemented Login page (`/login`) with form (`LoginForm`), validation (i18n Zod), loading/error states (Toast, Alert, inline), and redirects.
+    *   Implemented Registration page (`/register`) with form (`RegisterForm`), validation (i18n Zod), user type selection (Researcher/Organizer), loading/error states, and success feedback (Toast, Alert).
+    *   Implemented Route Protection Middleware (`middleware.ts`) handling unauthenticated/authenticated redirects.
+    *   Resolved i18n issues (message file structure, component usage, Zod schema integration).
 
 ## What's Left to Build (MVP Focus - High-Level)
 
 1.  **Database Implementation (Completed)**
     *   *(Future Task)*: Define RLS policies for secondary tables.
     *   *(Future Task)*: Implement application-layer query logic for i18n fields (`->> 'ar'`).
-2.  **Authentication & Basic Profiles**:
-    *   Setup Supabase Browser Client & Auth Provider
-    *   Create Login Page & Form Component
-    *   Create Registration Page & Form Component
-    *   Implement Route Protection Middleware
+2.  **Authentication & Basic Profiles (In Progress)**:
+    *   ~~Setup Supabase Browser Client & Auth Provider~~ (Completed)
+    *   ~~Create Login Page & Form Component~~ (Completed)
+    *   ~~Create Registration Page & Form Component~~ (Completed)
+    *   ~~Implement Route Protection Middleware~~ (Completed)
     *   Create Profile Data Fetching Hook
     *   Create Profile View Component & Page
     *   Create Profile Edit Form (Common Fields & Location)
     *   Add Role-Specific Fields to Edit Form
-    *   *(Implied)* Implement loading/error states throughout auth & profile components.
-    *   *(Implied)* Ensure Arabic/RTL compliance.
+    *   *(Implied)* Ensure **strict** Arabic/RTL compliance in all UI and data handling.
 3.  **Manual Verification & Payment/Subscription Workflow (Core Logic)**:
     *   Implement Admin Panel UI controls to update user `is_verified` status.
     *   Implement Admin Panel UI to record payment details (`payments` table) and mark status as `verified`.
@@ -52,12 +57,12 @@
     *   Implement Researcher view for their submission status, with loading/error states.
 6.  **Notification System (Core)**:
     *   Setup `email_templates`, `email_log`, `notification_queue` tables.
-    *   Populate `email_templates` with Arabic content in the `ar` key of the JSONB columns.
+    *   Populate `email_templates` with **strictly** Arabic content in the `ar` key of the JSONB columns.
     *   Implement DB triggers to populate `notification_queue` for key events.
-    *   Implement `send-email` internal Edge Function logic using Resend (fetching `ar` text from templates), including error handling and logging to `email_log`.
+    *   Implement `send-email` internal Edge Function logic using Resend (fetching **only** `ar` text from templates), including error handling and logging to `email_log`.
     *   Implement `process-notification-queue` scheduled Edge Function, including error handling.
 7.  **Admin Panel (MVP Features)**:
-    *   Implement basic CRUD/Management interfaces as defined in `projectbrief.md`. Input/Display Arabic content only where applicable (e.g., Topic names, Email templates).
+    *   Implement basic CRUD/Management interfaces as defined in `projectbrief.md`. Input/Display **strictly** Arabic content only where applicable (e.g., Topic names, Email templates `ar` key).
     *   Ensure all Admin actions have appropriate loading indicators and error feedback.
 8.  **Deployment & CI/CD**: Setup Vercel deployment, Supabase environment variables, basic GitHub Actions workflow.
 
@@ -71,4 +76,4 @@
 *   Core Project Setup Completed
 *   **Full MVP DB Schema & Automation Defined & Applied** (Migrations: `init_core_schema`, `implement_handle_new_user_trigger`, `implement_handle_payment_verification_trigger`, `define_initial_rls_policies`, `define_secondary_schema`) - [Current Date]
 *   **Location Data Seeded** (Manually by user) - [Current Date]
-*   **Styling & Theme Implementation**: Upgraded to Tailwind v4, integrated Flowbite, implemented custom theme with dynamic light/dark mode using `next-themes`.
+*   **Styling & Theme Implementation**: Upgraded to Tailwind v4, integrated Flowbite, implemented custom theme with dynamic light/dark mode using `next-themes`. 
