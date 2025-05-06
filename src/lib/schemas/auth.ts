@@ -15,9 +15,22 @@ const BaseRegisterSchema = z.object({
   userType: z.enum(['researcher', 'organizer']) // Add userType enum
 }); // Removed refine here, apply after extend
 
+// --- Base Forgot Password Schema ---
+const BaseForgotPasswordSchema = z.object({
+  email: z.string().email(), // Message added dynamically
+});
+
+// --- Base Reset Password Schema ---
+const BaseResetPasswordSchema = z.object({
+  password: z.string().min(8), // Message added dynamically
+  confirmPassword: z.string(),
+});
+
 // --- Exported Types ---
 export type LoginFormData = z.infer<typeof BaseLoginSchema>;
 export type RegisterFormData = z.infer<typeof BaseRegisterSchema>;
+export type ForgotPasswordFormData = z.infer<typeof BaseForgotPasswordSchema>;
+export type ResetPasswordFormData = z.infer<typeof BaseResetPasswordSchema>;
 
 // --- Schema Generator Functions ---
 
@@ -59,4 +72,32 @@ export const getRegisterSchema = (t: TFunction) => {
       message: t('passwordsDontMatch'),
       path: ["confirmPassword"], // Attach error to confirmPassword field
     });
+};
+
+/**
+ * Generates the Forgot Password schema with translated error messages.
+ * @param t - The translation function from `useTranslations` (scoped to 'Validations').
+ * @returns The Zod schema for forgot password.
+ */
+export const getForgotPasswordSchema = (t: TFunction) => {
+  return BaseForgotPasswordSchema.extend({
+    email: z.string().email({ message: t('email') }),
+  });
+};
+
+/**
+ * Generates the Reset Password schema with translated error messages.
+ * @param t - The translation function from `useTranslations` (scoped to 'Validations').
+ * @returns The Zod schema for reset password.
+ */
+export const getResetPasswordSchema = (t: TFunction) => {
+  const schema = BaseResetPasswordSchema.extend({
+    password: z.string().min(8, { message: t('passwordMinLength') }),
+    confirmPassword: z.string(),
+  });
+
+  return schema.refine((data: ResetPasswordFormData) => data.password === data.confirmPassword, {
+    message: t('passwordsDoNotMatch'),
+    path: ['confirmPassword'],
+  });
 };

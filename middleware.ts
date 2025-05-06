@@ -7,6 +7,8 @@ import { routing } from '@/i18n/routing';
 const publicPaths = [
   '/login',
   '/register',
+  '/forgot-password',
+  '/reset-password',
   '/auth/callback', // Supabase redirects here
   '/auth/confirm',  // Supabase redirects here
   '/error'           // Next.js error page

@@ -7,7 +7,7 @@ import { getLoginSchema, type LoginFormData } from '@/lib/schemas/auth';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useRouter, Link } from '@/i18n/navigation'; // Add Link import
 import { Button, Label, TextInput, Alert, Spinner } from 'flowbite-react';
-import { HiInformationCircle, HiEye, HiEyeOff } from 'react-icons/hi'; // Import eye icons
+import { HiInformationCircle, HiEye, HiEyeOff, HiOutlineMail, HiOutlineLockClosed } from 'react-icons/hi'; // Added HiOutlineMail and HiOutlineLockClosed
 import { toast } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
 
@@ -73,7 +73,7 @@ export default function LoginForm() {
   };
 
   return (
-    <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)} noValidate>
+    <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)} noValidate>
       {formError && (
         <Alert color="failure" icon={HiInformationCircle} className="mb-4">
           <span className="font-medium">{t('loginFailed')}!</span> {formError}
@@ -84,16 +84,17 @@ export default function LoginForm() {
         <TextInput
           id="email"
           type="email"
+          icon={HiOutlineMail}
           placeholder={t('emailPlaceholder')}
           {...register('email')}
           color={errors.email ? 'failure' : 'gray'}
           required
           aria-invalid={!!errors.email}
           className="mt-1"
-          disabled={isLoading} // Added disabled state
+          disabled={isLoading}
         />
         {errors.email?.message && (
-          <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+          <p className="mt-0.5 text-sm text-red-600">{errors.email.message}</p>
         )}
       </div>
       <div>
@@ -112,26 +113,27 @@ export default function LoginForm() {
               color={errors.password ? 'failure' : 'gray'}
               required
               aria-invalid={!!errors.password}
-              disabled={isLoading} // Added disabled state
+              className=""
+              disabled={isLoading}
             />
             <button 
                 type="button" 
                 onClick={togglePasswordVisibility} 
                 className="absolute inset-y-0 end-0 flex items-center pe-3.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                 aria-label={showPassword ? t('hidePassword') : t('showPassword')}
-                disabled={isLoading} // Added disabled state
+                disabled={isLoading}
             >
                 {showPassword ? <HiEyeOff className="h-5 w-5"/> : <HiEye className="h-5 w-5"/>}
             </button>
         </div>
         {errors.password?.message && (
-          <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+          <p className="mt-0.5 text-sm text-red-600">{errors.password.message}</p>
         )}
       </div>
       {/* Submit Button */}
-      <Button type="submit" disabled={isLoading} className="mt-4 w-full">
+      <Button type="submit" disabled={isLoading} className="mt-2 w-full">
         {isLoading && (
-          <Spinner aria-label={tAria('loggingIn')} size="sm" className="me-2" /> // Use specific t
+          <Spinner aria-label={tAria('loggingIn')} size="sm" className="me-2" />
         )}
         {isLoading ? t('loading') : t('submitButton')}
       </Button>

@@ -3,7 +3,7 @@
 ## Current Status
 
 *   **Phase**: Authentication & Basic Profiles
-*   **Overall Progress**: Database schema and core automation fully implemented according to MVP specs. Ready to build user-facing authentication and profile features.
+*   **Overall Progress**: Core authentication features (Login, Register, Forgot Password, Reset Password) are implemented with correct internationalization. Ready to proceed with profile management features.
 
 ## What Works (Functionality Implemented)
 
@@ -11,7 +11,7 @@
 *   Next.js (App Router) project initialized.
 *   Essential dependencies installed.
 *   Supabase project setup and environment variables configured.
-*   `next-intl` configured for Arabic (`ar`) locale and RTL.
+*   `next-intl` configured for Arabic (`ar`) locale and RTL. All known i18n issues resolved.
 *   Git repository established.
 *   **Full MVP Database Schema Applied**: All required tables (`wilayas`, `dairas`, `profiles`, `subscriptions`, `payments`, `events`, `submissions`, `topics`, `bookmarks`, profile extensions, email tables) and ENUMs created via migrations.
 *   **Location Data Seeded**: `wilayas` and `dairas` populated from `wilayas.json` (via user-executed script).
@@ -22,7 +22,9 @@
     *   Implemented Login page (`/login`) with form (`LoginForm`), validation (i18n Zod), loading/error states (Toast, Alert, inline), and redirects.
     *   Implemented Registration page (`/register`) with form (`RegisterForm`), validation (i18n Zod), user type selection (Researcher/Organizer), loading/error states, and success feedback (Toast, Alert).
     *   Implemented Route Protection Middleware (`middleware.ts`) handling unauthenticated/authenticated redirects.
-    *   Resolved i18n issues (message file structure, component usage, Zod schema integration).
+    *   **Implemented Forgot Password page (`/forgot-password`) with form, validation, and i18n.**
+    *   **Implemented Reset Password page (`/reset-password`) with form, validation, and i18n.**
+    *   **Resolved all i18n issues** related to message loading, namespaces, and file paths.
 
 ## What's Left to Build (MVP Focus - High-Level)
 
@@ -34,6 +36,9 @@
     *   ~~Create Login Page & Form Component~~ (Completed)
     *   ~~Create Registration Page & Form Component~~ (Completed)
     *   ~~Implement Route Protection Middleware~~ (Completed)
+    *   ~~Implement Forgot Password Flow (Pages, Forms, i18n)~~ (Completed)
+    *   ~~Implement Reset Password Flow (Pages, Forms, i18n)~~ (Completed)
+    *   ~~Resolve all i18n loading/display issues~~ (Completed)
     *   Create Profile Data Fetching Hook
     *   Create Profile View Component & Page
     *   Create Profile Edit Form (Common Fields & Location)
@@ -76,4 +81,5 @@
 *   Core Project Setup Completed
 *   **Full MVP DB Schema & Automation Defined & Applied** (Migrations: `init_core_schema`, `implement_handle_new_user_trigger`, `implement_handle_payment_verification_trigger`, `define_initial_rls_policies`, `define_secondary_schema`) - [Current Date]
 *   **Location Data Seeded** (Manually by user) - [Current Date]
-*   **Styling & Theme Implementation**: Upgraded to Tailwind v4, integrated Flowbite, implemented custom theme with dynamic light/dark mode using `next-themes`. 
+*   **Styling & Theme Implementation**: Upgraded to Tailwind v4, integrated Flowbite, implemented custom theme with dynamic light/dark mode using `next-themes`.
+*   **Core Authentication Flows (Login, Register, Forgot/Reset Password) with i18n Fully Implemented.** 

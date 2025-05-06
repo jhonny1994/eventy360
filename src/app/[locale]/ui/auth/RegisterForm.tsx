@@ -5,8 +5,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { getRegisterSchema, type RegisterFormData } from '@/lib/schemas/auth';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { Button, Label, TextInput, Alert, Spinner, Radio } from 'flowbite-react';
-import { HiInformationCircle, HiEye, HiEyeOff } from 'react-icons/hi';
+import { Button, Label, TextInput, Alert, Spinner } from 'flowbite-react';
+import { HiInformationCircle, HiEye, HiEyeOff, HiOutlineAcademicCap, HiOutlineClipboardList, HiOutlineMail, HiOutlineLockClosed } from 'react-icons/hi';
 import { toast } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
 
@@ -29,6 +29,8 @@ export default function RegisterForm() {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
+    watch
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -75,8 +77,10 @@ export default function RegisterForm() {
     }
   };
 
+  const currentUserType = watch('userType');
+
   return (
-    <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)} noValidate>
+    <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)} noValidate>
       {formError && (
         <Alert color="failure" icon={HiInformationCircle} className="mb-4">
           <span className="font-medium">{t('registrationFailed')}!</span> {formError}
@@ -93,6 +97,7 @@ export default function RegisterForm() {
         <TextInput
           id="email"
           type="email"
+          icon={HiOutlineMail}
           placeholder={t('emailPlaceholder')}
           {...register('email')}
           color={errors.email ? 'failure' : 'gray'}
@@ -102,7 +107,7 @@ export default function RegisterForm() {
           disabled={isLoading}
         />
         {errors.email?.message && (
-          <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+          <p className="mt-0.5 text-sm text-red-600">{errors.email.message}</p>
         )}
       </div>
 
@@ -131,7 +136,7 @@ export default function RegisterForm() {
           </button>
         </div>
         {errors.password?.message && (
-          <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+          <p className="mt-0.5 text-sm text-red-600">{errors.password.message}</p>
         )}
       </div>
 
@@ -147,6 +152,7 @@ export default function RegisterForm() {
             color={errors.confirmPassword ? 'failure' : 'gray'}
             required
             aria-invalid={!!errors.confirmPassword}
+            className=""
             disabled={isLoading}
           />
            <button
@@ -160,40 +166,87 @@ export default function RegisterForm() {
           </button>
         </div>
         {errors.confirmPassword?.message && (
-          <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>
+          <p className="mt-0.5 text-sm text-red-600">{errors.confirmPassword.message}</p>
         )}
       </div>
 
-      {/* User Type Selection */}
-      <fieldset className="flex max-w-md flex-col gap-4 border-none p-0 m-0">
-        <legend className="mb-4 font-semibold text-foreground">{t('userTypeLabel')}</legend>
-        <div className="flex items-center gap-2">
-          <Radio
-            id="userTypeResearcher"
-            value="researcher"
-            {...register('userType')}
-            color={errors.userType ? 'failure' : 'gray'}
-            disabled={isLoading}
-          />
-          <Label htmlFor="userTypeResearcher">{t('userTypeResearcher')}</Label>
-        </div>
-        <div className="flex items-center gap-2">
-          <Radio
-            id="userTypeOrganizer"
-            value="organizer"
-            {...register('userType')}
-            color={errors.userType ? 'failure' : 'gray'}
-            disabled={isLoading}
-          />
-          <Label htmlFor="userTypeOrganizer">{t('userTypeOrganizer')}</Label>
+      {/* User Type Selection - New Card Design */}
+      <div className="">
+        <label id="userTypeLabelId" className="mb-1.5 block text-sm font-medium text-foreground">
+          {t('userTypeLabel')}
+        </label>
+        <div
+          role="radiogroup"
+          aria-labelledby="userTypeLabelId"
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2"
+        >
+          {/* Researcher Card */}
+          <div
+            role="radio"
+            aria-checked={currentUserType === 'researcher'}
+            tabIndex={currentUserType === 'researcher' ? 0 : -1}
+            onClick={() => setValue('userType', 'researcher', { shouldValidate: true })}
+            onKeyDown={(e) => {
+              if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                setValue('userType', 'researcher', { shouldValidate: true });
+              }
+            }}
+            className={`group cursor-pointer rounded-lg border p-2 text-center transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-900 focus:ring-primary/60
+                        ${currentUserType === 'researcher'
+                          ? 'border-primary bg-primary/5 dark:bg-primary/10 ring-2 ring-primary shadow-lg'
+                          : 'border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-600 hover:shadow-md'
+                        }`}
+          >
+            <HiOutlineAcademicCap 
+              className={`mx-auto mb-1 h-6 w-6 transition-colors group-hover:text-primary/80 
+                          ${currentUserType === 'researcher' ? 'text-primary' : 'text-muted-foreground'}`}
+            />
+            <span 
+              className={`block text-sm font-semibold transition-colors group-hover:text-primary/90 
+                          ${currentUserType === 'researcher' ? 'text-primary' : 'text-foreground'}`}
+            >
+              {t('userTypeResearcher')}
+            </span>
+          </div>
+
+          {/* Organizer Card */}
+          <div
+            role="radio"
+            aria-checked={currentUserType === 'organizer'}
+            tabIndex={currentUserType === 'organizer' ? 0 : -1}
+            onClick={() => setValue('userType', 'organizer', { shouldValidate: true })}
+            onKeyDown={(e) => {
+              if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                setValue('userType', 'organizer', { shouldValidate: true });
+              }
+            }}
+            className={`group cursor-pointer rounded-lg border p-2 text-center transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-900 focus:ring-primary/60
+                        ${currentUserType === 'organizer'
+                          ? 'border-primary bg-primary/5 dark:bg-primary/10 ring-2 ring-primary shadow-lg'
+                          : 'border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-600 hover:shadow-md'
+                        }`}
+          >
+            <HiOutlineClipboardList 
+              className={`mx-auto mb-1 h-6 w-6 transition-colors group-hover:text-primary/80 
+                          ${currentUserType === 'organizer' ? 'text-primary' : 'text-muted-foreground'}`}
+            />
+            <span 
+              className={`block text-sm font-semibold transition-colors group-hover:text-primary/90 
+                          ${currentUserType === 'organizer' ? 'text-primary' : 'text-foreground'}`}
+            >
+              {t('userTypeOrganizer')}
+            </span>
+          </div>
         </div>
         {errors.userType?.message && (
           <p className="mt-1 text-sm text-red-600">{errors.userType.message}</p>
         )}
-      </fieldset>
+      </div>
 
       {/* Submit Button */}
-      <Button type="submit" disabled={isLoading} className="mt-4 w-full">
+      <Button type="submit" disabled={isLoading} className="mt-2 w-full">
         {isLoading && (
           <Spinner aria-label={tAria('submittingRegistration')} size="sm" className="me-2" />
         )}
