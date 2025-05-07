@@ -1,11 +1,10 @@
 import { Link } from '@/i18n/navigation';
-import { getTranslations, getMessages } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 import ForgotPasswordForm from './ui/ForgotPasswordForm';
 
 export default async function ForgotPasswordPage() {
   const t = await getTranslations();
-  const messages = await getMessages();
 
   return (
     <div className="flex min-h-screen items-stretch bg-background text-foreground">
@@ -28,7 +27,7 @@ export default async function ForgotPasswordPage() {
             {t('Auth.ForgotPasswordPage.title')}
           </h2>
 
-          <ForgotPasswordForm messages={messages} />
+          <ForgotPasswordForm />
 
           <p className="mt-8 text-center text-sm text-muted-foreground">
             {t('Auth.ForgotPasswordPage.rememberPasswordPrompt')}{' '}

@@ -13,7 +13,7 @@
   },
   "LoginForm": {
     "emailLabel": "Email address",
-    "emailPlaceholder": "name@company.com",
+    "emailPlaceholder": "Enter your email address",
     "passwordLabel": "Password",
     "passwordPlaceholder": "••••••••",
     "forgotPasswordLink": "Forgot password?",
@@ -24,11 +24,11 @@
     "submitting": "Submitting...",
     "loginFailed": "Login failed",
     "loginSuccessToast": "Login successful! Redirecting...",
-    "unexpectedError": "An unexpected error occurred."
+    "unexpectedError": "An unexpected error occurred"
   },
   "RegisterForm": {
     "emailLabel": "Email address",
-    "emailPlaceholder": "name@company.com",
+    "emailPlaceholder": "Enter your email address",
     "passwordLabel": "Password",
     "passwordPlaceholder": "••••••••",
     "confirmPasswordLabel": "Confirm Password",
@@ -41,7 +41,7 @@
     "registrationFailed": "Registration failed",
     "registrationSuccessToast": "Registration successful! Please check your email to verify your account.",
     "registrationSuccessMessage": "Success! Please check your email inbox (and spam folder) for a verification link to activate your account.",
-    "unexpectedError": "An unexpected error occurred.",
+    "unexpectedError": "An unexpected error occurred",
     "userTypeLabel": "Account Type",
     "userTypeResearcher": "Researcher",
     "userTypeOrganizer": "Organizer"
@@ -49,17 +49,26 @@
   "Validations": {
     "email": "Invalid email address",
     "passwordRequired": "Password is required",
-    "passwordMinLength": "Password must be at least 6 characters",
+    "passwordMinLength": "Password must be at least 8 characters",
     "passwordsDontMatch": "Passwords don't match",
-    "userTypeRequired": "Please select your account type"
+    "required": "This field is required",
+    "userTypeRequired": "Please select your account type",
+    "acceptTerms": "You must accept the terms and conditions",
+    "invalidUrl": "Please enter a valid URL",
+    "invalidEnumValue": "Please select a valid option from the list"
   },
   "AriaLabels": {
-    "loggingIn": "Logging in",
+    "loggingIn": "Signing in...",
+    "registering": "Creating account...",
     "submittingRegistration": "Submitting registration",
+    "submittingResetRequest": "Submitting password reset request...",
+    "resettingPassword": "Resetting password...",
+    "hidePassword": "Hide password",
+    "showPassword": "Show password",
     "toggleTheme": "Toggle light/dark theme"
   },
   "HomePage": {
-    "title": "Welcome to Eventy360",
+    "title": "Welcome to Eventy360 Platform",
     "loading": "Loading...",
     "dummyCardTitle": "Dummy Card",
     "dummyCardContent": "This is some placeholder content for the card.",
@@ -76,6 +85,8 @@
     "linkExample": "Example Link"
   },
   "Auth": {
+    "logoutSuccess": "Logged out successfully",
+    "logoutError": "An error occurred while logging out",
     "LoginPage": {
       "title": "Sign in to your account",
       "noAccountPrompt": "Don't have an account?",
@@ -90,7 +101,7 @@
     },
     "LoginForm": {
       "emailLabel": "Email address",
-      "emailPlaceholder": "name@company.com",
+      "emailPlaceholder": "Enter your email address",
       "passwordLabel": "Password",
       "passwordPlaceholder": "••••••••",
       "forgotPasswordLink": "Forgot password?",
@@ -101,11 +112,11 @@
       "submitting": "Submitting...",
       "loginFailed": "Login failed",
       "loginSuccessToast": "Login successful! Redirecting...",
-      "unexpectedError": "An unexpected error occurred."
+      "unexpectedError": "An unexpected error occurred"
     },
     "RegisterForm": {
       "emailLabel": "Email address",
-      "emailPlaceholder": "name@company.com",
+      "emailPlaceholder": "Enter your email address",
       "passwordLabel": "Password",
       "passwordPlaceholder": "••••••••",
       "confirmPasswordLabel": "Confirm Password",
@@ -118,10 +129,52 @@
       "registrationFailed": "Registration failed",
       "registrationSuccessToast": "Registration successful! Please check your email to verify your account.",
       "registrationSuccessMessage": "Success! Please check your email inbox (and spam folder) for a verification link to activate your account.",
-      "unexpectedError": "An unexpected error occurred.",
+      "unexpectedError": "An unexpected error occurred",
       "userTypeLabel": "Account Type",
       "userTypeResearcher": "Researcher",
       "userTypeOrganizer": "Organizer"
+    },
+    "CompleteProfileForm": {
+      "title": "Complete your profile",
+      "subtitleResearcher": "Please provide the following details as a researcher.",
+      "subtitleOrganizer": "Please provide the following details as an organizer.",
+      "stepIndicator": "Step {currentStep} of {totalSteps}: Profile completion",
+      "researcherNameLabel": "Full Name",
+      "institutionLabel": "Institution/University",
+      "academicPositionLabel": "Academic Position/Rank",
+      "bioLabel": "Brief Biography",
+      "profilePictureUrlLabel": "Profile Picture URL (optional)",
+      "wilayaLabel": "Wilaya",
+      "dairaLabel": "Daira",
+      "organizationNameLabel": "Organization Name",
+      "institutionTypeLabel": "Institution Type",
+      "selectPlaceholder": "Select",
+      "submitButton": "Save and Continue",
+      "loadingButton": "Saving...",
+      "loading": "Loading...",
+      "successToast": "Profile updated successfully",
+      "errorToast": "Failed to update profile",
+      "fetchProfileError": "Error loading your profile data",
+      "locationDataFetchError": "Failed to load location data. Please try again"
+    },
+    "ConfirmEmailPage": {
+      "logoutButton": "Logout"
     }
+  },
+  "Common": {
+    "redirecting": "Redirecting",
+    "redirectFailed": "Redirect failed",
+    "tryAgain": "Try again",
+    "backToLogin": "Back to login",
+    "redirectFailedDescription": "Please try again or return to the login page",
+    "debugInformation": "Debug information",
+    "emailConfirmedRedirecting": "Email confirmed! Redirecting you to the next step"
+  },
+  "ProfilePage": {
+    "title": "My Profile",
+    "welcome": "Welcome to your profile page",
+    "loading": "Loading...",
+    "profileInfo": "Profile Information",
+    "logoutButton": "Logout"
   }
 } 

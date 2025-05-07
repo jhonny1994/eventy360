@@ -53,8 +53,9 @@ export default function LoginForm() {
         toast.error(`${t('loginFailed')}: ${error.message}`, { id: toastId });
       } else {
         toast.success(t('loginSuccessToast'), { id: toastId });
-        router.push('/profile');
-        // router.refresh(); // Temporarily comment out router.refresh()
+        
+        // Use the redirect route for middleware handling
+        router.push('/redirect');
       }
     } catch (err) {
       console.error('Unexpected login error:', err);

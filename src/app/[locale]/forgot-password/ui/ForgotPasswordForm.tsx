@@ -3,38 +3,18 @@
 import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useTranslations } from 'next-intl';
 import { Button, Label, TextInput, Alert, Spinner } from 'flowbite-react';
 import { HiMail, HiInformationCircle } from 'react-icons/hi';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useRouter } from '@/i18n/navigation';
-import { useParams } from 'next/navigation';
 import { getForgotPasswordSchema, type ForgotPasswordFormData } from '@/lib/schemas/auth';
-import { createTranslator } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
-interface ForgotPasswordFormProps {
-  messages: any;
-}
-
-export default function ForgotPasswordForm({ messages }: ForgotPasswordFormProps) {
-  const params = useParams();
-  const locale = params.locale as string || 'ar';
-
-  const t = createTranslator({
-    locale,
-    messages: messages,
-    namespace: 'Auth.ForgotPasswordPage'
-  });
-  const tValidation = createTranslator({
-    locale,
-    messages: messages,
-    namespace: 'Validations'
-  });
-  const tAria = createTranslator({
-    locale,
-    messages: messages,
-    namespace: 'AriaLabels'
-  });
+export default function ForgotPasswordForm() {
+  const locale = useLocale();
+  const t = useTranslations('Auth.ForgotPasswordPage');
+  const tValidation = useTranslations('Validations');
+  const tAria = useTranslations('AriaLabels');
 
   const router = useRouter();
   const { supabase } = useAuth();
@@ -72,7 +52,7 @@ export default function ForgotPasswordForm({ messages }: ForgotPasswordFormProps
       } else {
         setFormSuccess(t('resetLinkSent'));
         setTimeout(() => {
-          router.push('/login');
+          router.push('/redirect');
         }, 3000);
       }
     });

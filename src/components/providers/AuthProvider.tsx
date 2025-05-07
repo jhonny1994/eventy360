@@ -3,12 +3,16 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { Session, SupabaseClient, User } from '@supabase/supabase-js';
+import { useRouter } from '@/i18n/navigation';
+import { toast } from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
 
 interface AuthContextProps {
   supabase: SupabaseClient;
   session: Session | null;
   user: User | null;
   loading: boolean;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -18,6 +22,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const t = useTranslations('Auth');
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
@@ -39,11 +45,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, [supabase]);
 
+  // Global logout function
+  const logout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        throw error;
+      }
+      toast.success(t('logoutSuccess'));
+      router.push('/login');
+    } catch (error) {
+      console.error('Error signing out:', error);
+      toast.error(t('logoutError'));
+    }
+  };
+
   const value = {
     supabase,
     session,
     user,
     loading,
+    logout,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

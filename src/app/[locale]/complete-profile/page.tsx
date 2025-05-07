@@ -1,16 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from '@/i18n/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import CompleteProfileForm from './ui/CompleteProfileForm';
 import { Spinner, Alert } from 'flowbite-react';
 import { UserProfile } from '@/lib/schemas/profile';
+import React from 'react';
 
 export default function CompleteProfilePage() {
   const t = useTranslations('Auth.CompleteProfilePage');
-  const locale = useLocale();
   const { supabase, user, session, loading: authLoading } = useAuth();
   const router = useRouter();
 
@@ -18,28 +18,18 @@ export default function CompleteProfilePage() {
   const [profileLoading, setProfileLoading] = useState(true);
   const [profileError, setProfileError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (authLoading) return; // Wait for auth to settle
+  // We'll use a ref instead of state to track profile fetch attempts
+  // This avoids the dependency cycle that causes the infinite loop
+  const profileFetchedRef = React.useRef(false);
 
-    if (!session || !user) {
-      router.replace(`/${locale}/login`);
-      return;
-    }
-    if (!user.email_confirmed_at) {
-      router.replace(`/${locale}/confirm-email`);
-      return;
-    }
-
-    async function fetchProfile() {
+  // Memoize fetch profile function to prevent recreating on every render
+  const fetchProfile = useCallback(async () => {
+    // Only fetch if we haven't already and user exists
+    if (profileFetchedRef.current || !user || !user.id) return;
+    
       setProfileLoading(true);
       setProfileError(null);
-
-      if (!user || !user.id) { // Added check for user.id for robustness
-        setProfileError(t('userNotAuthenticated'));
-        setProfileLoading(false);
-        // router.replace(`/${locale}/login`); // Already handled by outer checks, but defensive
-        return;
-      }
+    profileFetchedRef.current = true;
 
       try {
         const { data, error } = await supabase
@@ -51,68 +41,70 @@ export default function CompleteProfilePage() {
         if (error) throw error;
         if (data) {
           if (data.is_extended_profile_complete) {
-            router.replace(`/${locale}/profile`);
-          } else if (!data.user_type) { // Explicitly check if user_type is missing
+          router.replace('/profile');
+        } else if (!data.user_type) {
             console.error("Profile data is missing user_type:", data);
             setProfileError(t('missingUserType'));
-            setProfile(null); // Ensure profile is null so form doesn't render
+          setProfile(null);
           } else {
             setProfile(data as UserProfile);
           }
         } else {
-          // Specific error for profile not found
           console.warn(`Profile not found for user ID: ${user.id}`);
           setProfileError(t('profileNotFound'));
         }
-      } catch (err: any) {
+      } catch (err) {
         console.error("Error fetching profile:", err);
-        setProfileError(err.message || t('fetchProfileError'));
-      }
+        setProfileError(err instanceof Error ? err.message : t('fetchProfileError'));
+    } finally {
       setProfileLoading(false);
     }
+  }, [user, supabase, router, t]);
 
+  // Handle auth state changes and redirects
+  useEffect(() => {
+    if (authLoading) return;
+
+    // Handle unauthenticated users
+    if (!session || !user) {
+      router.replace('/redirect');
+      return;
+    }
+    
+    // Handle unconfirmed email
+    if (!user.email_confirmed_at) {
+      router.replace('/confirm-email');
+      return;
+    }
+    
+    // Fetch profile data once auth is settled
     fetchProfile();
-  }, [session, user, authLoading, supabase, router, locale, t]);
+  }, [session, user, authLoading, router, fetchProfile]);
 
-  if (authLoading || profileLoading) {
-    return (
+  // Extract common UI elements to reduce complexity
+  const LoadingSpinner = useMemo(() => (
       <div className="flex min-h-screen items-center justify-center">
         <Spinner size="xl" />
       </div>
-    );
-  }
+  ), []);
 
-  if (profileError) {
-    return (
+  const ErrorAlert = useMemo(() => (
       <div className="container mx-auto p-4">
-        <Alert color="failure" className="text-lg"> {/* Added text-lg for better readability */}
+      <Alert color="failure" className="text-lg">
           {profileError}
         </Alert>
       </div>
-    );
-  }
+  ), [profileError]);
   
-  if (!profile) { 
-    return (
-        <div className="container mx-auto p-4">
-            <Alert color="warning" className="text-lg"> {/* Added text-lg */}
-                {profileError || t('profileDataUnavailable')} {/* Show specific error if available */}
-            </Alert> 
-        </div>
-    );
-  }
-
-  if (!profile.user_type) {
-    return (
+  const MissingUserTypeAlert = useMemo(() => (
       <div className="container mx-auto p-4">
         <Alert color="failure" className="text-lg">
-          {t('missingUserTypeCritical')} {/* Add a new translation key for this specific scenario */}
+        {t('missingUserTypeCritical')}
         </Alert>
       </div>
-    );
-  }
+  ), [t]);
 
-  return (
+  const FormContainer = useMemo(() => profile && (
     <div className="min-h-screen bg-background text-foreground py-8 sm:py-12">
       <div className="container mx-auto max-w-2xl px-4">
         <div className="text-center mb-8">
@@ -123,5 +115,25 @@ export default function CompleteProfilePage() {
         <CompleteProfileForm userProfile={profile} />
       </div>
     </div>
-  );
+  ), [profile, t]);
+
+  // Determine what to render based on current state
+  if (authLoading || profileLoading) {
+    return LoadingSpinner;
+  }
+
+  if (profileError) {
+    return ErrorAlert;
+  }
+  
+  if (!profile) { 
+    // Return empty div instead of warning alert to keep page blank during redirect
+    return <div></div>;
+  }
+
+  if (!profile.user_type) {
+    return MissingUserTypeAlert;
+  }
+
+  return FormContainer;
 }

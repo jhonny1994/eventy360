@@ -57,7 +57,7 @@ export default function RegisterForm() {
           data: {
             user_type: data.userType
           },
-          emailRedirectTo: `${window.location.origin}/${locale}/callback`
+          emailRedirectTo: `${window.location.origin}/${locale}/redirect`
         }
       });
 

@@ -31,7 +31,7 @@ export default function ConfirmEmailPage() {
         setEmailConfirmed(false);
       }
     } else if (!authLoading && !session) {
-      router.replace(`/${locale}/login`);
+      router.replace(`/${locale}/redirect`);
     }
   }, [session, authLoading, router, locale]);
 

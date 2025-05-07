@@ -3,38 +3,17 @@
 import { useState, useEffect, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useTranslations } from 'next-intl';
 import { Button, Label, TextInput, Alert, Spinner } from 'flowbite-react';
 import { HiOutlineLockClosed, HiInformationCircle, HiEye, HiEyeOff } from 'react-icons/hi';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useRouter } from '@/i18n/navigation';
 import { getResetPasswordSchema, type ResetPasswordFormData } from '@/lib/schemas/auth';
-import { createTranslator } from 'next-intl';
-import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
-interface ResetPasswordFormProps {
-  messages: any;
-}
-
-export default function ResetPasswordForm({ messages }: ResetPasswordFormProps) {
-  const params = useParams();
-  const locale = params.locale as string || 'ar';
-
-  const t = createTranslator({
-    locale,
-    messages: messages,
-    namespace: 'Auth.ResetPasswordPage'
-  });
-  const tValidation = createTranslator({
-    locale,
-    messages: messages,
-    namespace: 'Validations'
-  });
-  const tAria = createTranslator({
-    locale,
-    messages: messages,
-    namespace: 'AriaLabels'
-  });
+export default function ResetPasswordForm() {
+  const t = useTranslations('Auth.ResetPasswordPage');
+  const tValidation = useTranslations('Validations');
+  const tAria = useTranslations('AriaLabels');
 
   const router = useRouter();
   const { supabase } = useAuth();
@@ -96,7 +75,7 @@ export default function ResetPasswordForm({ messages }: ResetPasswordFormProps) 
       } else {
         setFormSuccess(t('passwordResetSuccess'));
         setTimeout(() => {
-          router.push('/login');
+          router.push('/redirect');
         }, 3000);
       }
     });

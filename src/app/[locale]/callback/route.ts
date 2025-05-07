@@ -6,8 +6,8 @@ export async function GET(request: NextRequest, { params: { locale } }: { params
   const code = searchParams.get('code');
 
   // Initialize the response object. We will set its redirect URL and cookies.
-  // Start with a default successful redirect, change if errors occur.
-  let targetRedirectUrl = `${origin}/${locale}/confirm-email`;
+  // Always redirect to our central redirect page which will handle the routing
+  const targetRedirectUrl = `${origin}/${locale}/redirect`;
   const response = NextResponse.redirect(targetRedirectUrl, 303); // Use 303 for POST-success redirect logic
 
   if (code) {
@@ -39,22 +39,22 @@ export async function GET(request: NextRequest, { params: { locale } }: { params
 
     if (exchangeError) {
       console.error('[AuthCallback] Error exchanging code:', exchangeError.message);
-      targetRedirectUrl = `${origin}/${locale}/login`;
       const url = new URL(targetRedirectUrl);
       url.searchParams.set('error', 'auth_callback_failed');
       url.searchParams.set('error_description', exchangeError.message);
       // Update the location header on the existing response object
       response.headers.set('Location', url.toString());
-      return response; // Return the response with updated redirect and any cookies (though unlikely on error)
+    } else {
+      // Set success parameter on redirect URL
+      const url = new URL(targetRedirectUrl);
+      url.searchParams.set('auth_action', 'email_confirmed');
+      response.headers.set('Location', url.toString());
     }
-    // If successful, cookies (like session) were set on `response` by the `set` cookie handler.
-    // The `response` redirect URL is already `${origin}/${locale}/confirm-email`.
-    return response; 
+    return response;
   }
 
   // Code was not present in query parameters
   console.error('[AuthCallback] No code found in query parameters.');
-  targetRedirectUrl = `${origin}/${locale}/login`;
   const url = new URL(targetRedirectUrl);
   url.searchParams.set('error', 'auth_callback_missing_code');
   // Update the location header on the existing response object

@@ -38,11 +38,14 @@ export const institutionTypeEnumValues = [
   'university', 'university_center', 'national_school', 'research_center',
   'research_laboratory', 'activities_service', 'research_team'
 ] as const;
-const institutionTypeEnum = z.enum(institutionTypeEnumValues);
+
+// Create a Zod schema for the institution type enum
+export const InstitutionTypeEnum = z.enum(institutionTypeEnumValues);
+export type InstitutionType = z.infer<typeof InstitutionTypeEnum>;
 
 const getBaseOrganizerProfileSchema = (t: TFunction) => z.object({
   organization_name_ar: z.string().min(1, { message: t('required') }),
-  institution_type: z.enum(institutionTypeEnumValues, { required_error: t('required'), invalid_type_error: t('required') }), 
+  institution_type: InstitutionTypeEnum, 
   bio_ar: z.string().optional().or(z.literal('')),
   profile_picture_url: z.string().url({ message: t('invalidUrl') }).optional().or(z.literal('')),
   wilaya_id: z.string().nonempty({ message: t('required') }),
@@ -50,61 +53,57 @@ const getBaseOrganizerProfileSchema = (t: TFunction) => z.object({
 });
 
 // --- Discriminated Union Zod Schema for the Form ---
-// We need to pass `t` to the base schema generators
-const getDiscriminatedUnionSchema = (t: TFunction) => z.discriminatedUnion('user_type', [
-  getBaseResearcherProfileSchema(t).extend({ user_type: z.literal('researcher') }),
-  getBaseOrganizerProfileSchema(t).extend({ user_type: z.literal('organizer') }),
-]);
+const getDiscriminatedUnionSchema = (t: TFunction, userType?: UserType) => {
+  // If userType is specified, return only that schema
+  if (userType === 'researcher') {
+    return z.discriminatedUnion('user_type', [
+      getBaseResearcherProfileSchema(t).extend({ user_type: z.literal('researcher') })
+    ]);
+  } else if (userType === 'organizer') {
+    return z.discriminatedUnion('user_type', [
+      getBaseOrganizerProfileSchema(t).extend({ user_type: z.literal('organizer') })
+    ]);
+  }
+  
+  // Otherwise return the full discriminated union
+  return z.discriminatedUnion('user_type', [
+    getBaseResearcherProfileSchema(t).extend({ user_type: z.literal('researcher') }),
+    getBaseOrganizerProfileSchema(t).extend({ user_type: z.literal('organizer') }),
+  ]);
+};
 
 // --- Exported Form Data Type from the Discriminated Union Schema ---
-// This type will depend on `t`, which is not ideal for a static type export.
-// Let's define the shape without `t` first for the type, then use `t` in the schema function.
+type BaseResearcherProfileShape = {
+  name: string;
+  institution: string;
+  academic_position?: string;
+  bio_ar?: string;
+  profile_picture_url?: string;
+  wilaya_id: string;
+  daira_id: string;
+};
 
-// Define shapes without messages for static type export
-const BaseResearcherProfileShapeSchema = z.object({
-  name: z.string(), 
-  institution: z.string(),
-  academic_position: z.string().optional(),
-  bio_ar: z.string().optional(),
-  profile_picture_url: z.string().url().optional(),
-  wilaya_id: z.string(), 
-  daira_id: z.string(),
-});
-const BaseOrganizerProfileShapeSchema = z.object({
-  organization_name_ar: z.string(),
-  institution_type: institutionTypeEnum, 
-  bio_ar: z.string().optional(),
-  profile_picture_url: z.string().url().optional(),
-  wilaya_id: z.string(),
-  daira_id: z.string(),
-});
+type BaseOrganizerProfileShape = {
+  organization_name_ar: string;
+  institution_type: InstitutionType;
+  bio_ar?: string;
+  profile_picture_url?: string;
+  wilaya_id: string;
+  daira_id: string;
+};
 
 export type ProfileCompletionFormShape = 
-  | (z.infer<typeof BaseResearcherProfileShapeSchema> & { user_type: 'researcher' })
-  | (z.infer<typeof BaseOrganizerProfileShapeSchema> & { user_type: 'organizer' });
+  | (BaseResearcherProfileShape & { user_type: 'researcher' })
+  | (BaseOrganizerProfileShape & { user_type: 'organizer' });
 
 
 // --- Schema Generator Function for the Complete Form ---
-export const getCompleteProfileFormSchema = (t: TFunction, userType: UserType) => {
+export const getCompleteProfileFormSchema = (t: TFunction, userType?: UserType) => {
   // Get the appropriate discriminated union schema with translations
-  const schemaWithTranslations = getDiscriminatedUnionSchema(t);
+  const schemaWithTranslations = getDiscriminatedUnionSchema(t, userType);
 
-  return schemaWithTranslations.superRefine((data, ctx) => {
-    // URL checks moved to base schemas with .url().optional().or(z.literal(''))
-    // Required checks are now part of base schemas with messages.
+  return schemaWithTranslations.superRefine(() => {
     // SuperRefine can be used for more complex cross-field validations if needed in the future.
-
-    // Example: If profile_picture_url is provided, ensure it's a valid URL (already handled by .url())
-    // This explicit check here is redundant if base schema has .url() and it's optional.
-    // if (data.profile_picture_url && data.profile_picture_url.length > 0) {
-    //   const urlCheck = z.string().url({ message: t('invalidUrl') }).safeParse(data.profile_picture_url);
-    //   if (!urlCheck.success) {
-    //       ctx.addIssue({ code: z.ZodIssueCode.custom, message: t('invalidUrl'), path: ['profile_picture_url'] });
-    //   }
-    // }
-
-    // The previous explicit required checks like `!data.name` or `!data.institution_type` 
-    // are now handled by the min(1, {message: t(...)}) or by making enum non-optional in base schemas.
   });
 };
 

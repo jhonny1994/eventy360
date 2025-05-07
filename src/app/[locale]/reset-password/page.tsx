@@ -1,11 +1,10 @@
 import { Link } from '@/i18n/navigation';
-import { getTranslations, getMessages } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 import ResetPasswordForm from './ui/ResetPasswordForm';
 
 export default async function ResetPasswordPage() {
   const t = await getTranslations();
-  const messages = await getMessages();
 
   return (
     <div className="flex min-h-screen items-stretch bg-background text-foreground">
@@ -26,7 +25,7 @@ export default async function ResetPasswordPage() {
             {t('Auth.ResetPasswordPage.title')} 
           </h2>
 
-          <ResetPasswordForm messages={messages} />
+          <ResetPasswordForm />
 
           <p className="mt-8 text-center text-sm text-muted-foreground">
             {t('Auth.ResetPasswordPage.passwordResetSuccessPrompt')}{' '}
