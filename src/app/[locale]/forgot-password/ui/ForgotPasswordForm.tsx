@@ -3,49 +3,46 @@
 import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
 import { Button, Label, TextInput, Alert, Spinner } from 'flowbite-react';
 import { HiMail, HiInformationCircle } from 'react-icons/hi';
-import { useAuth } from '@/components/providers/AuthProvider'; // Use AuthProvider
+import { useAuth } from '@/components/providers/AuthProvider';
 import { useRouter } from '@/i18n/navigation';
-import { useParams } from 'next/navigation'; // Correct import for useParams
-import { getForgotPasswordSchema, type ForgotPasswordFormData } from '@/lib/schemas/auth'; // Import schema and type
-import { createTranslator } from 'next-intl'; // Import createTranslator
+import { useParams } from 'next/navigation';
+import { getForgotPasswordSchema, type ForgotPasswordFormData } from '@/lib/schemas/auth';
+import { createTranslator } from 'next-intl';
 
-// Define Props type including messages
 interface ForgotPasswordFormProps {
-  messages: any; // Changed from formMessages to messages, type can be more specific if desired
+  messages: any;
 }
 
-export default function ForgotPasswordForm({ messages }: ForgotPasswordFormProps) { // Changed prop name
-  const params = useParams(); // Get URL parameters FIRST
-  const locale = params.locale as string || 'ar'; // Extract locale FIRST
+export default function ForgotPasswordForm({ messages }: ForgotPasswordFormProps) {
+  const params = useParams();
+  const locale = params.locale as string || 'ar';
 
-  // Add createTranslator calls back here
   const t = createTranslator({
     locale,
-    messages: messages, // Use the full messages object
-    namespace: 'Auth.ForgotPasswordPage' // Specify the namespace for this translator
+    messages: messages,
+    namespace: 'Auth.ForgotPasswordPage'
   });
   const tValidation = createTranslator({
     locale,
-    messages: messages, // Use the full messages object
-    namespace: 'Validations' // Specify the namespace for this translator
+    messages: messages,
+    namespace: 'Validations'
   });
   const tAria = createTranslator({
     locale,
-    messages: messages, // Use the full messages object
-    namespace: 'AriaLabels' // Specify the namespace for this translator
+    messages: messages,
+    namespace: 'AriaLabels'
   });
 
   const router = useRouter();
-  const { supabase } = useAuth(); // Get Supabase client from AuthProvider
+  const { supabase } = useAuth();
   const [isPending, startTransition] = useTransition();
   const [formError, setFormError] = useState<string | null>(null);
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
 
-  const forgotPasswordSchema = getForgotPasswordSchema(tValidation); // Pass validation translations
+  const forgotPasswordSchema = getForgotPasswordSchema(tValidation);
 
   const {
     register,
@@ -70,15 +67,7 @@ export default function ForgotPasswordForm({ messages }: ForgotPasswordFormProps
 
       if (error) {
         console.error('Password reset error:', error);
-        // Per Supabase recommendation for password reset, it's often better to show a generic success message 
-        // to prevent user enumeration (attackers trying to find out which emails are registered).
-        // However, if specific user-facing error messages are desired and deemed safe:
-        // if (error.message.includes('User not found') || error.status === 404) {
-        // setFormError(tAuth('emailNotFound'));
-        // } else {
-        // setFormError(tAuth('genericError'));
-        // }
-        // For this implementation, we will follow the safer approach:
+        // For this implementation, we will follow the safer approach (generic success message):
         setFormSuccess(t('resetLinkSent'));
       } else {
         setFormSuccess(t('resetLinkSent'));

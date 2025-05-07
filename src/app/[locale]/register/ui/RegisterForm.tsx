@@ -8,12 +8,13 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { Button, Label, TextInput, Alert, Spinner } from 'flowbite-react';
 import { HiInformationCircle, HiEye, HiEyeOff, HiOutlineAcademicCap, HiOutlineClipboardList, HiOutlineMail, HiCheckCircle } from 'react-icons/hi';
 import { toast } from 'react-hot-toast';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 export default function RegisterForm() {
   const t = useTranslations('Auth.RegisterForm');
   const tValidation = useTranslations('Validations');
   const tAria = useTranslations('AriaLabels');
+  const locale = useLocale();
 
   const { supabase } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -56,6 +57,7 @@ export default function RegisterForm() {
           data: {
             user_type: data.userType
           },
+          emailRedirectTo: `${window.location.origin}/${locale}/callback`
         }
       });
 
@@ -146,7 +148,6 @@ export default function RegisterForm() {
            {formSuccess}
         </Alert>
       )}
-      {/* Email Field */}
       <div>
         <Label htmlFor="email">{t('emailLabel')}</Label>
         <TextInput
@@ -166,7 +167,6 @@ export default function RegisterForm() {
         )}
       </div>
 
-      {/* Password Field */}
       <div>
         <Label htmlFor="password">{t('passwordLabel')}</Label>
         <div className="relative mt-1">
@@ -195,7 +195,6 @@ export default function RegisterForm() {
         )}
       </div>
 
-      {/* Confirm Password Field */}
       <div>
         <Label htmlFor="confirmPassword">{t('confirmPasswordLabel')}</Label>
         <div className="relative mt-1">
@@ -225,7 +224,6 @@ export default function RegisterForm() {
         )}
       </div>
 
-      {/* User Type Selection - New Card Design */}
       <div className="">
         <label id="userTypeLabelId" className="mb-1.5 block text-sm font-medium text-foreground">
           {t('userTypeLabel')}
@@ -235,7 +233,6 @@ export default function RegisterForm() {
           aria-labelledby="userTypeLabelId"
           className="grid grid-cols-1 gap-4 sm:grid-cols-2"
         >
-          {/* Researcher Card */}
           <div
             role="radio"
             aria-checked={currentUserType === 'researcher'}
@@ -266,7 +263,6 @@ export default function RegisterForm() {
             </span>
           </div>
 
-          {/* Organizer Card */}
           <div
             role="radio"
             aria-checked={currentUserType === 'organizer'}
@@ -302,7 +298,6 @@ export default function RegisterForm() {
         )}
       </div>
 
-      {/* Submit Button */}
       <Button type="submit" disabled={isLoading || !!formSuccess} className="mt-2 w-full">
         {isLoading && (
           <>

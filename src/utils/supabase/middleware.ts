@@ -11,7 +11,6 @@ import type { User } from '@supabase/supabase-js';
  * @returns An object containing the response (potentially modified) and the user.
  */
 export async function updateSession(request: NextRequest, response?: NextResponse): Promise<{ response: NextResponse; user: User | null }> {
-  // If no response is provided, create a default one
   let supabaseResponse = response ?? NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -28,7 +27,7 @@ export async function updateSession(request: NextRequest, response?: NextRespons
             request.cookies.set(name, value)
           );
           // Set cookies on the response object to be sent back to the browser
-          supabaseResponse = response ?? NextResponse.next({ request }); // Re-create if default was used initially
+          supabaseResponse = response ?? NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
           );

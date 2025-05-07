@@ -4,14 +4,14 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { Button, Alert, Spinner } from 'flowbite-react';
-import { HiOutlineMail, HiOutlineLogout, HiOutlineRefresh, HiInformationCircle } from 'react-icons/hi';
+import { HiOutlineMail, HiOutlineLogout, HiOutlineRefresh, HiInformationCircle, HiCheckCircle } from 'react-icons/hi';
 import { toast } from 'react-hot-toast';
 import { useTranslations, useLocale } from 'next-intl';
 import Image from 'next/image';
-import { Link } from '@/i18n/navigation'; // For the logo link
+import { Link } from '@/i18n/navigation';
 
-export default function ConfirmEmailPage() { // Renamed component slightly for clarity
-  const t = useTranslations('Auth.ConfirmEmailPage'); // Translations key remains for now
+export default function ConfirmEmailPage() {
+  const t = useTranslations('Auth.ConfirmEmailPage');
   const tCommon = useTranslations('Auth.LoginPage'); 
   const locale = useLocale();
   const { supabase, session, loading: authLoading } = useAuth();
@@ -20,12 +20,15 @@ export default function ConfirmEmailPage() { // Renamed component slightly for c
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isResending, setIsResending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [emailConfirmed, setEmailConfirmed] = useState(false);
 
   useEffect(() => {
     if (!authLoading && session?.user) {
       setUserEmail(session.user.email || null);
       if (session.user.email_confirmed_at) {
-        router.replace(`/${locale}/profile`);
+        setEmailConfirmed(true);
+      } else {
+        setEmailConfirmed(false);
       }
     } else if (!authLoading && !session) {
       router.replace(`/${locale}/login`);
@@ -64,6 +67,10 @@ export default function ConfirmEmailPage() { // Renamed component slightly for c
     router.push(`/${locale}/login`);
   };
 
+  const handleContinueToCompleteProfile = () => {
+    router.push(`/${locale}/complete-profile`);
+  };
+
   if (authLoading || (!session && !authLoading)) { 
     return (
       <div className="flex min-h-screen items-center justify-center bg-background text-foreground">
@@ -80,65 +87,86 @@ export default function ConfirmEmailPage() { // Renamed component slightly for c
       );
   }
 
-  const NoticeContent = () => (
-    <div className="flex flex-col items-center text-center">
-      <HiOutlineMail className="w-16 h-16 text-primary mb-4" />
-      <h1 className="mb-4 text-2xl font-bold leading-9 tracking-tight text-foreground">
-        {t('title')}
-      </h1>
-      <p className="mb-2 text-sm text-muted-foreground">
-        {t('infoTextLine1')}
-      </p>
-      <p className="mb-3 text-sm font-semibold text-foreground">
-        {userEmail || t('emailAddress')} 
-      </p>
-      <p className="mb-2 text-sm text-muted-foreground">
-        {t('infoTextLine2')}
-      </p>
-      <p className="mb-6 text-sm text-muted-foreground">
-        {t('infoTextLine3')}
-      </p>
+  const NoticeContent = () => {
+    if (emailConfirmed) {
+      return (
+        <div className="flex flex-col items-center text-center">
+          <HiCheckCircle className="w-16 h-16 text-green-500 mb-4" />
+          <h1 className="mb-4 text-2xl font-bold leading-9 tracking-tight text-foreground">
+            {t('emailSuccessfullyConfirmedTitle')}
+          </h1>
+          <p className="mb-6 text-sm text-muted-foreground">
+            {t('emailSuccessfullyConfirmedMessage')}
+          </p>
+          <Button
+            onClick={handleContinueToCompleteProfile}
+            color="gray"
+            className="w-full mb-3"
+          >
+            {t('continueButton')}
+          </Button>
+        </div>
+      );
+    }
 
-      {error && (
-        <Alert color="failure" icon={HiInformationCircle} className="mb-4 w-full text-start">
-          {error}
-        </Alert>
-      )}
+    return (
+      <div className="flex flex-col items-center text-center">
+        <HiOutlineMail className="w-16 h-16 text-primary mb-4" />
+        <h1 className="mb-4 text-2xl font-bold leading-9 tracking-tight text-foreground">
+          {t('title')}
+        </h1>
+        <p className="mb-2 text-sm text-muted-foreground">
+          {t('infoTextLine1')}
+        </p>
+        <p className="mb-3 text-sm font-semibold text-foreground">
+          {userEmail || t('emailAddress')} 
+        </p>
+        <p className="mb-2 text-sm text-muted-foreground">
+          {t('infoTextLine2')}
+        </p>
+        <p className="mb-6 text-sm text-muted-foreground">
+          {t('infoTextLine3')}
+        </p>
 
-      <Button
-        onClick={handleResendConfirmation}
-        disabled={isResending || !userEmail}
-        color="primary"
-        className="w-full mb-3"
-        aria-live="polite"
-      >
-        {isResending ? (
-          <>
-            <Spinner size="sm" />
-            <span className="ps-3">{t('resendingButton')}</span>
-          </>
-        ) : (
-          <><HiOutlineRefresh className="me-2 h-5 w-5" /> {t('resendButton')}</>
+        {error && (
+          <Alert color="failure" icon={HiInformationCircle} className="mb-4 w-full text-start">
+            {error}
+          </Alert>
         )}
-      </Button>
 
-      <Button
-        onClick={handleLogout}
-        color="gray"
-        className="w-full"
-      >
-        <HiOutlineLogout className="me-2 h-5 w-5" />
-        {t('logoutButton')}
-      </Button>
-    </div>
-  );
+        <Button
+          onClick={handleResendConfirmation}
+          disabled={isResending || !userEmail}
+          color="primary"
+          className="w-full mb-3"
+          aria-live="polite"
+        >
+          {isResending ? (
+            <>
+              <Spinner size="sm" />
+              <span className="ps-3">{t('resendingButton')}</span>
+            </>
+          ) : (
+            <><HiOutlineRefresh className="me-2 h-5 w-5" /> {t('resendButton')}</>
+          )}
+        </Button>
+
+        <Button
+          onClick={handleLogout}
+          color="gray"
+          className="w-full"
+        >
+          <HiOutlineLogout className="me-2 h-5 w-5" />
+          {t('logoutButton')}
+        </Button>
+      </div>
+    );
+  };
 
   return (
     <div className="flex min-h-screen items-stretch bg-background text-foreground">
-      {/* Left Column: Notice Content */}
       <div className="flex w-full lg:w-1/2 items-center justify-center p-6 sm:p-8 md:p-12">
         <div className="w-full max-w-md bg-card dark:bg-card-dark shadow-2xl rounded-xl p-6 sm:p-8">
-          {/* Logo */}
           <div className="mb-8 text-center">
             <Link href="/">
               <Image
@@ -162,7 +190,6 @@ export default function ConfirmEmailPage() { // Renamed component slightly for c
         </div>
       </div>
 
-      {/* Right Column: Illustration */}
       <div className="hidden lg:flex lg:w-1/2 items-center justify-center bg-primary-50 dark:bg-primary-950/30 p-12">
         <div className="w-full max-w-md text-center">
           <Image

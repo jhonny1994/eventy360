@@ -127,10 +127,19 @@
       "logoutButton": "تسجيل الخروج",
       "emailAddress": "عنوان البريد الإلكتروني",
       "sessionError": "تعذر جلب معلومات المستخدم. يرجى محاولة تسجيل الخروج ثم الدخول مرة أخرى.",
-      "illustrationAlt": "رسم توضيحي لتأكيد البريد الإلكتروني"
+      "illustrationAlt": "رسم توضيحي لتأكيد البريد الإلكتروني",
+      "emailSuccessfullyConfirmedTitle": "تم تأكيد بريدك الإلكتروني بنجاح!",
+      "emailSuccessfullyConfirmedMessage": "يمكنك الآن المتابعة لإكمال ملفك الشخصي والوصول إلى جميع ميزات المنصة.",
+      "continueButton": "متابعة"
     },
     "CompleteProfilePage": {
-      "title": "إكمال ملفك الشخصي"
+      "title": "إكمال الملف الشخصي",
+      "userNotAuthenticated": "المستخدم غير مصادق عليه. جاري إعادة التوجيه لتسجيل الدخول...",
+      "fetchProfileError": "حدث خطأ أثناء جلب بيانات الملف الشخصي. يرجى المحاولة مرة أخرى.",
+      "profileNotFound": "لم يتم العثور على بيانات الملف الشخصي. يرجى الاتصال بالدعم إذا استمرت المشكلة.",
+      "missingUserType": "نوع المستخدم مفقود من بيانات الملف الشخصي. لا يمكن عرض النموذج.",
+      "profileDataUnavailable": "بيانات الملف الشخصي غير متوفرة حاليًا.",
+      "missingUserTypeCritical": "بيانات الملف الشخصي غير مكتملة (نوع المستخدم مفقود). لا يمكن المتابعة."
     },
     "CompleteProfileForm": {
       "title": "أكمل ملفك الشخصي",
@@ -146,6 +155,7 @@
       "dairaLabel": "الدائرة",
       "organizationNameLabel": "اسم المؤسسة/المنظمة",
       "institutionTypeLabel": "نوع المؤسسة",
+      "selectPlaceholder": "اختر...",
       "submitButton": "حفظ واستمرار",
       "loadingButton": "جار الحفظ...",
       "successToast": "تم تحديث الملف الشخصي بنجاح!",
@@ -161,7 +171,8 @@
     "acceptTerms": "يجب عليك قبول الشروط والأحكام.",
     "userTypeRequired": "يرجى تحديد نوع الحساب.",
     "passwordRequired": "يجب إدخال كلمة المرور.",
-    "passwordsDontMatch": "كلمتا المرور غير متطابقتين."
+    "passwordsDontMatch": "كلمتا المرور غير متطابقتين.",
+    "invalidUrl": "الرجاء إدخال رابط صحيح."
   },
   "AriaLabels": {
     "submittingResetRequest": "إرسال طلب إعادة تعيين كلمة المرور...",
@@ -170,7 +181,7 @@
     "registering": "إنشاء حساب...",
     "hidePassword": "إخفاء كلمة المرور",
     "showPassword": "إظهار كلمة المرور",
-    "toggleTheme": "تبديل المظهر الفاتح/الداكن" 
+    "toggleTheme": "تبديل المظهر الفاتح/الداكن"
   },
   "Enums": {
     "UserType": {
@@ -251,5 +262,10 @@
       "completed": "مكتمل",
       "failed": "فشل"
     }
+  },
+  "ProfilePage": {
+    "title": "ملفي الشخصي",
+    "welcome": "مرحباً بك في صفحة ملفك الشخصي!",
+    "loading": "جار التحميل..."
   }
 }

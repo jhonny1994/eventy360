@@ -15,6 +15,9 @@ const BaseRegisterSchema = z.object({
   userType: z.enum(['researcher', 'organizer']) // Add userType enum
 }); // Removed refine here, apply after extend
 
+// --- Export UserType explicitly ---
+export type UserType = z.infer<typeof BaseRegisterSchema>['userType'];
+
 // --- Base Forgot Password Schema ---
 const BaseForgotPasswordSchema = z.object({
   email: z.string().email(), // Message added dynamically

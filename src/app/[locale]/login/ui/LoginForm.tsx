@@ -5,14 +5,13 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { getLoginSchema, type LoginFormData } from '@/lib/schemas/auth';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { useRouter, Link } from '@/i18n/navigation'; // Add Link import
+import { useRouter, Link } from '@/i18n/navigation';
 import { Button, Label, TextInput, Alert, Spinner } from 'flowbite-react';
-import { HiInformationCircle, HiEye, HiEyeOff, HiOutlineMail, HiOutlineLockClosed } from 'react-icons/hi'; // Added HiOutlineMail and HiOutlineLockClosed
+import { HiInformationCircle, HiEye, HiEyeOff, HiOutlineMail } from 'react-icons/hi';
 import { toast } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
 
 export default function LoginForm() {
-  // Use specific namespaces
   const t = useTranslations('Auth.LoginForm');
   const tValidation = useTranslations('Validations');
   const tAria = useTranslations('AriaLabels');
@@ -21,9 +20,8 @@ export default function LoginForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const [showPassword, setShowPassword] = useState(false); // State for password visibility
+  const [showPassword, setShowPassword] = useState(false);
 
-  // Pass the validation translation function to the schema generator
   const loginSchema = getLoginSchema(tValidation);
 
   const {
@@ -31,7 +29,7 @@ export default function LoginForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormData>({ 
-    resolver: zodResolver(loginSchema), // Use the generated schema
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
@@ -54,9 +52,9 @@ export default function LoginForm() {
         setFormError(error.message);
         toast.error(`${t('loginFailed')}: ${error.message}`, { id: toastId });
       } else {
-        toast.success(t('loginSuccessToast'), { id: toastId }); // Corrected key
-        router.push('/profile'); // Redirect to profile page after successful login
-        router.refresh(); 
+        toast.success(t('loginSuccessToast'), { id: toastId });
+        router.push('/profile');
+        // router.refresh(); // Temporarily comment out router.refresh()
       }
     } catch (err) {
       console.error('Unexpected login error:', err);
@@ -118,7 +116,7 @@ export default function LoginForm() {
             />
             <button 
                 type="button" 
-                onClick={togglePasswordVisibility} 
+                onClick={togglePasswordVisibility}
                 className="absolute inset-y-0 end-0 flex items-center pe-3.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                 aria-label={showPassword ? t('hidePassword') : t('showPassword')}
                 disabled={isLoading}
@@ -130,7 +128,6 @@ export default function LoginForm() {
           <p className="mt-0.5 text-sm text-red-600">{errors.password.message}</p>
         )}
       </div>
-      {/* Submit Button */}
       <Button type="submit" disabled={isLoading} className="mt-2 w-full">
         {isLoading && (
           <Spinner aria-label={tAria('loggingIn')} size="sm" className="me-2" />

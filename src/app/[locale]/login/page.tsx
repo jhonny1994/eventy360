@@ -1,7 +1,7 @@
 import LoginForm from './ui/LoginForm';
-import { Link } from '@/i18n/navigation'; // Use localized Link
-import { getTranslations } from 'next-intl/server'; // Changed import
-import Image from 'next/image'; // Import the Image component
+import { Link } from '@/i18n/navigation';
+import { getTranslations } from 'next-intl/server';
+import Image from 'next/image';
 
 export default async function LoginPage() {
   const t = await getTranslations('Auth.LoginPage');
@@ -16,8 +16,8 @@ export default async function LoginPage() {
             <Image
               src="/png/logo.png"
               alt={t('logoAltText')}
-              width={180} // Adjust width as needed
-              height={60} // Adjust height as needed
+              width={180}
+              height={60}
               priority
               className="mx-auto"
             />
@@ -44,11 +44,11 @@ export default async function LoginPage() {
         <div className="w-full max-w-md text-center">
           {/* Use the login.svg illustration */}
           <Image
-            src="/illustrations/login.svg" // Use the correct filename
-            alt={t('illustrationAlt')} // Use translation for alt text
-            width={500} // Adjust if needed based on SVG viewbox
-            height={500} // Adjust if needed based on SVG viewbox
-            priority // Load image sooner
+            src="/illustrations/login.svg"
+            alt={t('illustrationAlt')}
+            width={500}
+            height={500}
+            priority
             className="mx-auto"
           />
         </div>

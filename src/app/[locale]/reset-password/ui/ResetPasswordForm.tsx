@@ -3,40 +3,37 @@
 import { useState, useEffect, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { useTranslations } from 'next-intl';
 import { Button, Label, TextInput, Alert, Spinner } from 'flowbite-react';
 import { HiOutlineLockClosed, HiInformationCircle, HiEye, HiEyeOff } from 'react-icons/hi';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useRouter } from '@/i18n/navigation';
-import { getResetPasswordSchema, type ResetPasswordFormData } from '@/lib/schemas/auth'; // Import schema and type
-import { createTranslator } from 'next-intl'; // Import createTranslator
-import { useParams } from 'next/navigation'; // Import useParams
+import { getResetPasswordSchema, type ResetPasswordFormData } from '@/lib/schemas/auth';
+import { createTranslator } from 'next-intl';
+import { useParams } from 'next/navigation';
 
-// Define Props type including messages
 interface ResetPasswordFormProps {
-  messages: any; // Changed from formMessages to messages
+  messages: any;
 }
 
-export default function ResetPasswordForm({ messages }: ResetPasswordFormProps) { // Changed prop name
-  const params = useParams(); // Get locale via params
+export default function ResetPasswordForm({ messages }: ResetPasswordFormProps) {
+  const params = useParams();
   const locale = params.locale as string || 'ar';
 
-  // Create translators from props
   const t = createTranslator({
     locale,
-    messages: messages, // Use the full messages object
-    namespace: 'Auth.ResetPasswordPage' // Specify the namespace for this translator
+    messages: messages,
+    namespace: 'Auth.ResetPasswordPage'
   });
   const tValidation = createTranslator({
     locale,
-    messages: messages, // Use the full messages object
-    namespace: 'Validations' // Specify the namespace for this translator
+    messages: messages,
+    namespace: 'Validations'
   });
   const tAria = createTranslator({
     locale,
-    messages: messages, // Use the full messages object
-    namespace: 'AriaLabels' // Specify the namespace for this translator
+    messages: messages,
+    namespace: 'AriaLabels'
   });
 
   const router = useRouter();
@@ -51,28 +48,23 @@ export default function ResetPasswordForm({ messages }: ResetPasswordFormProps) 
   const resetPasswordSchema = getResetPasswordSchema(tValidation);
 
   useEffect(() => {
-    // Supabase client automatically handles the #access_token fragment from the URL
-    // on page load and fires an auth event. We can listen for PASSWORD_RECOVERY.
+    // Supabase client handles #access_token fragment and fires auth events (e.g., PASSWORD_RECOVERY).
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY') {
-        // User is in the password recovery state, form can be used.
+        // User is in password recovery state.
         setTokenError(null);
       } else if (!session) {
-        // If there's no session and it's not PASSWORD_RECOVERY, the token might be invalid/expired or not present.
-        // However, directly concluding token error here might be too aggressive as other events might fire.
-        // A more robust check might be needed if Supabase doesn't automatically restrict form usage.
+        // Other events might fire; a more robust check for token errors could be implemented if needed.
       }
     });
 
-    // Check if there's an error in the URL fragment from Supabase (e.g., error_description)
     const hash = window.location.hash;
     if (hash.includes('error_description')) {
-      const params = new URLSearchParams(hash.substring(1)); // remove #
+      const params = new URLSearchParams(hash.substring(1));
       const errorDescription = params.get('error_description');
       setTokenError(errorDescription || t('invalidOrExpiredToken'));
     }
     else if (!hash.includes('access_token')){
-        // If no access token at all, likely invalid access
         setTokenError(t('invalidOrExpiredTokenLink'));
     }
 
@@ -90,7 +82,7 @@ export default function ResetPasswordForm({ messages }: ResetPasswordFormProps) 
   });
 
   const onSubmit = async (data: ResetPasswordFormData) => {
-    if (tokenError) return; // Don't submit if there was an initial token error
+    if (tokenError) return;
 
     setFormError(null);
     setFormSuccess(null);

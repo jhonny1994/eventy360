@@ -1,4 +1,4 @@
-"use client"; // Required for hooks like useTranslations and event handlers
+"use client";
 
 import { useTranslations } from 'next-intl';
 import { useTheme } from "next-themes";
@@ -9,13 +9,11 @@ export default function Home() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  // Ensure component is mounted before using theme
   useEffect(() => setMounted(true), []);
 
   if (!mounted) {
-    // Avoid rendering theme-dependent UI on the server or during hydration mismatch
-    // You could return null or a generic loader skeleton here
-    return <div className="p-24">{t('loading')}</div>; // Use translation
+    // Avoid hydration mismatch for theme-dependent UI
+    return <div className="p-24">{t('loading')}</div>;
   }
 
   return (
@@ -24,7 +22,7 @@ export default function Home() {
       <div className="fixed top-4 right-4 z-50">
         <button
           onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-          aria-label={t('AriaLabels.toggleTheme')} // Use translation
+          aria-label={t('AriaLabels.toggleTheme')}
           className="p-2 rounded-md border bg-background text-foreground shadow-md"
         >
           {theme === 'light' ? '🌙' : '☀️'} {/* Icons are less likely to need translation */}

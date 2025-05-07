@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 
 export default async function RegisterPage() {
-  const t = await getTranslations('Auth.RegisterPage'); // Used await getTranslations
+  const t = await getTranslations('Auth.RegisterPage');
 
   return (
     <div className="flex min-h-screen items-stretch bg-background text-foreground">
@@ -16,8 +16,8 @@ export default async function RegisterPage() {
             <Image
               src="/png/logo.png"
               alt={t('logoAltText')}
-              width={180} // Adjust width as needed
-              height={60} // Adjust height as needed
+              width={180}
+              height={60}
               priority
               className="mx-auto"
             />
@@ -43,8 +43,8 @@ export default async function RegisterPage() {
         <div className="w-full max-w-md text-center">
           {/* Use signup.svg illustration */}
           <Image
-            src="/illustrations/signup.svg" // Use signup illustration
-            alt={t('illustrationAlt')} // Use translation for alt text
+            src="/illustrations/signup.svg"
+            alt={t('illustrationAlt')}
             width={500} 
             height={500} 
             priority 
