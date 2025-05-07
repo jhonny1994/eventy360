@@ -65,6 +65,7 @@
 
 ## 5. Data Handling Specifics
 
+*   **User Profile State**: The `public.profiles` table includes an `is_extended_profile_complete` (BOOLEAN) flag to track if a user has completed the mandatory role-specific information after initial signup and email confirmation. This flag is crucial for middleware logic and RLS policies controlling access to application features.
 *   **Translatable Content (Dynamic)**: Fields like event names/descriptions, topic names, profile bios use `JSONB` columns (e.g., `event_name_translations JSONB`).
     *   JSONB structure designed for `{"ar": "...", "en": "...", "fr": "..."}`.
     *   **MVP Implementation**: **Strictly** only the `ar` key is populated and queried (e.g., `{"ar": "نص عربي"}`). **Accessing or populating other keys is forbidden in MVP code.**

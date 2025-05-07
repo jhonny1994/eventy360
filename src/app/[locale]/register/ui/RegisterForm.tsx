@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { getRegisterSchema, type RegisterFormData } from '@/lib/schemas/auth';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { Button, Label, TextInput, Alert, Spinner } from 'flowbite-react';
-import { HiInformationCircle, HiEye, HiEyeOff, HiOutlineAcademicCap, HiOutlineClipboardList, HiOutlineMail, HiOutlineLockClosed } from 'react-icons/hi';
+import { HiInformationCircle, HiEye, HiEyeOff, HiOutlineAcademicCap, HiOutlineClipboardList, HiOutlineMail, HiCheckCircle } from 'react-icons/hi';
 import { toast } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
 
@@ -21,6 +21,8 @@ export default function RegisterForm() {
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
+  const [isResendingEmail, setIsResendingEmail] = useState(false);
 
   const registerSchema = getRegisterSchema(tValidation);
 
@@ -28,7 +30,6 @@ export default function RegisterForm() {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
     setValue,
     watch
   } = useForm<RegisterFormData>({
@@ -44,17 +45,17 @@ export default function RegisterForm() {
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true);
     setFormError(null);
-    setFormSuccess(null);
+
     const toastId = toast.loading(t('submitting'));
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data: signUpData, error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
           data: {
             user_type: data.userType
-          }
+          },
         }
       });
 
@@ -62,10 +63,14 @@ export default function RegisterForm() {
         console.error('Registration error:', error.message);
         setFormError(error.message);
         toast.error(`${t('registrationFailed')}: ${error.message}`, { id: toastId });
+      } else if (signUpData.user && signUpData.user.identities && signUpData.user.identities.length === 0) {
+        setFormSuccess(t('registrationSuccessMessage'));
+        setRegisteredEmail(data.email);
+        toast.success(t('registrationSuccessToast'), { id: toastId });
       } else {
         setFormSuccess(t('registrationSuccessMessage'));
+        setRegisteredEmail(data.email);
         toast.success(t('registrationSuccessToast'), { id: toastId });
-        reset();
       }
     } catch (err) {
       console.error('Unexpected registration error:', err);
@@ -77,7 +82,57 @@ export default function RegisterForm() {
     }
   };
 
+  const handleResendConfirmationEmail = async () => {
+    if (!registeredEmail) return;
+    setIsResendingEmail(true);
+    const toastId = toast.loading(tAria('submittingResetRequest'));
+
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: registeredEmail,
+    });
+
+    if (error) {
+      console.error('Resend confirmation error:', error.message);
+      toast.error(t('resendConfirmationErrorToast') + `: ${error.message}`, { id: toastId });
+    } else {
+      toast.success(t('resendConfirmationSuccessToast'), { id: toastId });
+    }
+    setIsResendingEmail(false);
+  };
+
   const currentUserType = watch('userType');
+
+  if (formSuccess) {
+    return (
+      <Alert 
+        color="success" 
+        icon={HiCheckCircle}
+        className="mb-4 p-6 text-center"
+      >
+        <h3 className="text-lg font-semibold mb-2">{t('registrationSuccessToast')}</h3>
+        <p className="mb-4">{formSuccess}</p>
+        {registeredEmail && (
+          <Button 
+            onClick={handleResendConfirmationEmail} 
+            disabled={isResendingEmail || isLoading} 
+            color="primary"
+            size="sm"
+            className="mx-auto"
+          >
+            {isResendingEmail ? (
+              <>
+                <Spinner size="sm" />
+                <span className="ps-3">{tAria('submittingResetRequest')}</span>
+              </>
+            ) : (
+              t('resendConfirmationButton')
+            )}
+          </Button>
+        )}
+      </Alert>
+    );
+  }
 
   return (
     <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -104,7 +159,7 @@ export default function RegisterForm() {
           required
           aria-invalid={!!errors.email}
           className="mt-1"
-          disabled={isLoading}
+          disabled={isLoading || !!formSuccess}
         />
         {errors.email?.message && (
           <p className="mt-0.5 text-sm text-red-600">{errors.email.message}</p>
@@ -123,14 +178,14 @@ export default function RegisterForm() {
             color={errors.password ? 'failure' : 'gray'}
             required
             aria-invalid={!!errors.password}
-            disabled={isLoading}
+            disabled={isLoading || !!formSuccess}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className="absolute inset-y-0 end-0 flex items-center pe-3.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
             aria-label={showPassword ? t('hidePassword') : t('showPassword')}
-            disabled={isLoading}
+            disabled={isLoading || !!formSuccess}
           >
             {showPassword ? <HiEyeOff className="h-5 w-5" /> : <HiEye className="h-5 w-5" />}
           </button>
@@ -153,14 +208,14 @@ export default function RegisterForm() {
             required
             aria-invalid={!!errors.confirmPassword}
             className=""
-            disabled={isLoading}
+            disabled={isLoading || !!formSuccess}
           />
            <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             className="absolute inset-y-0 end-0 flex items-center pe-3.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
             aria-label={showConfirmPassword ? t('hidePassword') : t('showPassword')}
-            disabled={isLoading}
+            disabled={isLoading || !!formSuccess}
           >
             {showConfirmPassword ? <HiEyeOff className="h-5 w-5" /> : <HiEye className="h-5 w-5" />}
           </button>
@@ -185,9 +240,9 @@ export default function RegisterForm() {
             role="radio"
             aria-checked={currentUserType === 'researcher'}
             tabIndex={currentUserType === 'researcher' ? 0 : -1}
-            onClick={() => setValue('userType', 'researcher', { shouldValidate: true })}
+            onClick={() => !formSuccess && setValue('userType', 'researcher', { shouldValidate: true })}
             onKeyDown={(e) => {
-              if (e.key === ' ' || e.key === 'Enter') {
+              if (!formSuccess && (e.key === ' ' || e.key === 'Enter')) {
                 e.preventDefault();
                 setValue('userType', 'researcher', { shouldValidate: true });
               }
@@ -196,7 +251,8 @@ export default function RegisterForm() {
                         ${currentUserType === 'researcher'
                           ? 'border-primary bg-primary/5 dark:bg-primary/10 ring-2 ring-primary shadow-lg'
                           : 'border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-600 hover:shadow-md'
-                        }`}
+                        } ${formSuccess ? 'opacity-50 cursor-not-allowed' : ''}`}
+            aria-disabled={!!formSuccess}
           >
             <HiOutlineAcademicCap 
               className={`mx-auto mb-1 h-6 w-6 transition-colors group-hover:text-primary/80 
@@ -215,9 +271,9 @@ export default function RegisterForm() {
             role="radio"
             aria-checked={currentUserType === 'organizer'}
             tabIndex={currentUserType === 'organizer' ? 0 : -1}
-            onClick={() => setValue('userType', 'organizer', { shouldValidate: true })}
+            onClick={() => !formSuccess && setValue('userType', 'organizer', { shouldValidate: true })}
             onKeyDown={(e) => {
-              if (e.key === ' ' || e.key === 'Enter') {
+              if (!formSuccess && (e.key === ' ' || e.key === 'Enter')) {
                 e.preventDefault();
                 setValue('userType', 'organizer', { shouldValidate: true });
               }
@@ -226,7 +282,8 @@ export default function RegisterForm() {
                         ${currentUserType === 'organizer'
                           ? 'border-primary bg-primary/5 dark:bg-primary/10 ring-2 ring-primary shadow-lg'
                           : 'border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-600 hover:shadow-md'
-                        }`}
+                        } ${formSuccess ? 'opacity-50 cursor-not-allowed' : ''}`}
+             aria-disabled={!!formSuccess}
           >
             <HiOutlineClipboardList 
               className={`mx-auto mb-1 h-6 w-6 transition-colors group-hover:text-primary/80 
@@ -246,11 +303,14 @@ export default function RegisterForm() {
       </div>
 
       {/* Submit Button */}
-      <Button type="submit" disabled={isLoading} className="mt-2 w-full">
+      <Button type="submit" disabled={isLoading || !!formSuccess} className="mt-2 w-full">
         {isLoading && (
-          <Spinner aria-label={tAria('submittingRegistration')} size="sm" className="me-2" />
+          <>
+            <Spinner size="sm" />
+            <span className="ps-3">{t('loading')}</span>
+          </>
         )}
-        {isLoading ? t('loading') : t('submitButton')}
+        {!isLoading && t('submitButton')}
       </Button>
     </form>
   );

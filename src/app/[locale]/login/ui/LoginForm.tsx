@@ -55,7 +55,7 @@ export default function LoginForm() {
         toast.error(`${t('loginFailed')}: ${error.message}`, { id: toastId });
       } else {
         toast.success(t('loginSuccessToast'), { id: toastId }); // Corrected key
-        router.push('/'); // Redirect to home after successful login
+        router.push('/profile'); // Redirect to profile page after successful login
         router.refresh(); 
       }
     } catch (err) {

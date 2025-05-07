@@ -11,15 +11,16 @@
 ## 2. Key Backend Components & Patterns (Supabase)
 
 *   **Database (PostgreSQL)**:
-    *   **Schema**: Relational model with tables like `profiles`, `events`, `submissions`, `subscriptions`, `payments`, `topics`, `email_templates`, `email_log`, `notification_queue`, `wilayas`, `dairas`.
+    *   **Schema**: Relational model with tables like `profiles`, `events`, `submissions`, `subscriptions`, `payments`, `topics`, `email_templates`, `email_log`, `notification_queue`, `wilayas`, `dairas`. Includes `is_extended_profile_complete` flag in `profiles`.
     *   **Data Types**: Extensive use of PostgreSQL `ENUM` types (e.g., `user_type_enum`, `event_status_enum`, `subscription_tier_enum`, `payment_status_enum`) for data integrity.
     *   **Data Seeding**: `wilayas` and `dairas` tables populated initially from `wilayas.json` via a one-time script (Node.js/Python recommended).
     *   **Security**: Row Level Security (RLS) is the primary authorization mechanism. Policies grant users access to their own data, organizers to their event data, and admins broader access based on defined needs. Policies implemented for initial tables (`wilayas`, `dairas`, `profiles`, `subscriptions`, `payments`).
     *   **Automation**: DB Functions & Triggers (PL/pgSQL):
-        *   `handle_new_user()`: Triggered by Supabase Auth Hook on new sign-ups to create corresponding profile and initial trial subscription records.
+        *   `handle_new_user()`: Triggered by Supabase Auth Hook on new sign-ups to create corresponding profile (dynamically setting `user_type` from signup metadata) and initial trial subscription records.
         *   `handle_payment_verification()`: Triggered by admin updating `payments` status to 'verified'; creates/updates the `subscriptions` record accordingly.
         *   `billing_period_to_interval()`: Helper function used by `handle_payment_verification`.
         *   `is_admin()`: Helper function used within RLS policies to check admin status.
+        *   `complete_my_profile()` (RPC): Called by frontend to atomically create/update role-specific extended profile data (e.g., in `researcher_profiles` or `organizer_profiles` via UPSERT) and set `profiles.is_extended_profile_complete` to true. Uses `auth.uid()` internally.
         *   *(Future)* Notification Triggers: Inserts tasks into `notification_queue` upon relevant data changes (e.g., new user, payment verified, submission status update, event change).
     *   **Data Integrity**: Foreign key constraints, `NOT NULL` where applicable.
     *   **Metadata**: `JSONB` used for flexible data like file metadata (`submissions` table).
@@ -38,6 +39,11 @@
 
 ## 3. Key System Workflow Patterns
 
+*   **Robust Multi-Step User Onboarding**: A sequential flow enforced by middleware and RLS:
+    1.  **Signup**: User registers, `handle_new_user` trigger creates base profile with `user_type` and initial subscription.
+    2.  **Email Confirmation**: User must confirm email via link. Middleware blocks access to most of app if email is unconfirmed, redirecting to a notice page.
+    3.  **Extended Profile Completion**: After email confirmation, middleware checks `profiles.is_extended_profile_complete`. If false, redirects to a dedicated page to collect role-specific profile details. Submission calls `complete_my_profile` RPC.
+    4.  **Full Access**: Granted only after email is confirmed and extended profile is complete.
 *   **Manual Verification/Payment (MVP)**: Relies on Admin intervention. Email communication initiates the process, but the state change and subsequent logic (notifications, subscription activation) are triggered by the Admin updating records (`profiles.is_verified`, `payments.status`) via the Admin Panel.
 *   **Asynchronous Email Notifications**: Decoupled sending via `notification_queue` table and scheduled processing function (`process-notification-queue`) for reliability.
 *   **State Management**: Uses `ENUM` status fields in tables (`events`, `submissions`, `subscriptions`, `payments`) to track lifecycle, updated by user actions, admin actions, or scheduled jobs.
@@ -64,6 +70,7 @@
 *   **Database Functions & Triggers**: Used for automation and enforcing complex logic directly within the database:
     *   `handle_new_user()`: Triggered on new user authentication to create corresponding profile and initial subscription.
     *   `handle_payment_verification()`: Triggered on payment verification to update/create subscription records. Uses `billing_period_to_interval()` helper.
+    *   `complete_my_profile()` (RPC): Called by frontend to atomically create/update role-specific extended profile data (e.g., in `researcher_profiles` or `organizer_profiles` via UPSERT) and set `profiles.is_extended_profile_complete` to true. Uses `auth.uid()` internally.
     *   *(Future)* Notification Queue Triggers: Insert tasks into `notification_queue` on relevant data changes.
 *   **Soft Deletes**: Implemented for certain data types (e.g., canceled events) initially, with scheduled functions for eventual permanent deletion.
 *   **JSONB for Metadata**: Storing flexible *non-translatable* metadata associated with files (e.g., `abstract_file_metadata`).

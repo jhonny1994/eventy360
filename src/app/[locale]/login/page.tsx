@@ -1,4 +1,4 @@
-import LoginForm from '../ui/auth/LoginForm';
+import LoginForm from './ui/LoginForm';
 import { Link } from '@/i18n/navigation'; // Use localized Link
 import { getTranslations } from 'next-intl/server'; // Changed import
 import Image from 'next/image'; // Import the Image component
