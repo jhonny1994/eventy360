@@ -40,6 +40,45 @@
    - Improve the minimal profile page with more comprehensive UI
    - Add editing capabilities for user information
    - Display role-specific information properly
+   
+   **Detailed Profile Enhancement Tasks:**
+   1. **Create Profile Display Page** (ID: `64773e50-e32c-45be-a060-9e83ed394ba0`)
+      - Create a new page at `/[locale]/profile` as a Server Component
+      - Display user info: profile picture, name, affiliation, location, bio, email, user type, verification status, joined date
+      - Structure with top section for profile info and bottom section as dashboard placeholder
+      - Use Flowbite components and ensure RTL layout for Arabic
+   
+   2. **Create Profile Edit Page** (ID: `b49ecfaa-1d1d-4566-b46c-efd44e0db16f`)
+      - Create a new page at `/[locale]/profile/edit`
+      - Duplicate and modify `CompleteProfileForm.tsx` to create `EditProfileForm.tsx`
+      - Pre-fill form with current user data
+      - Update submission logic to use direct Supabase update queries
+   
+   3. **Implement Profile Picture Upload** (ID: `cb4897a4-4e94-461c-acba-b810938d5f81`)
+      - Add file input component to `EditProfileForm.tsx`
+      - Add preview functionality for selected images
+      - Handle upload to Supabase Storage at `avatars/{user_id}.{extension}`
+      - Implement proper validation and error handling
+   
+   4. **Create Profile Page Components** (ID: `df2ab927-00bf-402a-89c5-284718e1a531`)
+      - Create modular components: ProfileHeader, ProfileDetails, ProfileActions, DashboardPlaceholder
+      - Ensure components support RTL layout and handle nullable data
+   
+   5. **Add i18n Translations for Profile Pages** (ID: `b3441b79-b8b0-45e6-9c94-3af3904ab2a3`)
+      - Add all necessary strings to translation files (Arabic, English, French)
+      - Organize under a `ProfilePage` namespace
+   
+   6. **Configure Route Protection for Profile Pages** (ID: `652f42e2-0e51-4cf5-99a1-26adce810d5a`)
+      - Update middleware to protect `/profile` and `/profile/edit` routes
+      - Ensure proper redirection for unauthenticated users or those with incomplete profiles
+   
+   7. **Implement Success/Error Notifications** (ID: `f901d9e6-54e0-4f58-926e-21c424308724`)
+      - Add toast/alert notifications for profile update actions
+      - Ensure proper translation of notification messages
+   
+   8. **End-to-End Testing of Profile Features** (ID: `f6683cb7-bb93-4a7f-9fdf-9db04a7af40a`)
+      - Test with different user types and scenarios
+      - Verify all edge cases and responsive behavior
 
 2. **Quality Assurance:**
    - Conduct thorough testing of all implemented features
@@ -63,7 +102,7 @@
 - ✅ Minimal profile page for testing
 
 **In Progress:**
-- Profile page enhancements
+- Profile page enhancements (detailed tasks created and ready for implementation)
 - Comprehensive end-to-end testing
 
 **Up Next:**
