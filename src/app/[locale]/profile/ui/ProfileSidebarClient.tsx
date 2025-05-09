@@ -108,10 +108,10 @@ export default function ProfileSidebarClient({ profile, locale, translations }: 
   if (isMobile) {
     return (
       <>
-        {/* Mobile toggle button */}
+        {/* Mobile toggle button - Adjusted positioning for RTL layouts */}
         <button 
           onClick={toggleSidebar}
-          className="fixed top-4 start-4 z-20 p-2 rounded-full bg-white shadow-md dark:bg-gray-800 text-gray-700 dark:text-gray-200"
+          className={`fixed top-4 ${isRTL ? 'end-4' : 'start-4'} z-20 p-2 rounded-full bg-white shadow-md dark:bg-gray-800 text-gray-700 dark:text-gray-200`}
           aria-label={translations.toggleSidebar}
         >
           <HiMenuAlt2 className="h-6 w-6" />

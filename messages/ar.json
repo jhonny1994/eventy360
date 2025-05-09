@@ -173,7 +173,8 @@
       "successToast": "تم تحديث الملف الشخصي بنجاح",
       "errorToast": "تعذّر تحديث الملف الشخصي",
       "fetchProfileError": "حدث خطأ أثناء تحميل بيانات ملفك الشخصي",
-      "locationDataFetchError": "تعذّر تحميل البيانات الجغرافية. يُرجى المحاولة مرة أخرى"
+      "locationDataFetchError": "تعذّر تحميل البيانات الجغرافية. يُرجى المحاولة مرة أخرى",
+      "cancelButton": "إلغاء"
     }
   },
   "Validations": {
@@ -346,6 +347,13 @@
     "daysRemainingFormatted": "{count, plural, zero {لا أيام متبقية} one {يتبقى يوم واحد} two {يتبقى يومان} few {تتبقى # أيام} many {يتبقى # يومًا} other {يتبقى # يومًا}}",
     "trialExpired": "انتهت الفترة التجريبية",
     "trialAboutToExpire": "الفترة التجريبية على وشك الانتهاء",
-    "reactivateSubscription": "إعادة تفعيل الاشتراك"
+    "reactivateSubscription": "إعادة تفعيل الاشتراك",
+    "editProfileTitle": "تعديل الملف الشخصي",
+    "adminEditNotAllowed": "لا يُسمح للمسؤولين بتعديل الملف الشخصي من هذه الصفحة."
+  },
+  "Generic": {
+    "authenticationRequired": "المصادقة مطلوبة. يرجى تسجيل الدخول.",
+    "dataFetchError": "حدث خطأ أثناء جلب البيانات.",
+    "noDataFound": "لم يتم العثور على بيانات."
   }
 }

@@ -115,8 +115,13 @@ interface ExtendedProfileData {
   subscriptions: Subscription | null; // Added subscriptions
 }
 
-export default async function ProfilePage({ params }: { params: { locale: string } }) {
-  const { locale } = await params;
+type Props = {
+  params: Promise<{ locale: string }>;
+};
+
+export default async function ProfilePage(props: Props) {
+  // Properly await the params object as required in Next.js 15
+  const { locale } = await props.params;
   const t = await getTranslations({ locale, namespace: 'ProfilePage' });
   const tEnums = await getTranslations({ locale, namespace: 'Enums' });
   const tAuth = await getTranslations({ locale, namespace: 'Auth' });
