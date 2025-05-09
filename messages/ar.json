@@ -341,6 +341,11 @@
     "recentSubmissions": "الأوراق المستلمة مؤخرًا",
     "noSubmissionsReceived": "لم تستلم أي أوراق بحثية بعد",
     "dashboardTitle": "لوحة التحكم",
-    "toggleSidebar": "فتح/إغلاق الشريط الجانبي"
+    "toggleSidebar": "فتح/إغلاق الشريط الجانبي",
+    "trialEndsAt": "تنتهي الفترة التجريبية في",
+    "daysRemainingFormatted": "{count, plural, zero {لا أيام متبقية} one {يتبقى يوم واحد} two {يتبقى يومان} few {تتبقى # أيام} many {يتبقى # يومًا} other {يتبقى # يومًا}}",
+    "trialExpired": "انتهت الفترة التجريبية",
+    "trialAboutToExpire": "الفترة التجريبية على وشك الانتهاء",
+    "reactivateSubscription": "إعادة تفعيل الاشتراك"
   }
 }

@@ -246,6 +246,127 @@
       "implementationGuide": "1. Test the profile display page with different user types (researcher, organizer) to ensure role-specific information is displayed correctly.\n2. Test the profile edit page, ensuring all fields can be edited and saved.\n3. Test profile picture upload with various file types and sizes to verify validation.\n4. Test form validation for all fields, ensuring appropriate error messages appear.\n5. Test edge cases such as:\n   - Users with missing profile data\n   - Very long text in fields\n   - Network interruptions during form submission\n   - Cancelling edits midway\n6. Test on different browsers and screen sizes to ensure responsive design.\n7. Verify RTL layout functions correctly on all pages and components.\n8. Test the route protection to ensure proper redirection for different user states.",
       "verificationCriteria": "- All features of the profile display and edit pages function as expected.\n- The profile picture upload process works correctly.\n- Form validation and error handling function properly.\n- The UI is responsive and displays correctly on different screen sizes.\n- RTL layout for Arabic text works properly throughout.\n- Route protection correctly manages access to the profile pages.\n- All identified edge cases are handled appropriately.\n- The user experience is smooth and intuitive.",
       "analysisResult": "The plan for enhancing the user profile page has been thoroughly analyzed and is aligned with the project's architecture (Next.js App Router, Supabase, Tailwind, Flowbite). The approach of creating a dedicated display page with a separate edit page that uses a duplicated form (rather than modifying the existing onboarding form) is sound. The primary tasks involve creating new pages for profile display and editing, implementing profile picture upload functionality, and ensuring proper i18n support with Arabic/RTL layout. The plan respects existing module boundaries and code organization patterns, and should integrate seamlessly with the application's current structure."
+    },
+    {
+      "id": "f1f9718b-69e7-436f-ae55-38d97fac241e",
+      "name": "Update Profile Page Query to Include Subscription Data",
+      "description": "Modify the existing profile page database query to include subscription information from the subscriptions table. This will allow access to trial_ends_at, status, and other subscription-related fields necessary for displaying trial subscription status.",
+      "status": "已完成",
+      "dependencies": [
+        {
+          "taskId": "64773e50-e32c-45be-a060-9e83ed394ba0"
+        }
+      ],
+      "createdAt": "2025-05-09T11:09:06.277Z",
+      "updatedAt": "2025-05-09T21:02:21.751Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "Modify the profile page query to include subscription data"
+        }
+      ],
+      "implementationGuide": "1. Locate the Supabase query in src/app/[locale]/profile/page.tsx that fetches profile data\n2. Extend the query to include a join with the subscriptions table:\n```typescript\nconst { data: profileData, error: profileError } = await supabase\n  .from('profiles')\n  .select(`\n    *,\n    researcher_profiles ( \n      *,\n      wilayas!inner ( id, name_ar, name_other ),\n      dairas!inner ( id, name_ar, name_other )\n    ),\n    organizer_profiles ( \n      *,\n      wilayas!inner ( id, name_ar, name_other ),\n      dairas!inner ( id, name_ar, name_other )\n    ),\n    subscriptions (*) // Add this line to fetch subscription data\n  `)\n  .eq('id', user.id)\n  .single();\n```\n3. Add TypeScript type definitions for the subscription data\n4. Verify that the subscription data is properly fetched by logging it during development",
+      "verificationCriteria": "The profile page should successfully fetch subscription data including trial_ends_at, tier, and status fields from the database. This can be verified by checking console logs during development or by using the React Developer Tools to inspect the component props.",
+      "analysisResult": "After analyzing the existing codebase and requirements, I've found that the trial subscription system already has a database foundation with the `handle_new_user` trigger creating a 1-month trial subscription, but the UI doesn't display this information properly. The profile page needs to be enhanced to fetch and display the subscription status, with special attention to trial expiration dates, appropriate visual indicators, and action buttons. This implementation requires database querying, UI enhancements, and proper integration with the existing profile page components.",
+      "summary": "Updated the profile page Supabase query to include 'subscriptions(*)'. Added TypeScript interfaces for 'Subscription' and updated 'ExtendedProfileData' to include 'subscriptions: Subscription | null'. The JSX for displaying subscription tier, event limit, and the upgrade button has been updated to conditionally render based on the fetched 'subscriptionData'.",
+      "completedAt": "2025-05-09T21:02:21.749Z"
+    },
+    {
+      "id": "1cc92f4b-af5d-46c0-b01e-1f71e60cd33b",
+      "name": "Implement Trial Status Logic",
+      "description": "Create utility functions to calculate the current trial status (active/expiring soon/expired) based on the trial_ends_at date, and to format dates in the appropriate language. This will provide the core logic for determining how to display the subscription information.",
+      "status": "已完成",
+      "dependencies": [
+        {
+          "taskId": "64773e50-e32c-45be-a060-9e83ed394ba0"
+        }
+      ],
+      "createdAt": "2025-05-09T11:09:06.277Z",
+      "updatedAt": "2025-05-09T21:03:45.798Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "Add utility functions for trial status calculation"
+        }
+      ],
+      "implementationGuide": "1. Add a utility function in the profile page component or in a separate utils file to calculate trial status:\n```typescript\nfunction calculateTrialStatus(trialEndsAt: string | null): {\n  status: 'active' | 'expiring_soon' | 'expired',\n  daysRemaining: number | null\n} {\n  if (!trialEndsAt) return { status: 'expired', daysRemaining: null };\n  \n  const now = new Date();\n  const trialEnd = new Date(trialEndsAt);\n  const diffTime = trialEnd.getTime() - now.getTime();\n  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));\n  \n  if (diffDays <= 0) return { status: 'expired', daysRemaining: 0 };\n  if (diffDays <= 7) return { status: 'expiring_soon', daysRemaining: diffDays };\n  return { status: 'active', daysRemaining: diffDays };\n}\n```\n2. Enhance the existing formatDate function to handle trial dates:\n```typescript\nfunction formatTrialDate(dateString: string | null, locale: string = 'ar'): string {\n  return formatDate(dateString, locale);\n}\n```\n3. Prepare the subscription data for the UI by creating appropriate display objects",
+      "verificationCriteria": "The calculateTrialStatus function should correctly determine trial status based on different trial_ends_at dates. Test with current date, past dates, and future dates to ensure proper status categorization.",
+      "analysisResult": "After analyzing the existing codebase and requirements, I've found that the trial subscription system already has a database foundation with the `handle_new_user` trigger creating a 1-month trial subscription, but the UI doesn't display this information properly. The profile page needs to be enhanced to fetch and display the subscription status, with special attention to trial expiration dates, appropriate visual indicators, and action buttons. This implementation requires database querying, UI enhancements, and proper integration with the existing profile page components.",
+      "summary": "Added the `calculateTrialStatus` function to determine if a trial is active, expiring soon, or expired, and to calculate the days remaining. Added a `formatTrialDate` function (currently a wrapper around the existing `formatDate`). Called `calculateTrialStatus` if the user's subscription is a trial and stored the result. Linter errors for unused variables are expected and will be resolved in the next UI task.",
+      "completedAt": "2025-05-09T21:03:45.796Z"
+    },
+    {
+      "id": "b151b9ea-e37e-4b14-956d-d99970b5cdbd",
+      "name": "Enhance Subscription Status Card UI",
+      "description": "Update the subscription status card in the profile page to display the actual subscription information, including trial status, expiration date, and relevant actions. This includes implementing different visual states based on trial status.",
+      "status": "已完成",
+      "dependencies": [
+        {
+          "taskId": "64773e50-e32c-45be-a060-9e83ed394ba0"
+        }
+      ],
+      "createdAt": "2025-05-09T11:09:06.277Z",
+      "updatedAt": "2025-05-09T21:24:06.582Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "Update the subscription status card UI to display trial information"
+        }
+      ],
+      "implementationGuide": "1. Locate the subscription status card in the profile page\n2. Modify it to use the actual subscription data and trial status:\n```tsx\n{/* Subscription Status Card */}\n<Card className=\"shadow-md\">\n  <div className=\"p-5\">\n    <div className=\"flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4\">\n      <div className=\"flex items-center gap-2\">\n        <h2 className=\"text-xl font-bold\">{t('subscriptionStatus')}</h2>\n        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${\n          trialStatus.status === 'active' \n            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'\n            : trialStatus.status === 'expiring_soon' \n              ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'\n              : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'\n        }`}>\n          {tEnums(`SubscriptionStatus.${subscriptionData.status}`)}\n        </span>\n      </div>\n    </div>\n    \n    <div className=\"bg-gray-50 dark:bg-gray-800 rounded-lg p-5 border border-gray-200 dark:border-gray-700\">\n      <div className=\"flex flex-col sm:flex-row gap-6\">\n        <div className=\"flex-1\">\n          <div className=\"flex items-center mb-2\">\n            <span className=\"font-medium me-2\">{t('currentTier')}:</span>\n            <span className=\"text-blue-600 dark:text-blue-400 font-medium\">\n              {tEnums(`SubscriptionTier.${subscriptionData.tier}`)}\n            </span>\n          </div>\n          \n          {/* Show trial information if in trial */}\n          {subscriptionData.status === 'trial' && (\n            <div className=\"mt-3\">\n              <div className=\"mb-2\">\n                <span className=\"text-sm text-gray-700 dark:text-gray-300\">\n                  {t('trialEndsAt')}: {formatTrialDate(subscriptionData.trial_ends_at, locale)}\n                </span>\n              </div>\n              \n              {/* Progress bar for trial */}\n              <div className=\"w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mb-1\">\n                <div \n                  className={`h-2.5 rounded-full ${\n                    trialStatus.status === 'active' \n                      ? 'bg-green-600' \n                      : trialStatus.status === 'expiring_soon' \n                        ? 'bg-yellow-500'\n                        : 'bg-red-600'\n                  }`}\n                  style={{ width: `${calculateTrialProgress(subscriptionData.trial_ends_at)}%` }}\n                ></div>\n              </div>\n              \n              {/* Days remaining */}\n              <div className=\"text-sm text-gray-700 dark:text-gray-300\">\n                {trialStatus.daysRemaining !== null \n                  ? t('daysRemaining', { count: trialStatus.daysRemaining })\n                  : t('trialExpired')}\n              </div>\n            </div>\n          )}\n        </div>\n        \n        <div className=\"border-t sm:border-t-0 sm:border-s pt-4 sm:pt-0 sm:ps-6 border-gray-200 dark:border-gray-700 flex flex-col sm:w-72\">\n          {/* Event limit display */}\n          <div className=\"flex justify-between items-center mb-4\">\n            <span className=\"font-medium\">{t('eventLimit')}</span>\n            <span className=\"text-indigo-600 dark:text-indigo-400 font-bold\">\n              {subscriptionData.tier === 'free' || subscriptionData.status === 'expired' \n                ? (profileData.user_type === 'organizer' ? '1' : '∞')\n                : (profileData.user_type === 'organizer' ? '10' : '∞')}\n            </span>\n          </div>\n          \n          {/* CTA button - different text based on status */}\n          <button className=\"bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg py-2 px-4 transition-colors duration-200 w-full\">\n            {trialStatus.status === 'expired' \n              ? t('reactivateSubscription')\n              : t('upgradeTo') + ' ' + t('premiumTier')}\n          </button>\n        </div>\n      </div>\n    </div>\n  </div>\n</Card>\n```\n3. Add a helper function to calculate trial progress percentage:\n```typescript\nfunction calculateTrialProgress(trialEndsAt: string | null): number {\n  if (!trialEndsAt) return 100;\n  \n  const now = new Date();\n  const trialEnd = new Date(trialEndsAt);\n  const trialStart = new Date(trialEnd);\n  trialStart.setMonth(trialStart.getMonth() - 1); // Assuming 1-month trial\n  \n  const totalDuration = trialEnd.getTime() - trialStart.getTime();\n  const elapsed = now.getTime() - trialStart.getTime();\n  \n  const progress = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));\n  return progress;\n}\n```",
+      "verificationCriteria": "The subscription status card should display different states based on the trial status: green for active trials, yellow for soon-to-expire trials, and red for expired trials. The progress bar should correctly represent the trial period completion percentage.",
+      "analysisResult": "After analyzing the existing codebase and requirements, I've found that the trial subscription system already has a database foundation with the `handle_new_user` trigger creating a 1-month trial subscription, but the UI doesn't display this information properly. The profile page needs to be enhanced to fetch and display the subscription status, with special attention to trial expiration dates, appropriate visual indicators, and action buttons. This implementation requires database querying, UI enhancements, and proper integration with the existing profile page components.",
+      "summary": "Enhanced the subscription status card UI. Added a `calculateTrialProgress` function. The status badge now reflects trial status with conditional styling. Displays trial end date, a colored progress bar for trial duration, and days remaining. The event limit logic and CTA button styling/text are now also conditional based on trial and subscription status.",
+      "completedAt": "2025-05-09T21:24:06.580Z"
+    },
+    {
+      "id": "24f52dbb-bbac-4587-8223-b73dddff9d73",
+      "name": "Add Trial-Related Translations",
+      "description": "Add all necessary translation strings for the trial subscription UI to the Arabic language file (messages/ar.json). This ensures proper internationalization support for all trial-related text.",
+      "status": "待處理",
+      "dependencies": [
+        {
+          "taskId": "b3441b79-b8b0-45e6-9c94-3af3904ab2a3"
+        }
+      ],
+      "createdAt": "2025-05-09T11:09:06.277Z",
+      "updatedAt": "2025-05-09T11:09:06.277Z",
+      "relatedFiles": [
+        {
+          "path": "messages/ar.json",
+          "type": "TO_MODIFY",
+          "description": "Add Arabic translations for trial subscription UI"
+        }
+      ],
+      "implementationGuide": "1. Open the messages/ar.json file\n2. Add the following translation entries under the appropriate sections:\n```json\n{\n  \"ProfilePage\": {\n    // ... existing translations\n    \"trialEndsAt\": \"تنتهي الفترة التجريبية في\",\n    \"daysRemaining\": \"تبقى {count} يوم\",\n    \"trialExpired\": \"انتهت الفترة التجريبية\",\n    \"trialAboutToExpire\": \"الفترة التجريبية على وشك الانتهاء\",\n    \"upgradeTo\": \"الترقية إلى\",\n    \"premiumTier\": \"المستوى المميز\",\n    \"reactivateSubscription\": \"تفعيل الاشتراك\",\n    \"dayRemaining\": \"يتبقى يوم واحد\",\n    \"daysRemaining\": \"تبقى {count} أيام\"\n  },\n  \"Enums\": {\n    // ... existing enums\n    \"SubscriptionTier\": {\n      \"free\": \"مجاني\",\n      \"paid_researcher\": \"حساب باحث مدفوع\",\n      \"paid_organizer\": \"حساب منظّم مدفوع\",\n      \"trial\": \"فترة تجريبية\"\n    },\n    \"SubscriptionStatus\": {\n      \"active\": \"نشط\",\n      \"expired\": \"منتهي الصلاحية\",\n      \"trial\": \"فترة تجريبية\",\n      \"cancelled\": \"ملغى\"\n    }\n  }\n}\n```\n3. Make sure to use the appropriate plural forms for the Arabic language",
+      "verificationCriteria": "All trial-related text in the UI should have corresponding Arabic translations in the messages/ar.json file. No untranslated text should appear in the UI when viewing in Arabic.",
+      "analysisResult": "After analyzing the existing codebase and requirements, I've found that the trial subscription system already has a database foundation with the `handle_new_user` trigger creating a 1-month trial subscription, but the UI doesn't display this information properly. The profile page needs to be enhanced to fetch and display the subscription status, with special attention to trial expiration dates, appropriate visual indicators, and action buttons. This implementation requires database querying, UI enhancements, and proper integration with the existing profile page components."
+    },
+    {
+      "id": "ce123cd0-894f-4624-a2ce-a79bd37a2c05",
+      "name": "Test and Debug Trial Subscription Display",
+      "description": "Comprehensively test the trial subscription display functionality across different states (active, expiring soon, expired) and ensure correct presentation in Arabic. Fix any bugs or issues found during testing.",
+      "status": "待處理",
+      "dependencies": [
+        {
+          "taskId": "f6683cb7-bb93-4a7f-9fdf-9db04a7af40a"
+        }
+      ],
+      "createdAt": "2025-05-09T11:09:06.277Z",
+      "updatedAt": "2025-05-09T11:09:06.277Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "Testing and debugging the trial subscription display"
+        }
+      ],
+      "implementationGuide": "1. Create test cases for different trial states:\n   - Active trial with more than 7 days remaining\n   - Trial expiring soon (less than 7 days remaining)\n   - Expired trial\n2. Temporarily modify the trial_ends_at dates in the database for testing purposes\n3. Test the following aspects:\n   - Correct status display (badges and colors)\n   - Proper trial end date formatting\n   - Accurate days remaining calculation\n   - Progress bar visual representation\n   - Action button text changes based on status\n   - RTL layout for Arabic\n4. Check mobile responsiveness:\n   - Test on different screen sizes\n   - Verify card layout adapts properly on small screens\n5. Fix any identified issues:",
+      "verificationCriteria": "The trial subscription display should correctly handle all states (active, expiring soon, expired) with proper visual indicators. All text should be correctly displayed in Arabic with appropriate RTL layout. The component should be responsive across different screen sizes.",
+      "analysisResult": "After analyzing the existing codebase and requirements, I've found that the trial subscription system already has a database foundation with the `handle_new_user` trigger creating a 1-month trial subscription, but the UI doesn't display this information properly. The profile page needs to be enhanced to fetch and display the subscription status, with special attention to trial expiration dates, appropriate visual indicators, and action buttons. This implementation requires database querying, UI enhancements, and proper integration with the existing profile page components."
     }
   ]
 }

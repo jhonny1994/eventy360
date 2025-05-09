@@ -20,8 +20,100 @@ function formatDate(dateString: string | null, locale: string = 'ar'): string {
   }
 }
 
+// Function to format trial date (can be enhanced later if specific formatting is needed)
+function formatTrialDate(dateString: string | null, locale: string = 'ar'): string {
+  return formatDate(dateString, locale);
+}
+
+// Function to calculate trial status
+function calculateTrialStatus(trialEndsAt: string | null): {
+  status: 'active' | 'expiring_soon' | 'expired',
+  daysRemaining: number | null
+} {
+  if (!trialEndsAt) return { status: 'expired', daysRemaining: null };
+  
+  const now = new Date();
+  const trialEnd = new Date(trialEndsAt);
+  const diffTime = trialEnd.getTime() - now.getTime();
+  // Round up to the nearest whole day for days remaining
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+  
+  if (diffDays <= 0) return { status: 'expired', daysRemaining: 0 };
+  if (diffDays <= 7) return { status: 'expiring_soon', daysRemaining: diffDays };
+  return { status: 'active', daysRemaining: diffDays };
+}
+
+// Function to calculate trial progress percentage
+function calculateTrialProgress(trialEndsAt: string | null, trialStartsAt: string | null): number {
+  if (!trialEndsAt || !trialStartsAt) return 0; // Or 100 if expired, depending on desired behavior for expired
+
+  const now = new Date();
+  const trialEnd = new Date(trialEndsAt);
+  const trialStart = new Date(trialStartsAt); // Assuming subscriptionData.start_date is the trial start
+
+  if (now >= trialEnd) return 100; // Trial ended
+  if (now < trialStart) return 0; // Trial hasn't started
+
+  const totalDuration = trialEnd.getTime() - trialStart.getTime();
+  if (totalDuration <= 0) return 100; // Should not happen if dates are correct
+
+  const elapsed = now.getTime() - trialStart.getTime();
+  
+  const progress = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+  return progress;
+}
+
 // Define a simple type for the expected JSONB translation structure
 type TranslationObject = { ar?: string; en?: string; fr?: string; [key: string]: string | undefined };
+
+// Add type for Subscription data based on database.types.ts
+interface Subscription {
+  id: string;
+  user_id: string;
+  tier: 'free' | 'paid_researcher' | 'paid_organizer' | 'trial';
+  status: 'active' | 'expired' | 'trial' | 'cancelled';
+  start_date: string;
+  end_date: string | null;
+  trial_ends_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// Update ProfileData type to include subscriptions
+interface ExtendedProfileData {
+  id: string;
+  user_type: 'researcher' | 'organizer' | 'admin';
+  is_verified: boolean;
+  is_extended_profile_complete?: boolean; // Assuming this was added by middleware or other logic
+  created_at: string;
+  updated_at: string;
+  researcher_profiles: {
+    id: string;
+    profile_id: string;
+    name: string | null;
+    institution: string | null;
+    academic_position: string | null;
+    bio_translations: TranslationObject | null;
+    profile_picture_url: string | null;
+    wilaya_id: number | null;
+    daira_id: number | null;
+    wilayas?: { id: number; name_ar: string; name_other: string }; // Optional for join
+    dairas?: { id: number; name_ar: string; name_other: string }; // Optional for join
+  } | null;
+  organizer_profiles: {
+    id: string;
+    profile_id: string;
+    name_translations: TranslationObject | null;
+    institution_type: string | null; // Assuming ENUM type
+    bio_translations: TranslationObject | null;
+    profile_picture_url: string | null;
+    wilaya_id: number | null;
+    daira_id: number | null;
+    wilayas?: { id: number; name_ar: string; name_other: string }; // Optional for join
+    dairas?: { id: number; name_ar: string; name_other: string }; // Optional for join
+  } | null;
+  subscriptions: Subscription | null; // Added subscriptions
+}
 
 export default async function ProfilePage({ params }: { params: { locale: string } }) {
   const { locale } = await params;
@@ -41,22 +133,23 @@ export default async function ProfilePage({ params }: { params: { locale: string
   // Fetch profile data including extended profile and location names
   // Join location data via the extended profile tables
   const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
+    .from('profiles')
     .select(`
       *,
       researcher_profiles ( 
-        *,
+        * ,
         wilayas!inner ( id, name_ar, name_other ),
         dairas!inner ( id, name_ar, name_other )
        ),
       organizer_profiles ( 
-        *,
+        * ,
         wilayas!inner ( id, name_ar, name_other ),
         dairas!inner ( id, name_ar, name_other )
-      )
+      ),
+      subscriptions (*)
     `)
-          .eq('id', user.id)
-          .single();
+    .eq('id', user.id)
+    .single<ExtendedProfileData>(); // Updated to use the new type
 
   // If profile is somehow incomplete despite middleware, redirect
   if (profileData && !profileData.is_extended_profile_complete) {
@@ -72,6 +165,14 @@ export default async function ProfilePage({ params }: { params: { locale: string
   const dairaData = researcherProfile?.dairas ?? organizerProfile?.dairas;
 
   const currentLang = locale as keyof TranslationObject;
+
+  // Access subscription data
+  const subscriptionData = profileData?.subscriptions;
+
+  // Calculate trial status if subscription data exists and it's a trial
+  const trialStatus = subscriptionData && subscriptionData.tier === 'trial' 
+    ? calculateTrialStatus(subscriptionData.trial_ends_at) 
+    : null;
 
   // Create a simpler notVerified string based on the verified text
   const notVerified = locale === 'ar' ? 'غير موثق' : 'Not verified';
@@ -262,6 +363,21 @@ export default async function ProfilePage({ params }: { params: { locale: string
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
                     <div className="flex items-center gap-2">
                       <h2 className="text-xl font-bold">{t('subscriptionStatus')}</h2>
+                      {subscriptionData && (
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          trialStatus && trialStatus.status === 'active' 
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                            : trialStatus && trialStatus.status === 'expiring_soon' 
+                              ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                              : (trialStatus && trialStatus.status === 'expired') || subscriptionData.status === 'expired'
+                                ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                                : subscriptionData.status === 'active' // For non-trial active subscriptions
+                                  ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                  : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200' // Default/cancelled
+                        }`}>
+                          {tEnums(`SubscriptionStatus.${subscriptionData.status}`)}
+                        </span>
+                      )}
                     </div>
                   </div>
                   
@@ -270,17 +386,66 @@ export default async function ProfilePage({ params }: { params: { locale: string
                       <div className="flex-1">
                         <div className="flex items-center mb-2">
                           <span className="font-medium me-2">{t('currentTier')}:</span>
-                          <span className="text-blue-600 dark:text-blue-400 font-medium">{t('freeTier')}</span>
+                          <span className="text-blue-600 dark:text-blue-400 font-medium">
+                            {subscriptionData ? tEnums(`SubscriptionTier.${subscriptionData.tier}`) : t('freeTier')}
+                          </span>
                         </div>
+                        
+                        {/* Show trial information if it's a trial subscription */}
+                        {subscriptionData && subscriptionData.tier === 'trial' && trialStatus && (
+                          <div className="mt-3">
+                            <div className="mb-2">
+                              <span className="text-sm text-gray-700 dark:text-gray-300">
+                                {t('trialEndsAt')}: {formatTrialDate(subscriptionData.trial_ends_at, locale)}
+                              </span>
+                            </div>
+                            
+                            {/* Progress bar for trial */}
+                            {trialStatus.status !== 'expired' && (
+                              <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mb-1">
+                                <div 
+                                  className={`h-2.5 rounded-full ${
+                                    trialStatus.status === 'active' 
+                                      ? 'bg-green-600' 
+                                      : trialStatus.status === 'expiring_soon' 
+                                        ? 'bg-yellow-500'
+                                        // Expired case handled by not showing the bar or a full red bar
+                                        : 'bg-red-600' // Fallback, though expired status hides this
+                                  }`}
+                                  style={{ width: `${calculateTrialProgress(subscriptionData.trial_ends_at, subscriptionData.start_date)}%` }}
+                                ></div>
+                              </div>
+                            )}
+                            
+                            {/* Days remaining or status message */}
+                            <div className="text-sm text-gray-700 dark:text-gray-300">
+                              {trialStatus.status === 'expired'
+                                ? t('trialExpired')
+                                : t('daysRemainingFormatted', { count: trialStatus.daysRemaining as number })}
+                            </div>
+                          </div>
+                        )}
                       </div>
                       
                       <div className="border-t sm:border-t-0 sm:border-s pt-4 sm:pt-0 sm:ps-6 border-gray-200 dark:border-gray-700 flex flex-col sm:w-72">
                         <div className="flex justify-between items-center mb-4">
                           <span className="font-medium">{t('eventLimit')}</span>
-                          <span className="text-indigo-600 dark:text-indigo-400 font-bold">{profileData.user_type === 'organizer' ? '1' : '∞'}</span>
+                          <span className="text-indigo-600 dark:text-indigo-400 font-bold">
+                            {profileData.user_type === 'organizer' && (!subscriptionData || subscriptionData.tier === 'free' || subscriptionData.status === 'expired' || (trialStatus && trialStatus.status === 'expired')) 
+                              ? '1' 
+                              : profileData.user_type === 'organizer' && subscriptionData // Assuming paid tiers have higher limits
+                                ? '10' 
+                                : '∞'}
+                          </span>
                         </div>
-                        <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg py-2 px-4 transition-colors duration-200 w-full">
-                          {t('upgradeTo')} {t('premiumTier')}
+                        <button className={`text-white font-medium rounded-lg py-2 px-4 transition-colors duration-200 w-full ${
+                          (trialStatus && trialStatus.status === 'expired') || (subscriptionData && subscriptionData.status === 'expired')
+                            ? 'bg-orange-500 hover:bg-orange-600' // Suggest reactivation for expired
+                            : 'bg-blue-600 hover:bg-blue-700' // Default upgrade
+                        }`}>
+                          {(trialStatus && trialStatus.status === 'expired') || (subscriptionData && subscriptionData.status === 'expired')
+                            ? t('reactivateSubscription') 
+                            : t('upgradeTo') + ' ' + t('premiumTier')}
                         </button>
                       </div>
                     </div>
