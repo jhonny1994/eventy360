@@ -1,176 +1,483 @@
-'use client';
+import { createServerSupabaseClient } from '@/utils/supabase/server';
+import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
+import { Card, Alert } from 'flowbite-react';
+import { HiInformationCircle, HiAcademicCap, HiCheckCircle, HiIdentification, HiCalendar } from 'react-icons/hi2';
+import ProfileSidebarClient, { ProfileInfo, IconName } from './ui/ProfileSidebarClient';
 
-import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
-import { useAuth } from '@/components/providers/AuthProvider';
-import { useRouter } from '@/i18n/navigation';
-import { Spinner, Alert, Card, Button } from 'flowbite-react';
-import { HiInformationCircle, HiLogout } from 'react-icons/hi';
-
-export default function ProfilePage() {
-  const t = useTranslations('ProfilePage');
-  const { user, supabase, loading: authLoading, logout } = useAuth();
-  const router = useRouter();
-
-  interface ExtendedProfile {
-    id: string;
-    user_type: string;
-    is_extended_profile_complete: boolean;
-    researcher_profiles?: {
-      name: string;
-      institution: string;
-      academic_position: string;
-    } | null;
-    organizer_profiles?: {
-      organization_name_ar: string;
-      institution_type: string;
-    } | null;
+// Helper function to format dates (adjust format as needed for Arabic)
+function formatDate(dateString: string | null, locale: string = 'ar'): string {
+  if (!dateString) return 'N/A';
+  try {
+    return new Intl.DateTimeFormat(locale, {
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    }).format(new Date(dateString));
+  } catch (error) {
+    console.error("Error formatting date:", error);
+    return dateString; // Fallback to original string
   }
+}
 
-  const [profile, setProfile] = useState<ExtendedProfile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+// Define a simple type for the expected JSONB translation structure
+type TranslationObject = { ar?: string; en?: string; fr?: string; [key: string]: string | undefined };
 
-  useEffect(() => {
-    // Redirect if not authenticated
-    if (!authLoading && !user) {
-      router.push('/redirect');
-      return;
+export default async function ProfilePage({ params }: { params: { locale: string } }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'ProfilePage' });
+  const tEnums = await getTranslations({ locale, namespace: 'Enums' });
+  const tAuth = await getTranslations({ locale, namespace: 'Auth' });
+  const supabase = await createServerSupabaseClient();
+
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    // This should theoretically be handled by middleware, but good to double-check
+    console.error('Profile Page: User not found or error fetching user', userError);
+    redirect(`/${locale}/login`);
     }
 
-    // Fetch profile data
-    async function fetchProfileData() {
-      if (!user) return;
-
-      try {
-        // Get base profile and extended profile based on user type
-        const { data, error } = await supabase
+  // Fetch profile data including extended profile and location names
+  // Join location data via the extended profile tables
+  const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('*, researcher_profiles(*), organizer_profiles(*)')
+    .select(`
+      *,
+      researcher_profiles ( 
+        *,
+        wilayas!inner ( id, name_ar, name_other ),
+        dairas!inner ( id, name_ar, name_other )
+       ),
+      organizer_profiles ( 
+        *,
+        wilayas!inner ( id, name_ar, name_other ),
+        dairas!inner ( id, name_ar, name_other )
+      )
+    `)
           .eq('id', user.id)
           .single();
 
-        if (error) throw error;
-
-        if (data && !data.is_extended_profile_complete) {
-          // If profile is not complete, redirect to complete-profile
-          router.push('/complete-profile');
-          return;
-        }
-
-        setProfile(data);
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch profile data';
-        setError(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    if (user && !authLoading) {
-      fetchProfileData();
-    }
-  }, [user, authLoading, supabase, router]);
-
-  // Add logout handler
-  const handleLogout = async () => {
-    setIsLoggingOut(true);
-    await logout();
-    setIsLoggingOut(false);
-  };
-
-  if (authLoading || isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Spinner size="xl" />
-      </div>
-    );
+  // If profile is somehow incomplete despite middleware, redirect
+  if (profileData && !profileData.is_extended_profile_complete) {
+    redirect(`/${locale}/complete-profile`);
   }
 
-  if (error) {
+  // Determine the correct extended profile and location data
+  const researcherProfile = profileData?.researcher_profiles;
+  const organizerProfile = profileData?.organizer_profiles;
+
+  // Access wilayas and dairas *within* the relevant extended profile
+  const wilayaData = researcherProfile?.wilayas ?? organizerProfile?.wilayas;
+  const dairaData = researcherProfile?.dairas ?? organizerProfile?.dairas;
+
+  const currentLang = locale as keyof TranslationObject;
+
+  // Create a simpler notVerified string based on the verified text
+  const notVerified = locale === 'ar' ? 'غير موثق' : 'Not verified';
+
+  // Prepare data for display
+  const displayData = {
+    email: user.email || 'N/A',
+    joinedDate: formatDate(user.created_at, locale),
+    isVerified: profileData?.is_verified ?? false,
+    userType: profileData?.user_type ? tEnums(`user_type_enum.${profileData.user_type}`) : 'N/A',
+    profilePictureUrl: researcherProfile?.profile_picture_url 
+                       ?? organizerProfile?.profile_picture_url 
+                       ?? null, // Default avatar handled by component
+    name: profileData?.user_type === 'researcher' 
+          ? researcherProfile?.name || 'N/A'
+          : organizerProfile?.name_translations
+            ? (organizerProfile.name_translations as TranslationObject)?.[currentLang] ?? (organizerProfile.name_translations as TranslationObject)?.ar ?? 'N/A'
+            : 'N/A',
+    bio: profileData?.user_type === 'researcher' 
+         ? researcherProfile?.bio_translations
+           ? (researcherProfile.bio_translations as TranslationObject)?.[currentLang] ?? (researcherProfile.bio_translations as TranslationObject)?.ar ?? ''
+           : ''
+         : organizerProfile?.bio_translations
+           ? (organizerProfile.bio_translations as TranslationObject)?.[currentLang] ?? (organizerProfile.bio_translations as TranslationObject)?.ar ?? ''
+           : '', // Access Arabic bio
+    institution: researcherProfile?.institution, // Reverted to direct access
+    academicPosition: researcherProfile?.academic_position, // Reverted to direct access
+    institutionType: organizerProfile?.institution_type 
+                      ? tEnums(`InstitutionType.${organizerProfile.institution_type}`)
+                      : null,
+    // Location
+    wilayaName: locale === 'ar' ? wilayaData?.name_ar : (wilayaData?.name_other ?? wilayaData?.name_ar),
+    dairaName: locale === 'ar' ? dairaData?.name_ar : (dairaData?.name_other ?? dairaData?.name_ar),
+  };
+
+  // --- Render Page ---
+  if (profileError) {
     return (
       <div className="container mx-auto p-4">
         <Alert color="failure" icon={HiInformationCircle}>
-          {error}
+          <span className="font-medium">{t('fetchErrorTitle')}</span> {t('fetchErrorDetails', { error: profileError.message })}
         </Alert>
       </div>
     );
   }
 
+  if (!profileData) {
+    // This case might indicate a sync issue if middleware allowed access
+    return (
+      <div className="container mx-auto p-4">
+        <Alert color="warning" icon={HiInformationCircle}>
+          <span className="font-medium">{t('profileNotFoundTitle')}</span> {t('profileNotFoundDetails')}
+        </Alert>
+      </div>
+    );
+  }
+
+  const locationString = [displayData.dairaName, displayData.wilayaName].filter(Boolean).join(', ');
+
+  // Prepare profile info for sidebar
+  const profileInfo: ProfileInfo = {
+    name: displayData.name,
+    email: displayData.email,
+    userType: displayData.userType,
+    isVerified: displayData.isVerified,
+    profilePictureUrl: displayData.profilePictureUrl, 
+    bio: displayData.bio,
+    details: [],
+    joinedDate: displayData.joinedDate
+  };
+
+  // Add user type specific details
+  if (profileData.user_type === 'researcher') {
+    if (displayData.institution) {
+      profileInfo.details.push({
+        icon: "HiBuildingOffice2" as IconName,
+        label: t('researcher.institutionLabel'),
+        value: displayData.institution
+      });
+    }
+    if (displayData.academicPosition) {
+      profileInfo.details.push({
+        icon: "HiAcademicCap" as IconName,
+        label: t('researcher.positionLabel'),
+        value: displayData.academicPosition
+      });
+    }
+  } else if (profileData.user_type === 'organizer' && displayData.institutionType) {
+    profileInfo.details.push({
+      icon: "HiIdentification" as IconName,
+      label: t('organizer.institutionTypeLabel'),
+      value: displayData.institutionType
+    });
+  }
+
+  // Add common details
+  if (locationString) {
+    profileInfo.details.push({
+      icon: "HiMapPin" as IconName,
+      label: t('common.locationLabel'),
+      value: locationString
+    });
+  }
+  profileInfo.details.push({
+    icon: "HiCalendar" as IconName,
+    label: t('common.joinedLabel'),
+    value: displayData.joinedDate
+  });
+
   return (
-    <div className="min-h-screen bg-background text-foreground py-8">
-      <div className="container mx-auto max-w-4xl px-4">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-primary">
-              {t('title')}
-            </h1>
-            <p className="mt-2 text-lg text-muted-foreground">
-              {t('welcome')}
-            </p>
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+      {/* Pass profile information to the sidebar client component */}
+      <ProfileSidebarClient 
+        profile={profileInfo}
+        locale={locale}
+        translations={{
+          editProfile: t('editProfileButton'),
+          logout: t('logoutButton'),
+          verifiedBadge: t('verifiedBadge'),
+          toggleSidebar: t('toggleSidebar'),
+          userTypeLabel: tAuth('RegisterForm.userTypeLabel'),
+          verificationLabel: t('verified'),
+          notVerifiedLabel: notVerified
+        }}
+      />
+
+      {/* Main content - widened to utilize more horizontal space */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Dashboard header */}
+        <header className="bg-white dark:bg-gray-800 shadow-sm z-10">
+          <div className="max-w-full mx-auto px-6 sm:px-8 lg:px-10 py-4">
+            <div className="flex justify-between items-center">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('dashboardTitle')}</h1>
+              <div className="flex items-center space-x-4 rtl:space-x-reverse">
+                {/* Additional header actions would go here */}
+              </div>
+            </div>
           </div>
-
-          {/* Add logout button */}
-          <Button
-            color="failure"
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-            className="flex items-center gap-2 rtl:flex-row-reverse"
-          >
-            <HiLogout className="h-5 w-5" />
-            {t('logoutButton')}
-          </Button>
-        </div>
-
-        {profile && (
-          <Card className="mb-6">
-            <h2 className="text-xl font-semibold mb-3">{t('profileInfo')}</h2>
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm text-muted-foreground">Email</p>
-                <p className="font-medium">{user?.email}</p>
-              </div>
-
-              <div>
-                <p className="text-sm text-muted-foreground">User Type</p>
-                <p className="font-medium">{profile.user_type}</p>
-              </div>
-
-              {/* Display extended profile information based on user type */}
-              {profile.user_type === 'researcher' && profile.researcher_profiles && (
+        </header>
+        
+        {/* Dashboard content - scrollable with wider container */}
+        <main className="flex-1 overflow-y-auto p-5 sm:p-7 lg:p-10">
+          <div className="max-w-full mx-auto space-y-6">
+            
+            {/* Status Cards Section - separated verification and subscription */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+              {/* Verification Status Card - simplified */}
+              <Card className="shadow-md">
+                <div className="p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl font-bold">{t('verified')}</h2>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        displayData.isVerified 
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                          : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                      }`}>
+                        {displayData.isVerified ? t('verified') : notVerified}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-5 border border-gray-200 dark:border-gray-700">
+                    <div className="flex flex-col sm:flex-row gap-6">
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                          {displayData.isVerified 
+                            ? locale === 'ar' ? 'هذا الحساب موثق' : 'This account is verified' 
+                            : locale === 'ar' ? 'هذا الحساب غير موثق' : 'This account is not verified'}
+                        </p>
+                      </div>
+                      
+                      {!displayData.isVerified && (
+                        <div className="border-t sm:border-t-0 sm:border-s pt-4 sm:pt-0 sm:ps-6 border-gray-200 dark:border-gray-700 flex flex-col sm:w-72">
+                          <button className="bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg py-2 px-4 transition-colors duration-200 w-full">
+                            {t('requestVerification')}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </Card>
+              
+              {/* Subscription Status Card */}
+              <Card className="shadow-md">
+                <div className="p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl font-bold">{t('subscriptionStatus')}</h2>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-5 border border-gray-200 dark:border-gray-700">
+                    <div className="flex flex-col sm:flex-row gap-6">
+                      <div className="flex-1">
+                        <div className="flex items-center mb-2">
+                          <span className="font-medium me-2">{t('currentTier')}:</span>
+                          <span className="text-blue-600 dark:text-blue-400 font-medium">{t('freeTier')}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="border-t sm:border-t-0 sm:border-s pt-4 sm:pt-0 sm:ps-6 border-gray-200 dark:border-gray-700 flex flex-col sm:w-72">
+                        <div className="flex justify-between items-center mb-4">
+                          <span className="font-medium">{t('eventLimit')}</span>
+                          <span className="text-indigo-600 dark:text-indigo-400 font-bold">{profileData.user_type === 'organizer' ? '1' : '∞'}</span>
+                        </div>
+                        <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg py-2 px-4 transition-colors duration-200 w-full">
+                          {t('upgradeTo')} {t('premiumTier')}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </div>
+            
+            {/* Role-based metrics - with better spacing and layout */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {profileData.user_type === 'researcher' && (
                 <>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Name</p>
-                    <p className="font-medium">{profile.researcher_profiles.name}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Institution</p>
-                    <p className="font-medium">{profile.researcher_profiles.institution}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Academic Position</p>
-                    <p className="font-medium">{profile.researcher_profiles.academic_position}</p>
-                  </div>
+                  {/* Researcher Metrics */}
+                  <Card className="shadow-md">
+                    <div className="p-4 flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{t('submissionsTotal')}</p>
+                        <h3 className="text-2xl font-bold mt-1">0</h3>
+                      </div>
+                      <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900">
+                        <HiAcademicCap className="h-6 w-6 text-blue-600 dark:text-blue-300" />
+                      </div>
+                    </div>
+                  </Card>
+                  
+                  <Card className="shadow-md">
+                    <div className="p-4 flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{t('acceptedPapers')}</p>
+                        <h3 className="text-2xl font-bold mt-1">0</h3>
+                      </div>
+                      <div className="p-3 rounded-full bg-green-100 dark:bg-green-900">
+                        <HiCheckCircle className="h-6 w-6 text-green-600 dark:text-green-300" />
+                      </div>
+                    </div>
+                  </Card>
+                  
+                  <Card className="shadow-md">
+                    <div className="p-4 flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{t('pendingReviews')}</p>
+                        <h3 className="text-2xl font-bold mt-1">0</h3>
+                      </div>
+                      <div className="p-3 rounded-full bg-yellow-100 dark:bg-yellow-900">
+                        <HiIdentification className="h-6 w-6 text-yellow-600 dark:text-yellow-300" />
+                      </div>
+                    </div>
+                  </Card>
+                  
+                  <Card className="shadow-md">
+                    <div className="p-4 flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{t('bookmarkedEvents')}</p>
+                        <h3 className="text-2xl font-bold mt-1">0</h3>
+                      </div>
+                      <div className="p-3 rounded-full bg-purple-100 dark:bg-purple-900">
+                        <HiCalendar className="h-6 w-6 text-purple-600 dark:text-purple-300" />
+                      </div>
+                    </div>
+                  </Card>
                 </>
               )}
-
-              {profile.user_type === 'organizer' && profile.organizer_profiles && (
+              
+              {profileData.user_type === 'organizer' && (
                 <>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Organization Name</p>
-                    <p className="font-medium">{profile.organizer_profiles.organization_name_ar}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Institution Type</p>
-                    <p className="font-medium">{profile.organizer_profiles.institution_type}</p>
-                  </div>
+                  {/* Organizer Metrics */}
+                  <Card className="shadow-md">
+                    <div className="p-4 flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{t('eventsCreated')}</p>
+                        <h3 className="text-2xl font-bold mt-1">0</h3>
+                      </div>
+                      <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900">
+                        <HiCalendar className="h-6 w-6 text-blue-600 dark:text-blue-300" />
+                      </div>
+                    </div>
+                  </Card>
+                  
+                  <Card className="shadow-md">
+                    <div className="p-4 flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{t('activeEvents')}</p>
+                        <h3 className="text-2xl font-bold mt-1">0</h3>
+                      </div>
+                      <div className="p-3 rounded-full bg-green-100 dark:bg-green-900">
+                        <HiCheckCircle className="h-6 w-6 text-green-600 dark:text-green-300" />
+                      </div>
+                    </div>
+                  </Card>
+                  
+                  <Card className="shadow-md">
+                    <div className="p-4 flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{t('totalSubmissions')}</p>
+                        <h3 className="text-2xl font-bold mt-1">0</h3>
+                      </div>
+                      <div className="p-3 rounded-full bg-yellow-100 dark:bg-yellow-900">
+                        <HiAcademicCap className="h-6 w-6 text-yellow-600 dark:text-yellow-300" />
+                      </div>
+                    </div>
+                  </Card>
+                  
+                  <Card className="shadow-md">
+                    <div className="p-4 flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{t('pendingReviews')}</p>
+                        <h3 className="text-2xl font-bold mt-1">0</h3>
+                      </div>
+                      <div className="p-3 rounded-full bg-purple-100 dark:bg-purple-900">
+                        <HiIdentification className="h-6 w-6 text-purple-600 dark:text-purple-300" />
+                      </div>
+                    </div>
+                  </Card>
                 </>
               )}
             </div>
-          </Card>
-        )}
+            
+            {/* Role-based main content - with better spacing */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {profileData.user_type === 'researcher' && (
+                <>
+                  {/* Researcher Dashboard Content */}
+                  <Card className="shadow-md lg:col-span-2">
+                    <div className="p-5">
+                      <h2 className="text-xl font-bold mb-4">{t('upcomingDeadlines')}</h2>
+                      <div className="border border-dashed border-gray-300 dark:border-gray-600 p-8 text-center bg-white dark:bg-gray-800 rounded-lg">
+                        <p className="text-gray-500 dark:text-gray-400">
+                          {t('noUpcomingDeadlines')}
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                  
+                  <Card className="shadow-md">
+                    <div className="p-5">
+                      <h2 className="text-xl font-bold mb-4">{t('submissionStatus')}</h2>
+                      <div className="border border-dashed border-gray-300 dark:border-gray-600 p-8 text-center bg-white dark:bg-gray-800 rounded-lg">
+                        <p className="text-gray-500 dark:text-gray-400">
+                          {t('noSubmissions')}
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                  
+                  <Card className="shadow-md lg:col-span-3">
+                    <div className="p-5">
+                      <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-bold">{t('recentlyBookmarkedEvents')}</h2>
+                        <button className="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white px-3 py-1.5 rounded-lg font-medium text-sm transition-colors duration-200">
+                          {t('exploreEvents')}
+                        </button>
+                      </div>
+                      <div className="border border-dashed border-gray-300 dark:border-gray-600 p-8 text-center bg-white dark:bg-gray-800 rounded-lg">
+                        <p className="text-gray-500 dark:text-gray-400">
+                          {t('noBookmarkedEvents')}
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                </>
+              )}
+              
+              {profileData.user_type === 'organizer' && (
+                <>
+                  {/* Organizer Dashboard Content */}
+                  <Card className="shadow-md lg:col-span-3">
+                    <div className="p-5">
+                      <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-bold">{t('activeEventsList')}</h2>
+                        <button className="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white px-3 py-1.5 rounded-lg font-medium text-sm transition-colors duration-200">
+                          {t('createEvent')}
+                        </button>
+                      </div>
+                      <div className="border border-dashed border-gray-300 dark:border-gray-600 p-8 text-center bg-white dark:bg-gray-800 rounded-lg">
+                        <p className="text-gray-500 dark:text-gray-400">
+                          {t('noActiveEvents')}
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                  
+                  <Card className="shadow-md lg:col-span-3">
+                    <div className="p-5">
+                      <h2 className="text-xl font-bold mb-4">{t('recentSubmissions')}</h2>
+                      <div className="border border-dashed border-gray-300 dark:border-gray-600 p-8 text-center bg-white dark:bg-gray-800 rounded-lg">
+                        <p className="text-gray-500 dark:text-gray-400">
+                          {t('noSubmissionsReceived')}
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                </>
+              )}
+            </div>
+          </div>
+        </main>
       </div>
     </div>
   );
-} 
+}

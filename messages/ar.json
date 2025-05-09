@@ -198,6 +198,11 @@
     "toggleTheme": "تبديل وضع السمة بين الفاتح والداكن"
   },
   "Enums": {
+    "user_type_enum": {
+      "researcher": "باحث",
+      "organizer": "منظّم",
+      "admin": "مسؤول"
+    },
     "UserType": {
       "researcher": "باحث",
       "organizer": "منظّم",
@@ -282,6 +287,60 @@
     "welcome": "مرحبًا بك في صفحة ملفك الشخصي",
     "loading": "جارٍ التحميل...",
     "profileInfo": "بيانات الملف الشخصي",
-    "logoutButton": "تسجيل الخروج"
+    "logoutButton": "تسجيل الخروج",
+    "avatarAlt": "الصورة الرمزية لـ {name}",
+    "editProfileButton": "تعديل الملف الشخصي",
+    "verifiedBadge": "موثّق",
+    "noBioPlaceholder": "لم يتم تقديم سيرة ذاتية بعد.",
+    "researcher": {
+      "institutionLabel": "المؤسسة",
+      "positionLabel": "المنصب الأكاديمي"
+    },
+    "organizer": {
+      "institutionTypeLabel": "نوع المؤسسة"
+    },
+    "common": {
+      "locationLabel": "الموقع",
+      "joinedLabel": "تاريخ الانضمام",
+      "emailLabel": "البريد الإلكتروني"
+    },
+    "dashboardPlaceholder": "ميزات لوحة التحكم ستتوفر قريبًا!",
+    "fetchErrorTitle": "خطأ في جلب البيانات",
+    "fetchErrorDetails": "تعذّر تحميل بيانات الملف الشخصي: {error}",
+    "profileNotFoundTitle": "الملف الشخصي غير موجود",
+    "profileNotFoundDetails": "تعذّر العثور على بيانات الملف الشخصي. يُرجى المحاولة مرة أخرى أو الاتصال بالدعم.",
+    "detailsTitle": "التفاصيل",
+    "subscriptionStatus": "حالة الاشتراك",
+    "verified": "موثق",
+    "verifiedAccountDescription": "حسابك موثق ويمكنك الوصول إلى جميع الميزات",
+    "unverifiedAccountDescription": "حسابك غير موثق. طلب التوثيق للوصول إلى المزيد من الميزات",
+    "requestVerification": "طلب التوثيق",
+    "submissionsTotal": "إجمالي الأوراق المقدمة",
+    "acceptedPapers": "الأوراق المقبولة",
+    "pendingReviews": "المراجعات المعلقة",
+    "bookmarkedEvents": "التظاهرات المحفوظة",
+    "upcomingDeadlines": "المواعيد النهائية القادمة",
+    "noUpcomingDeadlines": "لا توجد مواعيد نهائية قريبة",
+    "submissionStatus": "حالة الأوراق المقدمة",
+    "noSubmissions": "لم تقم بتقديم أي أوراق بحثية بعد",
+    "recentlyBookmarkedEvents": "التظاهرات المحفوظة مؤخرًا",
+    "noBookmarkedEvents": "لم تقم بحفظ أي تظاهرات بعد",
+    "exploreEvents": "استعراض التظاهرات",
+    "eventsCreated": "التظاهرات المنشأة",
+    "activeEvents": "التظاهرات النشطة",
+    "totalSubmissions": "إجمالي الأوراق المستلمة",
+    "activeEventsList": "قائمة التظاهرات النشطة",
+    "createEvent": "إنشاء تظاهرة جديدة",
+    "noActiveEvents": "لا توجد تظاهرات نشطة حاليًا",
+    "subscriptionInfo": "معلومات الاشتراك",
+    "currentTier": "المستوى الحالي",
+    "freeTier": "المستوى المجاني",
+    "eventLimit": "الحد الأقصى للتظاهرات",
+    "upgradeTo": "الترقية إلى",
+    "premiumTier": "المستوى المميز",
+    "recentSubmissions": "الأوراق المستلمة مؤخرًا",
+    "noSubmissionsReceived": "لم تستلم أي أوراق بحثية بعد",
+    "dashboardTitle": "لوحة التحكم",
+    "toggleSidebar": "فتح/إغلاق الشريط الجانبي"
   }
 }
