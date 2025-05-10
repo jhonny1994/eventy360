@@ -629,6 +629,39 @@ export type Database = {
           },
         ]
       }
+      researcher_topic_subscriptions: {
+        Row: {
+          created_at: string
+          profile_id: string
+          topic_id: string
+        }
+        Insert: {
+          created_at?: string
+          profile_id: string
+          topic_id: string
+        }
+        Update: {
+          created_at?: string
+          profile_id?: string
+          topic_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "researcher_topic_subscriptions_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "researcher_topic_subscriptions_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       submissions: {
         Row: {
           abstract_file_metadata: Json | null
@@ -994,4 +1027,4 @@ export const Constants = {
       user_type_enum: ["researcher", "organizer", "admin"],
     },
   },
-} as const 
+} as const

@@ -4,6 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import { Card, Alert } from 'flowbite-react';
 import { HiInformationCircle, HiAcademicCap, HiCheckCircle, HiIdentification, HiCalendar } from 'react-icons/hi2';
 import ProfileSidebarClient, { ProfileInfo, IconName } from './ui/ProfileSidebarClient';
+import TopicSubscriptionsCard from './ui/TopicSubscriptionsCard';
 
 // Helper function to format dates (adjust format as needed for Arabic)
 function formatDate(dateString: string | null, locale: string = 'ar'): string {
@@ -138,7 +139,7 @@ export default async function ProfilePage(props: Props) {
   // Fetch profile data including extended profile and location names
   // Join location data via the extended profile tables
   const { data: profileData, error: profileError } = await supabase
-    .from('profiles')
+          .from('profiles')
     .select(`
       *,
       researcher_profiles ( 
@@ -153,7 +154,7 @@ export default async function ProfilePage(props: Props) {
       ),
       subscriptions (*)
     `)
-    .eq('id', user.id)
+          .eq('id', user.id)
     .single<ExtendedProfileData>(); // Updated to use the new type
 
   // If profile is somehow incomplete despite middleware, redirect
@@ -433,16 +434,6 @@ export default async function ProfilePage(props: Props) {
                       </div>
                       
                       <div className="border-t sm:border-t-0 sm:border-s pt-4 sm:pt-0 sm:ps-6 border-gray-200 dark:border-gray-700 flex flex-col sm:w-72">
-                        <div className="flex justify-between items-center mb-4">
-                          <span className="font-medium">{t('eventLimit')}</span>
-                          <span className="text-indigo-600 dark:text-indigo-400 font-bold">
-                            {profileData.user_type === 'organizer' && (!subscriptionData || subscriptionData.tier === 'free' || subscriptionData.status === 'expired' || (trialStatus && trialStatus.status === 'expired')) 
-                              ? '1' 
-                              : profileData.user_type === 'organizer' && subscriptionData // Assuming paid tiers have higher limits
-                                ? '10' 
-                                : '∞'}
-                          </span>
-                        </div>
                         <button className={`text-white font-medium rounded-lg py-2 px-4 transition-colors duration-200 w-full ${
                           (trialStatus && trialStatus.status === 'expired') || (subscriptionData && subscriptionData.status === 'expired')
                             ? 'bg-orange-500 hover:bg-orange-600' // Suggest reactivation for expired
@@ -594,6 +585,16 @@ export default async function ProfilePage(props: Props) {
                       </div>
                     </div>
                   </Card>
+                  
+                  {/* Topic Subscriptions Card - Only for researchers with trial or active paid subscriptions */}
+                  {profileData.user_type === 'researcher' && 
+                   subscriptionData && 
+                   (subscriptionData.tier === 'trial' || subscriptionData.tier === 'paid_researcher') &&
+                   (subscriptionData.status === 'active' || subscriptionData.status === 'trial') && (
+                    <Card className="shadow-md lg:col-span-3">
+                      <TopicSubscriptionsCard />
+                    </Card>
+                  )}
                   
                   <Card className="shadow-md lg:col-span-3">
                     <div className="p-5">

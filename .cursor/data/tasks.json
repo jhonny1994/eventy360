@@ -65,14 +65,14 @@
       "id": "cb4897a4-4e94-461c-acba-b810938d5f81",
       "name": "Implement Profile Picture Upload",
       "description": "Add functionality to the EditProfileForm to handle profile picture uploads. This includes selecting files, displaying previews, uploading to Supabase Storage, and saving the URL to the user's profile.",
-      "status": "待處理",
+      "status": "已完成",
       "dependencies": [
         {
           "taskId": "b49ecfaa-1d1d-4566-b46c-efd44e0db16f"
         }
       ],
       "createdAt": "2025-05-08T07:52:46.026Z",
-      "updatedAt": "2025-05-08T07:52:46.026Z",
+      "updatedAt": "2025-05-10T11:11:44.594Z",
       "relatedFiles": [
         {
           "path": "src/app/[locale]/profile/ui/EditProfileForm.tsx",
@@ -82,20 +82,22 @@
       ],
       "implementationGuide": "1. Modify `EditProfileForm.tsx` to add a file input component for profile picture upload.\n2. Create a section that displays the current profile picture (if it exists) alongside the file input.\n3. Implement client-side file validation to ensure only image files (e.g., .jpg, .png) are accepted and that size limits are respected (suggest 1-2MB max).\n4. Add React state to store the selected file and display a preview of the new image before submission.\n5. Modify the form submission handler to:\n   - Check if a new file was selected\n   - If yes, upload the file to Supabase Storage at `avatars/{user_id}.{extension}` in a public bucket with `upsert: true`\n   - Get the returned URL and include it in the profile update data\n   - If no new file was selected, retain the existing URL in the update data\n6. Add appropriate error handling for upload failures (size limits, network issues, etc.).\n7. Display loading indicators during the upload process.\n8. Implement proper cleanup of any old files if needed (though with the upsert approach this may be handled automatically).",
       "verificationCriteria": "- Users can select an image file from their device.\n- A preview of the selected image is displayed before submission.\n- Invalid file types or oversized files are rejected with appropriate error messages.\n- The image is successfully uploaded to Supabase Storage in the correct location.\n- The profile picture URL is correctly updated in the user's profile.\n- The new profile picture is displayed on the profile page after submission.\n- Loading states are correctly shown during the upload process.",
-      "analysisResult": "The plan for enhancing the user profile page has been thoroughly analyzed and is aligned with the project's architecture (Next.js App Router, Supabase, Tailwind, Flowbite). The approach of creating a dedicated display page with a separate edit page that uses a duplicated form (rather than modifying the existing onboarding form) is sound. The primary tasks involve creating new pages for profile display and editing, implementing profile picture upload functionality, and ensuring proper i18n support with Arabic/RTL layout. The plan respects existing module boundaries and code organization patterns, and should integrate seamlessly with the application's current structure."
+      "analysisResult": "The plan for enhancing the user profile page has been thoroughly analyzed and is aligned with the project's architecture (Next.js App Router, Supabase, Tailwind, Flowbite). The approach of creating a dedicated display page with a separate edit page that uses a duplicated form (rather than modifying the existing onboarding form) is sound. The primary tasks involve creating new pages for profile display and editing, implementing profile picture upload functionality, and ensuring proper i18n support with Arabic/RTL layout. The plan respects existing module boundaries and code organization patterns, and should integrate seamlessly with the application's current structure.",
+      "summary": "Profile picture upload functionality has been implemented successfully, including file selection, preview, validation, upload to Supabase Storage, and profile update, as per user confirmation.",
+      "completedAt": "2025-05-10T11:11:44.592Z"
     },
     {
       "id": "df2ab927-00bf-402a-89c5-284718e1a531",
       "name": "Create Profile Page Components",
       "description": "Create reusable UI components for the profile display page to ensure a clean, modular structure. This includes components for profile header, profile details section, and the placeholder for the future dashboard area.",
-      "status": "待處理",
+      "status": "已完成",
       "dependencies": [
         {
           "taskId": "64773e50-e32c-45be-a060-9e83ed394ba0"
         }
       ],
       "createdAt": "2025-05-08T07:52:46.026Z",
-      "updatedAt": "2025-05-08T07:52:46.026Z",
+      "updatedAt": "2025-05-10T11:13:18.666Z",
       "relatedFiles": [
         {
           "path": "src/app/[locale]/profile/ui/ProfileHeader.tsx",
@@ -125,13 +127,15 @@
       ],
       "implementationGuide": "1. Create a new folder for profile components: `src/app/[locale]/profile/ui/`.\n2. Implement the following components:\n   - `ProfileHeader.tsx`: Displays profile picture, name, and verification badge\n   - `ProfileDetails.tsx`: Shows user details (affiliation, location, bio, etc.)\n   - `ProfileActions.tsx`: Contains action buttons (e.g., Edit Profile)\n   - `DashboardPlaceholder.tsx`: A placeholder section for future dashboard content\n3. Use Flowbite components and Tailwind for styling.\n4. Ensure all components support RTL layout for Arabic.\n5. Allow components to handle loading states and nullable data gracefully.\n6. Import and arrange these components in the main profile display page.",
       "verificationCriteria": "- All components render correctly and maintain visual consistency.\n- Components handle loading states and null/undefined data gracefully.\n- RTL layout works correctly for Arabic content.\n- The profile page maintains its functionality while using these modular components.\n- Visual design is consistent with the project's existing style.",
-      "analysisResult": "The plan for enhancing the user profile page has been thoroughly analyzed and is aligned with the project's architecture (Next.js App Router, Supabase, Tailwind, Flowbite). The approach of creating a dedicated display page with a separate edit page that uses a duplicated form (rather than modifying the existing onboarding form) is sound. The primary tasks involve creating new pages for profile display and editing, implementing profile picture upload functionality, and ensuring proper i18n support with Arabic/RTL layout. The plan respects existing module boundaries and code organization patterns, and should integrate seamlessly with the application's current structure."
+      "analysisResult": "The plan for enhancing the user profile page has been thoroughly analyzed and is aligned with the project's architecture (Next.js App Router, Supabase, Tailwind, Flowbite). The approach of creating a dedicated display page with a separate edit page that uses a duplicated form (rather than modifying the existing onboarding form) is sound. The primary tasks involve creating new pages for profile display and editing, implementing profile picture upload functionality, and ensuring proper i18n support with Arabic/RTL layout. The plan respects existing module boundaries and code organization patterns, and should integrate seamlessly with the application's current structure.",
+      "summary": "Profile page components created and confirmed complete by the user.",
+      "completedAt": "2025-05-10T11:13:18.664Z"
     },
     {
       "id": "b3441b79-b8b0-45e6-9c94-3af3904ab2a3",
       "name": "Add i18n Translations for Profile Pages",
       "description": "Add all necessary translation strings for the profile display and edit pages to the project's translation files. This ensures all text is available in Arabic and potentially other supported languages.",
-      "status": "待處理",
+      "status": "已完成",
       "dependencies": [
         {
           "taskId": "64773e50-e32c-45be-a060-9e83ed394ba0"
@@ -141,7 +145,7 @@
         }
       ],
       "createdAt": "2025-05-08T07:52:46.026Z",
-      "updatedAt": "2025-05-08T07:52:46.026Z",
+      "updatedAt": "2025-05-10T11:12:34.972Z",
       "relatedFiles": [
         {
           "path": "messages/ar.json",
@@ -161,13 +165,15 @@
       ],
       "implementationGuide": "1. Identify all text strings used in the new profile pages and components that need translation.\n2. Add these strings to the appropriate translation files (likely in `messages/[locale]/` directories).\n3. Organize translations logically, perhaps under a `ProfilePage` namespace.\n4. Ensure all error messages, button labels, section titles, and helper text are included.\n5. Use the `next-intl` library's translation function to retrieve these strings in components.\n6. Pay special attention to validation error messages for the edit form.",
       "verificationCriteria": "- All user-facing text in the profile pages and components is translated.\n- No hardcoded text strings remain in the components.\n- Translations are organized logically in the translation files.\n- All error messages and notifications are properly translated.\n- The translation keys used in components match those defined in the translation files.",
-      "analysisResult": "The plan for enhancing the user profile page has been thoroughly analyzed and is aligned with the project's architecture (Next.js App Router, Supabase, Tailwind, Flowbite). The approach of creating a dedicated display page with a separate edit page that uses a duplicated form (rather than modifying the existing onboarding form) is sound. The primary tasks involve creating new pages for profile display and editing, implementing profile picture upload functionality, and ensuring proper i18n support with Arabic/RTL layout. The plan respects existing module boundaries and code organization patterns, and should integrate seamlessly with the application's current structure."
+      "analysisResult": "The plan for enhancing the user profile page has been thoroughly analyzed and is aligned with the project's architecture (Next.js App Router, Supabase, Tailwind, Flowbite). The approach of creating a dedicated display page with a separate edit page that uses a duplicated form (rather than modifying the existing onboarding form) is sound. The primary tasks involve creating new pages for profile display and editing, implementing profile picture upload functionality, and ensuring proper i18n support with Arabic/RTL layout. The plan respects existing module boundaries and code organization patterns, and should integrate seamlessly with the application's current structure.",
+      "summary": "i18n translations for profile pages added and confirmed complete by the user.",
+      "completedAt": "2025-05-10T11:12:34.970Z"
     },
     {
       "id": "652f42e2-0e51-4cf5-99a1-26adce810d5a",
       "name": "Configure Route Protection for Profile Pages",
       "description": "Update the middleware or route protection logic to ensure profile pages are only accessible to authenticated users who have completed their profiles. This maintains the existing app security pattern.",
-      "status": "待處理",
+      "status": "已完成",
       "dependencies": [
         {
           "taskId": "64773e50-e32c-45be-a060-9e83ed394ba0"
@@ -177,7 +183,7 @@
         }
       ],
       "createdAt": "2025-05-08T07:52:46.026Z",
-      "updatedAt": "2025-05-08T07:52:46.026Z",
+      "updatedAt": "2025-05-10T11:12:22.527Z",
       "relatedFiles": [
         {
           "path": "middleware.ts",
@@ -187,13 +193,15 @@
       ],
       "implementationGuide": "1. Review the existing middleware.ts file to understand current route protection logic.\n2. Update middleware or route handlers to add `/profile` and `/profile/edit` to the list of protected routes.\n3. Verify that the checks for authentication and profile completion status are applied to these routes.\n4. Ensure appropriate redirection occurs for unauthenticated users or those with incomplete profiles.\n5. Test different user states (unauthenticated, authenticated with incomplete profile, fully onboarded) to verify redirection behavior.",
       "verificationCriteria": "- Unauthenticated users attempting to access profile pages are redirected to login.\n- Authenticated users with incomplete profiles are redirected to complete their profile.\n- Fully onboarded users can access the profile pages normally.\n- The middleware correctly differentiates between the profile display and edit pages.\n- The protection logic is consistent with the existing app security pattern.",
-      "analysisResult": "The plan for enhancing the user profile page has been thoroughly analyzed and is aligned with the project's architecture (Next.js App Router, Supabase, Tailwind, Flowbite). The approach of creating a dedicated display page with a separate edit page that uses a duplicated form (rather than modifying the existing onboarding form) is sound. The primary tasks involve creating new pages for profile display and editing, implementing profile picture upload functionality, and ensuring proper i18n support with Arabic/RTL layout. The plan respects existing module boundaries and code organization patterns, and should integrate seamlessly with the application's current structure."
+      "analysisResult": "The plan for enhancing the user profile page has been thoroughly analyzed and is aligned with the project's architecture (Next.js App Router, Supabase, Tailwind, Flowbite). The approach of creating a dedicated display page with a separate edit page that uses a duplicated form (rather than modifying the existing onboarding form) is sound. The primary tasks involve creating new pages for profile display and editing, implementing profile picture upload functionality, and ensuring proper i18n support with Arabic/RTL layout. The plan respects existing module boundaries and code organization patterns, and should integrate seamlessly with the application's current structure.",
+      "summary": "Route protection for profile pages configured and confirmed complete by the user.",
+      "completedAt": "2025-05-10T11:12:22.525Z"
     },
     {
       "id": "f901d9e6-54e0-4f58-926e-21c424308724",
       "name": "Implement Success/Error Notifications",
       "description": "Add toast or alert notifications to provide feedback for profile update actions, including success messages after saving changes and error messages for various failure scenarios.",
-      "status": "待處理",
+      "status": "已完成",
       "dependencies": [
         {
           "taskId": "b49ecfaa-1d1d-4566-b46c-efd44e0db16f"
@@ -203,7 +211,7 @@
         }
       ],
       "createdAt": "2025-05-08T07:52:46.026Z",
-      "updatedAt": "2025-05-08T07:52:46.026Z",
+      "updatedAt": "2025-05-10T11:12:43.007Z",
       "relatedFiles": [
         {
           "path": "src/app/[locale]/profile/edit/page.tsx",
@@ -218,14 +226,16 @@
       ],
       "implementationGuide": "1. Identify an existing notification component or pattern used in the app, or select a Flowbite component like Toast/Alert.\n2. Add success notifications that appear after successfully updating the profile.\n3. Add error notifications for various failure scenarios like:\n   - Failed data fetching\n   - Form validation errors (in addition to inline form errors)\n   - Image upload failures\n   - Database update failures\n4. Ensure all notification text is translated using the i18n system.\n5. Implement these notifications in both the profile display and edit pages as needed.\n6. Make sure notifications are dismissible and have appropriate timing (auto-dismiss for success, possibly remain for errors).",
       "verificationCriteria": "- Success notifications appear after profile updates are saved.\n- Error notifications appear for all relevant failure scenarios.\n- Notifications use correctly translated text.\n- Notifications are visually consistent with the app's design.\n- Notifications have appropriate timing and dismissal behavior.\n- Notifications do not disrupt the user experience (e.g., by blocking UI elements).",
-      "analysisResult": "The plan for enhancing the user profile page has been thoroughly analyzed and is aligned with the project's architecture (Next.js App Router, Supabase, Tailwind, Flowbite). The approach of creating a dedicated display page with a separate edit page that uses a duplicated form (rather than modifying the existing onboarding form) is sound. The primary tasks involve creating new pages for profile display and editing, implementing profile picture upload functionality, and ensuring proper i18n support with Arabic/RTL layout. The plan respects existing module boundaries and code organization patterns, and should integrate seamlessly with the application's current structure."
+      "analysisResult": "The plan for enhancing the user profile page has been thoroughly analyzed and is aligned with the project's architecture (Next.js App Router, Supabase, Tailwind, Flowbite). The approach of creating a dedicated display page with a separate edit page that uses a duplicated form (rather than modifying the existing onboarding form) is sound. The primary tasks involve creating new pages for profile display and editing, implementing profile picture upload functionality, and ensuring proper i18n support with Arabic/RTL layout. The plan respects existing module boundaries and code organization patterns, and should integrate seamlessly with the application's current structure.",
+      "summary": "Success/error notifications implemented and confirmed complete by the user.",
+      "completedAt": "2025-05-10T11:12:43.005Z"
     },
     {
       "id": "f6683cb7-bb93-4a7f-9fdf-9db04a7af40a",
       "name": "End-to-End Testing of Profile Features",
       "description": "Perform comprehensive testing of the profile display and edit functionality to ensure all features work correctly and edge cases are handled appropriately.",
       "notes": "This is a testing task, not a development task. It serves as a final verification that all the profile enhancement features work correctly together.",
-      "status": "待處理",
+      "status": "已完成",
       "dependencies": [
         {
           "taskId": "64773e50-e32c-45be-a060-9e83ed394ba0"
@@ -244,10 +254,12 @@
         }
       ],
       "createdAt": "2025-05-08T07:52:46.026Z",
-      "updatedAt": "2025-05-08T07:52:46.026Z",
+      "updatedAt": "2025-05-10T11:12:51.396Z",
       "implementationGuide": "1. Test the profile display page with different user types (researcher, organizer) to ensure role-specific information is displayed correctly.\n2. Test the profile edit page, ensuring all fields can be edited and saved.\n3. Test profile picture upload with various file types and sizes to verify validation.\n4. Test form validation for all fields, ensuring appropriate error messages appear.\n5. Test edge cases such as:\n   - Users with missing profile data\n   - Very long text in fields\n   - Network interruptions during form submission\n   - Cancelling edits midway\n6. Test on different browsers and screen sizes to ensure responsive design.\n7. Verify RTL layout functions correctly on all pages and components.\n8. Test the route protection to ensure proper redirection for different user states.",
       "verificationCriteria": "- All features of the profile display and edit pages function as expected.\n- The profile picture upload process works correctly.\n- Form validation and error handling function properly.\n- The UI is responsive and displays correctly on different screen sizes.\n- RTL layout for Arabic text works properly throughout.\n- Route protection correctly manages access to the profile pages.\n- All identified edge cases are handled appropriately.\n- The user experience is smooth and intuitive.",
-      "analysisResult": "The plan for enhancing the user profile page has been thoroughly analyzed and is aligned with the project's architecture (Next.js App Router, Supabase, Tailwind, Flowbite). The approach of creating a dedicated display page with a separate edit page that uses a duplicated form (rather than modifying the existing onboarding form) is sound. The primary tasks involve creating new pages for profile display and editing, implementing profile picture upload functionality, and ensuring proper i18n support with Arabic/RTL layout. The plan respects existing module boundaries and code organization patterns, and should integrate seamlessly with the application's current structure."
+      "analysisResult": "The plan for enhancing the user profile page has been thoroughly analyzed and is aligned with the project's architecture (Next.js App Router, Supabase, Tailwind, Flowbite). The approach of creating a dedicated display page with a separate edit page that uses a duplicated form (rather than modifying the existing onboarding form) is sound. The primary tasks involve creating new pages for profile display and editing, implementing profile picture upload functionality, and ensuring proper i18n support with Arabic/RTL layout. The plan respects existing module boundaries and code organization patterns, and should integrate seamlessly with the application's current structure.",
+      "summary": "End-to-end testing of profile features conducted and confirmed complete by the user.",
+      "completedAt": "2025-05-10T11:12:51.395Z"
     },
     {
       "id": "f1f9718b-69e7-436f-ae55-38d97fac241e",
@@ -328,14 +340,14 @@
       "id": "24f52dbb-bbac-4587-8223-b73dddff9d73",
       "name": "Add Trial-Related Translations",
       "description": "Add all necessary translation strings for the trial subscription UI to the Arabic language file (messages/ar.json). This ensures proper internationalization support for all trial-related text.",
-      "status": "待處理",
+      "status": "已完成",
       "dependencies": [
         {
           "taskId": "b3441b79-b8b0-45e6-9c94-3af3904ab2a3"
         }
       ],
       "createdAt": "2025-05-09T11:09:06.277Z",
-      "updatedAt": "2025-05-09T11:09:06.277Z",
+      "updatedAt": "2025-05-10T11:13:10.170Z",
       "relatedFiles": [
         {
           "path": "messages/ar.json",
@@ -345,20 +357,22 @@
       ],
       "implementationGuide": "1. Open the messages/ar.json file\n2. Add the following translation entries under the appropriate sections:\n```json\n{\n  \"ProfilePage\": {\n    // ... existing translations\n    \"trialEndsAt\": \"تنتهي الفترة التجريبية في\",\n    \"daysRemaining\": \"تبقى {count} يوم\",\n    \"trialExpired\": \"انتهت الفترة التجريبية\",\n    \"trialAboutToExpire\": \"الفترة التجريبية على وشك الانتهاء\",\n    \"upgradeTo\": \"الترقية إلى\",\n    \"premiumTier\": \"المستوى المميز\",\n    \"reactivateSubscription\": \"تفعيل الاشتراك\",\n    \"dayRemaining\": \"يتبقى يوم واحد\",\n    \"daysRemaining\": \"تبقى {count} أيام\"\n  },\n  \"Enums\": {\n    // ... existing enums\n    \"SubscriptionTier\": {\n      \"free\": \"مجاني\",\n      \"paid_researcher\": \"حساب باحث مدفوع\",\n      \"paid_organizer\": \"حساب منظّم مدفوع\",\n      \"trial\": \"فترة تجريبية\"\n    },\n    \"SubscriptionStatus\": {\n      \"active\": \"نشط\",\n      \"expired\": \"منتهي الصلاحية\",\n      \"trial\": \"فترة تجريبية\",\n      \"cancelled\": \"ملغى\"\n    }\n  }\n}\n```\n3. Make sure to use the appropriate plural forms for the Arabic language",
       "verificationCriteria": "All trial-related text in the UI should have corresponding Arabic translations in the messages/ar.json file. No untranslated text should appear in the UI when viewing in Arabic.",
-      "analysisResult": "After analyzing the existing codebase and requirements, I've found that the trial subscription system already has a database foundation with the `handle_new_user` trigger creating a 1-month trial subscription, but the UI doesn't display this information properly. The profile page needs to be enhanced to fetch and display the subscription status, with special attention to trial expiration dates, appropriate visual indicators, and action buttons. This implementation requires database querying, UI enhancements, and proper integration with the existing profile page components."
+      "analysisResult": "After analyzing the existing codebase and requirements, I've found that the trial subscription system already has a database foundation with the `handle_new_user` trigger creating a 1-month trial subscription, but the UI doesn't display this information properly. The profile page needs to be enhanced to fetch and display the subscription status, with special attention to trial expiration dates, appropriate visual indicators, and action buttons. This implementation requires database querying, UI enhancements, and proper integration with the existing profile page components.",
+      "summary": "Trial-related translations added and confirmed complete by the user.",
+      "completedAt": "2025-05-10T11:13:10.168Z"
     },
     {
       "id": "ce123cd0-894f-4624-a2ce-a79bd37a2c05",
       "name": "Test and Debug Trial Subscription Display",
       "description": "Comprehensively test the trial subscription display functionality across different states (active, expiring soon, expired) and ensure correct presentation in Arabic. Fix any bugs or issues found during testing.",
-      "status": "待處理",
+      "status": "已完成",
       "dependencies": [
         {
           "taskId": "f6683cb7-bb93-4a7f-9fdf-9db04a7af40a"
         }
       ],
       "createdAt": "2025-05-09T11:09:06.277Z",
-      "updatedAt": "2025-05-09T11:09:06.277Z",
+      "updatedAt": "2025-05-10T11:13:01.297Z",
       "relatedFiles": [
         {
           "path": "src/app/[locale]/profile/page.tsx",
@@ -368,7 +382,119 @@
       ],
       "implementationGuide": "1. Create test cases for different trial states:\n   - Active trial with more than 7 days remaining\n   - Trial expiring soon (less than 7 days remaining)\n   - Expired trial\n2. Temporarily modify the trial_ends_at dates in the database for testing purposes\n3. Test the following aspects:\n   - Correct status display (badges and colors)\n   - Proper trial end date formatting\n   - Accurate days remaining calculation\n   - Progress bar visual representation\n   - Action button text changes based on status\n   - RTL layout for Arabic\n4. Check mobile responsiveness:\n   - Test on different screen sizes\n   - Verify card layout adapts properly on small screens\n5. Fix any identified issues:",
       "verificationCriteria": "The trial subscription display should correctly handle all states (active, expiring soon, expired) with proper visual indicators. All text should be correctly displayed in Arabic with appropriate RTL layout. The component should be responsive across different screen sizes.",
-      "analysisResult": "After analyzing the existing codebase and requirements, I've found that the trial subscription system already has a database foundation with the `handle_new_user` trigger creating a 1-month trial subscription, but the UI doesn't display this information properly. The profile page needs to be enhanced to fetch and display the subscription status, with special attention to trial expiration dates, appropriate visual indicators, and action buttons. This implementation requires database querying, UI enhancements, and proper integration with the existing profile page components."
+      "analysisResult": "After analyzing the existing codebase and requirements, I've found that the trial subscription system already has a database foundation with the `handle_new_user` trigger creating a 1-month trial subscription, but the UI doesn't display this information properly. The profile page needs to be enhanced to fetch and display the subscription status, with special attention to trial expiration dates, appropriate visual indicators, and action buttons. This implementation requires database querying, UI enhancements, and proper integration with the existing profile page components.",
+      "summary": "Trial subscription display tested, debugged, and confirmed complete by the user.",
+      "completedAt": "2025-05-10T11:13:01.296Z"
+    },
+    {
+      "id": "d748d5a2-4c30-45cd-a294-15ac15ea9217",
+      "name": "Create TopicSubscriptionsCard Component",
+      "description": "Create a new client component (TopicSubscriptionsCard.tsx) in the profile UI directory that will display available topics and allow researchers to subscribe/unsubscribe. The component should fetch topics and current subscriptions, display them with checkboxes, and handle state management for UI interactions.",
+      "status": "已完成",
+      "dependencies": [],
+      "createdAt": "2025-05-10T10:04:38.459Z",
+      "updatedAt": "2025-05-10T10:07:28.367Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/ui/TopicSubscriptionsCard.tsx",
+          "type": "CREATE",
+          "description": "New client component for managing topic subscriptions"
+        },
+        {
+          "path": "src/app/[locale]/profile/page.tsx",
+          "type": "REFERENCE",
+          "description": "Profile page where the new component will be rendered"
+        }
+      ],
+      "implementationGuide": "Create a new file `src/app/[locale]/profile/ui/TopicSubscriptionsCard.tsx` as a client component. Use `createClientComponentClient` from @supabase/auth-helpers-nextjs for Supabase interactions. Implement state management with useState hooks for allTopics, subscribedTopicIds, loading state, and errors. Use Flowbite React components (Card, Checkbox, etc.) for UI consistency. The component should fetch topics and user subscriptions on mount, and handle subscribe/unsubscribe actions with optimistic UI updates.\n\n```tsx\n'use client';\n\nimport { useEffect, useState } from 'react';\nimport { createClientComponentClient } from '@supabase/auth-helpers-nextjs';\nimport { Card, Checkbox, Spinner, Alert } from 'flowbite-react';\nimport { useTranslations } from 'next-intl';\n\ninterface Topic {\n  id: string;\n  name: string;\n}\n\nexport default function TopicSubscriptionsCard() {\n  const t = useTranslations('ProfilePage.topicSubscriptions');\n  const supabase = createClientComponentClient();\n  const [allTopics, setAllTopics] = useState<Topic[]>([]);\n  const [subscribedTopicIds, setSubscribedTopicIds] = useState<Set<string>>(new Set());\n  const [isLoading, setIsLoading] = useState(true);\n  const [error, setError] = useState<string | null>(null);\n  const [userId, setUserId] = useState<string | null>(null);\n\n  // Implement useEffect to fetch topics and subscriptions\n  // Implement handleToggleSubscription function\n  // Implement UI with Card, loading states, error handling\n}\n```",
+      "verificationCriteria": "Component should properly fetch topics and user subscriptions. UI should display topics with checkboxes. Subscribe/unsubscribe functionality should work and update the UI. Loading and error states should be handled appropriately.",
+      "analysisResult": "The feature involves creating a new client component (TopicSubscriptionsCard.tsx) that will be conditionally rendered on the profile page for researchers with trial/paid subscriptions. The component will fetch topics and user subscriptions from Supabase, display them with checkboxes for subscribing/unsubscribing, and handle the necessary API calls.",
+      "summary": "Successfully created the TopicSubscriptionsCard component that displays available topics and allows researchers to subscribe/unsubscribe from them. The component fetches topics and existing subscriptions, handles optimistic UI updates, provides topic-specific loading states, adapts to the current locale, and handles errors appropriately. The implementation uses Flowbite React components for UI consistency and proper TypeScript typing based on the database schema.",
+      "completedAt": "2025-05-10T10:07:28.365Z"
+    },
+    {
+      "id": "7fb7b2bb-fbf9-41a5-a88a-a095ab555d0d",
+      "name": "Add TopicSubscriptionsCard to Profile Page",
+      "description": "Integrate the TopicSubscriptionsCard component into the profile page, conditionally rendering it only for researchers with trial or active paid subscriptions. Ensure the component receives necessary data and context.",
+      "status": "已完成",
+      "dependencies": [
+        {
+          "taskId": "d748d5a2-4c30-45cd-a294-15ac15ea9217"
+        }
+      ],
+      "createdAt": "2025-05-10T10:04:38.459Z",
+      "updatedAt": "2025-05-10T10:08:55.910Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "Profile page where the TopicSubscriptionsCard component needs to be integrated"
+        }
+      ],
+      "implementationGuide": "Import the TopicSubscriptionsCard component in the profile page. Add conditional rendering logic to only show it for researchers with trial/active subscriptions. Ensure the component has access to necessary context (user ID, subscription status).\n\n```tsx\n// In src/app/[locale]/profile/page.tsx\nimport TopicSubscriptionsCard from './ui/TopicSubscriptionsCard';\n\n// Existing code for profile page\n\n// Within the JSX return\n{profileData.user_type === 'researcher' && \n (profileData.subscription?.tier === 'trial' || profileData.subscription?.tier === 'active') && (\n  <TopicSubscriptionsCard />\n)}\n```",
+      "verificationCriteria": "TopicSubscriptionsCard should only appear for researchers with trial/active subscriptions. Component should receive necessary context and be properly positioned within the page layout.",
+      "analysisResult": "The feature involves creating a new client component (TopicSubscriptionsCard.tsx) that will be conditionally rendered on the profile page for researchers with trial/paid subscriptions. The component will fetch topics and user subscriptions from Supabase, display them with checkboxes for subscribing/unsubscribing, and handle the necessary API calls.",
+      "summary": "Successfully integrated the TopicSubscriptionsCard component into the profile page with conditional rendering. The component will only appear for users who are researchers and have an active trial or paid subscription. The component is properly positioned in the researcher dashboard section and follows the same styling patterns as other cards on the page.",
+      "completedAt": "2025-05-10T10:08:55.908Z"
+    },
+    {
+      "id": "7f99b3cb-6342-4210-8582-8f8c24afa28f",
+      "name": "Add Topic Subscription Translations",
+      "description": "Add all necessary translation strings for the topic subscription UI to the project's translation files (English, French, Arabic). This ensures proper internationalization of the new feature.",
+      "status": "已完成",
+      "dependencies": [
+        {
+          "taskId": "d748d5a2-4c30-45cd-a294-15ac15ea9217"
+        }
+      ],
+      "createdAt": "2025-05-10T10:04:38.459Z",
+      "updatedAt": "2025-05-10T10:11:24.631Z",
+      "relatedFiles": [
+        {
+          "path": "messages/en.json",
+          "type": "TO_MODIFY",
+          "description": "English translations file"
+        },
+        {
+          "path": "messages/fr.json",
+          "type": "TO_MODIFY",
+          "description": "French translations file"
+        },
+        {
+          "path": "messages/ar.json",
+          "type": "TO_MODIFY",
+          "description": "Arabic translations file"
+        }
+      ],
+      "implementationGuide": "Add new translation keys to messages/en.json, messages/fr.json, and messages/ar.json for all text elements in the TopicSubscriptionsCard component. This includes titles, button labels, error messages, and loading text.\n\n```json\n// Example additions to messages/en.json\n{\n  \"ProfilePage\": {\n    // ... existing translations\n    \"topicSubscriptions\": {\n      \"title\": \"Topic Subscriptions\",\n      \"noTopicsAvailable\": \"No topics are currently available.\",\n      \"loadingAriaLabel\": \"Loading topics\",\n      \"errorFetchingData\": \"Error loading topics. Please try again.\",\n      \"errorUpdatingSubscription\": \"Failed to update subscription. Please try again.\",\n      \"errorUserNotAuthenticated\": \"User authentication required.\"\n    }\n  }\n}\n```",
+      "verificationCriteria": "All text elements in the TopicSubscriptionsCard component should use translations. Translation keys should be consistent across language files.",
+      "analysisResult": "The feature involves creating a new client component (TopicSubscriptionsCard.tsx) that will be conditionally rendered on the profile page for researchers with trial/paid subscriptions. The component will fetch topics and user subscriptions from Supabase, display them with checkboxes for subscribing/unsubscribing, and handle the necessary API calls.",
+      "summary": "Successfully added translation strings for the topic subscription feature to all three language files (English, French, and Arabic). The translations include the card title, descriptions, loading states, error messages, and other UI text needed for the TopicSubscriptionsCard component. All translations are properly structured under the ProfilePage.topicSubscriptions namespace in each language file.",
+      "completedAt": "2025-05-10T10:11:24.630Z"
+    },
+    {
+      "id": "9ffa4eac-ca64-47b6-9e7d-8215c49ade82",
+      "name": "Test Topic Subscription Management",
+      "description": "Comprehensive testing of the topic subscription management functionality to ensure it works correctly for different user types, subscription states, and edge cases. This includes verifying the correct behavior of the UI, API calls, and RLS policies.",
+      "status": "已完成",
+      "dependencies": [
+        {
+          "taskId": "d748d5a2-4c30-45cd-a294-15ac15ea9217"
+        },
+        {
+          "taskId": "7fb7b2bb-fbf9-41a5-a88a-a095ab555d0d"
+        },
+        {
+          "taskId": "7f99b3cb-6342-4210-8582-8f8c24afa28f"
+        }
+      ],
+      "createdAt": "2025-05-10T10:04:38.459Z",
+      "updatedAt": "2025-05-10T11:12:04.870Z",
+      "implementationGuide": "Test the feature with different user types and subscription states:\n1. Researcher with active subscription: Should see and be able to use the feature\n2. Researcher with trial subscription: Should see and be able to use the feature\n3. Researcher with free/expired subscription: Should NOT see the feature\n4. Organizer (any subscription): Should NOT see the feature\n\nTest API functionality:\n1. Fetching topics\n2. Fetching user subscriptions\n3. Subscribing to a topic\n4. Unsubscribing from a topic\n\nTest error handling:\n1. Network errors\n2. RLS policy restrictions\n3. Invalid data\n\nTest UI responsiveness and accessibility.",
+      "verificationCriteria": "Feature works correctly for all user types and subscription states. API calls perform as expected. UI is responsive and accessible. Errors are handled gracefully. RLS policies restrict operations appropriately.",
+      "analysisResult": "The feature involves creating a new client component (TopicSubscriptionsCard.tsx) that will be conditionally rendered on the profile page for researchers with trial/paid subscriptions. The component will fetch topics and user subscriptions from Supabase, display them with checkboxes for subscribing/unsubscribing, and handle the necessary API calls.",
+      "summary": "Topic subscription management tested and confirmed complete by the user.",
+      "completedAt": "2025-05-10T11:12:04.868Z"
     }
   ]
 }

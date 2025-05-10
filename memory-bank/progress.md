@@ -3,6 +3,9 @@
 ## Project Overview
 Eventy360 is a Next.js application with Supabase backend, offering multilingual support (English, French, Arabic) for connecting researchers and event organizers in academia.
 
+**Conceptual Model Updates (New Section - 05/10/2025 - *replace with actual date*)**
+- The definitions for user subscription tiers (Free, Trial, Paid) and their associated features for both Researcher and Organizer roles have been clarified and refined. This includes specific behavior for Organizers in a post-trial (expired, not paid) state. These updated definitions are now documented in `productContext.md` and `systemPatterns.md`.
+
 ## Current Focus
 Enhancing the minimal profile page and conducting end-to-end testing now that the entire user authentication and onboarding flow is working.
 
@@ -17,7 +20,7 @@ Enhancing the minimal profile page and conducting end-to-end testing now that th
 | Middleware Redirection | ✅ Complete | Users properly redirected based on profile status |
 | Profile Completion | ✅ Complete | Form working with validation and submission |
 | Profile Page | ✅ Complete | Dashboard UI with responsive design implemented |
-| Profile Edit Page | 🔄 In Progress | Form implementation pending |
+| Profile Edit Page | ✅ Complete | Form implementation with profile picture upload and data updates functional. Debugging code removed. |
 | Localization | ✅ Complete | All translations implemented and refined |
 
 ## Current Issues
@@ -73,11 +76,11 @@ Enhancing the minimal profile page and conducting end-to-end testing now that th
   - ✅ Subscription status and verification display
   - ✅ Responsive design for desktop and mobile
   - ✅ RTL support for Arabic
+  - ✅ Profile picture upload functionality with Supabase Storage, Edge Function for cleanup, and UI preview.
+  - ✅ Debugging statements related to profile picture upload removed.
 - **Remaining:**
-  - Implement separate profile edit page (`/[locale]/profile/edit`)
-  - Add profile picture upload functionality
-  - Implement success/error notifications
-  - Conduct end-to-end testing
+  - Refine success/error notifications for profile updates (Basic toasts exist; assess if more comprehensive notifications are needed).
+  - Conduct comprehensive end-to-end testing of all profile viewing and editing features.
 
 ## Planned Features (Future)
 

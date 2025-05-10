@@ -82,6 +82,8 @@
 *   **Asynchronous Notifications**: A dedicated `notification_queue` table and scheduled Edge Functions (`process-notification-queue`) handle email sending asynchronously, improving resilience and decoupling email logic from core operations.
 *   **Scheduled Tasks (Cron)**: Supabase Cron jobs drive regular maintenance and checks (deadline reminders, subscription expiry, failed email retries, data purging).
 *   **Tiered Feature Access**: Logic checks (primarily backend/database level, potentially via RLS or DB functions/triggers) enforce feature limits based on user subscription tier (e.g., number of active events for organizers).
+    *   **Researcher - Free Tier**: RLS policies and/or application logic must prevent paper submissions. UI should hide/disable submission features. Notification system must not send topic-based event notifications.
+    *   **Organizer - Post-Trial (Expired, Not Paid)**: Users can log in. Existing events remain untouched. UI must disable event creation/management features. Backend RLS/function logic must prevent these actions. The `check-subscriptions-expiry` cron job is responsible for transitioning users to an 'expired' subscription status, which then drives these UI/backend limitations.
 *   **State Management**: Event and Submission lifecycles are managed via status fields (`event_status_enum`, `submission_status_enum`) updated through user actions or automated processes.
 *   **Internationalized Validation Schemas**: Zod schemas for forms are defined with a base structure and generated via a function that accepts the `next-intl` translation function (`t`). This allows validation error messages to be easily translated.
     *   Example: `getLoginSchema(t)` returns the Zod schema with messages like `t('Validations.email')`.
@@ -99,4 +101,16 @@
 *   **Manual Admin Verification**: Admins verify payment receipt offline.
 *   **Platform Record Keeping**: Admins record payment details (`payments` table) and mark as verified.
 *   **Automated Subscription Activation**: A database trigger/function (`handle_payment_verification`) on the `payments` table manages the creation/update of the corresponding `subscriptions` record.
-*   **Scheduled Expiry Management**: Cron job (`check-subscriptions-expiry`) handles automatic status updates for expired trials/subscriptions. 
+*   **Scheduled Expiry Management**: Cron job (`check-subscriptions-expiry`) handles automatic status updates for expired trials/subscriptions. For Organizers whose trials expire without converting to paid, this job's outcome (setting subscription to 'expired') is key to triggering the functionally disabled state (no event creation/management) while allowing login and leaving existing events untouched.
+
+## 7. UI/UX Patterns
+
+*   **Internationalized Validation Schemas**: Zod schemas for forms are defined with a base structure and generated via a function that accepts the `next-intl` translation function (`t`). This allows validation error messages to be easily translated.
+    *   Example: `getLoginSchema(t)` returns the Zod schema with messages like `t('Validations.email')`.
+*   **Loading State Management**: Provide visual feedback during data fetching and asynchronous operations.
+    *   **App Router (Server Components)**: Use Next.js convention `loading.js`/`tsx` files alongside pages for automatic Suspense boundaries.
+    *   **Client Components/Forms**: Use React state (`useState`) or library features (e.g., SWR `isLoading`) to conditionally render loaders (spinners, skeletons).
+*   **Error Handling**: Standardized approach across the stack.
+    *   **Frontend (App Router)**: Use `error.js`/`tsx` for segment-level Server Component errors, `global-error.js`/`tsx` for root layout errors, `notFound()` for missing data.
+    *   **Frontend (Client Components)**: Use `try...catch`, state management for errors, user-facing Toasts/Alerts.
+    *   **Backend (Edge Functions)**: Use `try...catch`, return structured JSON error responses with appropriate HTTP status codes, log detailed errors. 

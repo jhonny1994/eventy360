@@ -174,7 +174,9 @@
       "errorToast": "تعذّر تحديث الملف الشخصي",
       "fetchProfileError": "حدث خطأ أثناء تحميل بيانات ملفك الشخصي",
       "locationDataFetchError": "تعذّر تحميل البيانات الجغرافية. يُرجى المحاولة مرة أخرى",
-      "cancelButton": "إلغاء"
+      "cancelButton": "إلغاء",
+      "updateSuccess": "تم تحديث الملف الشخصي بنجاح",
+      "uploadPolicyError": "خطأ في الرفع بسبب سياسة الأمان"
     }
   },
   "Validations": {
@@ -187,7 +189,9 @@
     "passwordRequired": "يجب إدخال كلمة المرور",
     "passwordsDontMatch": "كلمتا المرور غير متطابقتين",
     "invalidUrl": "يُرجى إدخال رابط صحيح",
-    "invalidEnumValue": "يُرجى اختيار قيمة صالحة من القائمة"
+    "invalidEnumValue": "يُرجى اختيار قيمة صالحة من القائمة",
+    "fileTypeInvalid": "نوع الملف غير صالح. الأنواع المسموح بها: {types}",
+    "fileSizeTooLarge": "حجم الملف كبير جدًا. الحجم الأقصى المسموح به هو {maxSize} ميغابايت."
   },
   "AriaLabels": {
     "submittingResetRequest": "جارٍ إرسال طلب إعادة تعيين كلمة المرور...",
@@ -197,6 +201,44 @@
     "hidePassword": "إخفاء كلمة المرور",
     "showPassword": "إظهار كلمة المرور",
     "toggleTheme": "تبديل وضع السمة بين الفاتح والداكن"
+  },
+  "ProfilePage": {
+    "editProfileButton": "تعديل الملف الشخصي",
+    "profilePictureLabel": "صورة الملف الشخصي",
+    "profilePicturePreviewAlt": "معاينة صورة الملف الشخصي",
+    "profilePictureHelperText": "PNG, JPG, GIF, WEBP. الحد الأقصى 2 ميجابايت.",
+    "uploadingSpinnerLabel": "جار التحميل",
+    "uploadingText": "جار تحميل الصورة...",
+    "editProfileTitle": "تعديل الملف الشخصي",
+    "logoutButton": "تسجيل الخروج",
+    "verifiedBadge": "موثق",
+    "toggleSidebar": "تبديل القائمة الجانبية",
+    "verified": "موثق",
+    "dashboardTitle": "لوحة التحكم",
+    "subscriptionStatus": "حالة الاشتراك",
+    "currentTier": "الباقة الحالية",
+    "trialEndsAt": "تنتهي الفترة التجريبية في",
+    "daysRemainingFormatted": "{count, plural, zero {لا أيام متبقية} one {يوم واحد متبقي} two {يومان متبقيان} few {# أيام متبقية} many {# يوماً متبقياً} other {# يوم متبقي}}",
+    "upgradeTo": "الترقية إلى",
+    "premiumTier": "الباقة المميزة",
+    "eventsCreated": "الفعاليات المنشأة",
+    "activeEvents": "الفعاليات النشطة",
+    "totalSubmissions": "إجمالي المشاركات",
+    "pendingReviews": "المراجعات المعلقة",
+    "activeEventsList": "قائمة الفعاليات النشطة",
+    "createEvent": "إنشاء فعالية جديدة",
+    "noActiveEvents": "لا توجد فعاليات نشطة حاليًا",
+    "recentSubmissions": "المشاركات الأخيرة",
+    "noSubmissionsReceived": "لم يتم استلام أي مشاركات بعد",
+    "common": {
+      "locationLabel": "الموقع",
+      "joinedLabel": "انضم في"
+    },
+    "organizer": {
+      "institutionTypeLabel": "نوع المؤسسة"
+    },
+    "avatarCleanupError": "خطأ في تنظيف الصورة الرمزية القديمة",
+    "avatarCleanupSuccess": "تم تنظيف الصور الرمزية القديمة بنجاح"
   },
   "Enums": {
     "user_type_enum": {
@@ -283,73 +325,20 @@
       "failed": "فشل"
     }
   },
-  "ProfilePage": {
-    "title": "الملف الشخصي",
-    "welcome": "مرحبًا بك في صفحة ملفك الشخصي",
-    "loading": "جارٍ التحميل...",
-    "profileInfo": "بيانات الملف الشخصي",
-    "logoutButton": "تسجيل الخروج",
-    "avatarAlt": "الصورة الرمزية لـ {name}",
-    "editProfileButton": "تعديل الملف الشخصي",
-    "verifiedBadge": "موثّق",
-    "noBioPlaceholder": "لم يتم تقديم سيرة ذاتية بعد.",
-    "researcher": {
-      "institutionLabel": "المؤسسة",
-      "positionLabel": "المنصب الأكاديمي"
-    },
-    "organizer": {
-      "institutionTypeLabel": "نوع المؤسسة"
-    },
-    "common": {
-      "locationLabel": "الموقع",
-      "joinedLabel": "تاريخ الانضمام",
-      "emailLabel": "البريد الإلكتروني"
-    },
-    "dashboardPlaceholder": "ميزات لوحة التحكم ستتوفر قريبًا!",
-    "fetchErrorTitle": "خطأ في جلب البيانات",
-    "fetchErrorDetails": "تعذّر تحميل بيانات الملف الشخصي: {error}",
-    "profileNotFoundTitle": "الملف الشخصي غير موجود",
-    "profileNotFoundDetails": "تعذّر العثور على بيانات الملف الشخصي. يُرجى المحاولة مرة أخرى أو الاتصال بالدعم.",
-    "detailsTitle": "التفاصيل",
-    "subscriptionStatus": "حالة الاشتراك",
-    "verified": "موثق",
-    "verifiedAccountDescription": "حسابك موثق ويمكنك الوصول إلى جميع الميزات",
-    "unverifiedAccountDescription": "حسابك غير موثق. طلب التوثيق للوصول إلى المزيد من الميزات",
-    "requestVerification": "طلب التوثيق",
-    "submissionsTotal": "إجمالي الأوراق المقدمة",
-    "acceptedPapers": "الأوراق المقبولة",
-    "pendingReviews": "المراجعات المعلقة",
-    "bookmarkedEvents": "التظاهرات المحفوظة",
-    "upcomingDeadlines": "المواعيد النهائية القادمة",
-    "noUpcomingDeadlines": "لا توجد مواعيد نهائية قريبة",
-    "submissionStatus": "حالة الأوراق المقدمة",
-    "noSubmissions": "لم تقم بتقديم أي أوراق بحثية بعد",
-    "recentlyBookmarkedEvents": "التظاهرات المحفوظة مؤخرًا",
-    "noBookmarkedEvents": "لم تقم بحفظ أي تظاهرات بعد",
-    "exploreEvents": "استعراض التظاهرات",
-    "eventsCreated": "التظاهرات المنشأة",
-    "activeEvents": "التظاهرات النشطة",
-    "totalSubmissions": "إجمالي الأوراق المستلمة",
-    "activeEventsList": "قائمة التظاهرات النشطة",
-    "createEvent": "إنشاء تظاهرة جديدة",
-    "noActiveEvents": "لا توجد تظاهرات نشطة حاليًا",
-    "subscriptionInfo": "معلومات الاشتراك",
-    "currentTier": "المستوى الحالي",
-    "freeTier": "المستوى المجاني",
-    "eventLimit": "الحد الأقصى للتظاهرات",
-    "upgradeTo": "الترقية إلى",
-    "premiumTier": "المستوى المميز",
-    "recentSubmissions": "الأوراق المستلمة مؤخرًا",
-    "noSubmissionsReceived": "لم تستلم أي أوراق بحثية بعد",
-    "dashboardTitle": "لوحة التحكم",
-    "toggleSidebar": "فتح/إغلاق الشريط الجانبي",
+  "SubscriptionManagement": {
+    "title": "إدارة الاشتراك",
+    "currentTier": "الباقة الحالية",
+    "status": "الحالة",
     "trialEndsAt": "تنتهي الفترة التجريبية في",
-    "daysRemainingFormatted": "{count, plural, zero {لا أيام متبقية} one {يتبقى يوم واحد} two {يتبقى يومان} few {تتبقى # أيام} many {يتبقى # يومًا} other {يتبقى # يومًا}}",
-    "trialExpired": "انتهت الفترة التجريبية",
-    "trialAboutToExpire": "الفترة التجريبية على وشك الانتهاء",
-    "reactivateSubscription": "إعادة تفعيل الاشتراك",
-    "editProfileTitle": "تعديل الملف الشخصي",
-    "adminEditNotAllowed": "لا يُسمح للمسؤولين بتعديل الملف الشخصي من هذه الصفحة."
+    "subscribedSince": "مشترك منذ",
+    "nextBillingDate": "تاريخ الفاتورة القادم",
+    "manageSubscriptionButton": "إدارة الاشتراك (توجيه إلى Stripe)",
+    "noActiveSubscription": "ليس لديك اشتراك فعال حاليًا.",
+    "viewPricingButton": "عرض خطط الأسعار",
+    "loadingSubscription": "جارٍ تحميل معلومات الاشتراك...",
+    "errorLoadingSubscription": "حدث خطأ أثناء تحميل معلومات الاشتراك.",
+    "errorUpdatingSubscription": "فشل في تحديث الاشتراك. يرجى المحاولة مرة أخرى.",
+    "errorUserNotAuthenticated": "مطلوب مصادقة المستخدم."
   },
   "Generic": {
     "authenticationRequired": "المصادقة مطلوبة. يرجى تسجيل الدخول.",

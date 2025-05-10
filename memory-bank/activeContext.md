@@ -2,10 +2,10 @@
 
 ## Current Focus
 
-**Primary Task: End-to-End Testing of Full User Flow**
-- Conduct comprehensive testing of the complete user journey
-- Identify and address any edge cases or bugs in the flow
-- Perform testing across all supported languages (EN, FR, AR)
+**Primary Task: End-to-End Testing of Profile Features**
+- Conduct comprehensive testing of the recently enhanced profile editing capabilities, including profile picture management.
+- Identify and address any edge cases or bugs in the profile view and edit flows.
+- Verify data consistency across the user interface, database, and storage.
 
 **Secondary Task: Profile Page Enhancement**
 - Expand the minimal profile page with additional features
@@ -13,6 +13,17 @@
 - Ensure consistent styling and user experience
 
 ## Recent Changes
+
+- ✅ **Profile Picture Upload Implemented & Cleaned**: Successfully added profile picture upload to `EditProfileForm.tsx`. This includes:
+    - UI for file selection (Flowbite `FileInput`) and preview (Flowbite `Avatar` with Next.js `Image`).
+    - Image upload to Supabase Storage at `avatars/USER_ID.EXT`, adhering to RLS policies.
+    - Update of `profile_picture_url` in role-specific tables (`researcher_profiles` or `organizer_profiles`).
+    - Invocation of `clean-orphan-avatars` Edge Function to remove old avatars.
+    - Ensured `next.config.ts` permits the Supabase storage domain for images.
+    - Added `priority` prop to the preview `Image` for LCP optimization.
+    - Resolved associated linter errors, type issues, and React Hook dependencies.
+    - Added necessary i18n translations for new UI elements (e.g., in `messages/ar.json`).
+    - Removed all debugging `console.log` and `console.warn` statements from `EditProfileForm.tsx` and the `clean-orphan-avatars` Edge Function.
 
 **Full User Journey Implemented:**
 - ✅ Registration with user type selection is working
@@ -39,6 +50,14 @@
 - Standardized translations across all language files
 - Established consistent validation message structure
 
+**Key Decisions/Clarifications (New Section):**
+- **Feature Tier Definitions Updated (05/10/2025 - *replace with actual date*)**: 
+    - **Researcher - Free Tier**: Can surf events, manage account. Receives only essential system emails (password reset, email confirmation). Cannot submit papers or subscribe to topic notifications.
+    - **Researcher - Trial/Paid Tiers**: Same features. All Free Tier capabilities PLUS paper submission, submission tracking, topic subscription, and topic-based event notifications.
+    - **Organizer - Trial/Paid Tiers**: Same features. Full event creation/management capabilities (subject to active event limits per subscription status).
+    - **Organizer - Post-Trial (Expired, Not Paid)**: Can log in. Existing events remain untouched. Event creation/management features are disabled (UI reflects this, backend enforces it). Subscription status card shows expired trial.
+    - This refined understanding will guide future implementation and testing of tier-related features and limitations.
+
 **Form Components:**
 - Updated `CompleteProfileForm.tsx` with proper defaults for required fields
 - Improved type safety for error handling
@@ -59,16 +78,18 @@
       - ✅ Use Flowbite components and ensure RTL layout for Arabic
    
    2. **Create Profile Edit Page** (ID: `b49ecfaa-1d1d-4566-b46c-efd44e0db16f`)
-      - Create a new page at `/[locale]/profile/edit`
-      - Duplicate and modify `CompleteProfileForm.tsx` to create `EditProfileForm.tsx`
-      - Pre-fill form with current user data
-      - Update submission logic to use direct Supabase update queries
+      - ✅ Create a new page at `/[locale]/profile/edit`
+      - ✅ Duplicate and modify `CompleteProfileForm.tsx` to create `EditProfileForm.tsx`
+      - ✅ Pre-fill form with current user data
+      - ✅ Update submission logic to use direct Supabase update queries (for non-file fields)
    
    3. **Implement Profile Picture Upload** (ID: `cb4897a4-4e94-461c-acba-b810938d5f81`)
-      - Add file input component to `EditProfileForm.tsx`
-      - Add preview functionality for selected images
-      - Handle upload to Supabase Storage at `avatars/{user_id}.{extension}`
-      - Implement proper validation and error handling
+      - ✅ Add file input component to `EditProfileForm.tsx`
+      - ✅ Add preview functionality for selected images
+      - ✅ Handle upload to Supabase Storage at `avatars/{user_id}.{extension}`
+      - ✅ Implement proper validation and error handling
+      - ✅ Invoke Edge Function to clean up old avatars.
+      - ✅ Debugging code removed.
    
    4. **Create Profile Page Components** (ID: `df2ab927-00bf-402a-89c5-284718e1a531`)
       - Create modular components: ProfileHeader, ProfileDetails, ProfileActions, DashboardPlaceholder

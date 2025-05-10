@@ -39,8 +39,14 @@ Eventy360 provides a centralized, trusted SaaS platform featuring:
 
 *(Refer to detailed User Flows in Eventy360_Project_Summary.md for specifics)*
 
-*   **Researcher**: Register -> Complete Profile -> (Optional: Verify/Pay via Email/Admin) -> Discover Events -> Bookmark -> Submit Papers (Paid) -> Track Submissions.
-*   **Organizer**: Register -> Complete Profile -> (Optional: Verify/Pay via Email/Admin) -> Create/Manage Events -> Review Submissions -> Manage Event Lifecycle.
+*   **Researcher**:
+    *   **All Tiers (Free, Trial, Paid)**: Register -> Complete Profile (Basic + Extended) -> Confirm Email -> Discover Events -> Bookmark Events -> Manage Account.
+    *   **Trial Tier / Paid Tier ONLY**: Submit Abstracts/Papers -> Track Submission Status -> Subscribe to Topics -> Receive Topic-Based Email Notifications for new events.
+    *   **Free Tier Specifics**: Receives only essential system emails (password reset, email confirmation). Cannot submit papers or subscribe to topic notifications.
+*   **Organizer**:
+    *   **All Tiers (Trial, Paid, Post-Trial Expired)**: Register -> Complete Profile (Basic + Extended) -> Confirm Email -> Manage Account.
+    *   **Trial Tier / Paid Tier ONLY**: Create/Manage Events (subject to active event limits per subscription) -> Full Event Management Tools -> View/Download Submissions -> Review Submissions (Accept/Reject, Provide Feedback) -> Receive all relevant notifications.
+    *   **Post-Trial Expired (Not Paid)**: Can log in. Existing events remain untouched (not unpublished by system). Cannot use event creation/editing features; relevant UI elements are disabled. Subscription status card reflects expired trial.
 *   **Administrator**: Manage Users (Verify, Suspend) -> Manage Payments (Verify, Record) -> Oversee Platform Content (Events, Submissions, Topics) -> Manage Email Templates/Logs.
 
 ## 5. Core Principles (UX Goals)

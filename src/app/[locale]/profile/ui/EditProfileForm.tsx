@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
-import { Button, Label, TextInput, Textarea, Select, Alert, Spinner } from 'flowbite-react';
+import { Button, Label, TextInput, Textarea, Select, Alert, Spinner, FileInput, HelperText, Avatar } from 'flowbite-react';
 import { HiInformationCircle } from 'react-icons/hi';
 import { toast } from 'react-hot-toast';
 import {
@@ -15,6 +15,7 @@ import {
   institutionTypeEnumValues,
 } from '@/lib/schemas/profile';
 import type { Database } from '@/database.types';
+import Image from 'next/image';
 
 // Define a simple type for the expected JSONB translation structure
 type TranslationObject = { ar?: string; en?: string; fr?: string; [key: string]: string | undefined };
@@ -59,6 +60,10 @@ const getInitialValuesForEdit = (profileData: ExtendedProfile): ProfileEditFormS
   
   const bioArResearcher = (profileData.researcher_profiles?.bio_translations as TranslationObject)?.ar || '';
   const bioArOrganizer = (profileData.organizer_profiles?.bio_translations as TranslationObject)?.ar || '';
+  // Get profile_picture_url from role-specific profile
+  const currentProfilePictureUrl = profileData.user_type === 'researcher' 
+    ? profileData.researcher_profiles?.profile_picture_url 
+    : profileData.organizer_profiles?.profile_picture_url;
 
   if (profileData.user_type === 'researcher' && profileData.researcher_profiles) {
     return {
@@ -67,7 +72,7 @@ const getInitialValuesForEdit = (profileData: ExtendedProfile): ProfileEditFormS
       institution: profileData.researcher_profiles.institution || '',
       academic_position: profileData.researcher_profiles.academic_position || '',
       bio_ar: bioArResearcher,
-      profile_picture_url: '', 
+      profile_picture_url: currentProfilePictureUrl || '', // Use from role-specific
       ...commonRequiredValues,
     };
   } else if (profileData.user_type === 'organizer' && profileData.organizer_profiles) {
@@ -77,17 +82,23 @@ const getInitialValuesForEdit = (profileData: ExtendedProfile): ProfileEditFormS
       organization_name_ar: nameArOrganizer,
       institution_type: profileData.organizer_profiles.institution_type || institutionTypeEnumValues[0],
       bio_ar: bioArOrganizer,
-      profile_picture_url: '', 
+      profile_picture_url: currentProfilePictureUrl || '', // Use from role-specific
       ...commonRequiredValues,
     };
   }
   console.warn("EditProfileForm: Profile data incomplete or invalid user_type for initial values");
+  const fallbackUserType = profileData.user_type === 'researcher' || profileData.user_type === 'organizer' ? profileData.user_type : 'researcher';
   return { 
-    user_type: profileData.user_type as 'researcher' | 'organizer', 
-    name: '', institution: '', academic_position: '', bio_ar: '', profile_picture_url: '',
-    organization_name_ar: '', institution_type: institutionTypeEnumValues[0],
+    user_type: fallbackUserType, 
+    name: '', // For researcher
+    institution: '', // For researcher
+    academic_position: '', // For researcher
+    organization_name_ar: '', // For organizer
+    institution_type: institutionTypeEnumValues[0], // For organizer
+    bio_ar: '',
+    profile_picture_url: currentProfilePictureUrl || '', 
     ...commonRequiredValues
-  };
+  } as ProfileEditFormShape; // Added type assertion for fallback
 };
 
 const isResearcherError = (
@@ -117,6 +128,16 @@ function EditProfileFormComponent({ userProfileData, locale }: EditProfileFormPr
   const [wilayas, setWilayas] = useState<Wilaya[]>([]);
   const [allDairas, setAllDairas] = useState<Daira[]>([]);
   const [locationDataLoaded, setLocationDataLoaded] = useState(false);
+  
+  // State for file upload
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  // Initialize previewUrl from role-specific profile_picture_url
+  const initialPreviewUrl = userProfileData.user_type === 'researcher'
+    ? userProfileData.researcher_profiles?.profile_picture_url
+    : userProfileData.organizer_profiles?.profile_picture_url;
+  const [previewUrl, setPreviewUrl] = useState<string | null>(initialPreviewUrl || null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   
   const schema = useMemo(() => {
     if (userProfileData.user_type !== 'researcher' && userProfileData.user_type !== 'organizer') {
@@ -148,6 +169,32 @@ function EditProfileFormComponent({ userProfileData, locale }: EditProfileFormPr
   useEffect(() => {
     reset(defaultValuesForEdit);
   }, [defaultValuesForEdit, reset]);
+
+  // Effect to manage revoking object URLs
+  useEffect(() => {
+    // This specific previewUrl is the one that was set in state.
+    // We capture its value at the time the effect runs.
+    const currentPreview = previewUrl;
+    return () => {
+      if (currentPreview && currentPreview.startsWith('blob:')) {
+        URL.revokeObjectURL(currentPreview);
+      }
+    };
+  }, [previewUrl]); // Rerun when previewUrl changes
+
+  // Effect to update preview when profile_picture_url from props (via role-specific profile) changes
+  useEffect(() => {
+    const currentProfilePic = userProfileData.user_type === 'researcher'
+      ? userProfileData.researcher_profiles?.profile_picture_url
+      : userProfileData.organizer_profiles?.profile_picture_url;
+    setPreviewUrl(currentProfilePic || null);
+    setSelectedFile(null); // Reset selected file if prop changes
+    setUploadError(null);
+  }, [
+    userProfileData.user_type, 
+    userProfileData.researcher_profiles?.profile_picture_url, 
+    userProfileData.organizer_profiles?.profile_picture_url
+  ]);
 
   useEffect(() => {
     let isMounted = true;
@@ -198,69 +245,218 @@ function EditProfileFormComponent({ userProfileData, locale }: EditProfileFormPr
             setValue('daira_id', '', { shouldDirty: true });
         }
     }
-  }, [selectedWilayaId, setValue, filteredDairas, watch, isDirty]);
+  }, [selectedWilayaId, filteredDairas, watch, setValue, isDirty]);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUploadError(null);
+    const file = event.target.files?.[0];
+
+    // Revoke previous blob URL if it exists and a new file is being processed or selection is cleared
+    if (previewUrl && previewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(previewUrl);
+    }
+
+    if (file) {
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+      const maxSizeInMB = 2;
+      const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+
+      if (!allowedTypes.includes(file.type)) {
+        setUploadError(tValidation('fileTypeInvalid', { types: allowedTypes.join(', ') }));
+        setSelectedFile(null);
+        // Optionally revert preview to original, or keep it to show current selection was invalid
+        // setPreviewUrl(userProfileData.profile_picture_url || null); 
+        setValue('profile_picture_url', defaultValuesForEdit.profile_picture_url || '', { shouldDirty: true, shouldValidate: false });
+        return;
+      }
+      if (file.size > maxSizeInBytes) {
+        setUploadError(tValidation('fileSizeTooLarge', { maxSize: maxSizeInMB }));
+        setSelectedFile(null);
+        // setPreviewUrl(userProfileData.profile_picture_url || null);
+        setValue('profile_picture_url', defaultValuesForEdit.profile_picture_url || '', { shouldDirty: true, shouldValidate: false });
+        return;
+      }
+
+      setSelectedFile(file);
+      const newObjectUrl = URL.createObjectURL(file);
+      setPreviewUrl(newObjectUrl);
+      setValue('profile_picture_url', newObjectUrl, { shouldDirty: true, shouldValidate: false });
+    } else {
+      setSelectedFile(null);
+      // Revert to original picture if selection is cleared
+      const originalProfilePic = userProfileData.user_type === 'researcher'
+        ? userProfileData.researcher_profiles?.profile_picture_url
+        : userProfileData.organizer_profiles?.profile_picture_url;
+      setPreviewUrl(originalProfilePic || null);
+      setValue('profile_picture_url', defaultValuesForEdit.profile_picture_url || '', { shouldDirty: true, shouldValidate: false });
+    }
+  };
 
   const onSubmit = useCallback(async (data: ProfileEditFormShape) => {
-    if (!session?.user?.id) {
-      setFormError("User not authenticated.");
-      return;
-    }
     setIsLoading(true);
     setFormError(null);
-    const toastId = toast.loading(t('loadingButton'));
+    setUploadError(null); // Clear previous upload error
 
-    try {
-      let extendedProfileUpdates: ExtendedProfileUpdateShape;
-      let extendedProfileTable: 'researcher_profiles' | 'organizer_profiles';
+    if (!supabase || !session?.user?.id) {
+      setFormError(t('authenticationError'));
+      setIsLoading(false);
+      return;
+    }
 
-      const commonData = {
-        wilaya_id: data.wilaya_id ? parseInt(data.wilaya_id as string, 10) : null,
-        daira_id: data.daira_id ? parseInt(data.daira_id as string, 10) : null,
-        bio_translations: { ar: data.bio_ar || '' },
+    // Determine current profile picture URL from role-specific profile before any changes
+    const currentActualProfilePictureUrl = userProfileData.user_type === 'researcher'
+      ? userProfileData.researcher_profiles?.profile_picture_url
+      : userProfileData.organizer_profiles?.profile_picture_url;
+    let finalProfilePictureUrl = currentActualProfilePictureUrl || null;
+    let filePath: string | null = null; // To store the path of the uploaded file
+
+    // --- 1. Handle File Upload if a new file is selected ---
+    if (selectedFile) {
+      setUploading(true);
+      const fileExt = selectedFile.name.split('.').pop();
+      filePath = `${session.user.id}.${fileExt}`; // Correct: RLS-compliant path (USER_ID.EXT)
+
+      const { error: uploadError } = await supabase
+        .storage
+        .from('avatars')
+        .upload(filePath, selectedFile, {
+          cacheControl: '3600',
+          upsert: true,
+        });
+      setUploading(false);
+
+      if (uploadError) {
+        console.error('Error uploading profile picture:', uploadError);
+        // Check for specific error messages if needed, e.g., from RLS
+        if (uploadError.message.includes('policy')) {
+            setUploadError(t('uploadPolicyError')); 
+        } else {
+            setUploadError(t('uploadError') + `: ${uploadError.message}`);
+        }
+        // Do not setFormError here if it's just an upload issue, allow profile text update to proceed if desired
+        // setIsLoading(false); // Let it be set at the end
+        // If upload fails, we might not want to proceed with DB update for profile_picture_url
+        // For now, we'll let finalProfilePictureUrl remain the old one or null
+        filePath = null; // Reset filePath as upload failed
+      } else {
+        // Get public URL only on successful upload
+        finalProfilePictureUrl = supabase.storage.from('avatars').getPublicUrl(filePath).data.publicUrl;
+        // console.log('File uploaded successfully, new URL:', finalProfilePictureUrl);
+        // Clear any previous upload error on new success
+        setUploadError(null);
+      }
+    }
+
+    // --- 2. Prepare Profile Data for Update ---
+    const commonUpdateData = {
+      updated_at: new Date().toISOString(),
+      // Ensure conversion to number or undefined for type compatibility
+      wilaya_id: data.wilaya_id ? parseInt(data.wilaya_id.toString(), 10) : undefined,
+      daira_id: data.daira_id ? parseInt(data.daira_id.toString(), 10) : undefined,
+    };
+
+    let profileUpdatePayload: ExtendedProfileUpdateShape;
+    let profileUpdateTable: 'researcher_profiles' | 'organizer_profiles';
+    // mainProfileUpdatePayload should only contain fields directly in the 'profiles' table.
+    const mainProfileUpdatePayload: Partial<Database['public']['Tables']['profiles']['Row']> = {
         updated_at: new Date().toISOString(),
+        // wilaya_id and daira_id are not in the main 'profiles' table based on schema.
+        // They are in researcher_profiles / organizer_profiles.
       };
 
       if (data.user_type === 'researcher') {
-        extendedProfileTable = 'researcher_profiles';
-        extendedProfileUpdates = {
-          ...commonData,
+      profileUpdateTable = 'researcher_profiles';
+      profileUpdatePayload = {
           name: data.name,
           institution: data.institution,
-          academic_position: data.academic_position || null,
-        } as ResearcherProfileUpdate;
+        academic_position: data.academic_position,
+        bio_translations: { ...((userProfileData.researcher_profiles?.bio_translations as TranslationObject) || {}), ar: data.bio_ar },
+        profile_picture_url: finalProfilePictureUrl,
+        wilaya_id: commonUpdateData.wilaya_id, // This is correct for role-specific table
+        daira_id: commonUpdateData.daira_id,   // This is correct for role-specific table
+        updated_at: commonUpdateData.updated_at, // Also update updated_at here
+      };
       } else if (data.user_type === 'organizer') {
-        extendedProfileTable = 'organizer_profiles';
-        extendedProfileUpdates = {
-          ...commonData,
-          name_translations: { ar: data.organization_name_ar },
+      profileUpdateTable = 'organizer_profiles';
+      profileUpdatePayload = {
+        name_translations: { ...((userProfileData.organizer_profiles?.name_translations as TranslationObject) || {}), ar: data.organization_name_ar },
           institution_type: data.institution_type,
-        } as OrganizerProfileUpdate;
+        bio_translations: { ...((userProfileData.organizer_profiles?.bio_translations as TranslationObject) || {}), ar: data.bio_ar },
+        profile_picture_url: finalProfilePictureUrl,
+        wilaya_id: commonUpdateData.wilaya_id, // This is correct for role-specific table
+        daira_id: commonUpdateData.daira_id,   // This is correct for role-specific table
+        updated_at: commonUpdateData.updated_at, // Also update updated_at here
+      };
       } else {
-        throw new Error("Invalid user type for submission");
-      }
+      setFormError('Invalid user type encountered during submission.');
+      setIsLoading(false);
+      return;
+    }
 
-      const { error: updateError } = await supabase
-        .from(extendedProfileTable)
-        .update(extendedProfileUpdates)
+    // --- 3. Update Database ---
+    // First, update the main profiles table (e.g., for updated_at, wilaya_id)
+    const { error: mainProfileError } = await supabase
+        .from('profiles')
+        .update(mainProfileUpdatePayload)
+        .eq('id', session.user.id);
+
+    if (mainProfileError) {
+        setFormError(t('updateError') + ` (profiles): ${mainProfileError.message}`);
+        setIsLoading(false);
+        return;
+    }
+
+    // Then, update the role-specific profile table
+    const { error: roleProfileError } = await supabase
+      .from(profileUpdateTable)
+      .update(profileUpdatePayload)
         .eq('profile_id', session.user.id);
 
-      if (updateError) {
-        throw updateError;
+    setIsLoading(false);
+
+    if (roleProfileError) {
+      setFormError(t('updateError') + ` (${profileUpdateTable}): ${roleProfileError.message}`);
+      // If role-specific profile update fails, profile_picture_url might not be saved,
+      // So, cleanup function should ideally not run or run with awareness.
+      // However, for simplicity, if upload itself was successful and filePath is set, we'll try cleanup.
+    } else {
+      // Profile updated successfully in the database
+      toast.success(t('updateSuccess'));
+      reset(data); // Reset form with new successfully saved data
+      router.refresh(); // Refresh to show new data including avatar
+
+      // --- 4. Call Edge Function to Clean Orphan Avatars ---
+      // Only call if a new file was successfully uploaded and its path is known
+      if (filePath && finalProfilePictureUrl && !uploadError) { 
+        // console.log('Invoking clean-orphan-avatars function with path:', filePath); // filePath is now USER_ID.EXT
+        try {
+            const { error: funcError } = await supabase
+            .functions
+            .invoke('clean-orphan-avatars', {
+                body: { newAvatarPath: filePath }, // Pass USER_ID.EXT directly
+            });
+
+            if (funcError) {
+                console.error('Error cleaning up old avatars:', funcError.message);
+                toast.error(tEdit('avatarCleanupError') + `: ${funcError.message}`);
+            } else {
+                // console.log('Clean-orphan-avatars function response:', funcData);
+                toast.success(tEdit('avatarCleanupSuccess'));
+            }
+        } catch (invokeCatchError: unknown) {
+            let errorMessage = 'An unexpected error occurred during avatar cleanup.';
+            if (invokeCatchError instanceof Error) {
+                errorMessage = invokeCatchError.message;
+            }
+            console.error('Caught error invoking clean-orphan-avatars:', errorMessage);
+            toast.error(tEdit('avatarCleanupError') + `: ${errorMessage}`);
+        }
+      } else if (uploadError && selectedFile) {
+        // If there was an upload error but a file was selected, inform the user the cleanup won't run for the failed upload.
+        // console.warn('Skipping avatar cleanup due to upload error for the selected file.');
       }
-
-      toast.success(t('successToast'), { id: toastId });
-      router.push('/profile');
-      router.refresh();
-
-    } catch (error) {
-      const err = error as Error;
-      console.error("Failed to update profile:", err);
-      setFormError(err.message || t('errorToast'));
-      toast.error(t('errorToast'), { id: toastId });
-    } finally {
-      setIsLoading(false);
     }
-  }, [supabase, session, router, t]);
+  }, [supabase, session, userProfileData, router, reset, t, tEdit, selectedFile, uploadError]); // Added uploadError
 
   if (!locationDataLoaded) {
       return (
@@ -278,6 +474,52 @@ function EditProfileFormComponent({ userProfileData, locale }: EditProfileFormPr
           {formError}
         </Alert>
       )}
+
+      {/* Profile Picture Upload Section */}
+      <div className="space-y-2">
+        <Label htmlFor="profilePictureFile">{tEdit('profilePictureLabel')}</Label>
+        {previewUrl && (
+          <div className="mt-2 flex justify-center">
+            <Avatar
+              alt={tEdit('profilePicturePreviewAlt')}
+              rounded
+              size="xl"
+              img={(props) => {
+                const { className: avatarProvidedClassName, ...restProps } = props;
+                return (
+                  <Image
+                    {...restProps}
+                    src={previewUrl}
+                    alt={tEdit('profilePicturePreviewAlt')}
+                    width={128} 
+                    height={128} 
+                    referrerPolicy="no-referrer"
+                    className={avatarProvidedClassName || "rounded-full object-cover"}
+                    priority
+                    onError={() => {
+                      console.warn("Failed to load image preview from URL:", previewUrl);
+                    }}
+                  />
+                );
+              }}
+            />
+          </div>
+        )}
+        <FileInput
+          id="profilePictureFile"
+          onChange={handleFileChange}
+          accept="image/png, image/jpeg, image/webp, image/gif"
+          className="mt-1"
+        />
+        <HelperText className="mt-1">{tEdit('profilePictureHelperText')}</HelperText>
+        {uploadError && <Alert color="failure" className="mt-2 text-sm">{uploadError}</Alert>}
+        {uploading && 
+          <div className="flex items-center space-x-2 mt-2">
+            <Spinner size="sm" aria-label={tEdit('uploadingSpinnerLabel')} />
+            <span>{tEdit('uploadingText')}</span>
+          </div>
+        }
+      </div>
 
       {userProfileData.user_type === 'researcher' && (
         <>
