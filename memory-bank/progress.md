@@ -107,3 +107,37 @@ Enhancing the minimal profile page and conducting end-to-end testing now that th
 6. **Deployment Pipeline**
    - CI/CD setup
    - Production environment configuration
+
+## 1. What Works (Completed Features/Areas)
+
+- Core authentication flows (Login, Register, Password Reset)
+- Email confirmation flow and callback handling
+- Complete-profile form with validation and submission
+- Middleware redirection functionality
+- Translation system improvements (including comprehensive Arabic translation update)
+- Database schema and constraints (initial)
+- Minimal profile page for testing
+- Refined Profile Notification System (Implementation and Testing)
+- Profile Picture Upload (Implementation and Cleanup)
+
+## 2. What's Left to Build (Remaining Scope/Features)
+
+- Payment and subscription system (Planning phase)
+- Event management features (Planning phase)
+- Research repository
+- Search and Discovery features (MVP)
+- Verification system (Full implementation beyond manual admin flag)
+- Admin Panel (Full implementation)
+- Automated notification triggers and processing beyond initial setup
+- Scheduled jobs beyond initial setup
+- Comprehensive End-to-End Testing (Ongoing as features are built)
+
+## 3. Current Status
+
+The project has successfully implemented the core user authentication, profile completion, and basic profile viewing features. The notification system has been refined, and Arabic translations have been comprehensively updated. We are now transitioning into the planning phase for the next major feature sets: Payment/Subscription and Event Management.
+
+## 4. Known Issues & TODOs
+
+- Investigate and resolve the persistent linter error related to the dependency array in `EditProfileForm.tsx` (though the user applied a manual fix, understanding the root cause could be beneficial for future development).
+- Ensure comprehensive end-to-end testing is conducted for all new features as they are implemented.
+- Refine UI/UX based on user feedback from testing.

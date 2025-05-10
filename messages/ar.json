@@ -1,30 +1,30 @@
 {
   "Common": {
-    "redirecting": "جارٍ إعادة التوجيه",
-    "redirectFailed": "تعذّرت إعادة التوجيه",
-    "tryAgain": "محاولة مرة أخرى",
+    "redirecting": "جارٍ إعادة التوجيه...",
+    "redirectFailed": "تعذّرت عملية إعادة التوجيه",
+    "tryAgain": "المحاولة مرة أخرى",
     "backToLogin": "العودة إلى صفحة تسجيل الدخول",
     "redirectFailedDescription": "يُرجى المحاولة مرة أخرى أو العودة إلى صفحة تسجيل الدخول",
     "debugInformation": "معلومات التصحيح التقني",
     "emailConfirmedRedirecting": "تم تأكيد بريدك الإلكتروني بنجاح! جارٍ توجيهك إلى الخطوة التالية"
   },
   "HomePage": {
-    "title": "مرحبًا بك في منصة Eventy360"
+    "title": "مرحباً بكم في منصة Eventy360"
   },
   "Auth": {
     "logoutSuccess": "تم تسجيل الخروج بنجاح",
-    "logoutError": "حدث خطأ أثناء تسجيل الخروج",
+    "logoutError": "حدث خطأ أثناء عملية تسجيل الخروج",
     "LoginPage": {
       "logoAltText": "شعار منصة Eventy360",
-      "title": "تسجيل الدخول إلى حسابك",
+      "title": "تسجيل الدخول إلى حسابكم",
       "emailLabel": "البريد الإلكتروني",
-      "emailPlaceholder": "أدخل عنوان بريدك الإلكتروني",
+      "emailPlaceholder": "أدخلوا عنوان بريدكم الإلكتروني",
       "passwordLabel": "كلمة المرور",
       "passwordPlaceholder": "••••••••",
-      "forgotPasswordLink": "نسيت كلمة المرور؟",
+      "forgotPasswordLink": "نسيتم كلمة المرور؟",
       "submitButton": "تسجيل الدخول",
       "loading": "جارٍ التحميل...",
-      "noAccountPrompt": "ليس لديك حساب؟",
+      "noAccountPrompt": "ليس لديكم حساب؟",
       "registerLink": "إنشاء حساب جديد",
       "loginFailed": "تعذّر تسجيل الدخول",
       "loginSuccessToast": "تم تسجيل الدخول بنجاح!",
@@ -35,11 +35,11 @@
       "logoAltText": "شعار منصة Eventy360",
       "title": "إنشاء حساب جديد",
       "firstNameLabel": "الاسم الأول",
-      "firstNamePlaceholder": "أدخل اسمك الأول",
+      "firstNamePlaceholder": "أدخلوا اسمكم الأول",
       "lastNameLabel": "اسم العائلة",
-      "lastNamePlaceholder": "أدخل اسم العائلة",
+      "lastNamePlaceholder": "أدخلوا اسم عائلتكم",
       "emailLabel": "البريد الإلكتروني",
-      "emailPlaceholder": "أدخل عنوان بريدك الإلكتروني",
+      "emailPlaceholder": "أدخلوا عنوان بريدكم الإلكتروني",
       "passwordLabel": "كلمة المرور",
       "passwordPlaceholder": "••••••••",
       "confirmPasswordLabel": "تأكيد كلمة المرور",
@@ -50,7 +50,7 @@
       "acceptTermsLabel": "أوافق على <link>شروط الاستخدام</link> و <link>سياسة الخصوصية</link>",
       "submitButton": "إنشاء الحساب",
       "loading": "جارٍ الإنشاء...",
-      "haveAccountPrompt": "لديك حساب بالفعل؟",
+      "haveAccountPrompt": "لديكم حساب بالفعل؟",
       "loginLink": "تسجيل الدخول",
       "registrationFailed": "تعذّر إنشاء الحساب",
       "registrationSuccessToast": "تم إنشاء الحساب بنجاح!",
@@ -58,11 +58,11 @@
       "illustrationAlt": "رسم توضيحي لصفحة إنشاء حساب"
     },
     "LoginForm": {
-      "emailLabel": "عنوان البريد الإلكتروني",
-      "emailPlaceholder": "أدخل عنوان بريدك الإلكتروني",
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "أدخلوا عنوان بريدكم الإلكتروني",
       "passwordLabel": "كلمة المرور",
       "passwordPlaceholder": "••••••••",
-      "forgotPasswordLink": "نسيت كلمة المرور؟",
+      "forgotPasswordLink": "نسيتم كلمة المرور؟",
       "showPassword": "إظهار كلمة المرور",
       "hidePassword": "إخفاء كلمة المرور",
       "submitButton": "تسجيل الدخول",
@@ -73,8 +73,8 @@
       "unexpectedError": "حدث خطأ غير متوقع"
     },
     "RegisterForm": {
-      "emailLabel": "عنوان البريد الإلكتروني",
-      "emailPlaceholder": "أدخل عنوان بريدك الإلكتروني",
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "أدخلوا عنوان بريدكم الإلكتروني",
       "passwordLabel": "كلمة المرور",
       "passwordPlaceholder": "••••••••",
       "confirmPasswordLabel": "تأكيد كلمة المرور",
@@ -85,27 +85,27 @@
       "loading": "جارٍ إنشاء الحساب...",
       "submitting": "جارٍ الإرسال...",
       "registrationFailed": "تعذّر إنشاء الحساب",
-      "registrationSuccessToast": "تم التسجيل بنجاح! يُرجى التحقق من بريدك الإلكتروني لتفعيل حسابك",
-      "registrationSuccessMessage": "تم التسجيل بنجاح! يُرجى التحقق من صندوق الوارد في بريدك الإلكتروني (ومجلد البريد غير المرغوب فيه) للحصول على رابط التفعيل",
+      "registrationSuccessToast": "تم التسجيل بنجاح! يُرجى التحقق من بريدكم الإلكتروني لتفعيل حسابكم",
+      "registrationSuccessMessage": "تم التسجيل بنجاح! يُرجى التحقق من صندوق الوارد في بريدكم الإلكتروني (بما في ذلك مجلد البريد غير المرغوب فيه) للحصول على رابط التفعيل",
       "unexpectedError": "حدث خطأ غير متوقع",
       "userTypeLabel": "نوع الحساب",
       "userTypeResearcher": "باحث",
       "userTypeOrganizer": "منظّم",
       "resendConfirmationButton": "إعادة إرسال رسالة التأكيد",
-      "resendConfirmationSuccessToast": "تم إرسال رسالة تأكيد جديدة. يُرجى التحقق من بريدك الإلكتروني",
-      "resendConfirmationErrorToast": "تعذّر إرسال رسالة التأكيد. قد يكون البريد الإلكتروني مؤكدًا بالفعل أو يُرجى المحاولة لاحقًا"
+      "resendConfirmationSuccessToast": "تم إرسال رسالة تأكيد جديدة. يُرجى التحقق من بريدكم الإلكتروني",
+      "resendConfirmationErrorToast": "تعذّر إرسال رسالة التأكيد. قد يكون البريد الإلكتروني مؤكداً بالفعل أو يُرجى المحاولة لاحقاً"
     },
     "ForgotPasswordPage": {
       "logoAltText": "شعار منصة Eventy360",
       "title": "استعادة كلمة المرور",
       "emailLabel": "البريد الإلكتروني",
-      "emailPlaceholder": "أدخل بريدك الإلكتروني المسجل",
+      "emailPlaceholder": "أدخلوا بريدكم الإلكتروني المسجل",
       "submitButton": "إرسال رابط استعادة كلمة المرور",
       "sendingLink": "جارٍ إرسال الرابط...",
-      "resetLinkSent": "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني. يُرجى التحقق من صندوق الوارد (قد يستغرق وصوله بضع دقائق)",
+      "resetLinkSent": "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدكم الإلكتروني. يُرجى التحقق من صندوق الوارد (قد يستغرق وصول الرسالة بضع دقائق)",
       "emailNotFound": "لم يُعثر على حساب مرتبط بهذا البريد الإلكتروني",
       "genericError": "حدث خطأ ما. يُرجى المحاولة مرة أخرى",
-      "rememberPasswordPrompt": "تذكرت كلمة المرور؟",
+      "rememberPasswordPrompt": "تذكرتم كلمة المرور؟",
       "loginLink": "تسجيل الدخول",
       "illustrationAlt": "رسم توضيحي لصفحة استعادة كلمة المرور"
     },
@@ -118,7 +118,7 @@
       "confirmNewPasswordPlaceholder": "••••••••",
       "submitButton": "إعادة تعيين كلمة المرور",
       "resettingButton": "جارٍ إعادة التعيين...",
-      "passwordResetSuccess": "تم إعادة تعيين كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة",
+      "passwordResetSuccess": "تم إعادة تعيين كلمة المرور بنجاح! يمكنكم الآن تسجيل الدخول باستخدام كلمة المرور الجديدة",
       "genericError": "حدث خطأ ما. يُرجى المحاولة مرة أخرى",
       "invalidOrExpiredToken": "رابط إعادة تعيين كلمة المرور غير صالح أو منتهي الصلاحية. يُرجى طلب رابط جديد",
       "invalidOrExpiredTokenLink": "رابط إعادة تعيين كلمة المرور غير صالح أو منتهي الصلاحية. يُرجى طلب رابط جديد من صفحة استعادة كلمة المرور",
@@ -128,19 +128,19 @@
     },
     "ConfirmEmailPage": {
       "title": "تأكيد عنوان البريد الإلكتروني",
-      "infoTextLine1": "تم إرسال رسالة تحتوي على رابط تأكيد إلى بريدك الإلكتروني:",
-      "infoTextLine2": "يُرجى التحقق من صندوق الوارد (ومجلد البريد غير المرغوب فيه) والنقر على الرابط لتفعيل حسابك",
-      "infoTextLine3": "إذا لم تستلم الرسالة، يمكنك طلب إرسالها مرة أخرى",
+      "infoTextLine1": "تم إرسال رسالة تحتوي على رابط تأكيد إلى بريدكم الإلكتروني:",
+      "infoTextLine2": "يُرجى التحقق من صندوق الوارد (بما في ذلك مجلد البريد غير المرغوب فيه) والنقر على الرابط لتفعيل حسابكم",
+      "infoTextLine3": "إذا لم تستلموا الرسالة، يمكنكم طلب إرسالها مرة أخرى",
       "resendButton": "إعادة إرسال رسالة التأكيد",
       "resendingButton": "جارٍ الإرسال...",
-      "resendSuccessToast": "تم إرسال رسالة تأكيد جديدة. يُرجى التحقق من بريدك الإلكتروني",
-      "resendErrorToast": "تعذّر إرسال رسالة التأكيد. يُرجى المحاولة مرة أخرى لاحقًا",
+      "resendSuccessToast": "تم إرسال رسالة تأكيد جديدة. يُرجى التحقق من بريدكم الإلكتروني",
+      "resendErrorToast": "تعذّر إرسال رسالة التأكيد. يُرجى المحاولة مرة أخرى لاحقاً",
       "logoutButton": "تسجيل الخروج",
       "emailAddress": "عنوان البريد الإلكتروني",
       "sessionError": "تعذّر جلب معلومات المستخدم. يُرجى محاولة تسجيل الخروج ثم الدخول مرة أخرى",
       "illustrationAlt": "رسم توضيحي لتأكيد البريد الإلكتروني",
-      "emailSuccessfullyConfirmedTitle": "تم تأكيد بريدك الإلكتروني بنجاح!",
-      "emailSuccessfullyConfirmedMessage": "يمكنك الآن المتابعة لإكمال ملفك الشخصي والوصول إلى جميع ميزات المنصة",
+      "emailSuccessfullyConfirmedTitle": "تم تأكيد بريدكم الإلكتروني بنجاح!",
+      "emailSuccessfullyConfirmedMessage": "يمكنكم الآن المتابعة لإكمال ملفكم الشخصي والوصول إلى جميع خدمات المنصة",
       "continueButton": "متابعة"
     },
     "CompleteProfilePage": {
@@ -149,13 +149,13 @@
       "fetchProfileError": "حدث خطأ أثناء جلب بيانات الملف الشخصي. يُرجى المحاولة مرة أخرى",
       "profileNotFound": "لم يُعثر على بيانات الملف الشخصي. يُرجى التواصل مع الدعم الفني إذا استمرت المشكلة",
       "missingUserType": "نوع المستخدم غير محدد في بيانات الملف الشخصي. تعذّر عرض النموذج",
-      "profileDataUnavailable": "بيانات الملف الشخصي غير متاحة حاليًا",
+      "profileDataUnavailable": "بيانات الملف الشخصي غير متاحة حالياً",
       "missingUserTypeCritical": "بيانات الملف الشخصي غير مكتملة (نوع المستخدم غير محدد). لا يمكن متابعة العملية"
     },
     "CompleteProfileForm": {
       "title": "استكمال الملف الشخصي",
-      "subtitleResearcher": "يُرجى تقديم المعلومات التالية بصفتك باحثًا",
-      "subtitleOrganizer": "يُرجى تقديم المعلومات التالية بصفتك منظّمًا",
+      "subtitleResearcher": "يُرجى تقديم المعلومات التالية بصفتكم باحثاً",
+      "subtitleOrganizer": "يُرجى تقديم المعلومات التالية بصفتكم منظّماً",
       "stepIndicator": "الخطوة {currentStep} من {totalSteps}: استكمال الملف الشخصي",
       "researcherNameLabel": "الاسم الكامل",
       "institutionLabel": "المؤسسة/الجامعة",
@@ -166,17 +166,17 @@
       "dairaLabel": "الدائرة",
       "organizationNameLabel": "اسم المؤسسة/المنظمة",
       "institutionTypeLabel": "نوع المؤسسة",
-      "selectPlaceholder": "اختر",
+      "selectPlaceholder": "اختيار",
       "submitButton": "حفظ ومتابعة",
       "loadingButton": "جارٍ الحفظ...",
       "loading": "جارٍ التحميل...",
       "successToast": "تم تحديث الملف الشخصي بنجاح",
       "errorToast": "تعذّر تحديث الملف الشخصي",
-      "fetchProfileError": "حدث خطأ أثناء تحميل بيانات ملفك الشخصي",
+      "fetchProfileError": "حدث خطأ أثناء تحميل بيانات ملفكم الشخصي",
       "locationDataFetchError": "تعذّر تحميل البيانات الجغرافية. يُرجى المحاولة مرة أخرى",
       "cancelButton": "إلغاء",
       "updateSuccess": "تم تحديث الملف الشخصي بنجاح",
-      "uploadPolicyError": "خطأ في الرفع بسبب سياسة الأمان"
+      "uploadPolicyError": "خطأ في عملية الرفع بسبب محددات الأمان"
     }
   },
   "Validations": {
@@ -190,8 +190,8 @@
     "passwordsDontMatch": "كلمتا المرور غير متطابقتين",
     "invalidUrl": "يُرجى إدخال رابط صحيح",
     "invalidEnumValue": "يُرجى اختيار قيمة صالحة من القائمة",
-    "fileTypeInvalid": "نوع الملف غير صالح. الأنواع المسموح بها: {types}",
-    "fileSizeTooLarge": "حجم الملف كبير جدًا. الحجم الأقصى المسموح به هو {maxSize} ميغابايت."
+    "fileTypeInvalid": "نوع الملف غير مدعوم. الأنواع المدعومة: {types}",
+    "fileSizeTooLarge": "حجم الملف يتجاوز الحد المسموح به. الحد الأقصى هو {maxSize} ميغابايت."
   },
   "AriaLabels": {
     "submittingResetRequest": "جارٍ إرسال طلب إعادة تعيين كلمة المرور...",
@@ -200,45 +200,55 @@
     "registering": "جارٍ إنشاء الحساب...",
     "hidePassword": "إخفاء كلمة المرور",
     "showPassword": "إظهار كلمة المرور",
-    "toggleTheme": "تبديل وضع السمة بين الفاتح والداكن"
+    "toggleTheme": "تبديل نمط العرض بين الفاتح والداكن"
   },
   "ProfilePage": {
     "editProfileButton": "تعديل الملف الشخصي",
-    "profilePictureLabel": "صورة الملف الشخصي",
-    "profilePicturePreviewAlt": "معاينة صورة الملف الشخصي",
-    "profilePictureHelperText": "PNG, JPG, GIF, WEBP. الحد الأقصى 2 ميجابايت.",
-    "uploadingSpinnerLabel": "جار التحميل",
-    "uploadingText": "جار تحميل الصورة...",
+    "profilePictureLabel": "الصورة الشخصية",
+    "profilePicturePreviewAlt": "معاينة الصورة الشخصية",
+    "profilePictureHelperText": "PNG, JPG, GIF, WEBP. الحد الأقصى 2 ميغابايت.",
+    "uploadingSpinnerLabel": "جارٍ التحميل",
+    "uploadingText": "جارٍ تحميل الصورة...",
     "editProfileTitle": "تعديل الملف الشخصي",
     "logoutButton": "تسجيل الخروج",
-    "verifiedBadge": "موثق",
+    "verifiedBadge": "موثّق",
     "toggleSidebar": "تبديل القائمة الجانبية",
-    "verified": "موثق",
+    "verified": "موثّق",
     "dashboardTitle": "لوحة التحكم",
     "subscriptionStatus": "حالة الاشتراك",
     "currentTier": "الباقة الحالية",
     "trialEndsAt": "تنتهي الفترة التجريبية في",
-    "daysRemainingFormatted": "{count, plural, zero {لا أيام متبقية} one {يوم واحد متبقي} two {يومان متبقيان} few {# أيام متبقية} many {# يوماً متبقياً} other {# يوم متبقي}}",
+    "daysRemainingFormatted": "{count, plural, zero {لا توجد أيام متبقية} one {يوم واحد متبقٍ} two {يومان متبقيان} few {# أيام متبقية} many {# يوماً متبقياً} other {# يوم متبقٍ}}",
     "upgradeTo": "الترقية إلى",
     "premiumTier": "الباقة المميزة",
     "eventsCreated": "الفعاليات المنشأة",
     "activeEvents": "الفعاليات النشطة",
     "totalSubmissions": "إجمالي المشاركات",
-    "pendingReviews": "المراجعات المعلقة",
+    "pendingReviews": "المراجعات قيد الانتظار",
     "activeEventsList": "قائمة الفعاليات النشطة",
     "createEvent": "إنشاء فعالية جديدة",
-    "noActiveEvents": "لا توجد فعاليات نشطة حاليًا",
-    "recentSubmissions": "المشاركات الأخيرة",
-    "noSubmissionsReceived": "لم يتم استلام أي مشاركات بعد",
+    "noActiveEvents": "لا توجد فعاليات نشطة حالياً",
+    "recentSubmissions": "آخر المشاركات",
+    "noSubmissionsReceived": "لم يتم استلام أي مشاركات حتى الآن",
     "common": {
       "locationLabel": "الموقع",
-      "joinedLabel": "انضم في"
+      "joinedLabel": "تاريخ الانضمام"
     },
     "organizer": {
       "institutionTypeLabel": "نوع المؤسسة"
     },
-    "avatarCleanupError": "خطأ في تنظيف الصورة الرمزية القديمة",
-    "avatarCleanupSuccess": "تم تنظيف الصور الرمزية القديمة بنجاح"
+    "avatarCleanupError": "حدث خطأ في إزالة الصورة الشخصية السابقة",
+    "avatarCleanupSuccess": "تمت إزالة الصور الشخصية السابقة بنجاح",
+    "Toasts": {
+      "updateSuccess": "تم تحديث الملف الشخصي بنجاح",
+      "updateErrorGeneric": "تعذّر تحديث الملف الشخصي. يُرجى المحاولة مرة أخرى.",
+      "errorDuplicateEntry": "البيانات المدخلة موجودة بالفعل. يُرجى التحقق من المعلومات المقدمة.",
+      "errorStorageUploadFailed": "فشل تحميل الصورة. يُرجى المحاولة مرة أخرى.",
+      "errorStoragePolicy": "لا توجد صلاحية كافية لرفع الصورة.",
+      "errorNetwork": "حدث خطأ في الاتصال بالشبكة. يُرجى التحقق من اتصالكم بالإنترنت والمحاولة مرة أخرى.",
+      "errorBackendGeneric": "حدث خطأ في الخادم. يُرجى المحاولة لاحقاً.",
+      "pictureUploadSuccess": "تم تحميل الصورة الشخصية بنجاح."
+    }
   },
   "Enums": {
     "user_type_enum": {
@@ -265,7 +275,7 @@
     "PaymentMethod": {
       "bank": "تحويل بنكي",
       "check": "شيك",
-      "cash": "نقدًا",
+      "cash": "نقداً",
       "online": "دفع إلكتروني"
     },
     "BillingPeriod": {
@@ -307,7 +317,7 @@
       "canceled": "ملغى"
     },
     "SubmissionStatus": {
-      "received": "مُستلَم",
+      "received": "تم الاستلام",
       "under_review": "قيد التقييم",
       "accepted": "مقبول",
       "rejected": "مرفوض"
@@ -319,7 +329,7 @@
       "retry_attempted": "محاولة إعادة الإرسال"
     },
     "QueueStatus": {
-      "pending": "في الانتظار",
+      "pending": "قيد الانتظار",
       "processing": "قيد المعالجة",
       "completed": "مكتمل",
       "failed": "فشل"
@@ -330,19 +340,19 @@
     "currentTier": "الباقة الحالية",
     "status": "الحالة",
     "trialEndsAt": "تنتهي الفترة التجريبية في",
-    "subscribedSince": "مشترك منذ",
-    "nextBillingDate": "تاريخ الفاتورة القادم",
-    "manageSubscriptionButton": "إدارة الاشتراك (توجيه إلى Stripe)",
-    "noActiveSubscription": "ليس لديك اشتراك فعال حاليًا.",
-    "viewPricingButton": "عرض خطط الأسعار",
+    "subscribedSince": "تاريخ بدء الاشتراك",
+    "nextBillingDate": "تاريخ الفاتورة القادمة",
+    "manageSubscriptionButton": "إدارة الاشتراك",
+    "noActiveSubscription": "لا يوجد لديكم اشتراك فعال حالياً.",
+    "viewPricingButton": "عرض باقات الاشتراك",
     "loadingSubscription": "جارٍ تحميل معلومات الاشتراك...",
     "errorLoadingSubscription": "حدث خطأ أثناء تحميل معلومات الاشتراك.",
-    "errorUpdatingSubscription": "فشل في تحديث الاشتراك. يرجى المحاولة مرة أخرى.",
-    "errorUserNotAuthenticated": "مطلوب مصادقة المستخدم."
+    "errorUpdatingSubscription": "تعذّر تحديث الاشتراك. يُرجى المحاولة مرة أخرى.",
+    "errorUserNotAuthenticated": "المصادقة مطلوبة لهذه العملية."
   },
   "Generic": {
-    "authenticationRequired": "المصادقة مطلوبة. يرجى تسجيل الدخول.",
+    "authenticationRequired": "المصادقة مطلوبة. يُرجى تسجيل الدخول.",
     "dataFetchError": "حدث خطأ أثناء جلب البيانات.",
-    "noDataFound": "لم يتم العثور على بيانات."
+    "noDataFound": "لم يتم العثور على البيانات المطلوبة."
   }
 }
