@@ -13,7 +13,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         containerClassName=""
         containerStyle={{}}
         toastOptions={{
-          className: '!bg-background !text-foreground !border !border-border !shadow-lg', // Use Tailwind classes if preferred, adding !important if needed
+          className: '!bg-background !text-foreground !border !border-border !shadow-lg',
           duration: 5000,
           style: {
           },

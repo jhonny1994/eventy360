@@ -12,7 +12,7 @@ import { Link } from '@/i18n/navigation';
 
 export default function ConfirmEmailPage() {
   const t = useTranslations('Auth.ConfirmEmailPage');
-  const tCommon = useTranslations('Auth.LoginPage'); 
+  const tCommon = useTranslations('Auth.LoginPage');
   const locale = useLocale();
   const { supabase, session, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -37,7 +37,7 @@ export default function ConfirmEmailPage() {
 
   const handleResendConfirmation = async () => {
     if (!userEmail) {
-      setError(t('sessionError')); 
+      setError(t('sessionError'));
       toast.error(t('sessionError'));
       return;
     }
@@ -71,20 +71,20 @@ export default function ConfirmEmailPage() {
     router.push(`/${locale}/complete-profile`);
   };
 
-  if (authLoading || (!session && !authLoading)) { 
+  if (authLoading || (!session && !authLoading)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background text-foreground">
         <Spinner size="xl" aria-label="Loading page content..." />
       </div>
     );
   }
-  
-  if (!session && !authLoading) { 
-      return (
-        <div className="flex min-h-screen items-center justify-center bg-background text-foreground p-6">
-           <Alert color="failure">Redirecting to login...</Alert>
-        </div>
-      );
+
+  if (!session && !authLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background text-foreground p-6">
+        <Alert color="failure">Redirecting to login...</Alert>
+      </div>
+    );
   }
 
   const NoticeContent = () => {
@@ -119,7 +119,7 @@ export default function ConfirmEmailPage() {
           {t('infoTextLine1')}
         </p>
         <p className="mb-3 text-sm font-semibold text-foreground">
-          {userEmail || t('emailAddress')} 
+          {userEmail || t('emailAddress')}
         </p>
         <p className="mb-2 text-sm text-muted-foreground">
           {t('infoTextLine2')}
@@ -170,7 +170,7 @@ export default function ConfirmEmailPage() {
           <div className="mb-8 text-center">
             <Link href="/">
               <Image
-                src="/png/logo.png" 
+                src="/png/logo.png"
                 alt={tCommon('logoAltText')}
                 width={180}
                 height={60}
@@ -179,12 +179,12 @@ export default function ConfirmEmailPage() {
               />
             </Link>
           </div>
-          
+
           {userEmail ? <NoticeContent /> : (
-             <div className="flex flex-col items-center text-center">
-                <Spinner size="lg" aria-label="Loading user information..."/>
-                <p className="mt-4 text-muted-foreground">{t('sessionError')}</p>
-             </div>
+            <div className="flex flex-col items-center text-center">
+              <Spinner size="lg" aria-label="Loading user information..." />
+              <p className="mt-4 text-muted-foreground">{t('sessionError')}</p>
+            </div>
           )}
 
         </div>
@@ -193,9 +193,9 @@ export default function ConfirmEmailPage() {
       <div className="hidden lg:flex lg:w-1/2 items-center justify-center bg-primary-50 dark:bg-primary-950/30 p-12">
         <div className="w-full max-w-md text-center">
           <Image
-            src="/illustrations/email-sent.svg" 
-            alt={t('illustrationAlt') || "Email confirmation illustration"} 
-            width={450} 
+            src="/illustrations/email-sent.svg"
+            alt={t('illustrationAlt') || "Email confirmation illustration"}
+            width={450}
             height={450}
             priority
             className="mx-auto"

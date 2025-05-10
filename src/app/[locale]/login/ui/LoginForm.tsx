@@ -28,7 +28,7 @@ export default function LoginForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>({ 
+  } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
@@ -48,17 +48,15 @@ export default function LoginForm() {
       });
 
       if (error) {
-        console.error('Login error:', error.message);
         setFormError(error.message);
         toast.error(`${t('loginFailed')}: ${error.message}`, { id: toastId });
       } else {
         toast.success(t('loginSuccessToast'), { id: toastId });
-        
-        // Use the redirect route for middleware handling
+
+
         router.push('/redirect');
       }
     } catch (err) {
-      console.error('Unexpected login error:', err);
       const message = err instanceof Error ? err.message : t('unexpectedError');
       setFormError(message);
       toast.error(`${t('loginFailed')}: ${message}`, { id: toastId });
@@ -68,7 +66,7 @@ export default function LoginForm() {
   };
 
   const togglePasswordVisibility = () => {
-      setShowPassword(!showPassword);
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -97,33 +95,33 @@ export default function LoginForm() {
         )}
       </div>
       <div>
-         <div className="flex items-center justify-between">
-           <Label htmlFor="password">{t('passwordLabel')}</Label>
-           <Link href="/forgot-password" className="text-sm text-primary hover:underline">
-                {t('forgotPasswordLink')}
-            </Link>
-         </div>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="password">{t('passwordLabel')}</Label>
+          <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+            {t('forgotPasswordLink')}
+          </Link>
+        </div>
         <div className="relative mt-1">
-            <TextInput
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder={t('passwordPlaceholder')}
-              {...register('password')}
-              color={errors.password ? 'failure' : 'gray'}
-              required
-              aria-invalid={!!errors.password}
-              className=""
-              disabled={isLoading}
-            />
-            <button 
-                type="button" 
-                onClick={togglePasswordVisibility}
-                className="absolute inset-y-0 end-0 flex items-center pe-3.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                aria-label={showPassword ? t('hidePassword') : t('showPassword')}
-                disabled={isLoading}
-            >
-                {showPassword ? <HiEyeOff className="h-5 w-5"/> : <HiEye className="h-5 w-5"/>}
-            </button>
+          <TextInput
+            id="password"
+            type={showPassword ? 'text' : 'password'}
+            placeholder={t('passwordPlaceholder')}
+            {...register('password')}
+            color={errors.password ? 'failure' : 'gray'}
+            required
+            aria-invalid={!!errors.password}
+            className=""
+            disabled={isLoading}
+          />
+          <button
+            type="button"
+            onClick={togglePasswordVisibility}
+            className="absolute inset-y-0 end-0 flex items-center pe-3.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            aria-label={showPassword ? t('hidePassword') : t('showPassword')}
+            disabled={isLoading}
+          >
+            {showPassword ? <HiEyeOff className="h-5 w-5" /> : <HiEye className="h-5 w-5" />}
+          </button>
         </div>
         {errors.password?.message && (
           <p className="mt-0.5 text-sm text-red-600">{errors.password.message}</p>

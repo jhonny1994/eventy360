@@ -38,16 +38,15 @@ export default function ForgotPasswordForm() {
 
     startTransition(async () => {
       const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
-        // Supabase appends the redirect path to its own site URL for email resets.
-        // The actual redirect to your app happens when the user clicks the link.
-        // Configure the Site URL in your Supabase project settings (Authentication -> URL Configuration).
-        // The redirectTo here specifies the path *on your site* where the user should land.
+
+
+
+
         redirectTo: `${window.location.origin}/${locale}/reset-password`,
       });
 
       if (error) {
-        console.error('Password reset error:', error);
-        // For this implementation, we will follow the safer approach (generic success message):
+
         setFormSuccess(t('resetLinkSent'));
       } else {
         setFormSuccess(t('resetLinkSent'));

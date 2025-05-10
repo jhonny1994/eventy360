@@ -12,8 +12,8 @@ export default function ProfilePageActions() {
   const t = useTranslations('ProfilePage');
   const params = useParams();
   const locale = params.locale as string;
-  
-  // Determine tooltip placement based on text direction
+
+
   const tooltipPlacement = locale === 'ar' ? 'right' : 'left';
 
   const handleLogout = async () => {
@@ -24,7 +24,7 @@ export default function ProfilePageActions() {
     <div className="flex md:flex-col flex-row items-center gap-3">
       <Tooltip content={t('editProfileButton')} placement={tooltipPlacement}>
         <Link href="/profile/edit" className="inline-block">
-          <Button 
+          <Button
             color="gray"
             pill
             className="shadow-sm hover:shadow-md transition-all !p-2.5 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200"
@@ -34,9 +34,9 @@ export default function ProfilePageActions() {
           </Button>
         </Link>
       </Tooltip>
-      
+
       <Tooltip content={t('logoutButton')} placement={tooltipPlacement}>
-        <Button 
+        <Button
           color="gray"
           pill
           className="shadow-sm hover:shadow-md transition-all !p-2.5 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200"

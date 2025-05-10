@@ -62,7 +62,6 @@ export default function RegisterForm() {
       });
 
       if (error) {
-        console.error('Registration error:', error.message);
         setFormError(error.message);
         toast.error(`${t('registrationFailed')}: ${error.message}`, { id: toastId });
       } else if (signUpData.user && signUpData.user.identities && signUpData.user.identities.length === 0) {
@@ -75,7 +74,6 @@ export default function RegisterForm() {
         toast.success(t('registrationSuccessToast'), { id: toastId });
       }
     } catch (err) {
-      console.error('Unexpected registration error:', err);
       const message = err instanceof Error ? err.message : t('unexpectedError');
       setFormError(message);
       toast.error(`${t('registrationFailed')}: ${message}`, { id: toastId });
@@ -95,7 +93,6 @@ export default function RegisterForm() {
     });
 
     if (error) {
-      console.error('Resend confirmation error:', error.message);
       toast.error(t('resendConfirmationErrorToast') + `: ${error.message}`, { id: toastId });
     } else {
       toast.success(t('resendConfirmationSuccessToast'), { id: toastId });
@@ -107,17 +104,17 @@ export default function RegisterForm() {
 
   if (formSuccess) {
     return (
-      <Alert 
-        color="success" 
+      <Alert
+        color="success"
         icon={HiCheckCircle}
         className="mb-4 p-6 text-center"
       >
         <h3 className="text-lg font-semibold mb-2">{t('registrationSuccessToast')}</h3>
         <p className="mb-4">{formSuccess}</p>
         {registeredEmail && (
-          <Button 
-            onClick={handleResendConfirmationEmail} 
-            disabled={isResendingEmail || isLoading} 
+          <Button
+            onClick={handleResendConfirmationEmail}
+            disabled={isResendingEmail || isLoading}
             color="primary"
             size="sm"
             className="mx-auto"
@@ -145,7 +142,7 @@ export default function RegisterForm() {
       )}
       {formSuccess && (
         <Alert color="success" icon={HiInformationCircle} className="mb-4">
-           {formSuccess}
+          {formSuccess}
         </Alert>
       )}
       <div>
@@ -198,7 +195,7 @@ export default function RegisterForm() {
       <div>
         <Label htmlFor="confirmPassword">{t('confirmPasswordLabel')}</Label>
         <div className="relative mt-1">
-           <TextInput
+          <TextInput
             id="confirmPassword"
             type={showConfirmPassword ? 'text' : 'password'}
             placeholder={t('confirmPasswordPlaceholder')}
@@ -209,7 +206,7 @@ export default function RegisterForm() {
             className=""
             disabled={isLoading || !!formSuccess}
           />
-           <button
+          <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             className="absolute inset-y-0 end-0 flex items-center pe-3.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
@@ -246,16 +243,16 @@ export default function RegisterForm() {
             }}
             className={`group cursor-pointer rounded-lg border p-2 text-center transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-900 focus:ring-primary/60
                         ${currentUserType === 'researcher'
-                          ? 'border-primary bg-primary/5 dark:bg-primary/10 ring-2 ring-primary shadow-lg'
-                          : 'border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-600 hover:shadow-md'
-                        } ${formSuccess ? 'opacity-50 cursor-not-allowed' : ''}`}
+                ? 'border-primary bg-primary/5 dark:bg-primary/10 ring-2 ring-primary shadow-lg'
+                : 'border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-600 hover:shadow-md'
+              } ${formSuccess ? 'opacity-50 cursor-not-allowed' : ''}`}
             aria-disabled={!!formSuccess}
           >
-            <HiOutlineAcademicCap 
+            <HiOutlineAcademicCap
               className={`mx-auto mb-1 h-6 w-6 transition-colors group-hover:text-primary/80 
                           ${currentUserType === 'researcher' ? 'text-primary' : 'text-muted-foreground'}`}
             />
-            <span 
+            <span
               className={`block text-sm font-semibold transition-colors group-hover:text-primary/90 
                           ${currentUserType === 'researcher' ? 'text-primary' : 'text-foreground'}`}
             >
@@ -276,16 +273,16 @@ export default function RegisterForm() {
             }}
             className={`group cursor-pointer rounded-lg border p-2 text-center transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-900 focus:ring-primary/60
                         ${currentUserType === 'organizer'
-                          ? 'border-primary bg-primary/5 dark:bg-primary/10 ring-2 ring-primary shadow-lg'
-                          : 'border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-600 hover:shadow-md'
-                        } ${formSuccess ? 'opacity-50 cursor-not-allowed' : ''}`}
-             aria-disabled={!!formSuccess}
+                ? 'border-primary bg-primary/5 dark:bg-primary/10 ring-2 ring-primary shadow-lg'
+                : 'border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-600 hover:shadow-md'
+              } ${formSuccess ? 'opacity-50 cursor-not-allowed' : ''}`}
+            aria-disabled={!!formSuccess}
           >
-            <HiOutlineClipboardList 
+            <HiOutlineClipboardList
               className={`mx-auto mb-1 h-6 w-6 transition-colors group-hover:text-primary/80 
                           ${currentUserType === 'organizer' ? 'text-primary' : 'text-muted-foreground'}`}
             />
-            <span 
+            <span
               className={`block text-sm font-semibold transition-colors group-hover:text-primary/90 
                           ${currentUserType === 'organizer' ? 'text-primary' : 'text-foreground'}`}
             >

@@ -13,7 +13,7 @@ export default async function ResetPasswordPage() {
           <div className="mb-8 text-center">
             <Image
               src="/png/logo.png"
-              alt={t('Auth.ResetPasswordPage.logoAltText')} 
+              alt={t('Auth.ResetPasswordPage.logoAltText')}
               width={180}
               height={60}
               priority
@@ -22,7 +22,7 @@ export default async function ResetPasswordPage() {
           </div>
 
           <h2 className="mb-6 text-center text-2xl font-bold leading-9 tracking-tight text-foreground">
-            {t('Auth.ResetPasswordPage.title')} 
+            {t('Auth.ResetPasswordPage.title')}
           </h2>
 
           <ResetPasswordForm />
@@ -30,7 +30,7 @@ export default async function ResetPasswordPage() {
           <p className="mt-8 text-center text-sm text-muted-foreground">
             {t('Auth.ResetPasswordPage.passwordResetSuccessPrompt')}{' '}
             <Link href="/login" className="font-semibold leading-6 text-primary hover:text-primary/90">
-              {t('Auth.ResetPasswordPage.loginLink')} 
+              {t('Auth.ResetPasswordPage.loginLink')}
             </Link>
           </p>
         </div>
@@ -41,9 +41,9 @@ export default async function ResetPasswordPage() {
           <Image
             src="/illustrations/forgot-password.svg"
             alt={t('Auth.ResetPasswordPage.illustrationAlt')}
-            width={500} 
-            height={500} 
-            priority 
+            width={500}
+            height={500}
+            priority
             className="mx-auto"
           />
         </div>

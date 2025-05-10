@@ -46,9 +46,9 @@ export default async function ForgotPasswordPage() {
           <Image
             src="/illustrations/forgot-password.svg"
             alt={t('Auth.ForgotPasswordPage.illustrationAlt')}
-            width={500} 
-            height={500} 
-            priority 
+            width={500}
+            height={500}
+            priority
             className="mx-auto"
           />
         </div>

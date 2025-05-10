@@ -6,12 +6,12 @@ import type { ThemeProviderProps } from "next-themes";
 
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   return (
-    <NextThemesProvider 
-      attribute={props.attribute} 
+    <NextThemesProvider
+      attribute={props.attribute}
       defaultTheme={props.defaultTheme}
       enableSystem={props.enableSystem}
-      disableTransitionOnChange={props.disableTransitionOnChange} 
-      {...props} // Keep spread for any other props
+      disableTransitionOnChange={props.disableTransitionOnChange}
+      {...props}
     >
       {children}
     </NextThemesProvider>

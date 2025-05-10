@@ -1,12 +1,10 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
-// Renaming import to avoid confusion if cookies() is treated as async by the linter
-import { cookies as getRequestCookies } from 'next/headers';
-// Updated import path to match the filename
-import type { Database } from '@/database.types'; 
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 
-// Making the function async to await cookies() if the linter insists it's a Promise
+import { cookies as getRequestCookies } from "next/headers";
+
+import type { Database } from "@/database.types";
+
 export async function createServerSupabaseClient() {
-  // Awaiting getRequestCookies() based on persistent linter feedback suggesting it's a Promise
   const cookieStore = await getRequestCookies();
 
   return createServerClient<Database>(
@@ -15,20 +13,27 @@ export async function createServerSupabaseClient() {
     {
       cookies: {
         getAll() {
-          // Now cookieStore is the resolved ReadonlyRequestCookies object
           return cookieStore.getAll();
         },
-        setAll(cookiesToSet: Array<{ name: string; value: string; options: CookieOptions }>) {
+        setAll(
+          cookiesToSet: Array<{
+            name: string;
+            value: string;
+            options: CookieOptions;
+          }>
+        ) {
           try {
             cookiesToSet.forEach(({ name, value, options }) => {
               cookieStore.set(name, value, options);
             });
           } catch (_error) {
-            // Using console.warn to address the unused variable linter error
-            console.warn('Supabase server client setAll cookie error (often ignorable):', _error);
+            console.warn(
+              "Supabase server client setAll cookie error (often ignorable):",
+              _error
+            );
           }
         },
       },
     }
   );
-} 
+}

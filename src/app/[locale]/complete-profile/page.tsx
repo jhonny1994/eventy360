@@ -18,13 +18,13 @@ export default function CompleteProfilePage() {
   const [profileLoading, setProfileLoading] = useState(true);
   const [profileError, setProfileError] = useState<string | null>(null);
 
-  // We'll use a ref instead of state to track profile fetch attempts
-  // This avoids the dependency cycle that causes the infinite loop
+  
+  
   const profileFetchedRef = React.useRef(false);
 
-  // Memoize fetch profile function to prevent recreating on every render
+  
   const fetchProfile = useCallback(async () => {
-    // Only fetch if we haven't already and user exists
+    
     if (profileFetchedRef.current || !user || !user.id) return;
     
       setProfileLoading(true);
@@ -43,45 +43,42 @@ export default function CompleteProfilePage() {
           if (data.is_extended_profile_complete) {
           router.replace('/profile');
         } else if (!data.user_type) {
-            console.error("Profile data is missing user_type:", data);
             setProfileError(t('missingUserType'));
           setProfile(null);
           } else {
             setProfile(data as UserProfile);
           }
         } else {
-          console.warn(`Profile not found for user ID: ${user.id}`);
           setProfileError(t('profileNotFound'));
         }
       } catch (err) {
-        console.error("Error fetching profile:", err);
         setProfileError(err instanceof Error ? err.message : t('fetchProfileError'));
     } finally {
       setProfileLoading(false);
     }
   }, [user, supabase, router, t]);
 
-  // Handle auth state changes and redirects
+  
   useEffect(() => {
     if (authLoading) return;
 
-    // Handle unauthenticated users
+    
     if (!session || !user) {
       router.replace('/redirect');
       return;
     }
     
-    // Handle unconfirmed email
+    
     if (!user.email_confirmed_at) {
       router.replace('/confirm-email');
       return;
     }
     
-    // Fetch profile data once auth is settled
+    
     fetchProfile();
   }, [session, user, authLoading, router, fetchProfile]);
 
-  // Extract common UI elements to reduce complexity
+  
   const LoadingSpinner = useMemo(() => (
       <div className="flex min-h-screen items-center justify-center">
         <Spinner size="xl" />
@@ -117,7 +114,7 @@ export default function CompleteProfilePage() {
     </div>
   ), [profile, t]);
 
-  // Determine what to render based on current state
+  
   if (authLoading || profileLoading) {
     return LoadingSpinner;
   }
@@ -127,7 +124,7 @@ export default function CompleteProfilePage() {
   }
   
   if (!profile) { 
-    // Return empty div instead of warning alert to keep page blank during redirect
+    
     return <div></div>;
   }
 

@@ -27,13 +27,13 @@ export default function ResetPasswordForm() {
   const resetPasswordSchema = getResetPasswordSchema(tValidation);
 
   useEffect(() => {
-    // Supabase client handles #access_token fragment and fires auth events (e.g., PASSWORD_RECOVERY).
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY') {
-        // User is in password recovery state.
+
         setTokenError(null);
       } else if (!session) {
-        // Other events might fire; a more robust check for token errors could be implemented if needed.
+
       }
     });
 
@@ -43,8 +43,8 @@ export default function ResetPasswordForm() {
       const errorDescription = params.get('error_description');
       setTokenError(errorDescription || t('invalidOrExpiredToken'));
     }
-    else if (!hash.includes('access_token')){
-        setTokenError(t('invalidOrExpiredTokenLink'));
+    else if (!hash.includes('access_token')) {
+      setTokenError(t('invalidOrExpiredTokenLink'));
     }
 
     return () => {
@@ -70,7 +70,6 @@ export default function ResetPasswordForm() {
       const { error } = await supabase.auth.updateUser({ password: data.password });
 
       if (error) {
-        console.error('Password update error:', error);
         setFormError(error.message || t('genericError'));
       } else {
         setFormSuccess(t('passwordResetSuccess'));
@@ -80,7 +79,7 @@ export default function ResetPasswordForm() {
       }
     });
   };
-  
+
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
   const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
 
@@ -107,26 +106,26 @@ export default function ResetPasswordForm() {
       <div>
         <Label htmlFor="password">{t('newPasswordLabel')}</Label>
         <div className="relative mt-1">
-            <TextInput
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              icon={HiOutlineLockClosed}
-              placeholder={t('newPasswordPlaceholder')}
-              {...register('password')}
-              color={errors.password ? 'failure' : 'gray'}
-              disabled={isPending}
-              required
-              aria-invalid={!!errors.password}
-            />
-            <button 
-                type="button" 
-                onClick={togglePasswordVisibility} 
-                className="absolute inset-y-0 end-0 flex items-center pe-3.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                aria-label={showPassword ? tAria('hidePassword') : tAria('showPassword')}
-                disabled={isPending}
-            >
-                {showPassword ? <HiEyeOff className="h-5 w-5"/> : <HiEye className="h-5 w-5"/>}
-            </button>
+          <TextInput
+            id="password"
+            type={showPassword ? 'text' : 'password'}
+            icon={HiOutlineLockClosed}
+            placeholder={t('newPasswordPlaceholder')}
+            {...register('password')}
+            color={errors.password ? 'failure' : 'gray'}
+            disabled={isPending}
+            required
+            aria-invalid={!!errors.password}
+          />
+          <button
+            type="button"
+            onClick={togglePasswordVisibility}
+            className="absolute inset-y-0 end-0 flex items-center pe-3.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            aria-label={showPassword ? tAria('hidePassword') : tAria('showPassword')}
+            disabled={isPending}
+          >
+            {showPassword ? <HiEyeOff className="h-5 w-5" /> : <HiEye className="h-5 w-5" />}
+          </button>
         </div>
         {errors.password?.message && (
           <p className="mt-0.5 text-sm text-red-600 dark:text-red-500">{errors.password.message}</p>
@@ -136,26 +135,26 @@ export default function ResetPasswordForm() {
       <div>
         <Label htmlFor="confirmPassword">{t('confirmNewPasswordLabel')}</Label>
         <div className="relative mt-1">
-            <TextInput
-              id="confirmPassword"
-              type={showConfirmPassword ? 'text' : 'password'}
-              icon={HiOutlineLockClosed}
-              placeholder={t('confirmNewPasswordPlaceholder')}
-              {...register('confirmPassword')}
-              color={errors.confirmPassword ? 'failure' : 'gray'}
-              disabled={isPending}
-              required
-              aria-invalid={!!errors.confirmPassword}
-            />
-            <button 
-                type="button" 
-                onClick={toggleConfirmPasswordVisibility} 
-                className="absolute inset-y-0 end-0 flex items-center pe-3.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                aria-label={showConfirmPassword ? tAria('hidePassword') : tAria('showPassword')}
-                disabled={isPending}
-            >
-                {showConfirmPassword ? <HiEyeOff className="h-5 w-5"/> : <HiEye className="h-5 w-5"/>}
-            </button>
+          <TextInput
+            id="confirmPassword"
+            type={showConfirmPassword ? 'text' : 'password'}
+            icon={HiOutlineLockClosed}
+            placeholder={t('confirmNewPasswordPlaceholder')}
+            {...register('confirmPassword')}
+            color={errors.confirmPassword ? 'failure' : 'gray'}
+            disabled={isPending}
+            required
+            aria-invalid={!!errors.confirmPassword}
+          />
+          <button
+            type="button"
+            onClick={toggleConfirmPasswordVisibility}
+            className="absolute inset-y-0 end-0 flex items-center pe-3.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            aria-label={showConfirmPassword ? tAria('hidePassword') : tAria('showPassword')}
+            disabled={isPending}
+          >
+            {showConfirmPassword ? <HiEyeOff className="h-5 w-5" /> : <HiEye className="h-5 w-5" />}
+          </button>
         </div>
         {errors.confirmPassword?.message && (
           <p className="mt-0.5 text-sm text-red-600 dark:text-red-500">{errors.confirmPassword.message}</p>

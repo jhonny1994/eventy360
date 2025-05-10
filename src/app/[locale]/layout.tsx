@@ -9,7 +9,7 @@ import { AuthProvider } from '@/components/providers/AuthProvider';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { ToastProvider } from '@/components/providers/ToastProvider';
 
-// Font configurations
+
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -34,7 +34,7 @@ interface RootLayoutProps {
 }
 
 export default async function RootLayout({ children, params }: RootLayoutProps) {
-  // Await params (v15 compatibility)
+  
   const { locale } = await params;
 
   if (!locales.includes(locale as typeof locales[number])) {
@@ -44,8 +44,7 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
   let messages;
   try {
     messages = await getMessages();
-  } catch (error) {
-    console.error("Failed to load messages for locale:", locale, error);
+  } catch  {
     notFound();
   }
 

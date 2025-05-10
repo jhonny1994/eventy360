@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, [supabase]);
 
-  // Global logout function
+
   const logout = async () => {
     try {
       const { error } = await supabase.auth.signOut();

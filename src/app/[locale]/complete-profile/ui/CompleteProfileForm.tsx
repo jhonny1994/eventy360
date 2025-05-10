@@ -21,7 +21,7 @@ interface CompleteProfileFormProps {
   userProfile: UserProfile;
 }
 
-// Interfaces for location data
+
 interface Wilaya {
   id: number;
   name_ar: string;
@@ -35,15 +35,15 @@ interface Daira {
   name_other: string;
 }
 
-// Helper function to generate initial values
+
 const getInitialValues = (profile: UserProfile): ProfileCompletionFormShape => {
-  // Common initial values for OPTIONAL fields
+
   const commonOptionalValues = {
     bio_ar: '',
     profile_picture_url: '',
   };
 
-  // Common initial values for REQUIRED fields (empty string is typical starting point)
+
   const commonRequiredValues = {
     wilaya_id: '',
     daira_id: '',
@@ -52,24 +52,24 @@ const getInitialValues = (profile: UserProfile): ProfileCompletionFormShape => {
   if (profile.user_type === 'researcher') {
     return {
       user_type: 'researcher' as const,
-      name: '', // Required
-      institution: '', // Required
-      academic_position: '', // Optional
-      ...commonRequiredValues, // wilaya_id, daira_id are required
+      name: '',
+      institution: '',
+      academic_position: '',
+      ...commonRequiredValues,
       ...commonOptionalValues,
     };
-  } else { // 'organizer'
+  } else {
     return {
       user_type: 'organizer' as const,
-      organization_name_ar: '', // Required
-      institution_type: institutionTypeEnumValues[0], // Use the first enum value as default
-      ...commonRequiredValues, // wilaya_id, daira_id are required
+      organization_name_ar: '',
+      institution_type: institutionTypeEnumValues[0],
+      ...commonRequiredValues,
       ...commonOptionalValues,
     };
   }
 };
 
-// Type for profile data payload
+
 interface ProfileDataPayload {
   profile_picture_url: string | null;
   wilaya_id: number | null;
@@ -80,18 +80,18 @@ interface ProfileDataPayload {
   bio_translations?: { ar: string };
   name_translations?: { ar: string };
   institution_type?: string;
-  }
+}
 
-// Type guards for form errors
+
 const isResearcherError = (
-  errors: FieldErrors<ProfileCompletionFormShape>, 
+  errors: FieldErrors<ProfileCompletionFormShape>,
   userType: string
 ): errors is FieldErrors<Extract<ProfileCompletionFormShape, { user_type: 'researcher' }>> => {
   return userType === 'researcher';
 };
 
 const isOrganizerError = (
-  errors: FieldErrors<ProfileCompletionFormShape>, 
+  errors: FieldErrors<ProfileCompletionFormShape>,
   userType: string
 ): errors is FieldErrors<Extract<ProfileCompletionFormShape, { user_type: 'organizer' }>> => {
   return userType === 'organizer';
@@ -111,15 +111,15 @@ function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps)
   const [locationDataLoaded, setLocationDataLoaded] = useState(false);
   const [formInitialized, setFormInitialized] = useState(false);
 
-  // Create schema only once per user type
-  const schema = useMemo(() => 
-    getCompleteProfileFormSchema(tValidation, userProfile.user_type), 
+
+  const schema = useMemo(() =>
+    getCompleteProfileFormSchema(tValidation, userProfile.user_type),
     [tValidation, userProfile.user_type]
   );
-  
-  // Memoize default values to prevent recreation on every render
-  const defaultValues = useMemo(() => 
-    getInitialValues(userProfile), 
+
+
+  const defaultValues = useMemo(() =>
+    getInitialValues(userProfile),
     [userProfile]
   );
 
@@ -137,7 +137,7 @@ function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps)
     mode: 'onBlur',
   });
 
-  // Initialize form only once when component mounts
+
   useEffect(() => {
     if (!formInitialized) {
       reset(defaultValues);
@@ -145,30 +145,30 @@ function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps)
     }
   }, [formInitialized, reset, defaultValues]);
 
-  // Fetch wilayas and dairas data from Supabase - only once
+
   useEffect(() => {
     let isMounted = true;
-    
+
     async function fetchLocationData() {
       if (!locationDataLoaded) {
         try {
-          // Fetch wilayas
+
           const { data: wilayasData, error: wilayasError } = await supabase
             .from('wilayas')
             .select('id, name_ar, name_other')
             .order('id');
 
           if (wilayasError) throw wilayasError;
-          
-          // Fetch dairas
+
+
           const { data: dairasData, error: dairasError } = await supabase
             .from('dairas')
             .select('id, wilaya_id, name_ar, name_other')
             .order('id');
 
           if (dairasError) throw dairasError;
-          
-          // Only update state if component is still mounted
+
+
           if (isMounted) {
             setWilayas(wilayasData || []);
             setAllDairas(dairasData || []);
@@ -182,33 +182,33 @@ function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps)
         }
       }
     }
-    
+
     fetchLocationData();
-    
-    // Cleanup function to handle unmounting
+
+
     return () => {
       isMounted = false;
     };
   }, [supabase, t, locationDataLoaded]);
 
-  // Watch for wilaya changes
+
   const selectedWilayaId = watch('wilaya_id');
 
-  // Filter dairas based on selected wilaya - memoized to prevent unnecessary recalculations
+
   const filteredDairas = useMemo(() => {
     if (!selectedWilayaId || !allDairas.length) return [];
     return allDairas.filter(d => d.wilaya_id === parseInt(selectedWilayaId, 10));
   }, [selectedWilayaId, allDairas]);
 
-  // Reset daira selection when wilaya changes
+
   useEffect(() => {
-    // Only reset daira if we have a wilaya selected and the form is initialized
+
     if (selectedWilayaId && formInitialized) {
       setValue('daira_id', '');
     }
   }, [selectedWilayaId, setValue, formInitialized]);
 
-  // Form submission handler
+
   const onSubmit = useCallback(async (data: ProfileCompletionFormShape) => {
     setIsLoading(true);
     setFormError(null);
@@ -258,12 +258,12 @@ function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps)
     }
   }, [supabase, router, t]);
 
-  // Memoize researcher fields to prevent unnecessary re-renders
+
   const renderResearcherFields = useCallback(() => {
     const researcherErrors = isResearcherError(errors, userProfile.user_type)
       ? errors
       : {} as FieldErrors<Extract<ProfileCompletionFormShape, { user_type: 'researcher' }>>;
-      
+
     return (
       <>
         <div>
@@ -289,12 +289,12 @@ function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps)
     );
   }, [isLoading, t, tValidation, register, errors, userProfile.user_type]);
 
-  // Memoize organizer fields to prevent unnecessary re-renders
+
   const renderOrganizerFields = useCallback(() => {
-    const organizerErrors = isOrganizerError(errors, userProfile.user_type) 
-      ? errors 
+    const organizerErrors = isOrganizerError(errors, userProfile.user_type)
+      ? errors
       : {} as FieldErrors<Extract<ProfileCompletionFormShape, { user_type: 'organizer' }>>;
-      
+
     return (
       <>
         <div>
@@ -314,15 +314,15 @@ function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps)
             defaultValue={institutionTypeEnumValues[0] as InstitutionType}
             render={({ field }) => (
               <div className="relative">
-                <Select 
-                  id="institution_type" 
+                <Select
+                  id="institution_type"
                   value={field.value}
                   onChange={(e) => {
                     const selectedValue = e.target.value as InstitutionType;
                     field.onChange(selectedValue);
                   }}
                   onBlur={field.onBlur}
-                  disabled={isLoading} 
+                  disabled={isLoading}
                   color={organizerErrors.institution_type ? 'failure' : 'gray'}
                   className="w-full rounded-md focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                   style={{ textAlign: 'right', paddingRight: '2.5rem' }}
@@ -371,18 +371,18 @@ function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps)
 
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="space-y-1 flex-1">
-        <Label htmlFor="wilaya_id" className="mb-1 block text-sm font-medium">
-          {t('wilayaLabel')} <span className="text-red-500">*</span>
-        </Label>
-        <Controller
+          <Label htmlFor="wilaya_id" className="mb-1 block text-sm font-medium">
+            {t('wilayaLabel')} <span className="text-red-500">*</span>
+          </Label>
+          <Controller
             name="wilaya_id"
             control={control}
             render={({ field }) => (
               <div className="relative">
-                <Select 
-                  id="wilaya_id" 
-                  {...field} 
-                  disabled={isLoading || !locationDataLoaded} 
+                <Select
+                  id="wilaya_id"
+                  {...field}
+                  disabled={isLoading || !locationDataLoaded}
                   color={errors.wilaya_id ? 'failure' : 'gray'}
                   className="w-full rounded-md focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                   style={{ textAlign: 'right', paddingRight: '2.5rem' }}
@@ -392,27 +392,27 @@ function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps)
                     <option key={wilaya.id} value={wilaya.id.toString()}>
                       {wilaya.name_ar}
                     </option>
-                    ))}
+                  ))}
                 </Select>
               </div>
             )}
-        />
-        {errors.wilaya_id && <p className="mt-1 text-sm text-red-600">{tValidation('required')}</p>}
-      </div>
+          />
+          {errors.wilaya_id && <p className="mt-1 text-sm text-red-600">{tValidation('required')}</p>}
+        </div>
 
         <div className="space-y-1 flex-1">
-        <Label htmlFor="daira_id" className="mb-1 block text-sm font-medium">
-          {t('dairaLabel')} <span className="text-red-500">*</span>
-        </Label>
-        <Controller
+          <Label htmlFor="daira_id" className="mb-1 block text-sm font-medium">
+            {t('dairaLabel')} <span className="text-red-500">*</span>
+          </Label>
+          <Controller
             name="daira_id"
             control={control}
             render={({ field }) => (
               <div className="relative">
-                <Select 
-                  id="daira_id" 
-                  {...field} 
-                  disabled={isLoading || !selectedWilayaId || !locationDataLoaded} 
+                <Select
+                  id="daira_id"
+                  {...field}
+                  disabled={isLoading || !selectedWilayaId || !locationDataLoaded}
                   color={errors.daira_id ? 'failure' : 'gray'}
                   className="w-full rounded-md focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                   style={{ textAlign: 'right', paddingRight: '2.5rem' }}
@@ -422,27 +422,27 @@ function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps)
                     <option key={daira.id} value={daira.id.toString()}>
                       {daira.name_ar}
                     </option>
-                    ))}
+                  ))}
                 </Select>
               </div>
             )}
-        />
-        {errors.daira_id && <p className="mt-1 text-sm text-red-600">{tValidation('required')}</p>}
+          />
+          {errors.daira_id && <p className="mt-1 text-sm text-red-600">{tValidation('required')}</p>}
         </div>
       </div>
 
       <Button type="submit" disabled={isLoading} className="w-full">
         {isLoading ? (
-            <>
+          <>
             <Spinner className="mr-2" size="sm" />
             {t('loadingButton')}
-            </>
+          </>
         ) : t('submitButton')}
       </Button>
     </form>
   );
-} 
+}
 
-// Use memo to prevent unnecessary re-renders
+
 const CompleteProfileForm = memo(CompleteProfileFormComponent);
 export default CompleteProfileForm; 

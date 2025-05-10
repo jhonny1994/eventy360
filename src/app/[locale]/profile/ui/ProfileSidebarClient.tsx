@@ -3,13 +3,13 @@
 import { useState, useEffect } from 'react';
 import { Avatar, Button, Tooltip } from 'flowbite-react';
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
-import { 
-  HiPencil, 
-  HiArrowRightOnRectangle, 
-  HiBuildingOffice2, 
-  HiAcademicCap, 
-  HiMapPin, 
-  HiIdentification, 
+import {
+  HiPencil,
+  HiArrowRightOnRectangle,
+  HiBuildingOffice2,
+  HiAcademicCap,
+  HiMapPin,
+  HiIdentification,
   HiCalendar,
   HiCheckCircle
 } from 'react-icons/hi2';
@@ -17,19 +17,19 @@ import { HiX, HiMenuAlt2 } from 'react-icons/hi';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { Link } from '@/i18n/navigation';
 
-// Map of icon names to components
+
 export const iconMap = {
-  HiBuildingOffice2, 
-  HiAcademicCap, 
-  HiMapPin, 
+  HiBuildingOffice2,
+  HiAcademicCap,
+  HiMapPin,
   HiIdentification,
   HiCalendar
 };
 
-// Type for available icon names
+
 export type IconName = keyof typeof iconMap;
 
-// Type definitions for component props
+
 export interface ProfileDetail {
   icon: IconName;
   label: string;
@@ -70,18 +70,18 @@ export default function ProfileSidebarClient({ profile, locale, translations }: 
   const { logout } = useAuth();
   const isRTL = locale === 'ar';
 
-  // Handle resize events to determine mobile view
+
   useEffect(() => {
     function handleResize() {
       setIsMobile(window.innerWidth < 768);
-      // On larger screens, always reset to default (expanded on desktop)
+
       if (window.innerWidth >= 768) {
         setExpanded(true);
         setMobileOpen(false);
       }
     }
-    
-    handleResize(); // Initial check
+
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -90,7 +90,7 @@ export default function ProfileSidebarClient({ profile, locale, translations }: 
     await logout();
   };
 
-  // Toggle sidebar expanded state
+
   const toggleSidebar = () => {
     if (isMobile) {
       setMobileOpen(!mobileOpen);
@@ -99,38 +99,38 @@ export default function ProfileSidebarClient({ profile, locale, translations }: 
     }
   };
 
-  // Determine which chevron icon to show based on expanded state and RTL
-  const ChevronIcon = expanded 
-    ? (isRTL ? HiChevronRight : HiChevronLeft) 
+
+  const ChevronIcon = expanded
+    ? (isRTL ? HiChevronRight : HiChevronLeft)
     : (isRTL ? HiChevronLeft : HiChevronRight);
 
-  // Mobile sidebar
+
   if (isMobile) {
     return (
       <>
         {/* Mobile toggle button - Adjusted positioning for RTL layouts */}
-        <button 
+        <button
           onClick={toggleSidebar}
           className={`fixed top-4 ${isRTL ? 'end-4' : 'start-4'} z-20 p-2 rounded-full bg-white shadow-md dark:bg-gray-800 text-gray-700 dark:text-gray-200`}
           aria-label={translations.toggleSidebar}
         >
           <HiMenuAlt2 className="h-6 w-6" />
         </button>
-        
+
         {/* Mobile sidebar overlay */}
-        <div 
+        <div
           className={`fixed inset-0 bg-gray-900 bg-opacity-50 z-30 transition-opacity duration-300 ${mobileOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
           onClick={() => setMobileOpen(false)}
         ></div>
-        
+
         {/* Mobile sidebar - increased width to w-80 */}
-        <aside 
+        <aside
           className={`fixed top-0 bottom-0 start-0 w-80 bg-white dark:bg-gray-800 shadow-xl z-40 transition-transform duration-300 ${mobileOpen ? 'translate-x-0' : isRTL ? 'translate-x-full' : '-translate-x-full'}`}
           dir={isRTL ? 'rtl' : 'ltr'}
         >
           <div className="flex flex-col h-full">
             <div className="flex justify-end p-4">
-              <button 
+              <button
                 onClick={() => setMobileOpen(false)}
                 className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
                 aria-label="Close sidebar"
@@ -138,7 +138,7 @@ export default function ProfileSidebarClient({ profile, locale, translations }: 
                 <HiX className="h-5 w-5 text-gray-500 dark:text-gray-400" />
               </button>
             </div>
-            
+
             {/* Profile content for mobile - always expanded */}
             <div className="flex-1 overflow-y-auto px-4 py-2">
               {renderProfileContent(true)}
@@ -149,17 +149,17 @@ export default function ProfileSidebarClient({ profile, locale, translations }: 
     );
   }
 
-  // Desktop sidebar - increased width to w-80
+
   return (
     <>
-      <aside 
+      <aside
         className={`h-screen bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 overflow-hidden flex-shrink-0 ${expanded ? 'w-80' : 'w-20'}`}
         dir={isRTL ? 'rtl' : 'ltr'}
       >
         <div className="flex flex-col h-full">
           {/* Improved toggle button placement and styling */}
           <div className="flex justify-end p-3">
-            <button 
+            <button
               onClick={toggleSidebar}
               className="p-2.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
               aria-label={translations.toggleSidebar}
@@ -167,7 +167,7 @@ export default function ProfileSidebarClient({ profile, locale, translations }: 
               <ChevronIcon className="h-5 w-5 text-gray-600 dark:text-gray-300" />
             </button>
           </div>
-          
+
           <div className="flex-1 overflow-y-auto px-4 py-2">
             {renderProfileContent(expanded)}
           </div>
@@ -176,7 +176,7 @@ export default function ProfileSidebarClient({ profile, locale, translations }: 
     </>
   );
 
-  // Helper function to render the profile content
+
   function renderProfileContent(isExpanded: boolean) {
     return (
       <div className="flex flex-col items-center h-full">
@@ -192,19 +192,19 @@ export default function ProfileSidebarClient({ profile, locale, translations }: 
             />
           </div>
         </div>
-        
+
         {isExpanded && (
           <>
             {/* Name */}
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-center">{profile.name}</h2>
-            
+
             {/* Bio section */}
             {profile.bio && (
               <p className="text-sm text-gray-700 dark:text-gray-300 text-center mb-6 line-clamp-3">
                 {profile.bio}
               </p>
             )}
-            
+
             {/* Profile details - including verification status and user type as regular details */}
             <div className="w-full space-y-3 mb-auto">
               {/* Add user type as a detail item */}
@@ -215,7 +215,7 @@ export default function ProfileSidebarClient({ profile, locale, translations }: 
                   <p className="text-gray-900 dark:text-white">{profile.userType}</p>
                 </div>
               </div>
-              
+
               {/* Add verification status as a detail item (always shown) */}
               <div className="flex items-center gap-3 text-sm">
                 <HiCheckCircle className={`flex-shrink-0 h-5 w-5 ${profile.isVerified ? 'text-green-500 dark:text-green-400' : 'text-gray-400 dark:text-gray-500'}`} />
@@ -226,7 +226,7 @@ export default function ProfileSidebarClient({ profile, locale, translations }: 
                   </p>
                 </div>
               </div>
-              
+
               {/* Existing details */}
               {profile.details.map((detail, index) => {
                 const Icon = iconMap[detail.icon];
@@ -243,7 +243,7 @@ export default function ProfileSidebarClient({ profile, locale, translations }: 
             </div>
           </>
         )}
-        
+
         {/* Action buttons - changed to vertical stack */}
         <div className={`w-full mt-auto py-4 ${isExpanded ? 'space-y-3' : 'flex flex-col items-center space-y-4'}`}>
           {isExpanded ? (

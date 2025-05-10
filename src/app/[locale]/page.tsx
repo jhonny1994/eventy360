@@ -12,7 +12,7 @@ export default function Home() {
   useEffect(() => setMounted(true), []);
 
   if (!mounted) {
-    // Avoid hydration mismatch for theme-dependent UI
+    
     return <div className="p-24">{t('loading')}</div>;
   }
 

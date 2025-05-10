@@ -45,9 +45,9 @@ export default async function RegisterPage() {
           <Image
             src="/illustrations/signup.svg"
             alt={t('illustrationAlt')}
-            width={500} 
-            height={500} 
-            priority 
+            width={500}
+            height={500}
+            priority
             className="mx-auto"
           />
         </div>
