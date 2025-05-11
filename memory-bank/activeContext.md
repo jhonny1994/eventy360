@@ -2,16 +2,20 @@
 
 ## Current Focus
 
-**Primary Task: Planning for Payment, Subscription, and Event Management Systems**
-- Begin the planning phase for the next major feature sets: payment/subscription and event management.
-- Define scope, high-level requirements, and potential technical approaches.
+**Primary Task: Executing Phase 1 of the Eventy360 MVP Development Plan.**
+- Focus on implementing the foundational Subscription Backbone & Core Admin tools for manual MVP operations as outlined in the new 6-phase development plan.
 
-**Secondary Task: Comprehensive End-to-End Testing (Ongoing)**
-- Continue comprehensive testing of implemented features as new ones are added.
-- Identify and address any edge cases or bugs.
+**Secondary Task: Continuous Testing & Quality Assurance (Ongoing)**
+- Implement unit and integration tests for features developed in Phase 1.
+- Prepare for E2E testing of core Phase 1 user flows.
 
 ## Recent Changes
 
+- ✅ **Development Plan Restructured**: A new comprehensive 6-phase development plan for the Eventy360 MVP has been formulated and adopted. This plan details logical phases, steps, and ecosystem integrations.
+- ✅ **Policy Decisions Finalized**:
+    - User verification (`is_verified` flag) is now purely a visual badge and does not gate any features.
+    - Feature access for Free/Expired subscription tiers has been explicitly defined (e.g., no new topic emails for expired researchers, read-only access to event management for expired organizers).
+    - Topic deletion by Admins will now cascade delete associations in `event_topics`, effectively removing the topic from events and stopping related notifications.
 - ✅ **Refined Profile Notifications Implemented & Tested**: Implemented specific success and error toast notifications for profile updates in `EditProfileForm.tsx`, including Supabase error parsing and translation integration. The implementation was end-to-end tested and verified.
 - ✅ **Comprehensive Arabic Translations Updated**: A comprehensive review and update of all Arabic translations in `messages/ar.json` was completed to ensure professionalism, accuracy, and cultural relevance.
 - ✅ **Profile Picture Upload Implemented & Cleaned**: Successfully added profile picture upload to `EditProfileForm.tsx`. This includes:
@@ -50,76 +54,44 @@
 - Standardized translations across all language files
 - Established consistent validation message structure
 
-**Key Decisions/Clarifications (New Section):**
-- **Feature Tier Definitions Updated (05/10/2025 - *replace with actual date*)**: 
-    - **Researcher - Free Tier**: Can surf events, manage account. Receives only essential system emails (password reset, email confirmation). Cannot submit papers or subscribe to topic notifications.
-    - **Researcher - Trial/Paid Tiers**: Same features. All Free Tier capabilities PLUS paper submission, submission tracking, topic subscription, and topic-based event notifications.
-    - **Organizer - Trial/Paid Tiers**: Same features. Full event creation/management capabilities (subject to active event limits per subscription status).
-    - **Organizer - Post-Trial (Expired, Not Paid)**: Can log in. Existing events remain untouched. Event creation/management features are disabled (UI reflects this, backend enforces it). Subscription status card shows expired trial.
-    - This refined understanding will guide future implementation and testing of tier-related features and limitations.
+**Key Decisions/Clarifications (Updated Section):**
+- **Development Plan**: The project now follows a detailed 6-Phase MVP Development Plan. Refer to `projectbrief.md` for a high-level summary and internal documentation for full details.
+- **User Verification Badge**: The `is_verified` flag in `profiles` table results in a visual badge on the user's profile. It does **not** restrict access to any platform features. Feature access is governed by `user_type` and `subscription` status/tier.
+- **Feature Tier Definitions & Access (as per `productContext.md` and `systemPatterns.md` - reviewed for consistency with Verification Badge policy)**: 
+    - **Researcher - Free/Expired Tier**: Can surf events, manage account, edit profile. Bookmarks are read-only. Topic subscriptions are read-only (no new emails based on them). Cannot submit papers. Past submissions are read-only.
+    - **Researcher - Trial/Paid Tiers**: All Free Tier capabilities PLUS: can add new bookmarks, submit papers, track submissions, modify topic subscriptions, and receive topic-based event notifications.
+    - **Organizer - Trial/Paid Tiers**: Full event creation/management (subject to tier limits, if any). Can add new bookmarks.
+    - **Organizer - Post-Trial (Expired, Not Paid)**: Can log in, edit profile. Existing events remain publicly visible; Organizer has Read-Only access to their event details and submission lists. Event creation/management features disabled. Bookmarks are read-only.
+- **Topic Deletion Policy**: Admins deleting a topic will also remove its associations from events (cascade delete from `event_topics`).
 
 **Form Components:**
 - Updated `CompleteProfileForm.tsx` with proper defaults for required fields
 - Improved type safety for error handling
 - Added proper validation aligned with database constraints
 
-## Next Steps
+## Next Steps (Aligned with New Development Plan - Phase 1 Focus)
 
-1. **Profile Page Enhancements:**
-   - ✅ Improve the minimal profile page with comprehensive UI
-   - Add editing capabilities for user information
-   - Display role-specific information properly
-   
-   **Detailed Profile Enhancement Tasks:**
-   1. **Create Profile Display Page** (ID: `64773e50-e32c-45be-a060-9e83ed394ba0`)
-      - ✅ Create a new page at `/[locale]/profile` as a Server Component
-      - ✅ Display user info: profile picture, name, affiliation, location, bio, email, user type, verification status, joined date
-      - ✅ Structure with top section for profile info and bottom section as dashboard placeholder
-      - ✅ Use Flowbite components and ensure RTL layout for Arabic
-   
-   2. **Create Profile Edit Page** (ID: `b49ecfaa-1d1d-4566-b46c-efd44e0db16f`)
-      - ✅ Create a new page at `/[locale]/profile/edit`
-      - ✅ Duplicate and modify `CompleteProfileForm.tsx` to create `EditProfileForm.tsx`
-      - ✅ Pre-fill form with current user data
-      - ✅ Update submission logic to use direct Supabase update queries (for non-file fields)
-   
-   3. **Implement Profile Picture Upload** (ID: `cb4897a4-4e94-461c-acba-b810938d5f81`)
-      - ✅ Add file input component to `EditProfileForm.tsx`
-      - ✅ Add preview functionality for selected images
-      - ✅ Handle upload to Supabase Storage at `avatars/{user_id}.{extension}`
-      - ✅ Implement proper validation and error handling
-      - ✅ Invoke Edge Function to clean up old avatars.
-      - ✅ Debugging code removed.
-   
-   4. **Create Profile Page Components** (ID: `df2ab927-00bf-402a-89c5-284718e1a531`)
-      - Create modular components: ProfileHeader, ProfileDetails, ProfileActions, DashboardPlaceholder
-      - Ensure components support RTL layout and handle nullable data
-   
-   5. **Add i18n Translations for Profile Pages** (ID: `b3441b79-b8b0-45e6-9c94-3af3904ab2a3`)
-      - Add all necessary strings to translation files (Arabic, English, French)
-      - Organize under a `ProfilePage` namespace
-   
-   6. **Configure Route Protection for Profile Pages** (ID: `652f42e2-0e51-4cf5-99a1-26adce810d5a`)
-      - Update middleware to protect `/profile` and `/profile/edit` routes
-      - Ensure proper redirection for unauthenticated users or those with incomplete profiles
-   
-   7. **Implement Success/Error Notifications** (ID: `f901d9e6-54e0-4f58-926e-21c424308724`)
-      - ✅ Add toast/alert notifications for profile update actions
-      - ✅ Ensure proper translation of notification messages
-   
-   8. **End-to-End Testing of Profile Features** (ID: `f6683cb7-bb93-4a7f-9fdf-9db04a7af40a`)
-      - ✅ Test with different user types and scenarios
-      - ✅ Verify all edge cases and responsive behavior
+**Phase 1: Subscription Backbone & Core Admin for Manual MVP Operations - Key Tasks:**
 
-2. **Quality Assurance:**
-   - Conduct thorough testing of all implemented features
-   - Test edge cases (session timeouts, page refreshes, etc.)
-   - Verify proper behavior on different browsers
+*   **A. User Account & Profile Foundations:**
+    *   Review existing Auth/Profile flows for consistency with policies (e.g., `is_verified` badge display).
+*   **B. Admin Panel - Core MVP Operations:**
+    *   Implement Basic Admin Access & Layout (secure routes, basic navigation).
+    *   Implement User Management (Admin UI: List users, filter, award/remove `is_verified` badge via RPC).
+    *   Implement Payment & Subscription Management (Admin UI: List payments, record new manual payment via RPC, update payment status via RPC).
+    *   Verify/Refine `handle_payment_verification()` DB function.
+    *   Implement `admin_actions_log` table and integrate logging for admin user/payment actions.
+*   **C. Subscription Lifecycle & User Communication:**
+    *   Frontend: Display clear instructions for manual offline payment for upgrades.
+    *   Backend: Implement/Verify `check_subscriptions_expiry` Edge Function.
+    *   Frontend: Display Payment History in user profiles.
+    *   Admin Panel: Display Payment History for users.
+*   **D. Initial Notification Framework Setup:**
+    *   Setup/Verify core email sending Edge Functions (`send-email`, `process-notification-queue`).
+    *   Populate initial Arabic email templates in `email_templates` (User Verified Badge, Payment/Subscription status, Trial Expiry).
+    *   Integrate initial notification queueing logic.
 
-3. **Future Feature Planning:**
-   - Begin planning for the next feature set
-   - Consider implementing payment/subscription system
-   - Evaluate event management features
+*(Detailed tasks for subsequent phases (2-6) are outlined in the full development plan.)*
 
 ## Project Status Summary
 
@@ -133,10 +105,14 @@
 - ✅ Minimal profile page for testing
 - ✅ Refined Profile Notification System (Implementation and Testing)
 - ✅ Comprehensive Arabic Translations Update
+- ✅ Adoption of new 6-Phase MVP Development Plan and key policy decisions.
 
 **In Progress:**
-- Planning for next feature sets
+- **Executing Phase 1 of the MVP Development Plan:** Focusing on Subscription Backbone & Core Admin tools.
 
-**Up Next:**
-- Payment and subscription system implementation
-- Event management features implementation 
+**Up Next (Post Phase 1):**
+- Phase 2: Event Management & Topic Control
+- Phase 3: Submission System
+- Phase 4: Comprehensive Notification System & Email Management
+- Phase 5: Value-Added MVP Features & Admin Panel Consolidation
+- Phase 6: Testing, Deployment Preparation & Launch 

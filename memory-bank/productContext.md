@@ -20,8 +20,8 @@ Eventy360 provides a centralized, trusted SaaS platform featuring:
 *   **Streamlined Submissions (Paid Researchers)**: Direct upload of abstracts/papers (PDF/DOC/DOCX, 5MB limit) via the platform.
 *   **Review Management (Organizers)**: Tools to download submissions, update status (Accepted/Rejected), and provide mandatory rejection feedback (in Arabic).
 *   **Research Repository**: Access to accepted papers from completed events (MVP search/filter: title/abstract, topic/event - using Arabic content).
-*   **Manual MVP Workflows**: User verification and paid subscription activation rely on admin actions triggered by offline/email communication.
-    *   *Verification*: User emails admin -> Admin verifies externally -> Admin updates user status in platform.
+*   **Manual MVP Workflows**: User verification (awarding a visual badge) and paid subscription activation rely on admin actions triggered by offline/email communication.
+    *   *Verification Badge Award*: User emails admin (or admin proactively checks) -> Admin reviews profile -> Admin updates user status in platform to award badge.
     *   *Payment*: User emails admin -> Admin provides offline instructions (bank/check/cash) -> User confirms payment via email -> Admin verifies offline -> Admin records payment & activates subscription in platform.
 *   **Automated Notifications (Strictly Arabic MVP)**: Email system uses DB templates (`email_templates`) populated **only** with Arabic text in the `ar` key of JSONB fields. The Resend API integration via Edge Functions **must** use this Arabic text. System managed via queue (`notification_queue`).
 *   **Admin Control Panel**: Tools for managing users, payments, subscriptions, events, topics, email templates (Arabic only in MVP, editing `ar` key), and logs.
@@ -40,14 +40,14 @@ Eventy360 provides a centralized, trusted SaaS platform featuring:
 *(Refer to detailed User Flows in Eventy360_Project_Summary.md for specifics)*
 
 *   **Researcher**:
-    *   **All Tiers (Free, Trial, Paid)**: Register -> Complete Profile (Basic + Extended) -> Confirm Email -> Discover Events -> Bookmark Events -> Manage Account.
-    *   **Trial Tier / Paid Tier ONLY**: Submit Abstracts/Papers -> Track Submission Status -> Subscribe to Topics -> Receive Topic-Based Email Notifications for new events.
-    *   **Free Tier Specifics**: Receives only essential system emails (password reset, email confirmation). Cannot submit papers or subscribe to topic notifications.
+    *   **All Tiers (Free, Trial, Paid)**: Register -> Complete Profile (Basic + Extended) -> Confirm Email -> Discover Events -> Manage Account. Profile may display a Verification Badge awarded by Admin.
+    *   **Trial Tier / Paid Tier ONLY**: Bookmark Events (add new), Submit Abstracts/Papers -> Track Submission Status -> Subscribe to Topics (modify subscriptions) -> Receive Topic-Based Email Notifications for new events.
+    *   **Free Tier Specifics**: Receives only essential system emails (password reset, email confirmation). Cannot submit papers. Topic subscriptions become read-only (no new emails based on them). Bookmarks become read-only.
 *   **Organizer**:
-    *   **All Tiers (Trial, Paid, Post-Trial Expired)**: Register -> Complete Profile (Basic + Extended) -> Confirm Email -> Manage Account.
-    *   **Trial Tier / Paid Tier ONLY**: Create/Manage Events (subject to active event limits per subscription) -> Full Event Management Tools -> View/Download Submissions -> Review Submissions (Accept/Reject, Provide Feedback) -> Receive all relevant notifications.
-    *   **Post-Trial Expired (Not Paid)**: Can log in. Existing events remain untouched (not unpublished by system). Cannot use event creation/editing features; relevant UI elements are disabled. Subscription status card reflects expired trial.
-*   **Administrator**: Manage Users (Verify, Suspend) -> Manage Payments (Verify, Record) -> Oversee Platform Content (Events, Submissions, Topics) -> Manage Email Templates/Logs.
+    *   **All Tiers (Trial, Paid, Post-Trial Expired)**: Register -> Complete Profile (Basic + Extended) -> Confirm Email -> Manage Account. Profile may display a Verification Badge awarded by Admin.
+    *   **Trial Tier / Paid Tier ONLY**: Create/Manage Events (subject to active event limits per subscription) -> Full Event Management Tools -> View/Download Submissions -> Review Submissions (Accept/Reject, Provide Feedback) -> Receive all relevant notifications. Bookmarking events (add new) is also possible.
+    *   **Post-Trial Expired (Not Paid)**: Can log in. Existing events remain publicly visible; Organizer has Read-Only access to their event details and submission lists. Cannot use event creation/editing features; relevant UI elements are disabled. Subscription status card reflects expired trial. Bookmarks become read-only.
+*   **Administrator**: Manage Users (Award/Remove Verification Badge, Suspend) -> Manage Payments (Verify, Record) -> Oversee Platform Content (Events, Submissions, Topics) -> Manage Email Templates/Logs.
 
 ## 5. Core Principles (UX Goals)
 

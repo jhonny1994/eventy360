@@ -1,27 +1,28 @@
 # Project Progress: Eventy360
 
 ## Project Overview
-Eventy360 is a Next.js application with Supabase backend, offering multilingual support (English, French, Arabic) for connecting researchers and event organizers in academia.
+Eventy360 is a Next.js application with Supabase backend, offering multilingual support (English, French, Arabic) for connecting researchers and event organizers in academia. **The project now follows a detailed 6-Phase MVP Development Plan.**
 
-**Conceptual Model Updates (New Section - 05/10/2025 - *replace with actual date*)**
-- The definitions for user subscription tiers (Free, Trial, Paid) and their associated features for both Researcher and Organizer roles have been clarified and refined. This includes specific behavior for Organizers in a post-trial (expired, not paid) state. These updated definitions are now documented in `productContext.md` and `systemPatterns.md`.
+**Conceptual Model Updates (Consistent with latest policies - 05/10/2025 - *replace with actual date*)**
+- User Verification (`is_verified`) is a visual badge only and does not gate features.
+- Feature access for Free/Expired subscription tiers is explicitly defined (e.g., no topic emails for expired researchers, read-only for expired organizers on event mgt).
+- Topic deletion by Admins cascades to `event_topics`.
+- These definitions are reflected in `projectbrief.md`, `productContext.md`, `systemPatterns.md`, and `activeContext.md`.
 
 ## Current Focus
-Enhancing the minimal profile page and conducting end-to-end testing now that the entire user authentication and onboarding flow is working.
+**Executing Phase 1 of the MVP Development Plan:** Focusing on Subscription Backbone & Core Admin tools.
 
-## High-Level Status
+## High-Level Status (Against New 6-Phase Plan)
 
-| Feature | Status | Notes |
-|---------|--------|-------|
-| Project Setup | ✅ Complete | Next.js, Supabase, i18n, styling |
-| Database Schema | ✅ Complete | All tables, relations, and triggers created |
-| Authentication | ✅ Complete | Login, register, password reset |
-| Email Verification | ✅ Complete | Confirmation flow working |
-| Middleware Redirection | ✅ Complete | Users properly redirected based on profile status |
-| Profile Completion | ✅ Complete | Form working with validation and submission |
-| Profile Page | ✅ Complete | Dashboard UI with responsive design implemented |
-| Profile Edit Page | ✅ Complete | Form implementation with profile picture upload and data updates functional. Debugging code removed. |
-| Localization | ✅ Complete | All translations implemented and refined |
+| Phase                                                              | Status      | Notes                                                                                                                               |
+| :----------------------------------------------------------------- | :---------- | :---------------------------------------------------------------------------------------------------------------------------------- |
+| **Pre-Plan Work (Auth & Profile Foundation)**                        | ✅ Complete | Core authentication, profile completion, basic profile display, i18n, styling, DB schema foundation.                               |
+| **Phase 1: Subscription Backbone & Core Admin**                    | 🟡 In Progress | Focus on manual payment/verification admin tools, subscription lifecycle, initial notifications, payment history display.         |
+| **Phase 2: Event Management & Topic Control**                      | ⚪ Planned   |                                                                                                                                     |
+| **Phase 3: Submission System**                                     | ⚪ Planned   |                                                                                                                                     |
+| **Phase 4: Comprehensive Notification System & Email Management**    | ⚪ Planned   |                                                                                                                                     |
+| **Phase 5: Value-Added MVP Features & Admin Panel Consolidation**  | ⚪ Planned   |                                                                                                                                     |
+| **Phase 6: Testing, Deployment Preparation & Launch**              | ⚪ Planned   | Testing is also an ongoing activity throughout all phases.                                                                          |
 
 ## Current Issues
 
@@ -29,7 +30,7 @@ Enhancing the minimal profile page and conducting end-to-end testing now that th
 - Console shows: `Route "/[locale]/callback" used params.locale. params should be awaited...`
 - Doesn't break functionality, low priority
 
-## Completed Features
+## Completed Features (Categorized under Pre-Plan Work)
 
 ### Core Infrastructure
 - Next.js App Router project with TypeScript
@@ -63,52 +64,61 @@ Enhancing the minimal profile page and conducting end-to-end testing now that th
 - Callback handling and proper redirection
 - Profile completion form with dynamic fields based on user type
 - Middleware redirection to enforce onboarding sequence
-- Basic profile page for verification
+- Basic profile page and edit functionality, including profile picture upload.
 
-## In-Progress Features
+## In-Progress Features (Corresponds to Phase 1 of New Plan)
 
-### Profile Page Enhancements
-- **Status:** Partially Complete
-- **Completed:**
-  - ✅ Comprehensive profile dashboard page implemented
-  - ✅ Collapsible sidebar with user information
-  - ✅ Role-specific dashboard metrics (researchers vs organizers)
-  - ✅ Subscription status and verification display
-  - ✅ Responsive design for desktop and mobile
-  - ✅ RTL support for Arabic
-  - ✅ Profile picture upload functionality with Supabase Storage, Edge Function for cleanup, and UI preview.
-  - ✅ Debugging statements related to profile picture upload removed.
-- **Remaining:**
-  - Refine success/error notifications for profile updates (Basic toasts exist; assess if more comprehensive notifications are needed).
-  - Conduct comprehensive end-to-end testing of all profile viewing and editing features.
+*   **A. User Account & Profile Foundations (Review & Badge Display):**
+    *   Review existing Auth/Profile flows for consistency with new policies (e.g., `is_verified` badge display on profile page).
+*   **B. Admin Panel - Core MVP Operations:**
+    *   Basic Admin Access & Layout (secure routes, basic navigation).
+    *   User Management (Admin UI: List users, filter, award/remove `is_verified` badge via RPC).
+    *   Payment & Subscription Management (Admin UI: List payments, record new manual payment via RPC, update payment status via RPC).
+    *   Verify/Refine `handle_payment_verification()` DB function.
+    *   `admin_actions_log` table creation and logging integration for admin user/payment actions.
+*   **C. Subscription Lifecycle & User Communication:**
+    *   Frontend: Display clear instructions for manual offline payment for upgrades.
+    *   Backend: `check_subscriptions_expiry` Edge Function implementation/verification.
+    *   Frontend: Display Payment History in user profiles.
+    *   Admin Panel: Display Payment History for users.
+*   **D. Initial Notification Framework Setup:**
+    *   Core email sending Edge Functions (`send-email`, `process-notification-queue`) setup/verification.
+    *   Populate initial Arabic email templates in `email_templates` (User Verified Badge, Payment/Subscription status, Trial Expiry).
+    *   Initial notification queueing logic integration.
 
-## Planned Features (Future)
+## Planned Features (Phases 2-6 of New Plan)
 
-1. **Payment and Subscription System**
-   - Implement payment verification
-   - Subscription management
+1.  **Phase 2: Event Management & Topic Control**
+    *   Admin Topic Management (CRUD, cascade delete policy, logging).
+    *   Organizer Event Creation (form, backend logic, subscription checks, `event_topics` linking).
+    *   Organizer Event Dashboard (basic list).
+    *   Public/Researcher Event Discovery (listing, search/filter, detail page).
+    *   Event Bookmarking (for active subscriptions, read-only for expired).
+    *   Admin Event Oversight (view/edit all events).
+    *   Event-related Notifications (new event to topic subscribers - no emails for free/expired, deadline reminders to organizers).
+2.  **Phase 3: Submission System**
+    *   Researcher Submission (form, backend logic with subscription checks, file uploads to Storage).
+    *   Researcher Submission Tracking (UI, read-only for expired).
+    *   Organizer Submission Management (view submissions for own events, download files securely, update status/feedback).
+    *   Admin Submission Oversight (view all).
+    *   Submission-related Notifications (to researcher & organizer).
+3.  **Phase 4: Comprehensive Notification System & Email Management**
+    *   Full review and robust implementation of email sending Edge Functions (`send-email`, `process-notification-queue`, `retry-failed-emails`).
+    *   Complete population of all Arabic `email_templates`.
+    *   System-wide review and implementation of notification queueing logic (ensure no topic emails for free/expired).
+    *   Admin Email Management (template edit, log viewing, logging template edits).
+4.  **Phase 5: Value-Added MVP Features & Admin Panel Consolidation**
+    *   Research Repository (event flag, UI, backend RPC).
+    *   Global Search Bar (Events, Repository) & FTS optimization.
+    *   Admin Panel Central Dashboard (stats, navigation).
+    *   Admin Panel UI/UX Refinement.
+5.  **Phase 6: Testing, Deployment Preparation & Launch**
+    *   Comprehensive Testing Cycles (Unit, Integration, E2E, UAT).
+    *   Performance & Security Review.
+    *   Deployment Preparation (Prod environments, data seeding, CI/CD, backups).
+    *   Launch & Post-Launch Monitoring.
 
-2. **Event Management**
-   - Event creation and editing
-   - Event discovery
-
-3. **Submission System**
-   - Paper/abstract submission
-   - Review process
-
-4. **Notification System**
-   - Email notifications
-   - In-app notifications
-
-5. **Admin Panel**
-   - User management
-   - Content moderation
-
-6. **Deployment Pipeline**
-   - CI/CD setup
-   - Production environment configuration
-
-## 1. What Works (Completed Features/Areas)
+## 1. What Works (Completed Features/Areas - Now considered Pre-Plan Foundational Work)
 
 - Core authentication flows (Login, Register, Password Reset)
 - Email confirmation flow and callback handling
@@ -120,24 +130,15 @@ Enhancing the minimal profile page and conducting end-to-end testing now that th
 - Refined Profile Notification System (Implementation and Testing)
 - Profile Picture Upload (Implementation and Cleanup)
 
-## 2. What's Left to Build (Remaining Scope/Features)
+## 2. What's Left to Build (Now tracked by Phases 1-6 of the New Plan)
 
-- Payment and subscription system (Planning phase)
-- Event management features (Planning phase)
-- Research repository
-- Search and Discovery features (MVP)
-- Verification system (Full implementation beyond manual admin flag)
-- Admin Panel (Full implementation)
-- Automated notification triggers and processing beyond initial setup
-- Scheduled jobs beyond initial setup
-- Comprehensive End-to-End Testing (Ongoing as features are built)
+- All tasks outlined in Phases 1 through 6 of the new MVP Development Plan.
 
 ## 3. Current Status
-
-The project has successfully implemented the core user authentication, profile completion, and basic profile viewing features. The notification system has been refined, and Arabic translations have been comprehensively updated. We are now transitioning into the planning phase for the next major feature sets: Payment/Subscription and Event Management.
+The project has successfully implemented foundational user authentication, profile completion, and basic profile viewing/editing features. **A new 6-Phase MVP Development Plan has been adopted. Work is commencing on Phase 1: Subscription Backbone & Core Admin tools.**
 
 ## 4. Known Issues & TODOs
 
 - Investigate and resolve the persistent linter error related to the dependency array in `EditProfileForm.tsx` (though the user applied a manual fix, understanding the root cause could be beneficial for future development).
-- Ensure comprehensive end-to-end testing is conducted for all new features as they are implemented.
-- Refine UI/UX based on user feedback from testing.
+- Ensure comprehensive end-to-end testing is conducted for all new features as they are implemented (as part of each Phase and culminating in Phase 6).
+- Refine UI/UX based on user feedback from testing (ongoing).

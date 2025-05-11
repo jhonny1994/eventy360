@@ -16,7 +16,7 @@
     *   **Data Seeding**: `wilayas` and `dairas` tables populated initially from `wilayas.json` via a one-time script (Node.js/Python recommended).
     *   **Security**: Row Level Security (RLS) is the primary authorization mechanism. Policies grant users access to their own data, organizers to their event data, and admins broader access based on defined needs. Policies implemented for initial tables (`wilayas`, `dairas`, `profiles`, `subscriptions`, `payments`).
     *   **Automation**: DB Functions & Triggers (PL/pgSQL):
-        *   `handle_new_user()`: Triggered by Supabase Auth Hook on new sign-ups to create corresponding profile (dynamically setting `user_type` from signup metadata) and initial trial subscription records.
+        *   `handle_new_user()`: Triggered by Supabase Auth Hook on new sign-ups to create corresponding profile (dynamically setting `user_type` from signup metadata, `is_verified` to `false`) and initial trial subscription records.
         *   `handle_payment_verification()`: Triggered by admin updating `payments` status to 'verified'; creates/updates the `subscriptions` record accordingly.
         *   `billing_period_to_interval()`: Helper function used by `handle_payment_verification`.
         *   `is_admin()`: Helper function used within RLS policies to check admin status.
@@ -44,7 +44,7 @@
     2.  **Email Confirmation**: User must confirm email via link. Middleware blocks access to most of app if email is unconfirmed, redirecting to a notice page.
     3.  **Extended Profile Completion**: After email confirmation, middleware checks `profiles.is_extended_profile_complete`. If false, redirects to a dedicated page to collect role-specific profile details. Submission calls `complete_my_profile` RPC.
     4.  **Full Access**: Granted only after email is confirmed and extended profile is complete.
-*   **Manual Verification/Payment (MVP)**: Relies on Admin intervention. Email communication initiates the process, but the state change and subsequent logic (notifications, subscription activation) are triggered by the Admin updating records (`profiles.is_verified`, `payments.status`) via the Admin Panel.
+*   **Manual Verification/Payment (MVP)**: Relies on Admin intervention. User verification for a **badge** is initiated by Admin action. Payment confirmation is via email, then Admin updates records (`payments.status`) via the Admin Panel, which triggers subscription activation.
 *   **Asynchronous Email Notifications**: Decoupled sending via `notification_queue` table and scheduled processing function (`process-notification-queue`) for reliability.
 *   **State Management**: Uses `ENUM` status fields in tables (`events`, `submissions`, `subscriptions`, `payments`) to track lifecycle, updated by user actions, admin actions, or scheduled jobs.
 *   **Tier Limit Enforcement**: Checks implemented in backend logic (likely DB functions/triggers during event creation/publishing) based on organizer's `subscriptions` tier/status.
@@ -82,8 +82,8 @@
 *   **Asynchronous Notifications**: A dedicated `notification_queue` table and scheduled Edge Functions (`process-notification-queue`) handle email sending asynchronously, improving resilience and decoupling email logic from core operations.
 *   **Scheduled Tasks (Cron)**: Supabase Cron jobs drive regular maintenance and checks (deadline reminders, subscription expiry, failed email retries, data purging).
 *   **Tiered Feature Access**: Logic checks (primarily backend/database level, potentially via RLS or DB functions/triggers) enforce feature limits based on user subscription tier (e.g., number of active events for organizers).
-    *   **Researcher - Free Tier**: RLS policies and/or application logic must prevent paper submissions. UI should hide/disable submission features. Notification system must not send topic-based event notifications.
-    *   **Organizer - Post-Trial (Expired, Not Paid)**: Users can log in. Existing events remain untouched. UI must disable event creation/management features. Backend RLS/function logic must prevent these actions. The `check-subscriptions-expiry` cron job is responsible for transitioning users to an 'expired' subscription status, which then drives these UI/backend limitations.
+    *   **Researcher - Free Tier**: RLS policies and/or application logic must prevent paper submissions. UI should hide/disable submission features. Notification system must not send topic-based event notifications (even if topic subscriptions exist from a previous paid/trial period).
+    *   **Organizer - Post-Trial (Expired, Not Paid)**: Users can log in. Existing events remain publicly visible with Organizer having Read-Only access to their event details/submissions. UI must disable event creation/management features. Backend RLS/function logic must prevent these actions. The `check-subscriptions-expiry` cron job is responsible for transitioning users to an 'expired' subscription status, which then drives these UI/backend limitations.
 *   **State Management**: Event and Submission lifecycles are managed via status fields (`event_status_enum`, `submission_status_enum`) updated through user actions or automated processes.
 *   **Internationalized Validation Schemas**: Zod schemas for forms are defined with a base structure and generated via a function that accepts the `next-intl` translation function (`t`). This allows validation error messages to be easily translated.
     *   Example: `getLoginSchema(t)` returns the Zod schema with messages like `t('Validations.email')`.
@@ -98,19 +98,6 @@
 ## 6. Payment Strategy Pattern (MVP)
 
 *   **Offline Payment**: Users initiate payment requests via email.
-*   **Manual Admin Verification**: Admins verify payment receipt offline.
+*   **Manual Admin Verification**: Admins award a visual verification badge by updating user status. They also verify payment receipt offline and record this in the platform.
 *   **Platform Record Keeping**: Admins record payment details (`payments` table) and mark as verified.
-*   **Automated Subscription Activation**: A database trigger/function (`handle_payment_verification`) on the `payments` table manages the creation/update of the corresponding `subscriptions` record.
-*   **Scheduled Expiry Management**: Cron job (`check-subscriptions-expiry`) handles automatic status updates for expired trials/subscriptions. For Organizers whose trials expire without converting to paid, this job's outcome (setting subscription to 'expired') is key to triggering the functionally disabled state (no event creation/management) while allowing login and leaving existing events untouched.
-
-## 7. UI/UX Patterns
-
-*   **Internationalized Validation Schemas**: Zod schemas for forms are defined with a base structure and generated via a function that accepts the `next-intl` translation function (`t`). This allows validation error messages to be easily translated.
-    *   Example: `getLoginSchema(t)` returns the Zod schema with messages like `t('Validations.email')`.
-*   **Loading State Management**: Provide visual feedback during data fetching and asynchronous operations.
-    *   **App Router (Server Components)**: Use Next.js convention `loading.js`/`tsx` files alongside pages for automatic Suspense boundaries.
-    *   **Client Components/Forms**: Use React state (`useState`) or library features (e.g., SWR `isLoading`) to conditionally render loaders (spinners, skeletons).
-*   **Error Handling**: Standardized approach across the stack.
-    *   **Frontend (App Router)**: Use `error.js`/`tsx` for segment-level Server Component errors, `global-error.js`/`tsx` for root layout errors, `notFound()` for missing data.
-    *   **Frontend (Client Components)**: Use `try...catch`, state management for errors, user-facing Toasts/Alerts.
-    *   **Backend (Edge Functions)**: Use `try...catch`, return structured JSON error responses with appropriate HTTP status codes, log detailed errors. 
+*   **Automated Subscription Activation**: A database trigger/function (`handle_payment_verification`) on the `payments` table manages the creation/update of the corresponding `
