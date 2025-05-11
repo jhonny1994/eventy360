@@ -4,6 +4,7 @@
 
 **Primary Task: Executing Phase 1 of the Eventy360 MVP Development Plan.**
 - Focus on implementing the foundational Subscription Backbone & Core Admin tools for manual MVP operations as outlined in the new 6-phase development plan.
+- Refining UI for core subscription-related components like the Pricing Modal to ensure clarity and user-friendliness.
 
 **Secondary Task: Continuous Testing & Quality Assurance (Ongoing)**
 - Implement unit and integration tests for features developed in Phase 1.
@@ -68,6 +69,20 @@
 - Updated `CompleteProfileForm.tsx` with proper defaults for required fields
 - Improved type safety for error handling
 - Added proper validation aligned with database constraints
+
+- ✅ **`PricingModal.tsx` UI and Logic Refinements:**
+    - Increased modal width for better content display (`size="7xl"`).
+    - Standardized button appearance:
+        - "Select This Plan" buttons (within `PriceCard`) color changed to `gray` (from `info`).
+        - "Maybe Later" button color changed to `gray` (from `alternative`).
+    - Removed the `ButtonGroup` for switching between "Researcher" and "Organizer" plans; the modal now directly displays plans based on the `userType` prop.
+    - Added a message for scenarios where `userType` is null (e.g., admin view).
+    - Improved vertical alignment and spacing of content within `PriceCard` components for a more consistent look.
+- ✅ **Targeted Translation Updates (Pricing & Payment Context):**
+    - Removed the specific "trialInfo" string from `PricingModal` translations in English and Arabic.
+    - Added `featuresLabel` translation key to `PricingModal` in English and Arabic.
+    - Added `noPlanForUserType` translation key to `PricingModal` in English and Arabic.
+    - Proofread and enhanced Arabic translations for `PaymentInstructions` and `PricingModal` sections for a more professional and academic tone.
 
 ## Next Steps (Aligned with New Development Plan - Phase 1 Focus)
 

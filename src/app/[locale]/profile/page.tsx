@@ -5,6 +5,8 @@ import { Card, Alert } from 'flowbite-react';
 import { HiInformationCircle, HiAcademicCap, HiCheckCircle, HiIdentification, HiCalendar } from 'react-icons/hi2';
 import ProfileSidebarClient, { ProfileInfo, IconName } from './ui/ProfileSidebarClient';
 import TopicSubscriptionsCard from './ui/TopicSubscriptionsCard';
+import SubscriptionActions from './ui/SubscriptionActions';
+import { getAppSettings } from '@/lib/appConfig';
 
 
 function formatDate(dateString: string | null, locale: string = 'ar'): string {
@@ -125,8 +127,9 @@ export default async function ProfilePage(props: Props) {
   const { locale } = await props.params;
   const t = await getTranslations({ locale, namespace: 'ProfilePage' });
   const tEnums = await getTranslations({ locale, namespace: 'Enums' });
-  const tAuth = await getTranslations({ locale, namespace: 'Auth' });
   const supabase = await createServerSupabaseClient();
+
+  const appSettings = await getAppSettings();
 
   const { data: { user }, error: userError } = await supabase.auth.getUser();
 
@@ -144,13 +147,13 @@ export default async function ProfilePage(props: Props) {
       *,
       researcher_profiles ( 
         * ,
-        wilayas!inner ( id, name_ar, name_other ),
-        dairas!inner ( id, name_ar, name_other )
+        wilayas ( id, name_ar, name_other ),
+        dairas ( id, name_ar, name_other )
        ),
       organizer_profiles ( 
         * ,
-        wilayas!inner ( id, name_ar, name_other ),
-        dairas!inner ( id, name_ar, name_other )
+        wilayas ( id, name_ar, name_other ),
+        dairas ( id, name_ar, name_other )
       ),
       subscriptions (*)
     `)
@@ -179,7 +182,6 @@ export default async function ProfilePage(props: Props) {
   const trialStatus = subscriptionData && subscriptionData.tier === 'trial'
     ? calculateTrialStatus(subscriptionData.trial_ends_at)
     : null;
-
 
   const notVerified = locale === 'ar' ? 'غير موثق' : 'Not verified';
 
@@ -299,9 +301,9 @@ export default async function ProfilePage(props: Props) {
           logout: t('logoutButton'),
           verifiedBadge: t('verifiedBadge'),
           toggleSidebar: t('toggleSidebar'),
-          userTypeLabel: tAuth('RegisterForm.userTypeLabel'),
-          verificationLabel: t('verified'),
-          notVerifiedLabel: notVerified
+          userTypeLabel: t('sidebarUserTypeLabel'),
+          verificationLabel: t('verificationLabel'),
+          notVerifiedLabel: t('notVerifiedLabel')
         }}
       />
 
@@ -431,14 +433,16 @@ export default async function ProfilePage(props: Props) {
                       </div>
 
                       <div className="border-t sm:border-t-0 sm:border-s pt-4 sm:pt-0 sm:ps-6 border-gray-200 dark:border-gray-700 flex flex-col sm:w-72">
-                        <button className={`text-white font-medium rounded-lg py-2 px-4 transition-colors duration-200 w-full ${(trialStatus && trialStatus.status === 'expired') || (subscriptionData && subscriptionData.status === 'expired')
-                            ? 'bg-orange-500 hover:bg-orange-600'
-                            : 'bg-blue-600 hover:bg-blue-700'
-                          }`}>
-                          {(trialStatus && trialStatus.status === 'expired') || (subscriptionData && subscriptionData.status === 'expired')
-                            ? t('reactivateSubscription')
-                            : t('upgradeTo') + ' ' + t('premiumTier')}
-                        </button>
+                        <SubscriptionActions
+                          texts={{
+                            reactivateSubscription: t('reactivateSubscription'),
+                            upgradeTo: t('upgradeTo'),
+                            premiumTier: t('premiumTier')
+                          }}
+                          subscriptionData={profileData?.subscriptions ?? null}
+                          appSettings={appSettings}
+                          userType={profileData?.user_type === 'admin' ? null : profileData?.user_type || null}
+                        />
                       </div>
                     </div>
                   </div>

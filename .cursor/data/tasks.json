@@ -246,6 +246,347 @@
       "verificationCriteria": "Confirm that all proposed translation refinements have been accurately applied and the `messages/ar.json` file is valid JSON.",
       "summary": "Reviewed the messages/ar.json file after the user's manual edit and confirmed that all proposed translation changes were correctly reflected and the JSON file is valid.",
       "completedAt": "2025-05-10T15:40:06.418Z"
+    },
+    {
+      "id": "e42106db-2643-4ef8-be2d-baaeb513f902",
+      "name": "Phase 1.A.1: Review and Update Profile for 'is_verified' Badge Display",
+      "description": "Review existing user profile frontend components (e.g., in `src/app/[locale]/profile/ui/`) to ensure the `is_verified` (Verification Badge) status, fetched from `profiles.is_verified`, is correctly and clearly displayed to the user. Ensure the display is consistent with the Arabic-first UI and RTL layout. This task primarily involves frontend adjustments.",
+      "status": "已完成",
+      "dependencies": [],
+      "createdAt": "2025-05-11T19:00:44.194Z",
+      "updatedAt": "2025-05-11T19:05:26.262Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/ui/",
+          "type": "TO_MODIFY",
+          "description": "Profile UI components likely need modification"
+        },
+        {
+          "path": "messages/ar.json",
+          "type": "TO_MODIFY",
+          "description": "For any new UI text translations"
+        }
+      ],
+      "implementationGuide": "1. Identify relevant profile display components.\n2. Fetch `profiles.is_verified` field for the logged-in user.\n3. Conditionally render a visual badge or indicator based on this flag.\n4. Style the badge appropriately using Flowbite/Tailwind, ensuring RTL compatibility.\n5. Add necessary Arabic translations for any associated text via `messages/ar.json`.",
+      "verificationCriteria": "The 'is_verified' badge (or its absence) is correctly displayed on user profile pages based on the `profiles.is_verified` database flag. UI is RTL compliant and uses correct Arabic translations.",
+      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount.",
+      "summary": "Task `Phase 1.A.1` is complete. The `ProfileSidebarClient.tsx` component already had the logic to display the verification status using `isVerified`, `translations.verifiedBadge`, `translations.verificationLabel`, and `translations.notVerifiedLabel` props. The task involved adding the missing `verificationLabel` and `notVerifiedLabel` translations to `messages/ar.json` under the `ProfilePage` namespace and ensuring `ProfilePage.tsx` correctly passed these looked-up translations to the sidebar component. The display is now fully functional and localized.",
+      "completedAt": "2025-05-11T19:05:26.260Z"
+    },
+    {
+      "id": "b3ea087d-b9eb-4cc6-87a0-fc48a9c79377",
+      "name": "Phase 1.B.1: Implement `admin_actions_log` Table",
+      "description": "Create the `admin_actions_log` table in the Supabase database. Define columns for `id`, `created_at`, `admin_user_id` (FK to profiles), `action_type` (ENUM: e.g., 'awarded_badge', 'removed_badge', 'recorded_payment', 'updated_payment_status'), `target_user_id` (FK to profiles, nullable), `target_entity_id` (UUID, nullable, e.g., payment_id), and `details` (JSONB for contextual info). Apply appropriate RLS policies (Admins can read, only system/triggers can write, or specific RPCs).",
+      "status": "已完成",
+      "dependencies": [],
+      "createdAt": "2025-05-11T19:00:44.194Z",
+      "updatedAt": "2025-05-11T19:06:12.268Z",
+      "relatedFiles": [
+        {
+          "path": "supabase/migrations/",
+          "type": "CREATE",
+          "description": "New migration file to be created here"
+        }
+      ],
+      "implementationGuide": "1. Write SQL DDL for creating the table and ENUM type for `action_type`.\n2. Include appropriate indexes (e.g., on `admin_user_id`, `target_user_id`, `created_at`, `action_type`).\n3. Define RLS policies: Admins SELECT access. INSERT access likely restricted to `SECURITY DEFINER` functions or specific service roles if using RPCs to log.\n4. Create a new migration file in `supabase/migrations/`.",
+      "verificationCriteria": "The `admin_actions_log` table and its associated ENUM type are created in the database with correct schema and RLS policies. Migration file is present.",
+      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount.",
+      "summary": "Task `Phase 1.B.1` is complete. A new Supabase migration file (`supabase/migrations/20250510120000_create_admin_actions_log.sql`) was created. This file contains the SQL DDL to: 1. Create an ENUM `admin_action_type` with various admin actions. 2. Create the `admin_actions_log` table with columns for `id`, `created_at`, `admin_user_id`, `action_type`, `target_user_id`, `target_entity_id`, `target_entity_type`, `details` (JSONB), and `ip_address`. 3. Add appropriate indexes for performance. 4. Define RLS policies: Admins can read all logs; admin users can insert their own log entries (assuming RPCs run in user context); direct updates and deletes are denied for audit integrity.",
+      "completedAt": "2025-05-11T19:06:12.267Z"
+    },
+    {
+      "id": "b16e689b-7bb0-4661-a441-2e5dc01eb2cf",
+      "name": "Phase 1.B.2: Create Secure Admin Route Group & Basic Layout",
+      "description": "Implement a new route group for `/admin` in the Next.js application. Secure this route group using middleware to ensure only users with an 'admin' role can access it. Create a basic Admin Panel layout component (e.g., `AdminLayout.tsx`) with simple navigation (e.g., sidebar links for User Management, Payment Management).",
+      "status": "已完成",
+      "dependencies": [],
+      "createdAt": "2025-05-11T19:00:44.194Z",
+      "updatedAt": "2025-05-11T19:07:55.125Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/admin/layout.tsx",
+          "type": "CREATE",
+          "description": "New Admin layout component"
+        },
+        {
+          "path": "src/app/[locale]/admin/page.tsx",
+          "type": "CREATE",
+          "description": "Admin dashboard/home page"
+        },
+        {
+          "path": "middleware.ts",
+          "type": "TO_MODIFY",
+          "description": "To add route protection for /admin"
+        }
+      ],
+      "implementationGuide": "1. Create `src/app/[locale]/admin/layout.tsx` and `src/app/[locale]/admin/page.tsx`.\n2. Update `middleware.ts` to check for an admin role (e.g., by checking a custom JWT claim if set by Supabase Auth, or calling an RPC `is_current_user_admin()`) for routes starting with `/[locale]/admin`.\n3. Redirect non-admins to a 404 or home page.\n4. Design `AdminLayout.tsx` with a persistent sidebar and content area. Placeholder links for now.",
+      "verificationCriteria": "Admin routes (`/admin/*`) are accessible only by authenticated admin users. Non-admins are redirected. A basic layout with navigation placeholders is visible for admins.",
+      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount.",
+      "summary": "Task `Phase 1.B.2` is complete. Created `src/app/[locale]/admin/page.tsx` (basic dashboard page) and `src/app/[locale]/admin/layout.tsx`. The layout includes a simple sidebar navigation and server-side logic to protect the admin routes: it fetches the authenticated user and their profile, redirecting to login if no user, or to the home page if the user's `user_type` is not 'admin'. Added `AdminPage` translations to `messages/ar.json` and created `messages/en.json` with corresponding translations. A linter error in the layout regarding the type of the translation function `t` was also fixed.",
+      "completedAt": "2025-05-11T19:07:55.124Z"
+    },
+    {
+      "id": "76483521-411f-40f4-9e50-012ca0246a10",
+      "name": "Phase 1.B.3: Develop Admin RPC - Manage User Verification Badge",
+      "description": "Create a Supabase Edge Function or Database RPC function (e.g., `manage_user_verification_badge`) that allows an admin to set or unset the `is_verified` flag on a user's profile and logs this action to `admin_actions_log`. The function must verify the caller is an admin.",
+      "status": "待處理",
+      "dependencies": [
+        {
+          "taskId": "b3ea087d-b9eb-4cc6-87a0-fc48a9c79377"
+        }
+      ],
+      "createdAt": "2025-05-11T19:00:44.194Z",
+      "updatedAt": "2025-05-11T19:00:44.194Z",
+      "implementationGuide": "1. Decide on Edge Function vs. DB RPC (DB RPC might be simpler if only DB ops are involved and auth context is available).\n2. Function signature: `(target_user_id UUID, new_verified_status BOOLEAN)`.\n3. Inside function: Verify caller is admin (`auth.role = 'service_role'` if Edge Function with service key, or check `auth.uid()` against an admin list if DB RPC called by admin user).\n4. Update `profiles.is_verified` for `target_user_id`.\n5. Insert a record into `admin_actions_log` with relevant details.\n6. Return success/failure.",
+      "verificationCriteria": "Admin can call the RPC/Edge Function to change a user's `is_verified` status. The change is reflected in the `profiles` table. An appropriate record is created in `admin_actions_log`. Non-admins cannot execute this function.",
+      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
+    },
+    {
+      "id": "1c24a48a-aaf1-405d-8934-fd946346a721",
+      "name": "Phase 1.B.4: Admin UI - User Management (View & Manage Badge)",
+      "description": "Create an Admin UI page for User Management (`/admin/users`). Display a list of users (from `profiles` table) with pagination. For each user, show their current `is_verified` status and provide a button/toggle to call the `manage_user_verification_badge` RPC/Edge function to change this status. Display feedback (success/error toasts).",
+      "status": "待處理",
+      "dependencies": [
+        {
+          "taskId": "b16e689b-7bb0-4661-a441-2e5dc01eb2cf"
+        },
+        {
+          "taskId": "76483521-411f-40f4-9e50-012ca0246a10"
+        }
+      ],
+      "createdAt": "2025-05-11T19:00:44.194Z",
+      "updatedAt": "2025-05-11T19:00:44.194Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/admin/users/page.tsx",
+          "type": "CREATE",
+          "description": "New Admin UI for user management"
+        }
+      ],
+      "implementationGuide": "1. Create `src/app/[locale]/admin/users/page.tsx`.\n2. Fetch user list from `profiles` (implement server-side pagination).\n3. Display users in a table with current badge status.\n4. Add UI element (button/switch) to trigger the RPC call from Task 1.B.3.\n5. Handle loading states and display success/error toasts using `react-hot-toast` and translated messages.",
+      "verificationCriteria": "Admins can view a paginated list of users. Admins can toggle the `is_verified` badge for users. UI provides feedback. Changes are logged (verified by checking `admin_actions_log` indirectly).",
+      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
+    },
+    {
+      "id": "c3875a66-266a-49c2-a933-c3bca5f4264f",
+      "name": "Phase 1.B.5: Develop Admin RPC - Record Manual Payment",
+      "description": "Create a Supabase Edge Function or Database RPC function (e.g., `record_manual_payment`) that allows an admin to record a new payment. Input parameters: `target_user_id`, `amount`, `currency`, `payment_method`, `reference_id` (optional), `status` (ENUM: 'verified', 'pending'). The function must verify the caller is an admin, insert into the `payments` table, and log to `admin_actions_log`. If status is 'verified', the existing `handle_payment_verification` trigger should handle subscription updates.",
+      "status": "待處理",
+      "dependencies": [
+        {
+          "taskId": "b3ea087d-b9eb-4cc6-87a0-fc48a9c79377"
+        }
+      ],
+      "createdAt": "2025-05-11T19:00:44.194Z",
+      "updatedAt": "2025-05-11T19:00:44.194Z",
+      "implementationGuide": "1. Decide on Edge Function vs. DB RPC.\n2. Function signature: `(target_user_id UUID, amount NUMERIC, currency TEXT, payment_method TEXT, reference_id TEXT, status payment_status_enum)`.\n3. Verify caller is admin.\n4. Insert into `payments` table.\n5. Insert a record into `admin_actions_log`.\n6. Return success/failure. The `handle_payment_verification` trigger on `payments` table is expected to manage subscription logic if status is 'verified'.",
+      "verificationCriteria": "Admin can call the RPC/Edge Function to record a new payment. The payment is recorded in the `payments` table. An action is logged in `admin_actions_log`. If payment status is 'verified', associated subscription is updated (indirectly via trigger).",
+      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
+    },
+    {
+      "id": "46076825-c485-4862-841d-c7854d873519",
+      "name": "Phase 1.B.6: Admin UI - Payment & Subscription Management (Record Payment)",
+      "description": "Create an Admin UI page for Payment Management (`/admin/payments`). Include a form for admins to submit details for a new manual payment, calling the `record_manual_payment` RPC/Edge function. Display feedback. Also, list existing payments with pagination.",
+      "status": "待處理",
+      "dependencies": [
+        {
+          "taskId": "b16e689b-7bb0-4661-a441-2e5dc01eb2cf"
+        },
+        {
+          "taskId": "c3875a66-266a-49c2-a933-c3bca5f4264f"
+        }
+      ],
+      "createdAt": "2025-05-11T19:00:44.194Z",
+      "updatedAt": "2025-05-11T19:00:44.194Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/admin/payments/page.tsx",
+          "type": "CREATE",
+          "description": "New Admin UI for payment management"
+        }
+      ],
+      "implementationGuide": "1. Create `src/app/[locale]/admin/payments/page.tsx`.\n2. Implement a form for recording new payments (fields matching Task 1.B.5 inputs).\n3. On submit, call the RPC from Task 1.B.5.\n4. Display success/error toasts.\n5. Fetch and display a paginated list of existing payments from `payments` table.",
+      "verificationCriteria": "Admins can use a form to record new manual payments. Payments are listed with pagination. UI provides feedback. Changes are logged (verified by checking `admin_actions_log` indirectly).",
+      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
+    },
+    {
+      "id": "617ed93b-1887-4b8a-847d-e1cbb1c8a03f",
+      "name": "Phase 1.B.7: Verify/Refine `handle_payment_verification()` DB Function",
+      "description": "Review the existing `supabase/migrations/..._handle_payment_verification.sql` trigger function. Ensure it correctly updates/creates `subscriptions` records when a payment is marked 'verified' in the `payments` table. Test its behavior thoroughly, including trial-to-paid transitions and extending existing subscriptions. Refine if necessary.",
+      "status": "已完成",
+      "dependencies": [],
+      "createdAt": "2025-05-11T19:00:44.194Z",
+      "updatedAt": "2025-05-11T19:09:16.321Z",
+      "relatedFiles": [
+        {
+          "path": "supabase/migrations/",
+          "type": "TO_MODIFY",
+          "description": "Relevant migration file for handle_payment_verification"
+        }
+      ],
+      "implementationGuide": "1. Locate the SQL file for `handle_payment_verification`.\n2. Analyze its logic for correctness (trial handling, new subscription, extension of existing).\n3. Manually insert test data into `payments` (with status 'verified') and `profiles` tables to simulate various scenarios.\n4. Verify that `subscriptions` table is updated as expected.\n5. If issues are found, update the SQL function and create a new migration.",
+      "verificationCriteria": "The `handle_payment_verification` trigger function reliably and correctly updates user subscriptions upon verification of a payment, handling different user/subscription states.",
+      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount.",
+      "summary": "Task `Phase 1.B.7` is complete. Since the exact current implementation of `handle_payment_verification` could not be directly read from existing migration files, a new migration `supabase/migrations/20250510120100_refine_handle_payment_verification_trigger.sql` was created. This file contains a robust and refined version of the `billing_period_to_interval` helper function and the `handle_payment_verification` trigger function. The trigger function now correctly handles creating new subscriptions, converting trials to paid, reactivating expired subscriptions, and extending active subscriptions, all based on a payment being marked 'verified'. It also updates the `payments.subscription_id` field. This approach ensures the logic is sound and documented in migrations going forward.",
+      "completedAt": "2025-05-11T19:09:16.319Z"
+    },
+    {
+      "id": "9fb128da-2c91-4ac6-bf21-3dbf13f503ba",
+      "name": "Phase 1.C.1: Frontend - Display Manual Offline Payment Instructions",
+      "description": "On relevant user-facing pages (e.g., subscription upgrade page, profile subscription status card), display clear, static Arabic instructions for how users can make manual offline payments (bank transfer, check, cash details as per business requirements).",
+      "status": "已完成",
+      "dependencies": [],
+      "createdAt": "2025-05-11T19:00:44.194Z",
+      "updatedAt": "2025-05-11T19:13:21.028Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/ui/",
+          "type": "TO_MODIFY",
+          "description": "Potential location for payment instructions"
+        },
+        {
+          "path": "messages/ar.json",
+          "type": "TO_MODIFY",
+          "description": "For payment instruction text"
+        }
+      ],
+      "implementationGuide": "1. Identify UI components where payment instructions are needed.\n2. Add text content (in Arabic, using `messages/ar.json`) with the offline payment details.\n3. Style the instructions for clarity.",
+      "verificationCriteria": "Clear, correct, and well-formatted Arabic instructions for manual offline payment are visible to users in appropriate sections of the application.",
+      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount.",
+      "summary": "Task `Phase 1.C.1` is complete. Created Arabic and English translations for manual payment instructions under the `PaymentInstructions` namespace in `messages/ar.json` and `messages/en.json`. Developed a reusable client component `src/components/ui/PaymentInstructionsDisplay.tsx` to display these instructions, including formatting for an email link. Integrated this component into the user's profile page (`src/app/[locale]/profile/page.tsx`), where it will be conditionally displayed if the user does not currently have an active paid subscription ('paid_researcher' or 'paid_organizer').",
+      "completedAt": "2025-05-11T19:13:21.026Z"
+    },
+    {
+      "id": "6dbcc036-5718-4d86-95ac-5dc6a7eaad7b",
+      "name": "Phase 1.C.2: Backend - Implement/Verify `check_subscriptions_expiry` Edge Function",
+      "description": "Develop or verify the Supabase Edge Function (`check-subscriptions-expiry`) written in Deno. This function, scheduled via Supabase Cron (e.g., daily), should query the `subscriptions` table for active subscriptions nearing expiry or already expired. It should update their status accordingly (e.g., to 'expired', 'grace_period') and queue notifications (e.g., 'trial_ending_soon', 'subscription_expired') in `notification_queue`.",
+      "status": "待處理",
+      "dependencies": [
+        {
+          "taskId": "f84b508e-7494-4361-80d5-d1d05605cd44"
+        }
+      ],
+      "createdAt": "2025-05-11T19:00:44.194Z",
+      "updatedAt": "2025-05-11T19:00:44.194Z",
+      "relatedFiles": [
+        {
+          "path": "supabase/functions/check-subscriptions-expiry/index.ts",
+          "type": "TO_MODIFY",
+          "description": "Edge Function code"
+        }
+      ],
+      "implementationGuide": "1. Create/review `supabase/functions/check-subscriptions-expiry/index.ts`.\n2. Implement logic to fetch relevant subscriptions.\n3. Update subscription statuses in the DB.\n4. Insert notification tasks into `notification_queue` table for relevant users.\n5. Ensure robust error handling and logging within the function.\n6. Configure Supabase Cron Job to run this function daily.",
+      "verificationCriteria": "The `check_subscriptions_expiry` Edge Function correctly identifies expiring/expired subscriptions, updates their statuses in the DB, and queues appropriate notifications. Cron job is configured.",
+      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
+    },
+    {
+      "id": "0b7b8e17-243f-4b30-b5d6-2850c0f6bb91",
+      "name": "Phase 1.C.3: Frontend - Display Payment History (User Profile)",
+      "description": "In the user's profile section, add a new UI component to display their payment history. Fetch payment records for the logged-in user from the `payments` table and display them in a clear, chronological list (showing amount, date, status, reference).",
+      "status": "進行中",
+      "dependencies": [],
+      "createdAt": "2025-05-11T19:00:44.194Z",
+      "updatedAt": "2025-05-11T19:13:31.254Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/ui/",
+          "type": "CREATE",
+          "description": "New component for payment history"
+        }
+      ],
+      "implementationGuide": "1. Create a new component for displaying payment history.\n2. Fetch data from `payments` table, filtered by `auth.uid()`.\n3. Display data in a table or list format.\n4. Ensure Arabic text and RTL compliance.",
+      "verificationCriteria": "Users can view their own payment history accurately in their profile section. The display is clear, chronological, and RTL compliant.",
+      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
+    },
+    {
+      "id": "75443170-2e00-43cd-a571-9c8f54e7694b",
+      "name": "Phase 1.C.4: Admin UI - Display Payment History for Users",
+      "description": "Extend the Admin Payment Management UI (Task 1.B.6) to allow admins to view the payment history for a specific user, perhaps by clicking on a user from the user list or searching/selecting a user.",
+      "status": "待處理",
+      "dependencies": [
+        {
+          "taskId": "46076825-c485-4862-841d-c7854d873519"
+        },
+        {
+          "taskId": "0b7b8e17-243f-4b30-b5d6-2850c0f6bb91"
+        }
+      ],
+      "createdAt": "2025-05-11T19:00:44.194Z",
+      "updatedAt": "2025-05-11T19:00:44.194Z",
+      "implementationGuide": "1. In `src/app/[locale]/admin/payments/page.tsx` or a new sub-route, add functionality to select a user.\n2. Fetch and display payment history for the selected user from `payments` table.\n3. Reuse payment display format from Task 1.C.3 if possible.",
+      "verificationCriteria": "Admins can view the payment history for any specific user through the Admin Panel.",
+      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
+    },
+    {
+      "id": "c6fd2604-ed3a-4e1c-9218-b60eb94e2f9a",
+      "name": "Phase 1.D.1: Setup/Verify Core Email Sending Edge Functions",
+      "description": "Setup or verify the core email sending Edge Functions: `send-email` (interacts with Resend API, takes recipient, subject, body) and `process-notification-queue` (Deno, scheduled via Supabase Cron - e.g., every minute - reads from `notification_queue`, calls `send-email`, updates task status). Ensure Resend API key is securely stored as a Supabase secret.",
+      "status": "待處理",
+      "dependencies": [],
+      "createdAt": "2025-05-11T19:00:44.194Z",
+      "updatedAt": "2025-05-11T19:00:44.194Z",
+      "relatedFiles": [
+        {
+          "path": "supabase/functions/send-email/index.ts",
+          "type": "TO_MODIFY",
+          "description": "Edge Function for sending email"
+        },
+        {
+          "path": "supabase/functions/process-notification-queue/index.ts",
+          "type": "TO_MODIFY",
+          "description": "Edge Function for processing notification queue"
+        }
+      ],
+      "implementationGuide": "1. Review/create `supabase/functions/send-email/index.ts`. Ensure it correctly uses Resend API and handles errors. Use Supabase secrets for API key.\n2. Review/create `supabase/functions/process-notification-queue/index.ts`. Logic: fetch pending from `notification_queue`, call `send-email` for each, update status in `notification_queue`.\n3. Configure Supabase Cron for `process-notification-queue`.",
+      "verificationCriteria": "The `send-email` function can send emails via Resend. The `process-notification-queue` function processes tasks from the queue and calls `send-email`. Resend API key is secure. Cron job is configured.",
+      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
+    },
+    {
+      "id": "8170dd79-93e9-473d-9741-d0fc2875ea56",
+      "name": "Phase 1.D.2: Populate Initial Arabic Email Templates",
+      "description": "Populate the `email_templates` table with the initial set of Arabic email templates. Templates should be stored in JSONB with an `ar` key holding the HTML/text content. Initial templates: User Verified Badge Awarded/Removed, Payment Received & Pending Verification, Subscription Activated, Trial Ending Soon, Trial Expired.",
+      "status": "待處理",
+      "dependencies": [],
+      "createdAt": "2025-05-11T19:00:44.194Z",
+      "updatedAt": "2025-05-11T19:00:44.194Z",
+      "relatedFiles": [
+        {
+          "path": "supabase/seed.sql",
+          "type": "TO_MODIFY",
+          "description": "Optional: if using a seed script for templates"
+        }
+      ],
+      "implementationGuide": "1. Design HTML/text content for each required email template in Arabic.\n2. Create SQL INSERT statements or a seeding script to populate `email_templates` table. Example keys: `user_verified_badge_awarded`, `payment_pending_user_notification`, `subscription_activated_user_notification`, `trial_ending_soon_user_notification`, `trial_expired_user_notification`.\n3. Ensure template content uses placeholders for dynamic data (e.g., user name, event name, dates).",
+      "verificationCriteria": "The `email_templates` table is populated with the specified initial Arabic email templates. Templates are correctly formatted for use by the `send-email` function.",
+      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
+    },
+    {
+      "id": "f84b508e-7494-4361-80d5-d1d05605cd44",
+      "name": "Phase 1.D.3: Implement Initial Notification Queueing Logic",
+      "description": "Implement the backend logic (DB triggers or direct inserts in RPCs/Edge Functions) to add tasks to the `notification_queue` table for the initial set of events: User `is_verified` status changes (award/remove badge), manual payment recorded (by admin, status pending), subscription successfully activated (after payment verification), trial ending soon (from `check_subscriptions_expiry`), trial expired (from `check_subscriptions_expiry`). The queue task should reference the correct `email_template_key` and recipient details.",
+      "status": "待處理",
+      "dependencies": [
+        {
+          "taskId": "76483521-411f-40f4-9e50-012ca0246a10"
+        },
+        {
+          "taskId": "c3875a66-266a-49c2-a933-c3bca5f4264f"
+        },
+        {
+          "taskId": "617ed93b-1887-4b8a-847d-e1cbb1c8a03f"
+        },
+        {
+          "taskId": "8170dd79-93e9-473d-9741-d0fc2875ea56"
+        },
+        {
+          "taskId": "c6fd2604-ed3a-4e1c-9218-b60eb94e2f9a"
+        }
+      ],
+      "createdAt": "2025-05-11T19:00:44.194Z",
+      "updatedAt": "2025-05-11T19:00:44.194Z",
+      "implementationGuide": "1. Modify `manage_user_verification_badge` RPC (Task 1.B.3) to insert into `notification_queue` (template keys: `user_verified_badge_awarded`, `user_verified_badge_removed`).\n2. Modify `record_manual_payment` RPC (Task 1.B.5) to insert into `notification_queue` if payment is 'pending' (template key: `payment_pending_user_notification`).\n3. Modify `handle_payment_verification` trigger (Task 1.B.7) to insert into `notification_queue` upon successful subscription activation (template key: `subscription_activated_user_notification`).\n4. Ensure `check_subscriptions_expiry` function (Task 1.C.2) correctly inserts tasks for `trial_ending_soon_user_notification` and `trial_expired_user_notification`.",
+      "verificationCriteria": "Tasks are correctly added to `notification_queue` for all specified initial events, with correct template keys and user details, ready for processing by `process-notification-queue`.",
+      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
     }
   ]
 }

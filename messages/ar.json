@@ -6,7 +6,8 @@
     "backToLogin": "العودة إلى صفحة تسجيل الدخول",
     "redirectFailedDescription": "يُرجى المحاولة مرة أخرى أو العودة إلى صفحة تسجيل الدخول",
     "debugInformation": "معلومات التصحيح التقني",
-    "emailConfirmedRedirecting": "تم تأكيد بريدك الإلكتروني بنجاح! جارٍ توجيهك إلى الخطوة التالية"
+    "emailConfirmedRedirecting": "تم تأكيد بريدك الإلكتروني بنجاح! جارٍ توجيهك إلى الخطوة التالية",
+    "closeButton": "إغلاق"
   },
   "HomePage": {
     "title": "مرحباً بكم في منصة Eventy360"
@@ -88,7 +89,7 @@
       "registrationSuccessToast": "تم التسجيل بنجاح! يُرجى التحقق من بريدكم الإلكتروني لتفعيل حسابكم",
       "registrationSuccessMessage": "تم التسجيل بنجاح! يُرجى التحقق من صندوق الوارد في بريدكم الإلكتروني (بما في ذلك مجلد البريد غير المرغوب فيه) للحصول على رابط التفعيل",
       "unexpectedError": "حدث خطأ غير متوقع",
-      "userTypeLabel": "نوع الحساب",
+      "userTypeLabel": "نوع المستخدم",
       "userTypeResearcher": "باحث",
       "userTypeOrganizer": "منظّم",
       "resendConfirmationButton": "إعادة إرسال رسالة التأكيد",
@@ -214,6 +215,8 @@
     "verifiedBadge": "موثّق",
     "toggleSidebar": "تبديل القائمة الجانبية",
     "verified": "موثّق",
+    "verificationLabel": "حالة التوثيق",
+    "notVerifiedLabel": "غير موثّق",
     "dashboardTitle": "لوحة التحكم",
     "subscriptionStatus": "حالة الاشتراك",
     "currentTier": "الباقة الحالية",
@@ -221,6 +224,7 @@
     "daysRemainingFormatted": "{count, plural, zero {لا توجد أيام متبقية} one {يوم واحد متبقٍ} two {يومان متبقيان} few {# أيام متبقية} many {# يوماً متبقياً} other {# يوم متبقٍ}}",
     "upgradeTo": "الترقية إلى",
     "premiumTier": "الباقة المميزة",
+    "reactivateSubscription": "إعادة تفعيل الاشتراك",
     "eventsCreated": "الفعاليات المنشأة",
     "activeEvents": "الفعاليات النشطة",
     "totalSubmissions": "إجمالي المشاركات",
@@ -248,15 +252,11 @@
       "errorNetwork": "حدث خطأ في الاتصال بالشبكة. يُرجى التحقق من اتصالكم بالإنترنت والمحاولة مرة أخرى.",
       "errorBackendGeneric": "حدث خطأ في الخادم. يُرجى المحاولة لاحقاً.",
       "pictureUploadSuccess": "تم تحميل الصورة الشخصية بنجاح."
-    }
+    },
+    "sidebarUserTypeLabel": "نوع المستخدم"
   },
   "Enums": {
     "user_type_enum": {
-      "researcher": "باحث",
-      "organizer": "منظّم",
-      "admin": "مسؤول"
-    },
-    "UserType": {
       "researcher": "باحث",
       "organizer": "منظّم",
       "admin": "مسؤول"
@@ -354,5 +354,109 @@
     "authenticationRequired": "المصادقة مطلوبة. يُرجى تسجيل الدخول.",
     "dataFetchError": "حدث خطأ أثناء جلب البيانات.",
     "noDataFound": "لم يتم العثور على البيانات المطلوبة."
+  },
+  "AdminPage": {
+    "dashboardTitle": "لوحة تحكم المسؤول",
+    "welcomeMessage": "مرحباً بك في لوحة تحكم المسؤول. من هنا يمكنك إدارة مختلف جوانب المنصة.",
+    "nav": {
+      "dashboard": "لوحة التحكم الرئيسية",
+      "userManagement": "إدارة المستخدمين",
+      "paymentManagement": "إدارة المدفوعات"
+    }
+  },
+  "PaymentInstructions": {
+    "title": "تعليمات الدفع اليدوي",
+    "intro": "لتفعيل أو تجديد اشتراككم، يُرجى اتباع إحدى طرق الدفع اليدوي المبينة أدناه. يتم تفعيل الاشتراكات يدوياً بعد التحقق من عملية الدفع في غضون 24 إلى 48 ساعة عمل.",
+    "bankTransferTitle": "التحويل المصرفي",
+    "bankNameLabel": "اسم البنك:",
+    "bankNameValue": "البنك الوطني الجزائري",
+    "accountHolderLabel": "صاحب الحساب:",
+    "accountHolderValue": "Eventy360 ش.ذ.م.م",
+    "accountNumberLabel": "رقم الحساب (RIB):",
+    "accountNumberValue": "00100 XXXXXXXXXXXXXXXX XXX",
+    "paymentReferenceLabel": "مرجع عملية الدفع:",
+    "paymentReferenceValue": "معرّف المستخدم الخاص بكم أو عنوان بريدكم الإلكتروني المسجّل",
+    "cashPaymentTitle": "الدفع النقدي المباشر",
+    "cashPaymentDetails": "يمكنكم السداد نقداً بمقر مكتبنا الكائن في: 123 الشارع الرئيسي، الجزائر العاصمة. يُرجى تقديم معرّف المستخدم الخاص بكم عند الدفع.",
+    "importantNoteTitle": "ملاحظة هامة",
+    "importantNoteValue": "بعد إتمام عملية الدفع، يُرجى إرسال نسخة من إيصال السداد إلى البريد الإلكتروني <emailLink>payments@eventy360.dz</emailLink>، مع تضمين معرّف المستخدم الخاص بكم أو عنوان بريدكم الإلكتروني، وذلك لتسريع إجراءات تفعيل الاشتراك.",
+    "contactSupport": "في حال وجود أي استفسارات أو الحاجة للمساعدة، يُرجى التواصل مع فريق الدعم الفني.",
+    "infoNotAvailable": "المعلومات غير متوفرة حالياً",
+    "selectedPlanNotification": "لقد قمتم باختيار الباقة التالية:",
+    "planTierLabel": "فئة الباقة",
+    "researcherTier": "باقة الباحث",
+    "organizerTier": "باقة المنظّم",
+    "planPeriodLabel": "مدة الاشتراك",
+    "planAmountLabel": "تكلفة الاشتراك",
+    "currencySymbol": "د.ج",
+    "BillingPeriods": {
+      "monthly": "شهرياً",
+      "quarterly": "ربع سنوي",
+      "biannual": "نصف سنوي",
+      "annual": "سنوي"
+    }
+  },
+  "ValidationErrors": {
+    "userNotFound": "المستخدم غير موجود.",
+    "invalidCredentials": "بيانات الاعتماد غير صالحة.",
+    "emailAlreadyExists": "هذا البريد الإلكتروني مسجل بالفعل.",
+    "passwordTooShort": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.",
+    "passwordsDoNotMatch": "كلمات المرور غير متطابقة.",
+    "invalidEmailFormat": "صيغة البريد الإلكتروني غير صالحة.",
+    "requiredField": "هذا الحقل مطلوب.",
+    "unknownError": "حدث خطأ غير معروف. يرجى المحاولة مرة أخرى.",
+    "profileUpdateFailed": "فشل تحديث الملف الشخصي.",
+    "completeProfileFailed": "فشل إكمال الملف الشخصي.",
+    "sessionExpired": "انتهت صلاحية الجلسة. يرجى تسجيل الدخول مرة أخرى.",
+    "networkError": "حدث خطأ في الشبكة. يرجى التحقق من اتصالك بالإنترنت.",
+    "fileTooLarge": "حجم الملف كبير جدًا.",
+    "invalidFileType": "نوع الملف غير صالح."
+  },
+  "PricingModal": {
+    "modalTitle": "اختر خطة الاشتراك التي تناسب احتياجاتكم",
+    "loadingTitle": "جارٍ تحميل خطط الاشتراك",
+    "loadingText": "يرجى الانتظار قليلاً...",
+    "researcherTierTitle": "خطة الباحث",
+    "organizerTierTitle": "خطة المنظّم",
+    "startsWith": "تبدأ الأسعار من",
+    "currencySymbol": "د.ج",
+    "monthLabel": "شهرياً",
+    "trialInfo": "",
+    "featuresLabel": "ميزات خطة {tierName}:",
+    "selectThisPlan": "اختيار هذه الخطة",
+    "discountApplied": "خصم بنسبة {discount}%",
+    "equivalentTo": "ما يعادل:",
+    "maybeLater": "ليس الآن",
+    "noPlanForUserType": "خطط التسعير مخصصة لأنواع المستخدمين (باحث/منظّم). دوركم الحالي ليس له تحديد مباشر للخطة.",
+    "BillingPeriods": {
+      "monthly": "شهرياً",
+      "quarterly": "ربع سنوي (لكل 3 أشهر)",
+      "biannual": "نصف سنوي (لكل 6 أشهر)",
+      "annual": "سنوي (لكل 12 شهراً)"
+    },
+    "Features": {
+      "Researcher": {
+        "submitPapers": "تقديم الأوراق البحثية وملخصات الأبحاث للفعاليات",
+        "trackSubmissions": "متابعة حالة الطلبات والمشاركات المقدمة",
+        "topicSubscriptions": "الاشتراك في المجالات البحثية ذات الاهتمام وتلقي إشعارات بالفعاليات المتعلقة بها",
+        "bookmarkEvents": "حفظ الفعاليات الأكاديمية الهامة في القائمة المفضلة"
+      },
+      "Organizer": {
+        "createManageEvents": "إنشاء وإدارة الفعاليات الأكاديمية بكفاءة وسهولة",
+        "reviewSubmissions": "أدوات متكاملة لمراجعة وتقييم المشاركات وإدارتها",
+        "accessContactInfo": "الوصول إلى معلومات الاتصال الخاصة بالباحثين المشاركين",
+        "eventNotifications": "استقبال إشعارات فورية متعلقة بأنشطة وفعالياتكم"
+      },
+      "FreeResearcher": {
+        "browseOnly": "تصفح الفعاليات الأكاديمية المتاحة فقط",
+        "readOnlyFeatures": "استخدام ميزات القائمة المفضلة واشتراكات المجالات البحثية للقراءة فقط (دون تلقي إشعارات جديدة)",
+        "noNewSubmissions": "لا يمكن تقديم مشاركات جديدة"
+      },
+      "FreeOrganizer": {
+        "publishedEventsVisible": "تبقى الفعاليات الأكاديمية المنشورة مسبقاً متاحة للعرض العام",
+        "readOnlyAccess": "الوصول إلى بيانات الفعاليات والمشاركات السابقة للقراءة فقط",
+        "noCreateEditEvents": "عدم إمكانية إنشاء أو تعديل الفعاليات الأكاديمية"
+      }
+    }
   }
 }

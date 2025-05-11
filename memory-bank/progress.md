@@ -30,7 +30,7 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 - Console shows: `Route "/[locale]/callback" used params.locale. params should be awaited...`
 - Doesn't break functionality, low priority
 
-## Completed Features (Categorized under Pre-Plan Work)
+## Completed Features (Categorized under Pre-Plan Work & Ongoing Refinements)
 
 ### Core Infrastructure
 - Next.js App Router project with TypeScript
@@ -54,7 +54,9 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 
 ### Localization System
 - Translation files for English, French, Arabic
-- Arabic translations with proper orthography and terminology
+- Arabic translations with proper orthography and terminology (general pass completed)
+- **Targeted Arabic Translation Refinement**: Enhanced professionalism and academic tone for `PaymentInstructions` and `PricingModal` sections.
+- **New Translation Keys Added**: For `PricingModal` features (`featuresLabel`, `noPlanForUserType`).
 - Consistent validation messages and placeholders across languages
 - RTL layout support for Arabic
 
@@ -65,6 +67,12 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 - Profile completion form with dynamic fields based on user type
 - Middleware redirection to enforce onboarding sequence
 - Basic profile page and edit functionality, including profile picture upload.
+
+### UI Components & Refinements
+- **`PricingModal.tsx`**: 
+    - Enhanced UI/UX: Increased width, standardized button colors, improved internal content alignment and spacing.
+    - Simplified Logic: Removed tier selection, now directly shows plans based on `userType` prop.
+    - Translation Integration: Removed obsolete trial info, added new keys for features and user type messages.
 
 ## In-Progress Features (Corresponds to Phase 1 of New Plan)
 
@@ -77,7 +85,7 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
     *   Verify/Refine `handle_payment_verification()` DB function.
     *   `admin_actions_log` table creation and logging integration for admin user/payment actions.
 *   **C. Subscription Lifecycle & User Communication:**
-    *   Frontend: Display clear instructions for manual offline payment for upgrades.
+    *   Frontend: Display clear instructions for manual offline payment for upgrades (Partially addressed by `PricingModal` and `PaymentInstructionsDisplay` refinements).
     *   Backend: `check_subscriptions_expiry` Edge Function implementation/verification.
     *   Frontend: Display Payment History in user profiles.
     *   Admin Panel: Display Payment History for users.
@@ -118,17 +126,18 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
     *   Deployment Preparation (Prod environments, data seeding, CI/CD, backups).
     *   Launch & Post-Launch Monitoring.
 
-## 1. What Works (Completed Features/Areas - Now considered Pre-Plan Foundational Work)
+## 1. What Works (Completed Features/Areas - Includes Pre-Plan Foundational Work & Ongoing Refinements)
 
 - Core authentication flows (Login, Register, Password Reset)
 - Email confirmation flow and callback handling
 - Complete-profile form with validation and submission
 - Middleware redirection functionality
-- Translation system improvements (including comprehensive Arabic translation update)
+- Translation system improvements (including comprehensive Arabic translation update, targeted refinements for pricing/payment, and new key additions)
 - Database schema and constraints (initial)
 - Minimal profile page for testing
 - Refined Profile Notification System (Implementation and Testing)
 - Profile Picture Upload (Implementation and Cleanup)
+- `PricingModal.tsx` UI/UX and logic enhancements.
 
 ## 2. What's Left to Build (Now tracked by Phases 1-6 of the New Plan)
 

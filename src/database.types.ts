@@ -9,6 +9,57 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_actions_log: {
+        Row: {
+          action_type: Database["public"]["Enums"]["admin_action_type"]
+          admin_user_id: string | null
+          created_at: string
+          details: Json | null
+          id: number
+          ip_address: unknown | null
+          target_entity_id: string | null
+          target_entity_type: string | null
+          target_user_id: string | null
+        }
+        Insert: {
+          action_type: Database["public"]["Enums"]["admin_action_type"]
+          admin_user_id?: string | null
+          created_at?: string
+          details?: Json | null
+          id?: number
+          ip_address?: unknown | null
+          target_entity_id?: string | null
+          target_entity_type?: string | null
+          target_user_id?: string | null
+        }
+        Update: {
+          action_type?: Database["public"]["Enums"]["admin_action_type"]
+          admin_user_id?: string | null
+          created_at?: string
+          details?: Json | null
+          id?: number
+          ip_address?: unknown | null
+          target_entity_id?: string | null
+          target_entity_type?: string | null
+          target_user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_actions_log_admin_user_id_fkey"
+            columns: ["admin_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admin_actions_log_target_user_id_fkey"
+            columns: ["target_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admin_profiles: {
         Row: {
           created_at: string
@@ -37,6 +88,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      app_settings: {
+        Row: {
+          account_holder: string | null
+          account_number_rib: string | null
+          bank_name: string | null
+          base_price_organizer_monthly: number
+          base_price_researcher_monthly: number
+          created_at: string
+          discount_annual: number
+          discount_biannual: number
+          discount_quarterly: number
+          id: string
+          payment_email: string | null
+          updated_at: string
+        }
+        Insert: {
+          account_holder?: string | null
+          account_number_rib?: string | null
+          bank_name?: string | null
+          base_price_organizer_monthly?: number
+          base_price_researcher_monthly?: number
+          created_at?: string
+          discount_annual?: number
+          discount_biannual?: number
+          discount_quarterly?: number
+          id?: string
+          payment_email?: string | null
+          updated_at?: string
+        }
+        Update: {
+          account_holder?: string | null
+          account_number_rib?: string | null
+          bank_name?: string | null
+          base_price_organizer_monthly?: number
+          base_price_researcher_monthly?: number
+          created_at?: string
+          discount_annual?: number
+          discount_biannual?: number
+          discount_quarterly?: number
+          id?: string
+          payment_email?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       bookmarks: {
         Row: {
@@ -842,6 +938,19 @@ export type Database = {
       }
     }
     Enums: {
+      admin_action_type:
+        | "awarded_badge"
+        | "removed_badge"
+        | "recorded_payment"
+        | "updated_payment_status"
+        | "admin_login"
+        | "admin_user_edit"
+        | "admin_event_edit"
+        | "admin_submission_edit"
+        | "admin_topic_create"
+        | "admin_topic_update"
+        | "admin_topic_delete"
+        | "admin_email_template_edit"
       billing_period_enum: "monthly" | "quarterly" | "biannual" | "annual"
       email_log_status_enum: "attempted" | "sent" | "failed" | "retry_attempted"
       event_format_enum: "physical" | "virtual" | "hybrid"
@@ -989,6 +1098,20 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      admin_action_type: [
+        "awarded_badge",
+        "removed_badge",
+        "recorded_payment",
+        "updated_payment_status",
+        "admin_login",
+        "admin_user_edit",
+        "admin_event_edit",
+        "admin_submission_edit",
+        "admin_topic_create",
+        "admin_topic_update",
+        "admin_topic_delete",
+        "admin_email_template_edit",
+      ],
       billing_period_enum: ["monthly", "quarterly", "biannual", "annual"],
       email_log_status_enum: ["attempted", "sent", "failed", "retry_attempted"],
       event_format_enum: ["physical", "virtual", "hybrid"],
