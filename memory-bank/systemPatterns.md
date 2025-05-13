@@ -101,3 +101,12 @@
 *   **Manual Admin Verification**: Admins award a visual verification badge by updating user status. They also verify payment receipt offline and record this in the platform.
 *   **Platform Record Keeping**: Admins record payment details (`payments` table) and mark as verified.
 *   **Automated Subscription Activation**: A database trigger/function (`handle_payment_verification`) on the `payments` table manages the creation/update of the corresponding `
+
+## 7. Admin Authentication Flow
+
+Unlike standard users, administrators are onboarded via an invitation process:
+
+1.  **Admin Invitation (Backend/Admin Initiated):** An existing admin or system process triggers backend logic (e.g., a dedicated Edge Function or RPC) to create a new `auth.users` entry with `user_type = 'admin'`, a corresponding `profiles` entry, and potentially minimal `admin_profiles` data. A secure, time-limited token is generated.
+2.  **Email Invitation:** A system email containing a unique link with the token is sent to the invited admin's email address using the notification queue and a dedicated 'admin_invitation' email template.
+3.  **Admin Account Creation (Frontend Page):** The invited user clicks the link, which directs them to a specific frontend page (e.g., `/admin/create-account`). This page validates the token and prompts the user to set their password and complete any required initial `admin_profiles` fields.
+4.  **Dedicated Admin Login:** Administrators log in via a specific admin login page (e.g., `/admin/login`), distinct from the main user login page. Authentication is verified against Supabase Auth, and the admin `user_type` is checked for access to admin-specific routes.

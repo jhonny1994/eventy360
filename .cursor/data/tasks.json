@@ -329,17 +329,19 @@
       "id": "76483521-411f-40f4-9e50-012ca0246a10",
       "name": "Phase 1.B.3: Develop Admin RPC - Manage User Verification Badge",
       "description": "Create a Supabase Edge Function or Database RPC function (e.g., `manage_user_verification_badge`) that allows an admin to set or unset the `is_verified` flag on a user's profile and logs this action to `admin_actions_log`. The function must verify the caller is an admin.",
-      "status": "待處理",
+      "status": "已完成",
       "dependencies": [
         {
           "taskId": "b3ea087d-b9eb-4cc6-87a0-fc48a9c79377"
         }
       ],
       "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-11T19:00:44.194Z",
+      "updatedAt": "2025-05-13T08:15:53.131Z",
       "implementationGuide": "1. Decide on Edge Function vs. DB RPC (DB RPC might be simpler if only DB ops are involved and auth context is available).\n2. Function signature: `(target_user_id UUID, new_verified_status BOOLEAN)`.\n3. Inside function: Verify caller is admin (`auth.role = 'service_role'` if Edge Function with service key, or check `auth.uid()` against an admin list if DB RPC called by admin user).\n4. Update `profiles.is_verified` for `target_user_id`.\n5. Insert a record into `admin_actions_log` with relevant details.\n6. Return success/failure.",
       "verificationCriteria": "Admin can call the RPC/Edge Function to change a user's `is_verified` status. The change is reflected in the `profiles` table. An appropriate record is created in `admin_actions_log`. Non-admins cannot execute this function.",
-      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
+      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount.",
+      "summary": "Completed the implementation of the `manage-user-verification-badge` Supabase Edge Function. This function securely allows admin users to update the `is_verified` status of other users in the `profiles` table and logs the action in the `admin_actions_log`. Necessary RLS policies were added to support this functionality.",
+      "completedAt": "2025-05-13T08:15:53.130Z"
     },
     {
       "id": "1c24a48a-aaf1-405d-8934-fd946346a721",
@@ -545,12 +547,12 @@
     },
     {
       "id": "8170dd79-93e9-473d-9741-d0fc2875ea56",
-      "name": "Phase 1.D.2: Populate Initial Arabic Email Templates",
-      "description": "Populate the `email_templates` table with the initial set of Arabic email templates. Templates should be stored in JSONB with an `ar` key holding the HTML/text content. Initial templates: User Verified Badge Awarded/Removed, Payment Received & Pending Verification, Subscription Activated, Trial Ending Soon, Trial Expired.",
+      "name": "Phase 1.D.2: Populate Initial Arabic Email Templates (Including Admin Invitation)",
+      "description": "Populate the `email_templates` table with the initial set of Arabic email templates, **including the 'admin_invitation' template**. Templates should be stored in JSONB with an `ar` key holding the HTML/text content. Initial templates: User Verified Badge Awarded/Removed, Payment Received & Pending Verification, Subscription Activated, Trial Ending Soon, Trial Expired, **Admin Invitation**.",
       "status": "待處理",
       "dependencies": [],
       "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-11T19:00:44.194Z",
+      "updatedAt": "2025-05-13T14:06:24.464Z",
       "relatedFiles": [
         {
           "path": "supabase/seed.sql",
@@ -559,13 +561,13 @@
         }
       ],
       "implementationGuide": "1. Design HTML/text content for each required email template in Arabic.\n2. Create SQL INSERT statements or a seeding script to populate `email_templates` table. Example keys: `user_verified_badge_awarded`, `payment_pending_user_notification`, `subscription_activated_user_notification`, `trial_ending_soon_user_notification`, `trial_expired_user_notification`.\n3. Ensure template content uses placeholders for dynamic data (e.g., user name, event name, dates).",
-      "verificationCriteria": "The `email_templates` table is populated with the specified initial Arabic email templates. Templates are correctly formatted for use by the `send-email` function.",
+      "verificationCriteria": "The `email_templates` table is populated with the specified initial templates, including the 'admin_invitation' template, with correct Arabic content in the JSONB column.",
       "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
     },
     {
       "id": "f84b508e-7494-4361-80d5-d1d05605cd44",
-      "name": "Phase 1.D.3: Implement Initial Notification Queueing Logic",
-      "description": "Implement the backend logic (DB triggers or direct inserts in RPCs/Edge Functions) to add tasks to the `notification_queue` table for the initial set of events: User `is_verified` status changes (award/remove badge), manual payment recorded (by admin, status pending), subscription successfully activated (after payment verification), trial ending soon (from `check_subscriptions_expiry`), trial expired (from `check_subscriptions_expiry`). The queue task should reference the correct `email_template_key` and recipient details.",
+      "name": "Phase 1.D.3: Implement Initial Notification Queueing Logic (Including Admin Invitation)",
+      "description": "Implement the backend logic (DB triggers or direct inserts in RPCs/Edge Functions) to add tasks to the `notification_queue` table for the initial set of events: User `is_verified` status changes (award/remove badge), manual payment recorded (by admin, status pending), subscription successfully activated (after payment verification), trial ending soon (from `check_subscriptions_expiry`), trial expired (from `check_subscriptions_expiry`), **and Admin Invitation**. The queue task should reference the correct `email_template_key` and recipient details.",
       "status": "待處理",
       "dependencies": [
         {
@@ -585,10 +587,112 @@
         }
       ],
       "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-11T19:00:44.194Z",
+      "updatedAt": "2025-05-13T14:06:29.406Z",
       "implementationGuide": "1. Modify `manage_user_verification_badge` RPC (Task 1.B.3) to insert into `notification_queue` (template keys: `user_verified_badge_awarded`, `user_verified_badge_removed`).\n2. Modify `record_manual_payment` RPC (Task 1.B.5) to insert into `notification_queue` if payment is 'pending' (template key: `payment_pending_user_notification`).\n3. Modify `handle_payment_verification` trigger (Task 1.B.7) to insert into `notification_queue` upon successful subscription activation (template key: `subscription_activated_user_notification`).\n4. Ensure `check_subscriptions_expiry` function (Task 1.C.2) correctly inserts tasks for `trial_ending_soon_user_notification` and `trial_expired_user_notification`.",
-      "verificationCriteria": "Tasks are correctly added to `notification_queue` for all specified initial events, with correct template keys and user details, ready for processing by `process-notification-queue`.",
+      "verificationCriteria": "Notification queue entries are correctly created for all specified events, including admin invitation, with appropriate template keys and recipient data.",
       "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
+    },
+    {
+      "id": "ff192d5f-bd50-40dc-8345-40df0c71b973",
+      "name": "Phase 1.B.3.1: Develop Admin Invitation Backend",
+      "description": "Implement backend logic (e.g., a Supabase Edge Function) to handle admin user creation upon invitation, token generation, and queuing the invitation email. This involves inserting into auth.users and profiles tables, generating a secure token, and creating a notification queue entry for the email.",
+      "status": "待處理",
+      "dependencies": [],
+      "createdAt": "2025-05-13T14:06:20.730Z",
+      "updatedAt": "2025-05-13T14:06:20.730Z",
+      "relatedFiles": [
+        {
+          "path": "supabase/functions/invite-admin/index.ts",
+          "type": "CREATE",
+          "description": "New Edge Function for admin invitation backend logic."
+        },
+        {
+          "path": "supabase/migrations/",
+          "type": "CREATE",
+          "description": "Possible migration for temporary token storage table or profile modifications."
+        },
+        {
+          "path": "src/database.types.ts",
+          "type": "REFERENCE",
+          "description": "Supabase database types."
+        }
+      ],
+      "implementationGuide": "1. Create a new Edge Function (e.g., `invite-admin`).\\\\n2. Function should be callable by an authenticated admin or service role.\\\\n3. Input: invited admin email address.\\\\n4. Use Supabase admin client (with service role key) to create user in `auth.users` and insert into `profiles` with `user_type=\\'admin\\'` and `is_extended_profile_complete=false`.\\\\n5. Generate a secure, time-limited token (e.g., using `crypto.randomUUID()` and storing it in a temporary table or metadata with expiry).\\\\n6. Insert a task into `notification_queue` for the \\'admin\\_invitation\\' email template, including the tokenized link and recipient email.\\\\n7. Return success/error response.",
+      "verificationCriteria": "A new admin user is created in auth.users and profiles table with correct type and status. An invitation email task is queued in notification_queue with the correct template key and a valid tokenized link. Only authorized users can call the function."
+    },
+    {
+      "id": "e6f25b66-4546-4f11-86c3-bb0b529e240f",
+      "name": "Phase 1.B.3.2: Create Admin Account Creation Page",
+      "description": "Develop a frontend page where invited administrators can set their password and complete initial profile details using a secure invitation token.",
+      "status": "待處理",
+      "dependencies": [
+        {
+          "taskId": "ff192d5f-bd50-40dc-8345-40df0c71b973"
+        }
+      ],
+      "createdAt": "2025-05-13T14:06:20.730Z",
+      "updatedAt": "2025-05-13T14:06:20.730Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/admin/create-account/page.tsx",
+          "type": "CREATE",
+          "description": "Admin account creation frontend page."
+        },
+        {
+          "path": "src/app/[locale]/admin/create-account/ui/",
+          "type": "CREATE",
+          "description": "UI components for the admin account creation form."
+        },
+        {
+          "path": "src/lib/supabase/client.ts",
+          "type": "REFERENCE",
+          "description": "Supabase client utility."
+        },
+        {
+          "path": "src/lib/schemas/admin.ts",
+          "type": "CREATE",
+          "description": "Zod schema for admin profile completion form."
+        }
+      ],
+      "implementationGuide": "1. Create a new Next.js page at `/admin/create-account` (Client Component).\\n2. Extract token from URL parameters.\\n3. Implement client-side logic to validate the token with a backend endpoint (e.g., another Edge Function or API route).\\n4. If token is valid, display a form for setting password and potentially basic admin profile fields (e.g., name from `admin_profiles`).\\n5. Use Supabase client to update user password and insert/update `admin_profiles` data.\\n6. Handle validation and submission states.\\n7. Redirect to the dedicated admin login page upon success.\\n8. Display error messages for invalid/expired tokens or submission failures.",
+      "verificationCriteria": "The page loads correctly with a valid token. User can set password and complete profile info. Account is finalized in the backend. User is redirected to login. Invalid/expired tokens show appropriate error messages."
+    },
+    {
+      "id": "2fd70694-61b4-4b4d-a9d8-d320c06b35ad",
+      "name": "Phase 1.B.3.3: Implement Dedicated Admin Login Page",
+      "description": "Create a separate login page specifically for administrators, distinct from the main user login.",
+      "status": "待處理",
+      "dependencies": [
+        {
+          "taskId": "ff192d5f-bd50-40dc-8345-40df0c71b973"
+        }
+      ],
+      "createdAt": "2025-05-13T14:06:20.730Z",
+      "updatedAt": "2025-05-13T14:06:20.730Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/admin/login/page.tsx",
+          "type": "CREATE",
+          "description": "Dedicated admin login frontend page."
+        },
+        {
+          "path": "src/app/[locale]/admin/login/ui/",
+          "type": "CREATE",
+          "description": "UI components for the admin login form."
+        },
+        {
+          "path": "src/lib/supabase/client.ts",
+          "type": "REFERENCE",
+          "description": "Supabase client utility."
+        },
+        {
+          "path": "src/lib/schemas/auth.ts",
+          "type": "REFERENCE",
+          "description": "Existing Zod schema for login form validation."
+        }
+      ],
+      "implementationGuide": "1. Create a new Next.js page at `/admin/login` (Client Component).\\n2. Implement a login form (email/password) using React Hook Form and Zod validation.\\n3. Use Supabase client `signInWithPassword` for authentication.\\n4. After successful authentication, fetch the user's profile to verify `user_type` is 'admin'.\\n5. If admin, redirect to the main admin dashboard page (e.g., `/admin`).\\n6. If not admin, show an error message (e.g., \"Invalid credentials\" or \"Not authorized\").\\n7. Handle loading and error states during login process.",
+      "verificationCriteria": "Admins can successfully log in via this page and are redirected to the admin dashboard. Non-admins attempting to log in receive an error. Validation works correctly."
     }
   ]
 }

@@ -92,7 +92,8 @@
     *   Review existing Auth/Profile flows for consistency with policies (e.g., `is_verified` badge display).
 *   **B. Admin Panel - Core MVP Operations:**
     *   Implement Basic Admin Access & Layout (secure routes, basic navigation).
-    *   Implement User Management (Admin UI: List users, filter, award/remove `is_verified` badge via RPC).
+    *   **Implement Admin Authentication Flow (Invitation, Account Creation, Dedicated Login):** Add tasks for backend invitation logic, frontend account creation page, and a dedicated login page for admins.
+    *   Implement User Management (Admin UI: List users, filter, award/remove `is_verified` badge via Edge Function).
     *   Implement Payment & Subscription Management (Admin UI: List payments, record new manual payment via RPC, update payment status via RPC).
     *   Verify/Refine `handle_payment_verification()` DB function.
     *   Implement `admin_actions_log` table and integrate logging for admin user/payment actions.
@@ -103,8 +104,8 @@
     *   Admin Panel: Display Payment History for users.
 *   **D. Initial Notification Framework Setup:**
     *   Setup/Verify core email sending Edge Functions (`send-email`, `process-notification-queue`).
-    *   Populate initial Arabic email templates in `email_templates` (User Verified Badge, Payment/Subscription status, Trial Expiry).
-    *   Integrate initial notification queueing logic.
+    *   Populate initial Arabic email templates in `email_templates` (User Verified Badge, Payment/Subscription status, Trial Expiry, **Admin Invitation**).
+    *   Integrate initial notification queueing logic (including for **Admin Invitation**).
 
 *(Detailed tasks for subsequent phases (2-6) are outlined in the full development plan.)*
 

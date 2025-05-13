@@ -81,4 +81,14 @@
     *   Seeding script populates these columns directly from `arabic_name` and `name` fields in the JSON.
     *   MVP Application queries **only** `name_ar` for display.
     *   Future i18n will use the `name_other` field for French/English display.
-*   **File Uploads**: Validate file type (PDF, DOC, DOCX) and size (max 5MB) on both client and server (Edge Function). Store files in Supabase Storage under structured paths (e.g., `submissions/{event_id}/{submission_id}/abstract.pdf`). Store URL and potentially metadata (`filesize`, `mimetype`, `uploaded_at`) in the database (`submissions` table fields). 
+*   **File Uploads**: Validate file type (PDF, DOC, DOCX) and size (max 5MB) on both client and server (Edge Function). Store files in Supabase Storage under structured paths (e.g., `submissions/{event_id}/{submission_id}/abstract.pdf`). Store URL and potentially metadata (`filesize`, `mimetype`, `uploaded_at`) in the database (`submissions` table fields).
+
+## 6. Admin Authentication Implementation
+
+The admin authentication process follows a specific invitation-based flow:
+
+*   **Admin Invitation Backend**: Implemented via a dedicated Supabase Edge Function or RPC (to be determined/implemented), which handles user creation in `auth.users`, profile creation in `public.profiles` (with `user_type = 'admin'`), token generation, and queuing the invitation email.
+*   **Invitation Email**: Uses the Resend service via the notification queue and a specific 'admin_invitation' email template stored in `email_templates`.
+*   **Admin Account Creation Page**: A dedicated Next.js page (e.g., `/admin/create-account`) handles token validation and allows the invited user to set their password and complete initial admin profile details.
+*   **Admin Login Page**: A separate Next.js login page (e.g., `/admin/login`) is provided for administrators.
+*   **Admin Authentication Check**: Middleware and/or server-side logic on admin routes verifies the authenticated user's `user_type` from the `profiles` table. 
