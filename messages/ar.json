@@ -253,7 +253,22 @@
       "errorBackendGeneric": "حدث خطأ في الخادم. يُرجى المحاولة لاحقاً.",
       "pictureUploadSuccess": "تم تحميل الصورة الشخصية بنجاح."
     },
-    "sidebarUserTypeLabel": "نوع المستخدم"
+    "sidebarUserTypeLabel": "نوع المستخدم",
+    "PaymentHistory": {
+      "title": "سجل المدفوعات",
+      "loading": "جارٍ تحميل سجل المدفوعات...",
+      "errorFetching": "حدث خطأ أثناء جلب سجل المدفوعات. يُرجى المحاولة مرة أخرى.",
+      "errorUserNotLoaded": "تعذر تحميل بيانات المستخدم لعرض المدفوعات.",
+      "noPayments": "لا توجد مدفوعات لعرضها.",
+      "headerDate": "التاريخ",
+      "headerAmount": "المبلغ",
+      "headerPeriod": "فترة الفوترة",
+      "headerStatus": "الحالة",
+      "headerReference": "المرجع",
+      "statusVerified": "تم التحقق",
+      "statusPendingVerification": "في انتظار التحقق",
+      "statusRejected": "مرفوض"
+    }
   },
   "Enums": {
     "user_type_enum": {

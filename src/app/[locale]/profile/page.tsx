@@ -7,6 +7,7 @@ import ProfileSidebarClient, { ProfileInfo, IconName } from './ui/ProfileSidebar
 import TopicSubscriptionsCard from './ui/TopicSubscriptionsCard';
 import SubscriptionActions from './ui/SubscriptionActions';
 import { getAppSettings } from '@/lib/appConfig';
+import PaymentHistoryDisplay from './ui/PaymentHistoryDisplay';
 
 
 function formatDate(dateString: string | null, locale: string = 'ar'): string {
@@ -450,6 +451,8 @@ export default async function ProfilePage(props: Props) {
               </Card>
             </div>
 
+
+
             {/* Role-based metrics - with better spacing and layout */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {profileData.user_type === 'researcher' && (
@@ -558,6 +561,19 @@ export default async function ProfilePage(props: Props) {
                 </>
               )}
             </div>
+
+                        {/* Payment History Section */}
+                        {user && <PaymentHistoryDisplay userId={user.id} />}
+            
+            {/* Topic Subscriptions Card (if applicable) */}
+            {profileData?.user_type === 'researcher' &&
+              subscriptionData &&
+              (subscriptionData.tier === 'trial' || subscriptionData.tier === 'paid_researcher') &&
+              (subscriptionData.status === 'active' || subscriptionData.status === 'trial') && (
+                <Card className="shadow-md lg:col-span-3">
+                  <TopicSubscriptionsCard />
+                </Card>
+              )}
 
             {/* Role-based main content - with better spacing */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

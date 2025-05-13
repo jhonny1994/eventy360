@@ -483,10 +483,10 @@
       "id": "0b7b8e17-243f-4b30-b5d6-2850c0f6bb91",
       "name": "Phase 1.C.3: Frontend - Display Payment History (User Profile)",
       "description": "In the user's profile section, add a new UI component to display their payment history. Fetch payment records for the logged-in user from the `payments` table and display them in a clear, chronological list (showing amount, date, status, reference).",
-      "status": "進行中",
+      "status": "已完成",
       "dependencies": [],
       "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-11T19:13:31.254Z",
+      "updatedAt": "2025-05-13T07:53:29.665Z",
       "relatedFiles": [
         {
           "path": "src/app/[locale]/profile/ui/",
@@ -496,7 +496,9 @@
       ],
       "implementationGuide": "1. Create a new component for displaying payment history.\n2. Fetch data from `payments` table, filtered by `auth.uid()`.\n3. Display data in a table or list format.\n4. Ensure Arabic text and RTL compliance.",
       "verificationCriteria": "Users can view their own payment history accurately in their profile section. The display is clear, chronological, and RTL compliant.",
-      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
+      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount.",
+      "summary": "Implemented the Payment History display feature in the user profile. Created PaymentHistoryDisplay.tsx, fetched and displayed payment data in a table. Added translations and integrated the component into the profile page. Minor TODOs remain for currency formatting and status translation within the component.",
+      "completedAt": "2025-05-13T07:53:29.663Z"
     },
     {
       "id": "75443170-2e00-43cd-a571-9c8f54e7694b",
@@ -521,10 +523,10 @@
       "id": "c6fd2604-ed3a-4e1c-9218-b60eb94e2f9a",
       "name": "Phase 1.D.1: Setup/Verify Core Email Sending Edge Functions",
       "description": "Setup or verify the core email sending Edge Functions: `send-email` (interacts with Resend API, takes recipient, subject, body) and `process-notification-queue` (Deno, scheduled via Supabase Cron - e.g., every minute - reads from `notification_queue`, calls `send-email`, updates task status). Ensure Resend API key is securely stored as a Supabase secret.",
-      "status": "待處理",
+      "status": "進行中",
       "dependencies": [],
       "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-11T19:00:44.194Z",
+      "updatedAt": "2025-05-13T08:07:32.455Z",
       "relatedFiles": [
         {
           "path": "supabase/functions/send-email/index.ts",
