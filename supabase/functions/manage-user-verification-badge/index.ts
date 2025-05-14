@@ -1,11 +1,25 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.43.2";
-import { z } from "https://deno.land/x/zod@v3.23.3/mod.ts";
+import { createClient } from "npm:@supabase/supabase-js@2";
+import { z } from "npm:zod@3.22.4";
+
+// Define CORS headers
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*", // For production, restrict to specific domains
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Content-Type": "application/json"
+};
+
 // Define the expected structure of the request body
 const RequestSchema = z.object({
   target_user_id: z.string().uuid(),
   new_is_verified_status: z.boolean(),
 });
-Deno.serve(async (req) => {
+
+Deno.serve(async (req: Request) => {
+  // Handle OPTIONS requests
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: CORS_HEADERS });
+  }
+
   // Create a Supabase client authenticated with the user's JWT
   const supabaseClient = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
@@ -13,17 +27,19 @@ Deno.serve(async (req) => {
     {
       global: {
         headers: {
-          Authorization: req.headers.get("Authorization"),
+          Authorization: req.headers.get("Authorization") ?? "",
         },
       },
     }
   );
+  
   try {
     // 1. Authenticate and verify admin status
     const {
       data: { user },
       error: userError,
     } = await supabaseClient.auth.getUser();
+    
     if (userError || !user) {
       console.error("Authentication error:", userError?.message);
       return new Response(
@@ -32,17 +48,17 @@ Deno.serve(async (req) => {
         }),
         {
           status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: CORS_HEADERS,
         }
       );
     }
+    
     const { data: profile, error: profileError } = await supabaseClient
       .from("profiles")
       .select("user_type")
       .eq("id", user.id)
       .single();
+      
     if (profileError || profile?.user_type !== "admin") {
       console.error(
         "Authorization error: User is not an admin or profile not found."
@@ -53,15 +69,15 @@ Deno.serve(async (req) => {
         }),
         {
           status: 403,
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: CORS_HEADERS,
         }
       );
     }
+    
     // 2. Validate request body
     const json = await req.json();
     const validationResult = RequestSchema.safeParse(json);
+    
     if (!validationResult.success) {
       console.error("Input validation failed:", validationResult.error.errors);
       return new Response(
@@ -71,13 +87,13 @@ Deno.serve(async (req) => {
         }),
         {
           status: 400,
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: CORS_HEADERS,
         }
       );
     }
+    
     const { target_user_id, new_is_verified_status } = validationResult.data;
+    
     // Prevent changing own badge via this function (admins can do it via SQL if needed)
     if (target_user_id === user.id) {
       return new Response(
@@ -87,12 +103,11 @@ Deno.serve(async (req) => {
         }),
         {
           status: 400,
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: CORS_HEADERS,
         }
       );
     }
+    
     // 3. Fetch current status for logging (optional but good practice)
     const { data: targetProfile, error: fetchTargetProfileError } =
       await supabaseClient
@@ -100,6 +115,7 @@ Deno.serve(async (req) => {
         .select("is_verified")
         .eq("id", target_user_id)
         .single();
+        
     if (fetchTargetProfileError) {
       console.error(
         "Error fetching target profile status:",
@@ -108,7 +124,9 @@ Deno.serve(async (req) => {
       // Decide if this should be a hard error or just skip logging previous state
       // For now, we'll proceed with the update but log the error
     }
+    
     const old_is_verified_status = targetProfile?.is_verified ?? null;
+    
     // 4. Update the is_verified status
     const { error: updateError } = await supabaseClient
       .from("profiles")
@@ -117,6 +135,7 @@ Deno.serve(async (req) => {
         updated_at: new Date().toISOString(),
       }) // Also update updated_at
       .eq("id", target_user_id);
+      
     if (updateError) {
       console.error("Error updating user verification status:", updateError);
       return new Response(
@@ -125,21 +144,22 @@ Deno.serve(async (req) => {
         }),
         {
           status: 500,
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: CORS_HEADERS,
         }
       );
     }
+    
     // 5. Log the action
     const action_type = new_is_verified_status
       ? "awarded_badge"
       : "removed_badge";
+      
     const logDetails = {
       previous_status: old_is_verified_status,
       new_status: new_is_verified_status,
       target_user_id: target_user_id,
     };
+    
     const { error: logError } = await supabaseClient
       .from("admin_actions_log")
       .insert({
@@ -148,11 +168,13 @@ Deno.serve(async (req) => {
         target_user_id: target_user_id,
         details: logDetails,
       });
+      
     if (logError) {
       console.error("Error logging admin action:", logError);
       // Decide if logging failure should prevent the update success response
       // For now, we'll just log the error and still report update success
     }
+    
     // 6. Return success response
     return new Response(
       JSON.stringify({
@@ -161,22 +183,24 @@ Deno.serve(async (req) => {
       }),
       {
         status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: CORS_HEADERS,
       }
     );
+    
   } catch (error) {
     console.error("Edge Function error:", error);
+    let errorMessage = "An unexpected error occurred";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    
     return new Response(
       JSON.stringify({
-        error: "An unexpected error occurred",
+        error: errorMessage,
       }),
       {
         status: 500,
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: CORS_HEADERS,
       }
     );
   }

@@ -81,7 +81,7 @@
     *   Seeding script populates these columns directly from `arabic_name` and `name` fields in the JSON.
     *   MVP Application queries **only** `name_ar` for display.
     *   Future i18n will use the `name_other` field for French/English display.
-*   **File Uploads**: Validate file type (PDF, DOC, DOCX) and size (max 5MB) on both client and server (Edge Function). Store files in Supabase Storage under structured paths (e.g., `submissions/{event_id}/{submission_id}/abstract.pdf`). Store URL and potentially metadata (`filesize`, `mimetype`, `uploaded_at`) in the database (`submissions` table fields).
+*   **File Uploads**: Validate file type (PDF, DOC, DOCX) and size (max 5MB) on both client and server (Edge Function). Store files in Supabase Storage under structured paths (e.g., `submissions/{event_id}/{submission_id}/abstract.pdf`). Store URL and potentially metadata (`filesize`, `mimetype`, `uploaded_at`) in the database (`submissions` table fields). 
 
 ## 6. Admin Authentication Implementation
 

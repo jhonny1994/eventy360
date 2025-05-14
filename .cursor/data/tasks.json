@@ -549,10 +549,10 @@
       "id": "8170dd79-93e9-473d-9741-d0fc2875ea56",
       "name": "Phase 1.D.2: Populate Initial Arabic Email Templates (Including Admin Invitation)",
       "description": "Populate the `email_templates` table with the initial set of Arabic email templates, **including the 'admin_invitation' template**. Templates should be stored in JSONB with an `ar` key holding the HTML/text content. Initial templates: User Verified Badge Awarded/Removed, Payment Received & Pending Verification, Subscription Activated, Trial Ending Soon, Trial Expired, **Admin Invitation**.",
-      "status": "待處理",
+      "status": "已完成",
       "dependencies": [],
       "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-13T14:06:24.464Z",
+      "updatedAt": "2025-05-13T14:26:37.544Z",
       "relatedFiles": [
         {
           "path": "supabase/seed.sql",
@@ -562,7 +562,9 @@
       ],
       "implementationGuide": "1. Design HTML/text content for each required email template in Arabic.\n2. Create SQL INSERT statements or a seeding script to populate `email_templates` table. Example keys: `user_verified_badge_awarded`, `payment_pending_user_notification`, `subscription_activated_user_notification`, `trial_ending_soon_user_notification`, `trial_expired_user_notification`.\n3. Ensure template content uses placeholders for dynamic data (e.g., user name, event name, dates).",
       "verificationCriteria": "The `email_templates` table is populated with the specified initial templates, including the 'admin_invitation' template, with correct Arabic content in the JSONB column.",
-      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
+      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount.",
+      "summary": "Successfully populated the email_templates table with all required templates (user_verified_badge_awarded, user_verified_badge_removed, payment_received_pending_verification, subscription_activated, trial_ending_soon, trial_expired, admin_invitation) in proper JSONB format with Arabic content and placeholders for dynamic data. Templates are professional and include proper greetings and closings appropriate for academic context.",
+      "completedAt": "2025-05-13T14:26:37.542Z"
     },
     {
       "id": "f84b508e-7494-4361-80d5-d1d05605cd44",
@@ -596,10 +598,10 @@
       "id": "ff192d5f-bd50-40dc-8345-40df0c71b973",
       "name": "Phase 1.B.3.1: Develop Admin Invitation Backend",
       "description": "Implement backend logic (e.g., a Supabase Edge Function) to handle admin user creation upon invitation, token generation, and queuing the invitation email. This involves inserting into auth.users and profiles tables, generating a secure token, and creating a notification queue entry for the email.",
-      "status": "待處理",
+      "status": "已完成",
       "dependencies": [],
       "createdAt": "2025-05-13T14:06:20.730Z",
-      "updatedAt": "2025-05-13T14:06:20.730Z",
+      "updatedAt": "2025-05-13T16:17:10.761Z",
       "relatedFiles": [
         {
           "path": "supabase/functions/invite-admin/index.ts",
@@ -618,20 +620,22 @@
         }
       ],
       "implementationGuide": "1. Create a new Edge Function (e.g., `invite-admin`).\\\\n2. Function should be callable by an authenticated admin or service role.\\\\n3. Input: invited admin email address.\\\\n4. Use Supabase admin client (with service role key) to create user in `auth.users` and insert into `profiles` with `user_type=\\'admin\\'` and `is_extended_profile_complete=false`.\\\\n5. Generate a secure, time-limited token (e.g., using `crypto.randomUUID()` and storing it in a temporary table or metadata with expiry).\\\\n6. Insert a task into `notification_queue` for the \\'admin\\_invitation\\' email template, including the tokenized link and recipient email.\\\\n7. Return success/error response.",
-      "verificationCriteria": "A new admin user is created in auth.users and profiles table with correct type and status. An invitation email task is queued in notification_queue with the correct template key and a valid tokenized link. Only authorized users can call the function."
+      "verificationCriteria": "A new admin user is created in auth.users and profiles table with correct type and status. An invitation email task is queued in notification_queue with the correct template key and a valid tokenized link. Only authorized users can call the function.",
+      "summary": "Created the `invite-admin` Supabase Edge Function. This function securely handles new admin invitations by: 1. Verifying the invoker is an admin. 2. Creating an auth.users entry. 3. Creating a profiles entry (user_type: 'admin', is_extended_profile_complete: false). 4. Optionally creating an admin_profiles entry. 5. Generating an invitation link using Supabase's built-in functionality. 6. Queueing an 'admin_invitation' email. Includes error handling and cleanup logic. Also created the `_shared/cors.ts` file.",
+      "completedAt": "2025-05-13T16:17:10.760Z"
     },
     {
       "id": "e6f25b66-4546-4f11-86c3-bb0b529e240f",
       "name": "Phase 1.B.3.2: Create Admin Account Creation Page",
       "description": "Develop a frontend page where invited administrators can set their password and complete initial profile details using a secure invitation token.",
-      "status": "待處理",
+      "status": "已完成",
       "dependencies": [
         {
           "taskId": "ff192d5f-bd50-40dc-8345-40df0c71b973"
         }
       ],
       "createdAt": "2025-05-13T14:06:20.730Z",
-      "updatedAt": "2025-05-13T14:06:20.730Z",
+      "updatedAt": "2025-05-13T16:46:42.662Z",
       "relatedFiles": [
         {
           "path": "src/app/[locale]/admin/create-account/page.tsx",
@@ -655,20 +659,22 @@
         }
       ],
       "implementationGuide": "1. Create a new Next.js page at `/admin/create-account` (Client Component).\\n2. Extract token from URL parameters.\\n3. Implement client-side logic to validate the token with a backend endpoint (e.g., another Edge Function or API route).\\n4. If token is valid, display a form for setting password and potentially basic admin profile fields (e.g., name from `admin_profiles`).\\n5. Use Supabase client to update user password and insert/update `admin_profiles` data.\\n6. Handle validation and submission states.\\n7. Redirect to the dedicated admin login page upon success.\\n8. Display error messages for invalid/expired tokens or submission failures.",
-      "verificationCriteria": "The page loads correctly with a valid token. User can set password and complete profile info. Account is finalized in the backend. User is redirected to login. Invalid/expired tokens show appropriate error messages."
+      "verificationCriteria": "The page loads correctly with a valid token. User can set password and complete profile info. Account is finalized in the backend. User is redirected to login. Invalid/expired tokens show appropriate error messages.",
+      "summary": "Implemented the admin account creation page at /admin/create-account. This page allows an invited admin to set their password and full name. It relies on Supabase's invite token flow to establish a session. UI is consistent with other auth pages. Added new translations to ar.json. Key functionalities: password update, admin_profiles name update, profiles.is_extended_profile_complete update. User is signed out and redirected to admin login after completion. Score 90 due to the need for thorough end-to-end testing of the invite flow and robust error handling for edge cases around token validity not fully testable without live environment.",
+      "completedAt": "2025-05-13T16:46:42.660Z"
     },
     {
       "id": "2fd70694-61b4-4b4d-a9d8-d320c06b35ad",
       "name": "Phase 1.B.3.3: Implement Dedicated Admin Login Page",
       "description": "Create a separate login page specifically for administrators, distinct from the main user login.",
-      "status": "待處理",
+      "status": "已完成",
       "dependencies": [
         {
           "taskId": "ff192d5f-bd50-40dc-8345-40df0c71b973"
         }
       ],
       "createdAt": "2025-05-13T14:06:20.730Z",
-      "updatedAt": "2025-05-13T14:06:20.730Z",
+      "updatedAt": "2025-05-13T16:41:49.827Z",
       "relatedFiles": [
         {
           "path": "src/app/[locale]/admin/login/page.tsx",
@@ -692,7 +698,9 @@
         }
       ],
       "implementationGuide": "1. Create a new Next.js page at `/admin/login` (Client Component).\\n2. Implement a login form (email/password) using React Hook Form and Zod validation.\\n3. Use Supabase client `signInWithPassword` for authentication.\\n4. After successful authentication, fetch the user's profile to verify `user_type` is 'admin'.\\n5. If admin, redirect to the main admin dashboard page (e.g., `/admin`).\\n6. If not admin, show an error message (e.g., \"Invalid credentials\" or \"Not authorized\").\\n7. Handle loading and error states during login process.",
-      "verificationCriteria": "Admins can successfully log in via this page and are redirected to the admin dashboard. Non-admins attempting to log in receive an error. Validation works correctly."
+      "verificationCriteria": "Admins can successfully log in via this page and are redirected to the admin dashboard. Non-admins attempting to log in receive an error. Validation works correctly.",
+      "summary": "Implemented a dedicated admin login page at /admin/login. Copied user login UI, added admin-specific translations (Arabic only, as per current i18n config), and implemented logic in AdminLoginForm.tsx to verify user_type is 'admin' after Supabase auth. Non-admins are signed out with an error. Redirects to /redirect for now (placeholder for admin dashboard). Removed 'forgot password' and 'register' links from admin page. Next steps: Implement actual admin dashboard, consider admin password recovery, and add other language support if needed.",
+      "completedAt": "2025-05-13T16:41:49.825Z"
     }
   ]
 }

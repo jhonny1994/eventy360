@@ -7,7 +7,20 @@
     "redirectFailedDescription": "يُرجى المحاولة مرة أخرى أو العودة إلى صفحة تسجيل الدخول",
     "debugInformation": "معلومات التصحيح التقني",
     "emailConfirmedRedirecting": "تم تأكيد بريدك الإلكتروني بنجاح! جارٍ توجيهك إلى الخطوة التالية",
-    "closeButton": "إغلاق"
+    "closeButton": "إغلاق",
+    "loading": "جار التحميل",
+    "goToLoginPage": "الانتقال إلى {pageName}",
+    "unexpectedError": "حدث خطأ غير متوقع.",
+    "avatarCleanupError": "حدث خطأ في إزالة الصورة الشخصية السابقة",
+    "avatarUploadError": "فشل تحميل الصورة الرمزية",
+    "avatarUpdateError": "فشل تحديث الصورة الرمزية",
+    "backToAdminLoginButton": "العودة إلى صفحة دخول المسؤولين",
+    "genericErrorAlertDescription": "يُرجى المحاولة مرة أخرى. إذا استمرت المشكلة، يُرجى التواصل مع الدعم.",
+    "unexpectedErrorAlertTitle": "حدث خطأ غير متوقع",
+    "unexpectedStateMessage": "حدثت حالة غير متوقعة. يرجى تحديث الصفحة والمحاولة مرة أخرى.",
+    "loadingProcessing": "جارٍ المعالجة...",
+    "redirectingToLogin": "جارٍ إعادة توجيهك إلى صفحة تسجيل الدخول...",
+    "redirectFailedTitle": "فشل إعادة التوجيه"
   },
   "HomePage": {
     "title": "مرحباً بكم في منصة Eventy360"
@@ -192,7 +205,8 @@
     "invalidUrl": "يُرجى إدخال رابط صحيح",
     "invalidEnumValue": "يُرجى اختيار قيمة صالحة من القائمة",
     "fileTypeInvalid": "نوع الملف غير مدعوم. الأنواع المدعومة: {types}",
-    "fileSizeTooLarge": "حجم الملف يتجاوز الحد المسموح به. الحد الأقصى هو {maxSize} ميغابايت."
+    "fileSizeTooLarge": "حجم الملف يتجاوز الحد المسموح به. الحد الأقصى هو {maxSize} ميغابايت.",
+    "minLength": "يجب أن يحتوي هذا الحقل على {min} أحرف على الأقل"
   },
   "AriaLabels": {
     "submittingResetRequest": "جارٍ إرسال طلب إعادة تعيين كلمة المرور...",
@@ -201,7 +215,10 @@
     "registering": "جارٍ إنشاء الحساب...",
     "hidePassword": "إخفاء كلمة المرور",
     "showPassword": "إظهار كلمة المرور",
-    "toggleTheme": "تبديل نمط العرض بين الفاتح والداكن"
+    "toggleTheme": "تبديل نمط العرض بين الفاتح والداكن",
+    "loadingPage": "جارٍ تحميل الصفحة...",
+    "submitting": "جارٍ الإرسال...",
+    "loading": "جارٍ التحميل..."
   },
   "ProfilePage": {
     "editProfileButton": "تعديل الملف الشخصي",
@@ -472,6 +489,90 @@
         "readOnlyAccess": "الوصول إلى بيانات الفعاليات والمشاركات السابقة للقراءة فقط",
         "noCreateEditEvents": "عدم إمكانية إنشاء أو تعديل الفعاليات الأكاديمية"
       }
+    }
+  },
+  "AdminAuth": {
+    "LoginPage": {
+      "logoAltText": "شعار منصة Eventy360 (إدارة)",
+      "title": "تسجيل دخول المسؤولين",
+      "illustrationAlt": "رسم توضيحي لصفحة تسجيل دخول المسؤولين"
+    },
+    "LoginForm": {
+      "emailLabel": "البريد الإلكتروني للمسؤول",
+      "emailPlaceholder": "أدخلوا بريدكم الإلكتروني كمسؤول",
+      "passwordLabel": "كلمة مرور المسؤول",
+      "passwordPlaceholder": "••••••••",
+      "showPassword": "إظهار كلمة المرور",
+      "hidePassword": "إخفاء كلمة المرور",
+      "submitButton": "دخول المسؤولين",
+      "loading": "جارٍ تسجيل الدخول...",
+      "submitting": "جارٍ الإرسال...",
+      "loginFailed": "فشل تسجيل دخول المسؤول",
+      "loginSuccessToast": "تم تسجيل دخول المسؤول بنجاح! جارٍ إعادة التوجيه...",
+      "unexpectedError": "حدث خطأ غير متوقع",
+      "userRetrievalFailed": "فشل في استرداد بيانات المستخدم",
+      "profileRetrievalFailed": "فشل في استرداد ملف تعريف المسؤول",
+      "notAdminError": "وصول مرفوض. الحساب ليس له صلاحيات مسؤول",
+      "forgotPasswordLink": "نسيت كلمة مرور المسؤول؟",
+      "magicLinkSent": "تم إرسال رابط الدخول السحري الخاص بالمسؤول.",
+      "magicLinkFailed": "فشل إرسال رابط الدخول السحري الخاص بالمسؤول.",
+      "orLoginWithMagicLink": "أو الدخول عبر الرابط السحري (مسؤول)",
+      "sendMagicLinkButton": "إرسال رابط الدخول السحري (مسؤول)",
+      "sendingMagicLink": "جارٍ إرسال رابط المسؤول...",
+      "returnToPasswordLogin": "العودة لتسجيل الدخول بكلمة المرور (مسؤول)"
+    },
+    "CreateAccountPage": {
+      "logoAltText": "شعار منصة Eventy360 (إعداد حساب مسؤول)",
+      "title": "إعداد حساب المسؤول الخاص بك",
+      "illustrationAlt": "رسم توضيحي لإعداد حساب مسؤول",
+      "alreadySetupPrompt": "هل قمت بالفعل بإعداد حسابك؟",
+      "adminLoginLink": "تسجيل الدخول كمسؤول"
+    },
+    "CreateAccountForm": {
+      "title": "إعداد حساب المسؤول",
+      "verifyingInvite": "يتم التحقق من الدعوة...",
+      "invalidInviteNoUser": "رابط الدعوة غير صالح أو منتهي الصلاحية. لم يتم العثور على جلسة مستخدم.",
+      "invalidOrExpiredInvite": "رابط الدعوة غير صالح أو انتهت صلاحيته.",
+      "sessionExpiredUserNotFound": "انتهت صلاحية الجلسة أو لم يتم العثور على المستخدم. يرجى محاولة تسجيل الدخول مرة أخرى.",
+      "errorAlertTitle": "خطأ!",
+      "successAlertTitle": "نجاح!",
+      "emailLabel": "عنوان البريد الإلكتروني",
+      "fullNameLabel": "الاسم الكامل",
+      "passwordLabel": "كلمة المرور",
+      "passwordPlaceholder": "••••••••",
+      "confirmPasswordLabel": "تأكيد كلمة المرور",
+      "confirmPasswordPlaceholder": "••••••••",
+      "submitButton": "تعيين كلمة المرور والإنهاء",
+      "submittingButton": "يتم الإعداد...",
+      "submitting": "يتم الإرسال...",
+      "alreadyHaveAccount": "هل لديك حساب بالفعل أو تم إعداد بيانات الاعتماد؟",
+      "loginLink": "تسجيل الدخول هنا",
+      "userNotAuthenticatedError": "المستخدم غير مصادق عليه. يرجى التأكد من صحة رابط الدعوة أو محاولة تسجيل الدخول.",
+      "passwordUpdateFailed": "فشل تحديث كلمة المرور",
+      "profileUpdateFailed": "فشل تحديث معلومات الملف الشخصي",
+      "generalProfileUpdateFailedWarning": "تحذير: فشل تحديث حالة الملف الشخصي العام",
+      "accountSetupSuccess": "اكتمل إعداد حساب المسؤول! سيتم الآن تسجيل خروجك.",
+      "accountSetupSuccessToast": "تم إعداد الحساب بنجاح! يرجى تسجيل الدخول باستخدام بيانات الاعتماد الجديدة الخاصة بك.",
+      "submissionFailed": "فشل الإرسال",
+      "unexpectedError": "حدث خطأ غير متوقع.",
+      "missingNameError": "اسم المستخدم الكامل مفقود. لا يمكن إكمال إعداد الحساب.",
+      "setupFailedAlertTitle": "فشل إعداد الحساب",
+      "invalidInviteTitle": "الدعوة غير صالحة",
+      "invalidInviteMessage": "رابط الدعوة الذي استخدمته غير صالح أو انتهت صلاحيته. يرجى التواصل مع المسؤول لطلب دعوة جديدة.",
+      "accountSetupSuccessTitle": "اكتمل إعداد الحساب بنجاح!",
+      "accountSetupSuccessBody": "تم إعداد حساب المسؤول الخاص بك. سيتم الآن توجيهك لصفحة تسجيل الدخول لاستخدام بيانات الاعتماد الجديدة.",
+      "termsHint": "بالنقر على 'تعيين كلمة المرور والإنهاء'، فإنك توافق على شروط الخدمة الخاصة بالمسؤولين."
+    },
+    "CallbackPage": {
+      "processingAuthentication": "جارٍ معالجة المصادقة",
+      "invalidOrExpiredInvite": "الدعوة غير صالحة أو انتهت صلاحيتها. يرجى طلب دعوة جديدة أو الاتصال بالدعم.",
+      "profileRetrievalError": "حدث خطأ أثناء استرداد ملف تعريف المسؤول الخاص بك.",
+      "notAnAdminError": "أنت غير مصرح لك بالوصول كمسؤول. تم تسجيل خروجك.",
+      "missingRedirectPathError": "خطأ في التكوين: مسار إعادة التوجيه النهائي مفقود.",
+      "errorTitle": "حدث خطأ",
+      "adminLoginPageName": "صفحة دخول المسؤولين",
+      "unexpectedState": "حالة غير متوقعة. يرجى المحاولة مرة أخرى.",
+      "unexpectedErrorTitle": "خطأ غير متوقع في معالجة الرابط"
     }
   }
 }

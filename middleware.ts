@@ -1,64 +1,56 @@
-import { type NextRequest, NextResponse } from 'next/server';
-import { updateSession } from '@/utils/supabase/middleware';
-import createIntlMiddleware from 'next-intl/middleware';
-import { routing } from '@/i18n/routing';
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
-
+import { type NextRequest, NextResponse } from "next/server";
+import { updateSession } from "@/utils/supabase/middleware";
+import createIntlMiddleware from "next-intl/middleware";
+import { routing } from "@/i18n/routing";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 
 const AUTH_SYSTEM_PATHS = [
-  '/auth/callback',
-  '/auth/confirm',
+  "/auth/callback",
+  "/auth/confirm",
+  "/admin/auth/callback",
 ];
 
 const UNAUTHENTICATED_USER_ACCESSIBLE_PATHS = [
-  '/login',
-  '/register',
-  '/forgot-password',
-  '/reset-password',
-  '/error',
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+  "/error",
+  "/admin/login",
 ];
 
 const PROFILE_COMPLETION_ACCESSIBLE_PATHS = [
-  '/complete-profile',
-  '/confirm-email',
-  
-  
+  "/complete-profile",
+  "/confirm-email",
+  "/admin/create-account",
 ];
-
 
 const handleI18nRouting = createIntlMiddleware(routing);
 
 export async function middleware(request: NextRequest) {
-  
   const { pathname } = request.nextUrl;
   
-  
   const i18nResponse = handleI18nRouting(request);
-  const { response: supabaseResponseAfterSessionUpdate, user } = await updateSession(request, i18nResponse);
-
+  const { response: supabaseResponseAfterSessionUpdate, user } =
+    await updateSession(request, i18nResponse);
   
   let pathWithoutLocale = pathname;
-  const localePattern = new RegExp(`^/(${routing.locales.join('|')})(.*)`);
+  const localePattern = new RegExp(`^/(${routing.locales.join("|")})(.*)`);
   const pathMatch = pathname.match(localePattern);
   const currentLocale = pathMatch ? pathMatch[1] : routing.defaultLocale;
   
   if (pathMatch && pathMatch[2]) {
-    pathWithoutLocale = pathMatch[2] || '/';
+    pathWithoutLocale = pathMatch[2] || "/";
   }
-  if (!pathWithoutLocale.startsWith('/')) {
-    pathWithoutLocale = '/' + pathWithoutLocale;
+  if (!pathWithoutLocale.startsWith("/")) {
+    pathWithoutLocale = "/" + pathWithoutLocale;
   }
-
-
   
   if (AUTH_SYSTEM_PATHS.includes(pathWithoutLocale)) {
     return supabaseResponseAfterSessionUpdate;
   }
 
-  
-  if (pathWithoutLocale === '/redirect') {
-    
-    
+  if (pathWithoutLocale === "/redirect") {
     if (!user) {
       const loginUrl = new URL(`/${currentLocale}/login`, request.url);
       const redirectResponse = NextResponse.redirect(loginUrl);
@@ -66,16 +58,286 @@ export async function middleware(request: NextRequest) {
       return redirectResponse;
     }
     
-    
     if (!user.email_confirmed_at) {
-      const confirmEmailUrl = new URL(`/${currentLocale}/confirm-email`, request.url);
+      const confirmEmailUrl = new URL(
+        `/${currentLocale}/confirm-email`,
+        request.url
+      );
       const redirectResponse = NextResponse.redirect(confirmEmailUrl);
       copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
       return redirectResponse;
     }
     
     try {
+      const supabaseMiddlewareClient = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookies: {
+            getAll() {
+              return request.cookies.getAll();
+            },
+            setAll(cookiesToSet) {
+              cookiesToSet.forEach(({ name, value }) =>
+                request.cookies.set(name, value)
+              );
+            },
+          },
+        }
+      );
       
+      const { data: profileData, error: profileQueryError } =
+        await supabaseMiddlewareClient
+          .from("profiles")
+          .select("is_extended_profile_complete")
+          .eq("id", user.id)
+        .single();
+
+      if (profileQueryError || !profileData) {
+        const completeProfileUrl = new URL(
+          `/${currentLocale}/complete-profile`,
+          request.url
+        );
+        const redirectResponse = NextResponse.redirect(completeProfileUrl);
+        copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+        return redirectResponse;
+      }
+      
+      if (!profileData.is_extended_profile_complete) {
+        const completeProfileUrl = new URL(
+          `/${currentLocale}/complete-profile`,
+          request.url
+        );
+        const redirectResponse = NextResponse.redirect(completeProfileUrl);
+        copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+        return redirectResponse;
+      }
+      
+      const profileUrl = new URL(`/${currentLocale}/profile`, request.url);
+      const redirectResponse = NextResponse.redirect(profileUrl);
+      copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+      return redirectResponse;
+    } catch {
+      const completeProfileUrl = new URL(
+        `/${currentLocale}/complete-profile`,
+        request.url
+      );
+      const redirectResponse = NextResponse.redirect(completeProfileUrl);
+      copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+      return redirectResponse;
+    }
+  }
+
+  if (pathWithoutLocale === "/admin/redirect") {
+    if (!user) {
+      const loginUrl = new URL(`/${currentLocale}/admin/login`, request.url);
+      const redirectResponse = NextResponse.redirect(loginUrl);
+      copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+      return redirectResponse;
+    }
+
+    if (!user.email_confirmed_at) {
+      const loginUrl = new URL(`/${currentLocale}/admin/login`, request.url);
+      const redirectResponse = NextResponse.redirect(loginUrl);
+      copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+      return redirectResponse;
+    }
+
+    try {
+      const supabaseMiddlewareClient = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookies: {
+            getAll() {
+              return request.cookies.getAll();
+            },
+            setAll(cookiesToSet) {
+              cookiesToSet.forEach(({ name, value }) =>
+                request.cookies.set(name, value)
+              );
+            },
+          },
+        }
+      );
+
+      const { data: profileData, error: profileQueryError } =
+        await supabaseMiddlewareClient
+          .from("profiles")
+          .select("user_type, is_extended_profile_complete")
+          .eq("id", user.id)
+          .single();
+
+      if (profileQueryError || !profileData) {
+        const loginUrl = new URL(`/${currentLocale}/admin/login`, request.url);
+        const redirectResponse = NextResponse.redirect(loginUrl);
+        copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+        return redirectResponse;
+      }
+
+      if (profileData.user_type !== "admin") {
+        await supabaseMiddlewareClient.auth.signOut();
+        const loginUrl = new URL(`/${currentLocale}/admin/login`, request.url);
+        const redirectResponse = NextResponse.redirect(loginUrl);
+        copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+        return redirectResponse;
+      }
+
+      if (!profileData.is_extended_profile_complete) {
+        const createAccountUrl = new URL(
+          `/${currentLocale}/admin/create-account`,
+          request.url
+        );
+        const redirectResponse = NextResponse.redirect(createAccountUrl);
+        copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+        return redirectResponse;
+      }
+
+      const dashboardUrl = new URL(
+        `/${currentLocale}/admin/dashboard`,
+        request.url
+      );
+      const redirectResponse = NextResponse.redirect(dashboardUrl);
+      copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+      return redirectResponse;
+    } catch (error) {
+      console.error("Error in admin redirect middleware:", error);
+      const loginUrl = new URL(`/${currentLocale}/admin/login`, request.url);
+      const redirectResponse = NextResponse.redirect(loginUrl);
+      copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+      return redirectResponse;
+    }
+  }
+  
+  if (!user) {
+    const isAllowedUnauthenticatedPath =
+      UNAUTHENTICATED_USER_ACCESSIBLE_PATHS.includes(pathWithoutLocale);
+    if (!isAllowedUnauthenticatedPath) {
+      const loginUrl = new URL(`/${currentLocale}/login`, request.url);
+      const redirectResponse = NextResponse.redirect(loginUrl);
+      copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+      return redirectResponse;
+    }
+    
+    return supabaseResponseAfterSessionUpdate;
+  }
+
+  if (pathWithoutLocale === "/login" || pathWithoutLocale === "/register") {
+    const redirectUrl = new URL(`/${currentLocale}/redirect`, request.url);
+    const redirectResponse = NextResponse.redirect(redirectUrl);
+    copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+    return redirectResponse;
+  }
+  
+  if (!user.email_confirmed_at) {
+    const confirmEmailAppPath = `/${currentLocale}/confirm-email`;
+    
+    if (
+      request.nextUrl.pathname !== confirmEmailAppPath &&
+      pathWithoutLocale !== "/auth/confirm"
+    ) {
+      const redirectResponse = NextResponse.redirect(
+        new URL(confirmEmailAppPath, request.url)
+      );
+      copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+      return redirectResponse;
+    }
+    
+    return supabaseResponseAfterSessionUpdate;
+  }
+  
+  const supabaseMiddlewareClient = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
+          );
+        },
+      },
+    }
+  );
+
+  try {
+    const { data: profileData, error: profileQueryError } =
+      await supabaseMiddlewareClient
+        .from("profiles")
+        .select("is_extended_profile_complete")
+        .eq("id", user.id)
+      .single();
+
+    const completeProfileAppPath = `/${currentLocale}/complete-profile`;
+    const defaultProfileRedirectUrl = new URL(
+      `/${currentLocale}/profile`,
+      request.url
+    );
+    
+    if (profileQueryError) {
+      if (pathWithoutLocale !== "/complete-profile") {
+        const redirectResponse = NextResponse.redirect(
+          new URL(completeProfileAppPath, request.url)
+        );
+        copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+        return redirectResponse;
+      }
+      return supabaseResponseAfterSessionUpdate;
+    }
+    
+    if (!profileData) {
+      if (pathWithoutLocale !== "/complete-profile") {
+        const redirectResponse = NextResponse.redirect(
+          new URL(completeProfileAppPath, request.url)
+        );
+        copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+        return redirectResponse;
+      }
+      return supabaseResponseAfterSessionUpdate;
+    }
+    
+    if (!profileData.is_extended_profile_complete) {
+      const isAllowedDuringProfileCompletion =
+        PROFILE_COMPLETION_ACCESSIBLE_PATHS.includes(pathWithoutLocale);
+      if (!isAllowedDuringProfileCompletion) {
+        const redirectResponse = NextResponse.redirect(
+          new URL(completeProfileAppPath, request.url)
+        );
+        copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+        return redirectResponse;
+      }
+      return supabaseResponseAfterSessionUpdate;
+    }
+
+    if (pathWithoutLocale === "/complete-profile") {
+      const redirectResponse = NextResponse.redirect(defaultProfileRedirectUrl);
+      copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+      return redirectResponse;
+    }
+    
+    return supabaseResponseAfterSessionUpdate;
+  } catch {
+    return supabaseResponseAfterSessionUpdate;
+  }
+
+  // Admin login/register should redirect to admin redirect if user is already authenticated
+  if (pathWithoutLocale === "/admin/login" && user) {
+    const redirectUrl = new URL(
+      `/${currentLocale}/admin/redirect`,
+      request.url
+    );
+    const redirectResponse = NextResponse.redirect(redirectUrl);
+    copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+    return redirectResponse;
+  }
+
+  // Check if user is trying to access admin paths but is not an admin
+  if (user && pathWithoutLocale.startsWith('/admin/') && 
+      !UNAUTHENTICATED_USER_ACCESSIBLE_PATHS.includes(pathWithoutLocale)) {
+    try {
       const supabaseMiddlewareClient = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -89,160 +351,39 @@ export async function middleware(request: NextRequest) {
         }
       );
       
-      const { data: profileData, error: profileQueryError } = await supabaseMiddlewareClient
+      // Since we've checked that user is not null above, we can use non-null assertion (!) here
+      const { data: profileData } = await supabaseMiddlewareClient
         .from('profiles')
-        .select('is_extended_profile_complete')
-        .eq('id', user.id)
+        .select('user_type')
+        .eq('id', user!.id)
         .single();
 
-      if (profileQueryError || !profileData) {
-        const completeProfileUrl = new URL(`/${currentLocale}/complete-profile`, request.url);
-        const redirectResponse = NextResponse.redirect(completeProfileUrl);
+      // Handle the profileData potentially being null with proper type checking
+      if (!profileData || ((profileData as { user_type?: string })?.user_type !== 'admin')) {
+        // Not an admin, redirect to regular profile
+        const profileUrl = new URL(`/${currentLocale}/profile`, request.url);
+        const redirectResponse = NextResponse.redirect(profileUrl);
         copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
         return redirectResponse;
       }
-      
-      
-      if (!profileData.is_extended_profile_complete) {
-        const completeProfileUrl = new URL(`/${currentLocale}/complete-profile`, request.url);
-        const redirectResponse = NextResponse.redirect(completeProfileUrl);
-        copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
-        return redirectResponse;
-      }
-      
-      
-      const profileUrl = new URL(`/${currentLocale}/profile`, request.url);
-      const redirectResponse = NextResponse.redirect(profileUrl);
-      copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
-      return redirectResponse;
-    } catch  {
-            const completeProfileUrl = new URL(`/${currentLocale}/complete-profile`, request.url);
-      const redirectResponse = NextResponse.redirect(completeProfileUrl);
-      copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
-      return redirectResponse;
-    }
-  }
-
-  
-  if (!user) {
-    
-    const isAllowedUnauthenticatedPath = UNAUTHENTICATED_USER_ACCESSIBLE_PATHS.includes(pathWithoutLocale);
-    if (!isAllowedUnauthenticatedPath) {
+    } catch {
+      // Error checking admin status, redirect to login for safety
       const loginUrl = new URL(`/${currentLocale}/login`, request.url);
       const redirectResponse = NextResponse.redirect(loginUrl);
       copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
       return redirectResponse;
     }
-    
-    
-    return supabaseResponseAfterSessionUpdate;
-  }
-
-  
-
-  
-  if (pathWithoutLocale === '/login' || pathWithoutLocale === '/register') {
-    const redirectUrl = new URL(`/${currentLocale}/redirect`, request.url);
-    const redirectResponse = NextResponse.redirect(redirectUrl);
-    copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
-    return redirectResponse;
-  }
-
-  
-  if (!user.email_confirmed_at) {
-    
-    const confirmEmailAppPath = `/${currentLocale}/confirm-email`;
-    
-    if (request.nextUrl.pathname !== confirmEmailAppPath && pathWithoutLocale !== '/auth/confirm') {
-      const redirectResponse = NextResponse.redirect(new URL(confirmEmailAppPath, request.url));
-      copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
-      return redirectResponse;
-    }
-    
-    return supabaseResponseAfterSessionUpdate;
-  }
-
-  
-  
-  
-  const supabaseMiddlewareClient = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() { return request.cookies.getAll(); },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-        },
-      },
-    }
-  );
-
-  try {
-    const { data: profileData, error: profileQueryError } = await supabaseMiddlewareClient
-      .from('profiles')
-      .select('is_extended_profile_complete')
-      .eq('id', user.id)
-      .single();
-
-    const completeProfileAppPath = `/${currentLocale}/complete-profile`;
-    const defaultProfileRedirectUrl = new URL(`/${currentLocale}/profile`, request.url);
-
-    
-    if (profileQueryError) {
-      if (pathWithoutLocale !== '/complete-profile') {
-        const redirectResponse = NextResponse.redirect(new URL(completeProfileAppPath, request.url));
-        copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
-        return redirectResponse;
-      }
-      return supabaseResponseAfterSessionUpdate;
-    }
-
-    
-    if (!profileData) {
-      if (pathWithoutLocale !== '/complete-profile') {
-        const redirectResponse = NextResponse.redirect(new URL(completeProfileAppPath, request.url));
-        copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
-        return redirectResponse;
-      }
-      return supabaseResponseAfterSessionUpdate;
-    }
-
-    
-    if (!profileData.is_extended_profile_complete) {
-      const isAllowedDuringProfileCompletion = PROFILE_COMPLETION_ACCESSIBLE_PATHS.includes(pathWithoutLocale);
-      if (!isAllowedDuringProfileCompletion) {
-        const redirectResponse = NextResponse.redirect(new URL(completeProfileAppPath, request.url));
-        copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
-        return redirectResponse;
-      }
-      return supabaseResponseAfterSessionUpdate;
-    }
-
-    
-    if (pathWithoutLocale === '/complete-profile') {
-      const redirectResponse = NextResponse.redirect(defaultProfileRedirectUrl);
-      copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
-      return redirectResponse;
-    }
-    
-    
-    return supabaseResponseAfterSessionUpdate;
-  } catch  {
-    
-    return supabaseResponseAfterSessionUpdate;
   }
 }
 
-
 function copyAllCookies(source: NextResponse, destination: NextResponse) {
-  source.cookies.getAll().forEach(cookie => {
+  source.cookies.getAll().forEach((cookie) => {
     destination.cookies.set(cookie.name, cookie.value, cookie as CookieOptions);
   });
 }
 
 export const config = {
   matcher: [
-    '/((?!api|trpc|_next/static|_next/image|favicon.ico|healthz|readyz|robots.txt).*).',
+    "/((?!api|trpc|_next/static|_next/image|favicon.ico|healthz|readyz|robots.txt).*).",
   ],
 }; 

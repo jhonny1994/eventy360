@@ -131,11 +131,11 @@ export default function RedirectPage() {
   };
 
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center p-4">
+    <div className="flex h-screen w-full flex-col items-center justify-center p-6">
       {isLoading ? (
         <>
           <Spinner aria-label={t('redirecting')} size="xl" />
-          <p className="mt-4 text-lg">
+          <p className="mt-4 text-lg text-gray-700 dark:text-gray-300">
             {redirectSource === 'email_confirmation'
               ? t('emailConfirmedRedirecting')
               : t('redirecting')}...
@@ -143,10 +143,14 @@ export default function RedirectPage() {
         </>
       ) : (
         <>
-          <Alert color="failure" icon={HiOutlineExclamationCircle} className="mb-4 max-w-lg">
-            <span className="font-medium">{t('redirectFailed')}</span>
-            {error && <p className="mt-2">{error}</p>}
-            <p className="mt-2">{t('redirectFailedDescription')}</p>
+          <Alert color="failure" icon={HiOutlineExclamationCircle} className="mb-6 w-full max-w-lg">
+            <h3 className="text-lg font-medium">
+              {t('redirectFailedTitle') || t('redirectFailed')} 
+            </h3>
+            {error && <p className="mt-1 text-sm">{error}</p>}
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              {t('redirectFailedDescription') || "Please try again or return to the login page."}
+            </p>
           </Alert>
 
           {debugInfo && process.env.NODE_ENV === 'development' && (
@@ -158,11 +162,11 @@ export default function RedirectPage() {
             </Alert>
           )}
 
-          <div className="flex flex-col sm:flex-row gap-3 mt-4">
-            <Button onClick={handleManualRedirect} color="primary">
+          <div className="mt-4 flex w-full max-w-xs flex-col gap-3 sm:flex-row">
+            <Button onClick={handleManualRedirect} color="primary" fullSized>
               {t('tryAgain')}
             </Button>
-            <Button onClick={() => router.push('/login')} color="gray">
+            <Button onClick={() => router.push('/login')} color="gray" fullSized>
               {t('backToLogin')}
             </Button>
           </div>

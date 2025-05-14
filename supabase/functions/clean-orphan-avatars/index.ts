@@ -1,14 +1,25 @@
-import { serve } from "https://deno.land/std@0.203.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2";
+
 console.log("Function clean-orphan-avatars (v4 - CORS added) starting up...");
 // Standard CORS headers
 const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "*", // For production, restrict to specific domains
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Content-Type": "application/json"
 };
-serve(async (req) => {
+
+// Define the interface for storage bucket items
+interface StorageItem {
+  name: string;
+  id: string;
+  created_at: string;
+  updated_at: string;
+  last_accessed_at: string;
+  metadata: unknown;
+}
+
+Deno.serve(async (req: Request) => {
   // Handle OPTIONS preflight request
   if (req.method === "OPTIONS") {
     return new Response("ok", {
@@ -27,17 +38,14 @@ serve(async (req) => {
         }),
         {
           status: 500,
-          headers: {
-            ...CORS_HEADERS,
-            "Content-Type": "application/json",
-          },
+          headers: CORS_HEADERS,
         }
       );
     }
     const userSupabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
       global: {
         headers: {
-          Authorization: req.headers.get("Authorization"),
+          Authorization: req.headers.get("Authorization") ?? "",
         },
       },
     });
@@ -56,10 +64,7 @@ serve(async (req) => {
         }),
         {
           status: 401,
-          headers: {
-            ...CORS_HEADERS,
-            "Content-Type": "application/json",
-          },
+          headers: CORS_HEADERS,
         }
       );
     }
@@ -77,18 +82,15 @@ serve(async (req) => {
       } catch (jsonError) {
         console.error(
           "Error parsing JSON body or missing/invalid newAvatarPath:",
-          jsonError.message
+          jsonError instanceof Error ? jsonError.message : String(jsonError)
         );
         return new Response(
           JSON.stringify({
-            error: `Invalid request body: ${jsonError.message}`,
+            error: `Invalid request body: ${jsonError instanceof Error ? jsonError.message : String(jsonError)}`,
           }),
           {
             status: 400,
-            headers: {
-              ...CORS_HEADERS,
-              "Content-Type": "application/json",
-            },
+            headers: CORS_HEADERS,
           }
         );
       }
@@ -100,10 +102,7 @@ serve(async (req) => {
         }),
         {
           status: 400,
-          headers: {
-            ...CORS_HEADERS,
-            "Content-Type": "application/json",
-          },
+          headers: CORS_HEADERS,
         }
       );
     }
@@ -126,10 +125,7 @@ serve(async (req) => {
         }),
         {
           status: 403,
-          headers: {
-            ...CORS_HEADERS,
-            "Content-Type": "application/json",
-          },
+          headers: CORS_HEADERS,
         }
       );
     }
@@ -156,10 +152,7 @@ serve(async (req) => {
         }),
         {
           status: 500,
-          headers: {
-            ...CORS_HEADERS,
-            "Content-Type": "application/json",
-          },
+          headers: CORS_HEADERS,
         }
       );
     }
@@ -173,20 +166,17 @@ serve(async (req) => {
         }),
         {
           status: 200,
-          headers: {
-            ...CORS_HEADERS,
-            "Content-Type": "application/json",
-          },
+          headers: CORS_HEADERS,
         }
       );
     }
     console.log(
       `Found ${filesInBucket.length} file(s) with prefix "${searchPrefix}":`,
-      filesInBucket.map((f) => f.name)
+      filesInBucket.map((f: StorageItem) => f.name)
     );
     const filesToDelete = filesInBucket
-      .filter((file) => file.name !== newAvatarFileName)
-      .map((file) => file.name);
+      .filter((file: StorageItem) => file.name !== newAvatarFileName)
+      .map((file: StorageItem) => file.name);
     if (filesToDelete.length === 0) {
       console.log(
         `No old avatars to delete. The only file present matching the prefix is the new one or matches its name.`
@@ -197,10 +187,7 @@ serve(async (req) => {
         }),
         {
           status: 200,
-          headers: {
-            ...CORS_HEADERS,
-            "Content-Type": "application/json",
-          },
+          headers: CORS_HEADERS,
         }
       );
     }
@@ -218,10 +205,7 @@ serve(async (req) => {
         }),
         {
           status: 500,
-          headers: {
-            ...CORS_HEADERS,
-            "Content-Type": "application/json",
-          },
+          headers: CORS_HEADERS,
         }
       );
     }
@@ -233,28 +217,22 @@ serve(async (req) => {
       }),
       {
         status: 200,
-        headers: {
-          ...CORS_HEADERS,
-          "Content-Type": "application/json",
-        },
+        headers: CORS_HEADERS,
       }
     );
-  } catch (e) {
+  } catch (error) {
     console.error(
       "Unexpected error in Edge Function execution:",
-      e.message,
-      e.stack
+      error instanceof Error ? error.message : String(error),
+      error instanceof Error ? error.stack : ''
     );
     return new Response(
       JSON.stringify({
-        error: e.message || "Internal Server Error",
+        error: error instanceof Error ? error.message : "Internal Server Error",
       }),
       {
         status: 500,
-        headers: {
-          ...CORS_HEADERS,
-          "Content-Type": "application/json",
-        },
+        headers: CORS_HEADERS,
       }
     );
   }
