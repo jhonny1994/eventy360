@@ -7,7 +7,7 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 const AUTH_SYSTEM_PATHS = [
   "/auth/callback",
   "/auth/confirm",
-  "/admin/auth/callback",
+  "/admin/auth/magic-callback",
 ];
 
 const UNAUTHENTICATED_USER_ACCESSIBLE_PATHS = [

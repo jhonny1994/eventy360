@@ -250,7 +250,7 @@ Deno.serve(async (req: Request) => {
         // Example: https://yourdomain.com/api/auth/callback (if your route.ts is served at /api/auth/callback)
         // The fallback below is for local development and assumes the server-side callback is at /admin/auth/callback
         redirectTo: Deno.env.get("ADMIN_INVITE_REDIRECT_URL") || 
-                   "/admin/auth/callback", // Fallback to the new server-side callback path (relative)
+                   "/admin/auth/magic-callback", // Using the working magic-callback path
       },
     });
 

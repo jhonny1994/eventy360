@@ -569,7 +569,7 @@
     {
       "id": "f84b508e-7494-4361-80d5-d1d05605cd44",
       "name": "Phase 1.D.3: Implement Initial Notification Queueing Logic (Including Admin Invitation)",
-      "description": "Implement the backend logic (DB triggers or direct inserts in RPCs/Edge Functions) to add tasks to the `notification_queue` table for the initial set of events: User `is_verified` status changes (award/remove badge), manual payment recorded (by admin, status pending), subscription successfully activated (after payment verification), trial ending soon (from `check_subscriptions_expiry`), trial expired (from `check_subscriptions_expiry`), **and Admin Invitation**. The queue task should reference the correct `email_template_key` and recipient details.",
+      "description": "Implement the backend logic (DB triggers or direct inserts in RPCs/Edge Functions) to add tasks to the `notification_queue` table for the initial set of events: User `is_verified` status changes (award/remove badge), manual payment recorded (by admin, status pending), subscription successfully activated (after payment verification), trial ending soon (from `check_subscriptions_expiry`), trial expired (from `check_subscriptions_expiry`). Admin Invitation email queueing is COMPLETE as of user's manual implementation of `invite-admin` function. The queue task should reference the correct `email_template_key` and recipient details for the remaining events.",
       "status": "待處理",
       "dependencies": [
         {
@@ -589,10 +589,11 @@
         }
       ],
       "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-13T14:06:29.406Z",
+      "updatedAt": "2025-05-14T17:03:39.914Z",
       "implementationGuide": "1. Modify `manage_user_verification_badge` RPC (Task 1.B.3) to insert into `notification_queue` (template keys: `user_verified_badge_awarded`, `user_verified_badge_removed`).\n2. Modify `record_manual_payment` RPC (Task 1.B.5) to insert into `notification_queue` if payment is 'pending' (template key: `payment_pending_user_notification`).\n3. Modify `handle_payment_verification` trigger (Task 1.B.7) to insert into `notification_queue` upon successful subscription activation (template key: `subscription_activated_user_notification`).\n4. Ensure `check_subscriptions_expiry` function (Task 1.C.2) correctly inserts tasks for `trial_ending_soon_user_notification` and `trial_expired_user_notification`.",
       "verificationCriteria": "Notification queue entries are correctly created for all specified events, including admin invitation, with appropriate template keys and recipient data.",
-      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
+      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount.",
+      "notes": "Admin Invitation email queueing part is completed by the user."
     },
     {
       "id": "ff192d5f-bd50-40dc-8345-40df0c71b973",
