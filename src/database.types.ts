@@ -459,6 +459,7 @@ export type Database = {
           id: number
           last_attempt_at: string | null
           last_error: string | null
+          notification_type: Database["public"]["Enums"]["notification_type_enum"]
           payload_data: Json | null
           process_after: string | null
           recipient_profile_id: string | null
@@ -472,6 +473,7 @@ export type Database = {
           id?: number
           last_attempt_at?: string | null
           last_error?: string | null
+          notification_type?: Database["public"]["Enums"]["notification_type_enum"]
           payload_data?: Json | null
           process_after?: string | null
           recipient_profile_id?: string | null
@@ -485,6 +487,7 @@ export type Database = {
           id?: number
           last_attempt_at?: string | null
           last_error?: string | null
+          notification_type?: Database["public"]["Enums"]["notification_type_enum"]
           payload_data?: Json | null
           process_after?: string | null
           recipient_profile_id?: string | null
@@ -928,13 +931,88 @@ export type Database = {
         Args: { period: Database["public"]["Enums"]["billing_period_enum"] }
         Returns: unknown
       }
+      bytea_to_text: {
+        Args: { data: string }
+        Returns: string
+      }
+      check_subscriptions_expiry: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       complete_my_profile: {
         Args: { profile_data: Json }
         Returns: undefined
       }
+      http: {
+        Args: { request: Database["public"]["CompositeTypes"]["http_request"] }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_delete: {
+        Args:
+          | { uri: string }
+          | { uri: string; content: string; content_type: string }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_get: {
+        Args: { uri: string } | { uri: string; data: Json }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_head: {
+        Args: { uri: string }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_header: {
+        Args: { field: string; value: string }
+        Returns: Database["public"]["CompositeTypes"]["http_header"]
+      }
+      http_list_curlopt: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          curlopt: string
+          value: string
+        }[]
+      }
+      http_patch: {
+        Args: { uri: string; content: string; content_type: string }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_post: {
+        Args:
+          | { uri: string; content: string; content_type: string }
+          | { uri: string; data: Json }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_put: {
+        Args: { uri: string; content: string; content_type: string }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_reset_curlopt: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      http_set_curlopt: {
+        Args: { curlopt: string; value: string }
+        Returns: boolean
+      }
       is_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean
+      }
+      queue_trial_expiry_notification: {
+        Args: {
+          profile_id: string
+          days_remaining: number
+          template_key: string
+        }
+        Returns: undefined
+      }
+      text_to_bytea: {
+        Args: { data: string }
+        Returns: string
+      }
+      urlencode: {
+        Args: { data: Json } | { string: string } | { string: string }
+        Returns: string
       }
     }
     Enums: {
@@ -968,6 +1046,7 @@ export type Database = {
         | "research_laboratory"
         | "activities_service"
         | "research_team"
+      notification_type_enum: "immediate" | "scheduled"
       payment_method_enum: "bank" | "check" | "cash" | "online"
       payment_status_enum: "pending_verification" | "verified" | "rejected"
       queue_status_enum: "pending" | "processing" | "completed" | "failed"
@@ -985,7 +1064,23 @@ export type Database = {
       user_type_enum: "researcher" | "organizer" | "admin"
     }
     CompositeTypes: {
-      [_ in never]: never
+      http_header: {
+        field: string | null
+        value: string | null
+      }
+      http_request: {
+        method: unknown | null
+        uri: string | null
+        headers: Database["public"]["CompositeTypes"]["http_header"][] | null
+        content_type: string | null
+        content: string | null
+      }
+      http_response: {
+        status: number | null
+        content_type: string | null
+        headers: Database["public"]["CompositeTypes"]["http_header"][] | null
+        content: string | null
+      }
     }
   }
 }
@@ -1131,6 +1226,7 @@ export const Constants = {
         "activities_service",
         "research_team",
       ],
+      notification_type_enum: ["immediate", "scheduled"],
       payment_method_enum: ["bank", "check", "cash", "online"],
       payment_status_enum: ["pending_verification", "verified", "rejected"],
       queue_status_enum: ["pending", "processing", "completed", "failed"],

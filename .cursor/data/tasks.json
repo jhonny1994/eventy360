@@ -347,7 +347,7 @@
       "id": "1c24a48a-aaf1-405d-8934-fd946346a721",
       "name": "Phase 1.B.4: Admin UI - User Management (View & Manage Badge)",
       "description": "Create an Admin UI page for User Management (`/admin/users`). Display a list of users (from `profiles` table) with pagination. For each user, show their current `is_verified` status and provide a button/toggle to call the `manage_user_verification_badge` RPC/Edge function to change this status. Display feedback (success/error toasts).",
-      "status": "待處理",
+      "status": "進行中",
       "dependencies": [
         {
           "taskId": "b16e689b-7bb0-4661-a441-2e5dc01eb2cf"
@@ -357,7 +357,7 @@
         }
       ],
       "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-11T19:00:44.194Z",
+      "updatedAt": "2025-05-15T09:39:55.162Z",
       "relatedFiles": [
         {
           "path": "src/app/[locale]/admin/users/page.tsx",
