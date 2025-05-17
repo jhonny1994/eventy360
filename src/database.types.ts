@@ -898,6 +898,63 @@ export type Database = {
         }
         Relationships: []
       }
+      verification_requests: {
+        Row: {
+          created_at: string
+          document_path: string
+          id: string
+          notes: string | null
+          processed_at: string | null
+          processed_by: string | null
+          rejection_reason: string | null
+          status: Database["public"]["Enums"]["verification_request_status"]
+          submitted_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          document_path: string
+          id?: string
+          notes?: string | null
+          processed_at?: string | null
+          processed_by?: string | null
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["verification_request_status"]
+          submitted_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          document_path?: string
+          id?: string
+          notes?: string | null
+          processed_at?: string | null
+          processed_by?: string | null
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["verification_request_status"]
+          submitted_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verification_requests_processed_by_fkey"
+            columns: ["processed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "verification_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wilayas: {
         Row: {
           created_at: string
@@ -924,7 +981,113 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      admin_verification_requests: {
+        Row: {
+          admin_name: string | null
+          days_pending: number | null
+          document_path: string | null
+          id: string | null
+          is_verified: boolean | null
+          notes: string | null
+          processed_at: string | null
+          processed_by: string | null
+          profile_picture_url: string | null
+          rejection_reason: string | null
+          status:
+            | Database["public"]["Enums"]["verification_request_status"]
+            | null
+          status_label: string | null
+          submitted_at: string | null
+          user_id: string | null
+          user_name: string | null
+          user_type: Database["public"]["Enums"]["user_type_enum"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verification_requests_processed_by_fkey"
+            columns: ["processed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "verification_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      latest_verification_requests: {
+        Row: {
+          created_at: string | null
+          document_path: string | null
+          id: string | null
+          notes: string | null
+          processed_at: string | null
+          processed_by: string | null
+          rejection_reason: string | null
+          status:
+            | Database["public"]["Enums"]["verification_request_status"]
+            | null
+          submitted_at: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verification_requests_processed_by_fkey"
+            columns: ["processed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "verification_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      verification_request_details: {
+        Row: {
+          admin_name: string | null
+          document_path: string | null
+          id: string | null
+          is_verified: boolean | null
+          notes: string | null
+          processed_at: string | null
+          processed_by: string | null
+          profile_picture_url: string | null
+          rejection_reason: string | null
+          status:
+            | Database["public"]["Enums"]["verification_request_status"]
+            | null
+          submitted_at: string | null
+          user_id: string | null
+          user_name: string | null
+          user_type: Database["public"]["Enums"]["user_type_enum"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verification_requests_processed_by_fkey"
+            columns: ["processed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "verification_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       billing_period_to_interval: {
@@ -1029,6 +1192,7 @@ export type Database = {
         | "admin_topic_update"
         | "admin_topic_delete"
         | "admin_email_template_edit"
+        | "processed_verification_request"
       billing_period_enum: "monthly" | "quarterly" | "biannual" | "annual"
       email_log_status_enum: "attempted" | "sent" | "failed" | "retry_attempted"
       event_format_enum: "physical" | "virtual" | "hybrid"
@@ -1062,6 +1226,7 @@ export type Database = {
         | "paid_organizer"
         | "trial"
       user_type_enum: "researcher" | "organizer" | "admin"
+      verification_request_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
       http_header: {
@@ -1206,6 +1371,7 @@ export const Constants = {
         "admin_topic_update",
         "admin_topic_delete",
         "admin_email_template_edit",
+        "processed_verification_request",
       ],
       billing_period_enum: ["monthly", "quarterly", "biannual", "annual"],
       email_log_status_enum: ["attempted", "sent", "failed", "retry_attempted"],
@@ -1244,6 +1410,7 @@ export const Constants = {
         "trial",
       ],
       user_type_enum: ["researcher", "organizer", "admin"],
+      verification_request_status: ["pending", "approved", "rejected"],
     },
   },
 } as const

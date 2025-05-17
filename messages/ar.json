@@ -285,6 +285,23 @@
       "statusVerified": "تم التحقق",
       "statusPendingVerification": "في انتظار التحقق",
       "statusRejected": "مرفوض"
+    },
+    "VerificationDocument": {
+      "uploadTitle": "رفع وثيقة التوثيق",
+      "uploadDescription": "يرجى رفع مستند رسمي يثبت هويتكم أو وثيقة رسمية توضح انتمائكم للمؤسسة التي تمثلونها. سيتم مراجعة الطلب من قبل المسؤولين.",
+      "fileTypeError": "صيغة الملف غير مدعومة. يرجى استخدام ملفات PDF، JPG، أو PNG فقط.",
+      "fileSizeError": "حجم الملف كبير جداً. الحد الأقصى هو {maxSize} ميجابايت.",
+      "noFileSelectedError": "لم يتم اختيار ملف للرفع.",
+      "authError": "حدث خطأ في المصادقة. يرجى تسجيل الدخول مرة أخرى.",
+      "uploadError": "حدث خطأ أثناء رفع المستند. يرجى المحاولة مرة أخرى.",
+      "uploadSuccess": "تم رفع المستند بنجاح! سيتم مراجعة طلب التوثيق في أقرب وقت.",
+      "fileRequirements": "المستندات المدعومة: PDF، JPG، PNG (الحد الأقصى: 10 ميجابايت)",
+      "uploading": "جارٍ الرفع...",
+      "uploadButton": "رفع المستند",
+      "alreadyVerified": "حساب موثّق",
+      "verifiedDescription": "تم توثيق حسابكم بالفعل. شكراً لتقديم المستندات اللازمة.",
+      "pendingVerification": "طلب التوثيق قيد المراجعة",
+      "pendingDescription": "تم استلام طلب التوثيق الخاص بكم وهو قيد المراجعة حالياً. سيتم إعلامكم عند الانتهاء من المراجعة."
     }
   },
   "Enums": {
@@ -588,7 +605,8 @@
         "topics": "المواضيع",
         "emailTemplates": "قوالب البريد الإلكتروني",
         "emailLogs": "سجلات البريد الإلكتروني",
-        "logout": "تسجيل الخروج"
+        "logout": "تسجيل الخروج",
+        "verifications": "طلبات التوثيق"
       }
     },
     "Page": {
@@ -638,6 +656,55 @@
           "placeholder": "سيتم عرض جدول بأحدث المدفوعات هنا."
         }
       }
+    }
+  },
+  "AdminVerifications": {
+    "title": "إدارة طلبات التوثيق",
+    "pendingRequestsCount": "{count, plural, zero {لا توجد طلبات توثيق في انتظار المراجعة} one {طلب واحد ينتظر المراجعة} two {طلبان ينتظران المراجعة} few {# طلبات تنتظر المراجعة} many {# طلباً ينتظر المراجعة} other {# طلب ينتظر المراجعة}}",
+    "fetchError": "حدث خطأ أثناء جلب طلبات التوثيق:",
+    "noRequests": "لا توجد طلبات توثيق لعرضها.",
+    "status": {
+      "pending": "قيد الانتظار",
+      "approved": "تمت الموافقة",
+      "rejected": "مرفوض"
+    },
+    "table": {
+      "user": "المستخدم",
+      "userType": "نوع المستخدم",
+      "submittedAt": "تاريخ التقديم",
+      "status": "الحالة",
+      "actions": "الإجراءات"
+    },
+    "actions": {
+      "view": "عرض",
+      "approve": "قبول",
+      "reject": "رفض"
+    },
+    "userTypes": {
+      "researcher": "باحث",
+      "organizer": "منظم",
+      "admin": "مسؤول"
+    },
+    "details": {
+      "title": "تفاصيل طلب التوثيق",
+      "userInfo": "معلومات المستخدم",
+      "documentInfo": "معلومات الوثيقة",
+      "adminActions": "إجراءات المسؤول",
+      "back": "العودة",
+      "approveRequest": "الموافقة على الطلب",
+      "rejectRequest": "رفض الطلب",
+      "rejectReason": "سبب الرفض",
+      "rejectReasonPlaceholder": "يرجى ذكر سبب رفض هذا الطلب...",
+      "adminNotes": "ملاحظات المسؤول",
+      "adminNotesPlaceholder": "أي ملاحظات إضافية تتعلق بهذا الطلب...",
+      "submit": "إرسال",
+      "cancel": "إلغاء",
+      "loadingDocument": "جارٍ تحميل المستند...",
+      "documentNotFound": "تعذر العثور على المستند",
+      "processingStatus": "حالة المعالجة",
+      "processedBy": "تمت المعالجة بواسطة",
+      "processedAt": "تاريخ المعالجة",
+      "rejectionReason": "سبب الرفض"
     }
   }
 }
