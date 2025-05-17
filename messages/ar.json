@@ -574,5 +574,70 @@
       "unexpectedState": "حالة غير متوقعة. يرجى المحاولة مرة أخرى.",
       "unexpectedErrorTitle": "خطأ غير متوقع في معالجة الرابط"
     }
+  },
+  "AdminDashboard": {
+    "Layout": {
+      "toggleSidebar": "تبديل القائمة الجانبية",
+      "siteName": "Eventy360 لوحة تحكم المسؤول",
+      "sidebar": {
+        "dashboard": "لوحة التحكم",
+        "users": "المستخدمون",
+        "payments": "المدفوعات",
+        "events": "الفعاليات",
+        "submissions": "المشاركات",
+        "topics": "المواضيع",
+        "emailTemplates": "قوالب البريد الإلكتروني",
+        "emailLogs": "سجلات البريد الإلكتروني",
+        "logout": "تسجيل الخروج"
+      }
+    },
+    "Page": {
+      "title": "نظرة عامة على لوحة التحكم",
+      "metrics": {
+        "researcherCount": {
+          "title": "عدد الباحثين",
+          "unit": "باحث"
+        },
+        "organizerCount": {
+          "title": "عدد المنظمين",
+          "unit": "منظم"
+        },
+        "totalEvents": {
+          "title": "إجمالي الفعاليات",
+          "unit": "فعالية"
+        },
+        "pendingPayments": {
+          "title": "مدفوعات تحتاج للتأكيد",
+          "unit": "دفعة"
+        },
+        "pendingVerification": {
+          "title": "طلبات التحقق المعلقة",
+          "unit": "طلب"
+        },
+        "totalSubmittedFiles": {
+          "title": "إجمالي الملفات المرفوعة",
+          "unit": "ملف"
+        },
+        "since": "منذ",
+        "lastWeek": "الأسبوع الماضي",
+        "lastMonth": "الشهر الماضي"
+      },
+      "recent": {
+        "recentUsers": {
+          "title": "أحدث المستخدمين",
+          "placeholder": "سيتم عرض جدول بأحدث المستخدمين هنا.",
+          "tableHeaders": {
+            "userName": "اسم المستخدم",
+            "email": "البريد الإلكتروني",
+            "joinedAt": "تاريخ الانضمام",
+            "edit": "تعديل"
+          }
+        },
+        "recentPayments": {
+          "title": "أحدث المدفوعات",
+          "placeholder": "سيتم عرض جدول بأحدث المدفوعات هنا."
+        }
+      }
+    }
   }
 }
