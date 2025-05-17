@@ -8,16 +8,26 @@ import {
   HiCollection,
   HiDocumentDuplicate,
 } from 'react-icons/hi';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import type { Database } from '@/database.types';
+import { createServerSupabaseClient } from '@/utils/supabase/server';
+
+// Define enum types based on your database schema
+enum UserType {
+  RESEARCHER = 'researcher',
+  ORGANIZER = 'organizer',
+  ADMIN = 'admin'
+}
+
+enum PaymentStatus {
+  PENDING_VERIFICATION = 'pending_verification',
+  VERIFIED = 'verified',
+  REJECTED = 'rejected'
+}
 
 export default async function AdminDashboardPage() {
   const t = await getTranslations('AdminDashboard.Page');
   
-  // Initialize Supabase client with awaited cookies
-  const cookieStore = cookies();
-  const supabase = createServerComponentClient<Database>({ cookies: () => cookieStore });
+  // Initialize Supabase client using the SSR client
+  const supabase = await createServerSupabaseClient();
   
   // Fetch metrics from database
   const [
@@ -32,19 +42,19 @@ export default async function AdminDashboardPage() {
     supabase
       .from('profiles')
       .select('id', { count: 'exact', head: true })
-      .eq('user_type', 'researcher'),
+      .eq('user_type', UserType.RESEARCHER),
     
     // Get organizer count
     supabase
       .from('profiles')
       .select('id', { count: 'exact', head: true })
-      .eq('user_type', 'organizer'),
+      .eq('user_type', UserType.ORGANIZER),
     
     // Get pending payments count
     supabase
       .from('payments')
       .select('id', { count: 'exact', head: true })
-      .eq('status', 'pending_verification'),
+      .eq('status', PaymentStatus.PENDING_VERIFICATION),
     
     // Get unverified users count (pending verification)
     supabase

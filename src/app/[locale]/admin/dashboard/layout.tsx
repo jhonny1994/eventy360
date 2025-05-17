@@ -1,42 +1,44 @@
 import React from 'react';
 import { getTranslations } from 'next-intl/server';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import AdminNavbar from '@/components/admin/AdminNavbar';
-import type { Database } from '@/database.types';
+import { createServerSupabaseClient } from '@/utils/supabase/server';
 
-export default async function AdminDashboardLayout({
-  children,
-  params
-}: {
-  children: React.ReactNode;
-  params: { locale: string };
-}) {
+export default async function AdminDashboardLayout(
+  props: {
+    children: React.ReactNode;
+    params: Promise<{ locale: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   // Get translations using the locale from params
   const t = await getTranslations('AdminDashboard.Layout');
-  
+
   // Get the locale after translations to ensure params is resolved
   const locale = params.locale;
-  
-  // Initialize Supabase client with awaited cookies
-  const cookieStore = cookies();
-  const supabase = createServerComponentClient<Database>({ cookies: () => cookieStore });
-  
+
+  // Initialize Supabase client using the SSR client
+  const supabase = await createServerSupabaseClient();
+
   // Get authenticated user
-  const { data: { session } } = await supabase.auth.getSession();
-  const userId = session?.user.id;
-  
+  const { data } = await supabase.auth.getUser();
+  const userId = data?.user?.id;
+
   // Fetch admin profile
   let adminName = 'Admin'; // Default fallback
   if (userId) {
-    const { data: adminProfile } = await supabase
+    const { data: adminProfile, error } = await supabase
       .from('admin_profiles')
       .select('name')
       .eq('profile_id', userId)
       .single();
     
-    if (adminProfile?.name) {
+    if (adminProfile && !error) {
       adminName = adminProfile.name;
     }
   }

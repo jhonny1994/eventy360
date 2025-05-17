@@ -1,14 +1,20 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 
-export async function GET(request: NextRequest, { params: { locale } }: { params: { locale: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
 
-  
-  
+
+
   const targetRedirectUrl = `${origin}/${locale}/redirect`;
-  const response = NextResponse.redirect(targetRedirectUrl, 303); 
+  const response = NextResponse.redirect(targetRedirectUrl, 303);
 
   if (code) {
     const supabase = createServerClient(
@@ -52,10 +58,10 @@ export async function GET(request: NextRequest, { params: { locale } }: { params
     return response;
   }
 
-  
+
   const url = new URL(targetRedirectUrl);
   url.searchParams.set('error', 'auth_callback_missing_code');
-  
+
   response.headers.set('Location', url.toString());
   return response;
 } 
