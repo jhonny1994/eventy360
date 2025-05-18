@@ -37,13 +37,14 @@ interface AdminSidebarProps {
 
 export default function AdminSidebar({ translations, locale }: AdminSidebarProps) {
   const pathname = usePathname();
-  const addLocaleToPath = (path: string) => `/${locale}${path}`;
+  // Generate URLs without the route group name
+  const addLocaleToPath = (path: string) => `/${locale}/admin${path}`;
 
   // Helper function to check if the current path matches a given route
   const isActive = (route: string): boolean => {
-    const fullPath = addLocaleToPath(route);
+    const fullPathForMatching = `/${locale}/admin${route}`;
     // Check if the current path starts with the route (to handle nested routes)
-    return pathname === fullPath || pathname.startsWith(`${fullPath}/`);
+    return pathname === fullPathForMatching || pathname.startsWith(`${fullPathForMatching}/`);
   };
   
   return (
@@ -54,70 +55,70 @@ export default function AdminSidebar({ translations, locale }: AdminSidebarProps
     >
       <SidebarItemGroup>
         <SidebarItem 
-          href={addLocaleToPath('/admin/dashboard')} 
+          href={addLocaleToPath('/dashboard')} 
           icon={HiChartPie}
-          active={isActive('/admin/dashboard')}
+          active={isActive('/dashboard')}
         >
           {translations.dashboard}
         </SidebarItem>
         <SidebarItem 
-          href={addLocaleToPath('/admin/users')}
+          href={addLocaleToPath('/users')}
           icon={HiUsers}
-          active={isActive('/admin/users')}
+          active={isActive('/users')}
         >
           {translations.users}
         </SidebarItem>
         <SidebarItem 
-          href={addLocaleToPath('/admin/verifications')}
+          href={addLocaleToPath('/verifications')}
           icon={HiShieldCheck}
-          active={isActive('/admin/verifications')}
+          active={isActive('/verifications')}
         >
           {translations.verifications}
         </SidebarItem>
         <SidebarItem 
-          href={addLocaleToPath('/admin/payments')}
+          href={addLocaleToPath('/payments')}
           icon={HiCash}
-          active={isActive('/admin/payments')}
+          active={isActive('/payments')}
         >
           {translations.payments}
         </SidebarItem>
         <SidebarItem 
-          href={addLocaleToPath('/admin/events')}
+          href={addLocaleToPath('/events')}
           icon={HiCollection}
-          active={isActive('/admin/events')}
+          active={isActive('/events')}
         >
           {translations.events}
         </SidebarItem>
         <SidebarItem 
-          href={addLocaleToPath('/admin/submissions')}
+          href={addLocaleToPath('/submissions')}
           icon={HiDocumentText}
-          active={isActive('/admin/submissions')}
+          active={isActive('/submissions')}
         >
           {translations.submissions}
         </SidebarItem>
         <SidebarItem 
-          href={addLocaleToPath('/admin/topics')}
+          href={addLocaleToPath('/topics')}
           icon={HiTag}
-          active={isActive('/admin/topics')}
+          active={isActive('/topics')}
         >
           {translations.topics}
         </SidebarItem>
         <SidebarItem 
-          href={addLocaleToPath('/admin/email-templates')}
+          href={addLocaleToPath('/email-templates')}
           icon={HiMail}
-          active={isActive('/admin/email-templates')}
+          active={isActive('/email-templates')}
         >
           {translations.emailTemplates}
         </SidebarItem>
         <SidebarItem 
-          href={addLocaleToPath('/admin/email-logs')}
+          href={addLocaleToPath('/email-logs')}
           icon={HiClipboardList}
-          active={isActive('/admin/email-logs')}
+          active={isActive('/email-logs')}
         >
           {translations.emailLogs}
         </SidebarItem>
         <SidebarItem 
-          href={addLocaleToPath('/logout')}
+          href={`/${locale}/logout`}
           icon={HiLogout}
           active={isActive('/logout')}
         >

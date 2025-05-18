@@ -1,13 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from '@/i18n/navigation';
 import { useParams, useSearchParams } from 'next/navigation';
-import { Spinner, Alert, Button } from 'flowbite-react';
 import { useTranslations } from 'next-intl';
-import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { createClient } from '@/lib/supabase/client';
 import type { AuthError } from '@supabase/supabase-js';
+import { AuthLoadingState, AuthError as AuthErrorComponent } from '@/components/admin/auth';
 
 export default function AdminAuthCallbackPage() {
   const router = useRouter();
@@ -15,7 +14,6 @@ export default function AdminAuthCallbackPage() {
   const params = useParams();
   const locale = params.locale as string;
   const t = useTranslations('AdminAuth.CallbackPage');
-  const tCommon = useTranslations('Common');
   
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,22 +21,7 @@ export default function AdminAuthCallbackPage() {
   const [processedHash, setProcessedHash] = useState(false);
   const [attemptedMagicLinkAuth, setAttemptedMagicLinkAuth] = useState(false);
 
-  useEffect(() => {
-    if (processedHash || redirecting || attemptedMagicLinkAuth) return;
-    
-    const currentHash = window.location.hash;
-    const hasHash = currentHash && currentHash.length > 1;
-    const hasAccessTokenInHash = hasHash && currentHash.includes('access_token');
-
-    if (hasAccessTokenInHash) {
-      setAttemptedMagicLinkAuth(true);
-      handleMagicLinkAuth(currentHash);
-    } else {
-      setProcessedHash(true); 
-    }
-  }, [processedHash, redirecting, attemptedMagicLinkAuth, searchParams]);
-
-  const handleMagicLinkAuth = async (hash: string) => {
+  const handleMagicLinkAuth = useCallback(async (hash: string) => {
     setIsLoading(true); 
     setRedirecting(true); 
     try {
@@ -107,7 +90,22 @@ export default function AdminAuthCallbackPage() {
       setIsLoading(false);
       setRedirecting(false); 
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    if (processedHash || redirecting || attemptedMagicLinkAuth) return;
+    
+    const currentHash = window.location.hash;
+    const hasHash = currentHash && currentHash.length > 1;
+    const hasAccessTokenInHash = hasHash && currentHash.includes('access_token');
+
+    if (hasAccessTokenInHash) {
+      setAttemptedMagicLinkAuth(true);
+      handleMagicLinkAuth(currentHash);
+    } else {
+      setProcessedHash(true); 
+    }
+  }, [processedHash, redirecting, attemptedMagicLinkAuth, searchParams, handleMagicLinkAuth]);
 
   useEffect(() => {
     if (redirecting || attemptedMagicLinkAuth || !processedHash ) {
@@ -134,61 +132,35 @@ export default function AdminAuthCallbackPage() {
 
     router.replace(`/admin/redirect`);
 
-  }, [searchParams, redirecting, processedHash, attemptedMagicLinkAuth, locale]);
+  }, [searchParams, redirecting, processedHash, attemptedMagicLinkAuth, locale, router]);
 
 
   if (isLoading && !error) {
-    return (
-      <div className="flex h-screen w-full flex-col items-center justify-center p-6 text-center">
-        <Spinner aria-label={tCommon('loading')} size="xl" />
-        <p className="mt-4 text-lg text-gray-700 dark:text-gray-300">{t('processingAuthentication')}...</p>
-      </div>
-    );
+    return <AuthLoadingState message={t('processingAuthentication')} isFullScreen />;
   }
 
   if (error) {
     return (
-      <div className="flex h-screen w-full flex-col items-center justify-center p-6 text-center">
-        <Alert color="failure" icon={HiOutlineExclamationCircle} className="mb-6 w-full max-w-lg">
-          <h3 className="text-lg font-medium">
-            {t('errorTitle') || "Authentication Failed"}
-          </h3>
-          <p className="mt-1 text-sm">{error}</p>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            {t('genericErrorDescription') || "Please try again or return to the login page."}
-          </p>
-        </Alert>
-        <div className="flex w-full max-w-xs flex-col gap-3 sm:flex-row">
-          <Button onClick={() => window.location.reload()} color="primary" fullSized>
-            {tCommon('tryAgain')}
-          </Button>
-          <Button onClick={() => router.push('/admin/login')} color="gray" fullSized> 
-            {tCommon('backToAdminLogin')}
-          </Button>
-        </div>
-      </div>
+      <AuthErrorComponent
+        error={error}
+        title={t('errorTitle')}
+        description={t('genericErrorDescription')}
+        showBackToLogin={true}
+        showRetry={true}
+        loginPath={`/${locale}/admin/login`}
+      />
     );
   }
 
+  // Unexpected state - should never reach here under normal conditions
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center p-6 text-center">
-      <Alert color="failure" icon={HiOutlineExclamationCircle} className="mb-6 w-full max-w-lg">
-        <h3 className="text-lg font-medium">
-          {t('unexpectedErrorTitle') || "An Unexpected Error Occurred"}
-        </h3>
-        <p className="mt-1 text-sm">{t('unexpectedState')}</p>
-        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-          {t('genericErrorDescription') || "Please try again or return to the login page."}
-        </p>
-      </Alert>
-      <div className="flex w-full max-w-xs flex-col gap-3 sm:flex-row">
-        <Button onClick={() => window.location.reload()} color="primary" fullSized>
-          {tCommon('tryAgain')}
-        </Button>
-        <Button onClick={() => router.push('/admin/login')} color="gray" fullSized>
-          {tCommon('backToAdminLogin')}
-        </Button>
-      </div>
-    </div>
+    <AuthErrorComponent
+      error={t('unexpectedState')}
+      title={t('unexpectedErrorTitle')}
+      description={t('genericErrorDescription')}
+      showBackToLogin={true}
+      showRetry={true}
+      loginPath={`/${locale}/admin/login`}
+    />
   );
-} 
+}

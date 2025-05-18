@@ -5,6 +5,7 @@
  * The @ts-nocheck directive is necessary for Supabase Edge Functions deployment
  * as they run in Deno's runtime where relative imports for types can be problematic.
  */
+// deno-lint-ignore ban-ts-comment
 // @ts-nocheck
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 

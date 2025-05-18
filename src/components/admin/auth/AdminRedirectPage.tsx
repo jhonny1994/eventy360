@@ -1,12 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Spinner, Alert, Button } from 'flowbite-react';
 import { useTranslations } from 'next-intl';
-import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useRouter } from '@/i18n/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { AuthLoadingState, AuthError } from '@/components/admin/auth';
 
 export default function AdminRedirectPage() {
   const t = useTranslations('Common');
@@ -151,44 +150,22 @@ export default function AdminRedirectPage() {
   }, [error, redirectSource, autoRetryCount]);
 
   if (isLoading && !error && !redirectAttempted) {
-    return (
-      <div className="flex h-screen w-full flex-col items-center justify-center p-6 text-center">
-        <Spinner aria-label={t('loading')} size="xl" />
-        <p className="mt-4 text-lg text-gray-700 dark:text-gray-300">{t('redirecting')}...</p>
-      </div>
-    );
+    return <AuthLoadingState message={redirectAttempted ? t('redirecting') : t('loadingProcessing')} isFullScreen />;
   }
 
   if (error) {
     return (
-      <div className="flex h-screen w-full flex-col items-center justify-center p-6 text-center">
-        <Alert color="failure" icon={HiOutlineExclamationCircle} className="mb-6 w-full max-w-lg">
-          <h3 className="text-lg font-medium">
-            {t('redirectFailedTitle') || "Redirection Failed"} 
-          </h3>
-          {error && <p className="mt-1 text-sm">{error}</p>}
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            {t('redirectFailedDescription') || "Please try again or return to the login page."}
-          </p>
-        </Alert>
-        <div className="flex w-full max-w-xs flex-col gap-3 sm:flex-row">
-          <Button onClick={() => window.location.reload()} color="primary" fullSized>
-            {t('tryAgain')}
-          </Button>
-          <Button onClick={() => router.push('/admin/login')} color="gray" fullSized>
-            {t('backToAdminLogin')}
-          </Button>
-        </div>
-      </div>
+      <AuthError
+        error={error}
+        title={t('redirectFailedTitle') || "Redirection Failed"}
+        description={t('redirectFailedDescription')}
+        showBackToLogin={true}
+        showRetry={true}
+        loginPath="/admin/login"
+      />
     );
   }
 
-  return (
-    <div className="flex h-screen w-full flex-col items-center justify-center p-6 text-center">
-      <Spinner aria-label={t('loading')} size="xl" />
-      <p className="mt-4 text-lg text-gray-700 dark:text-gray-300">
-        {redirectAttempted || isLoading ? t('redirecting') : t('loadingProcessing')}
-      </p>
-    </div>
-  );
+  // Default loading state
+  return <AuthLoadingState message={t('redirecting')} isFullScreen />;
 } 
