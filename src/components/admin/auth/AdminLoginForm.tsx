@@ -12,7 +12,7 @@ import {
   HiEyeOff,
 } from "react-icons/hi";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { getLoginSchema, handleAdminLogin } from "@/utils/admin/auth-forms";
 
 type LoginFormValues = {
@@ -29,6 +29,8 @@ interface AdminLoginFormProps {
  */
 export default function AdminLoginForm({ redirectPath }: AdminLoginFormProps) {
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string || 'ar';
   const tCommon = useTranslations("Common");
   const tValidations = useTranslations("Validations");
   const tLogin = useTranslations("AdminAuth.LoginForm");
@@ -76,13 +78,13 @@ export default function AdminLoginForm({ redirectPath }: AdminLoginFormProps) {
         return;
       }
 
-      // Redirect based on provided path or URL parameter
-      if (redirectPath) {
-        router.push(redirectPath);
-      } else {
-        // Default redirect to dashboard
-        router.push("/admin/dashboard");
-      }
+      // Ensure redirect URL always includes the locale
+      const defaultPath = `/admin/dashboard`;
+      const redirectUrl = redirectPath 
+        ? `/${locale}${redirectPath.startsWith('/') ? redirectPath : `/${redirectPath}`}` 
+        : `/${locale}${defaultPath}`;
+      
+      router.push(redirectUrl);
     } catch (err) {
       console.error("Login error:", err);
       setAuthError(tLogin("unexpectedError"));

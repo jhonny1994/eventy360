@@ -23,6 +23,7 @@ export default function AuthCard({ title, logoAltText, children }: AuthCardProps
           alt={logoAltText}
           width={180}
           height={60}
+          style={{ height: 'auto', width: 'auto', maxWidth: '180px' }}
           priority
           className="mx-auto"
         />

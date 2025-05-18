@@ -39,6 +39,7 @@ export async function redirectAuthenticatedAdmin(locale: string) {
 
 /**
  * Gets the redirect URL for admin authentication, defaulting to dashboard
+ * Ensures redirects are secure and contain the proper locale prefix
  * 
  * @param locale Current locale for internationalization
  * @param defaultRedirect Default redirect path if none specified in URL
@@ -53,8 +54,14 @@ export function getAdminRedirectUrl(locale: string, defaultRedirect = "/admin/da
   const params = new URLSearchParams(window.location.search);
   const redirectTo = params.get("redirectTo");
   
-  if (redirectTo && redirectTo.startsWith("/admin") && !redirectTo.includes("//")) {
-    // Validate redirect is to admin area and doesn't contain double slashes
+  // Only allow relative admin paths and prevent any potential open redirects
+  if (
+    redirectTo && 
+    redirectTo.startsWith("/admin") && 
+    !redirectTo.includes("//") &&
+    !redirectTo.includes("..") &&
+    !redirectTo.includes("%")
+  ) {
     return `/${locale}${redirectTo}`;
   }
 

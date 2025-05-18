@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Navbar, 
   NavbarBrand, 
@@ -15,8 +15,6 @@ interface AdminNavbarProps {
   siteName: string;
   /** Current locale for internationalization */
   locale: string;
-  /** Optional admin name to display in the navbar */
-  adminName?: string;
 }
 
 /**
@@ -29,25 +27,68 @@ interface AdminNavbarProps {
 export default function AdminNavbar({
   siteName,
   locale,
-  adminName,
 }: AdminNavbarProps) {
   // State to track sidebar open/close state
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
+  // Function to check if current screen is mobile
+  const isMobile = () => window.innerWidth < 768;
+  
+  // Initialize sidebar state based on screen size
+  useEffect(() => {
+    const sidebarElement = document.getElementById('sidebar-multi-level-sidebar');
+    if (sidebarElement) {
+      if (isMobile()) {
+        // On mobile, sidebar starts closed
+        sidebarElement.classList.add('-translate-x-full', 'rtl:translate-x-full');
+        sidebarElement.classList.remove('translate-x-0');
+      } else {
+        // On desktop, sidebar starts open
+        sidebarElement.classList.remove('-translate-x-full', 'rtl:translate-x-full');
+        sidebarElement.classList.add('translate-x-0');
+      }
+    }
+    
+    // Update sidebar state when window resizes
+    const handleResize = () => {
+      if (sidebarElement) {
+        if (isMobile()) {
+          // When resizing to mobile, close sidebar
+          sidebarElement.classList.add('-translate-x-full', 'rtl:translate-x-full');
+          sidebarElement.classList.remove('translate-x-0');
+          setIsSidebarOpen(false);
+        } else {
+          // When resizing to desktop, show sidebar
+          sidebarElement.classList.remove('-translate-x-full', 'rtl:translate-x-full');
+          sidebarElement.classList.add('translate-x-0');
+          setIsSidebarOpen(true);
+        }
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   // Function to toggle sidebar and update its CSS class
   const toggleSidebar = () => {
     const newState = !isSidebarOpen;
     setIsSidebarOpen(newState);
     
-    // Update sidebar element's CSS class via DOM
-    const sidebarElement = document.getElementById('sidebar-multi-level-sidebar');
-    if (sidebarElement) {
-      if (newState) {
-        sidebarElement.classList.remove('-translate-x-full', 'rtl:translate-x-full');
-        sidebarElement.classList.add('translate-x-0');
-      } else {
-        sidebarElement.classList.remove('translate-x-0');
-        sidebarElement.classList.add('-translate-x-full', 'rtl:translate-x-full');
+    // Only toggle on mobile screens
+    if (isMobile()) {
+      // Update sidebar element's CSS class via DOM
+      const sidebarElement = document.getElementById('sidebar-multi-level-sidebar');
+      if (sidebarElement) {
+        if (newState) {
+          sidebarElement.classList.remove('-translate-x-full', 'rtl:translate-x-full');
+          sidebarElement.classList.add('translate-x-0');
+        } else {
+          sidebarElement.classList.remove('translate-x-0');
+          sidebarElement.classList.add('-translate-x-full', 'rtl:translate-x-full');
+        }
       }
     }
   };
@@ -57,24 +98,23 @@ export default function AdminNavbar({
       fluid
       className="fixed w-full z-50 border-b dark:border-gray-700 bg-white dark:bg-gray-800"
     >
-      <div className="flex md:order-2 rtl:me-auto rtl:ms-0 ltr:ml-auto ltr:mr-0">
-        {adminName && (
-          <div className="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-            {adminName}
-          </div>
-        )}
-      </div>
-      <div className="flex items-center rtl:me-2 ltr:ml-2">
-        <NavbarToggle
-          className="md:hidden me-2"
-          onClick={toggleSidebar}
-          aria-controls="sidebar-multi-level-sidebar"
-        />
-        <NavbarBrand href={`/${locale}/admin/dashboard`}>
-          <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-            {siteName}
-          </span>
-        </NavbarBrand>
+      <div className="flex items-center w-full justify-between">
+        <div className="flex items-center">
+          <NavbarToggle
+            className="md:hidden me-2"
+            onClick={toggleSidebar}
+            aria-controls="sidebar-multi-level-sidebar"
+          />
+          <NavbarBrand href={`/${locale}/admin/dashboard`}>
+            <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
+              {siteName}
+            </span>
+          </NavbarBrand>
+        </div>
+        
+        <div className="flex rtl:me-2 ltr:ml-2">
+          {/* Right side content if needed */}
+        </div>
       </div>
     </Navbar>
   );

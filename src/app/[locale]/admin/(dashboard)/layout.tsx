@@ -18,7 +18,7 @@ export default async function AdminLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  const { locale } = params;
+  const { locale } = await params;
 
   // Ensure the user is authenticated and has admin rights
   const user = await requireAdmin(locale);
@@ -48,15 +48,18 @@ export default async function AdminLayout({
       <AdminNavbar
         siteName={t("siteName")}
         locale={locale}
-        adminName={adminProfile.name}
       />
 
       {/* Sidebar and main content */}
       <div className="flex flex-1 pt-16">
-        <AdminSidebar translations={sidebarTranslations} locale={locale} />
+        <AdminSidebar 
+          translations={sidebarTranslations} 
+          locale={locale} 
+          adminName={adminProfile.name}
+        />
 
         {/* Main content area */}
-        <div className="p-4 sm:ms-64 flex-1 overflow-y-auto">
+        <div className="p-4 md:ms-64 flex-1 overflow-y-auto">
           <div className="p-4 rounded-lg mt-2">{children}</div>
         </div>
       </div>

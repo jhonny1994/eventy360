@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Label, TextInput, Alert } from 'flowbite-react';
 import { HiInformationCircle, HiEye, HiEyeOff, HiOutlineUser, HiCheckCircle } from 'react-icons/hi';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client'; 
 import { getAdminCreateAccountSchema } from '@/utils/admin/auth-forms';
 import { AuthError, AuthLoadingState } from '@/components/admin/auth';
@@ -28,16 +28,14 @@ type CreateAccountFormValues = {
   confirmPassword: string;
 };
 
-interface AdminCreateAccountFormProps {
-  redirectPath?: string;
-}
-
 /**
  * Standardized admin account creation form component with validation and error handling
  * Used during the admin invite flow to set up an initial admin account
  */
-export default function AdminCreateAccountForm({ redirectPath }: AdminCreateAccountFormProps) {
+export default function AdminCreateAccountForm() {
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string || 'ar';
   const tValidations = useTranslations('Validations');
   const tForm = useTranslations('AdminAuth.CreateAccountForm');
   
@@ -206,20 +204,15 @@ export default function AdminCreateAccountForm({ redirectPath }: AdminCreateAcco
       // Mark submission as successful to prevent further error checks during sign-out phase
       setSubmissionCompletedSuccessfully(true);
       
-      // Complete setup by signing out
-      await supabase.auth.signOut();
+      // Complete setup by signing out and redirecting
       setIsSuccess(true);
       
       // Show success toast
       toast.success(tForm('accountSetupSuccessToast'));
       
-      // Redirect after 2 seconds
+      // Redirect after 2 seconds to login page with locale
       setTimeout(() => {
-        if (redirectPath) {
-          router.push(redirectPath);
-        } else {
-          router.push('/admin/login');
-        }
+        router.push(`/${locale}/admin/login`);
       }, 2000);
       
     } catch (err) {
@@ -371,7 +364,7 @@ export default function AdminCreateAccountForm({ redirectPath }: AdminCreateAcco
       {/* Login link */}
       <div className="text-center text-sm text-gray-500">
         {tForm('alreadyHaveAccount')}{' '}
-        <Link href="/admin/login" className="text-primary hover:underline">
+        <Link href={`/${locale}/admin/login`} className="text-primary hover:underline">
           {tForm('loginLink')}
         </Link>
       </div>

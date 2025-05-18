@@ -17,7 +17,7 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 | Phase                                                              | Status      | Notes                                                                                                                               |
 | :----------------------------------------------------------------- | :---------- | :---------------------------------------------------------------------------------------------------------------------------------- |
 | **Pre-Plan Work (Auth & Profile Foundation)**                        | ✅ Complete | Core authentication, profile completion, basic profile display, i18n, styling, DB schema foundation.                               |
-| **Phase 1: Subscription Backbone & Core Admin**                    | 🟡 In Progress | Focus on manual payment/verification admin tools, subscription lifecycle, initial notifications, payment history display.         |
+| **Phase 1: Subscription Backbone & Core Admin**                    | 🟡 In Progress | Admin authentication flow and dashboard components standardized. Working on manual payment/verification admin tools, subscription lifecycle, initial notifications, payment history display.         |
 | **Phase 2: Event Management & Topic Control**                      | ⚪ Planned   |                                                                                                                                     |
 | **Phase 3: Submission System**                                     | ⚪ Planned   |                                                                                                                                     |
 | **Phase 4: Comprehensive Notification System & Email Management**    | ⚪ Planned   |                                                                                                                                     |
@@ -79,8 +79,8 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 *   **A. User Account & Profile Foundations (Review & Badge Display):**
     *   Review existing Auth/Profile flows for consistency with new policies (e.g., `is_verified` badge display on profile page).
 *   **B. Admin Panel - Core MVP Operations:**
-    *   Basic Admin Access & Layout (secure routes, basic navigation).
-    *   **New Tasks Added: Admin Authentication Flow (Invitation, Account Creation, Dedicated Login)**
+    *   ✅ **Basic Admin Access & Layout:** Secure routes, standardized navigation components (`AdminNavbar`, `AdminSidebar`), and dashboard layout with proper internationalization and RTL support.
+    *   ✅ **Admin Authentication Flow:** Standardized authentication components for admin login, account creation, error handling, and redirects with centralized exports via index files.
     *   User Management (Admin UI: List users, filter, award/remove `is_verified` badge via RPC).
     *   Payment & Subscription Management (Admin UI: List payments, record new manual payment via RPC, update payment status via RPC).
     *   Verify/Refine `handle_payment_verification()` DB function.
@@ -138,7 +138,9 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 - Minimal profile page for testing
 - Refined Profile Notification System (Implementation and Testing)
 - Profile Picture Upload (Implementation and Cleanup)
-- `PricingModal.tsx` UI/UX and logic enhancements.
+- `PricingModal.tsx` UI/UX and logic enhancements
+- Admin authentication system with standardized components, properly structured imports, and security checks
+- Admin dashboard layout with internationalized and standardized `AdminNavbar` and `AdminSidebar` components
 
 ## 2. What's Left to Build (Now tracked by Phases 1-6 of the New Plan)
 

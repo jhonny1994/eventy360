@@ -2,7 +2,7 @@
 
 import { Alert, Button } from 'flowbite-react';
 import { HiInformationCircle } from 'react-icons/hi';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 interface AuthErrorProps {
@@ -27,10 +27,22 @@ export default function AuthError({
   loginPath = '/admin/login'
 }: AuthErrorProps) {
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string || 'en';
   const t = useTranslations('Common');
   
   const errorTitle = title || t('unexpectedErrorAlertTitle');
   const errorDescription = description || t('genericErrorAlertDescription');
+  
+  // Ensure login path includes locale
+  const getLocaleLoginPath = () => {
+    // If loginPath already includes the locale or is a full URL, return as is
+    if (loginPath.startsWith(`/${locale}/`) || loginPath.includes('://')) {
+      return loginPath;
+    }
+    // Otherwise add the locale prefix
+    return `/${locale}${loginPath.startsWith('/') ? loginPath : `/${loginPath}`}`;
+  };
 
   return (
     <div className="w-full">
@@ -55,7 +67,7 @@ export default function AuthError({
         
         {showBackToLogin && (
           <Button 
-            onClick={() => router.push(loginPath)}
+            onClick={() => router.push(getLocaleLoginPath())}
             color="gray"
             className="sm:flex-1"
           >

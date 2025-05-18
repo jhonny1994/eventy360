@@ -110,3 +110,57 @@ Unlike standard users, administrators are onboarded via an invitation process:
 2.  **Email Invitation:** A system email containing a unique link with the token is sent to the invited admin's email address using the notification queue and a dedicated 'admin_invitation' email template.
 3.  **Admin Account Creation (Frontend Page):** The invited user clicks the link, which directs them to a specific frontend page (e.g., `/admin/create-account`). This page validates the token and prompts the user to set their password and complete any required initial `admin_profiles` fields.
 4.  **Dedicated Admin Login:** Administrators log in via a specific admin login page (e.g., `/admin/login`), distinct from the main user login page. Authentication is verified against Supabase Auth, and the admin `user_type` is checked for access to admin-specific routes.
+
+### 7.1 Admin Authentication Components
+
+The admin authentication system employs a standardized component architecture:
+
+1. **Component Organization:**
+   - Centralized exports via index files: `src/components/admin/auth/index.ts`
+   - Component-specific interfaces for props to ensure type safety
+   - Consistent component naming conventions (`AdminLoginForm`, `AdminCreateAccountForm`, etc.)
+
+2. **Authentication Security:**
+   - Server-side authentication checks using `createServerSupabaseClient` and `requireAdmin` utility
+   - Client-side redirects for unauthenticated users or users who aren't admins
+   - Path sanitization to prevent open redirect vulnerabilities
+
+3. **Authentication Flow Components:**
+   - `AuthLayout`: Wraps authentication pages with consistent styling and structure
+   - `AuthCard`: Container for authentication forms with standardized padding and styling
+   - `AdminLoginForm`: Handles admin login with proper validation
+   - `AdminCreateAccountForm`: Handles admin account creation process
+   - `AdminAuthCallbackPage`: Manages authentication callbacks securely
+   - `AdminRedirectPage`: Handles redirects after authentication processes
+   - `AuthError`: Displays standardized error messages
+   - `AuthLoadingState`: Provides consistent loading UI
+
+## 8. Admin Dashboard Architecture
+
+The admin dashboard follows a standardized component architecture to ensure consistency, security, and internationalization support:
+
+1. **Layout Components:**
+   - `AdminLayout`: Container layout for all admin dashboard pages with security checks
+   - `AdminNavbar`: Top navigation bar with responsive design and dark mode support
+   - `AdminSidebar`: Side navigation with active route highlighting and responsive behavior
+
+2. **Component Organization:**
+   - Centralized exports via index files (`src/components/admin/index.ts`) for easier imports
+   - Nested index structures for specific component categories (auth, UI, etc.)
+   - Consistent props interfaces and component structure
+
+3. **Dashboard Security:**
+   - Each dashboard page includes authentication and admin role verification
+   - Protected route groups using Next.js App Router
+   - Middleware checks for authenticated admin access
+
+4. **Internationalization Support:**
+   - All components use the `getTranslations` function for server components
+   - All UI elements include translation keys for multi-language support
+   - Full RTL layout support for Arabic language
+
+5. **UI Standardization:**
+   - Consistent use of Flowbite components with standardized styling
+   - Responsive design for all dashboard elements
+   - Dark mode support with appropriate color variables
+   - Error handling patterns for data loading and form submissions

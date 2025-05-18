@@ -27,7 +27,14 @@ Based on the Algerian academic context:
 *   **Verification System**: Manual admin check awards a visual **Verification Badge** to user profiles; this badge does **not** gate any platform features but serves as a trust indicator.
 *   **Notification System**: Email-based, driven by DB triggers -> `notification_queue` -> processed by scheduled Edge Function (`process-notification-queue`) using core `send-email` logic (Resend API); scheduled checks for deadlines/expiry (`check-deadlines`, `check-subscriptions-expiry`); logging (`email_log`); Admin visibility.
     *   **Internationalization (Core Requirement)**: **Strictly Arabic-only templates for MVP**. Templates stored in DB `email_templates` using JSONB fields **must** be populated with the `ar` key. The `send-email` logic must fetch and use only this `ar` text.
+*   **Admin System**: 
+    *   **Admin Authentication**: Secure invitation-based onboarding with dedicated login flow distinct from regular users.
+    *   **Admin Dashboard**: Standardized, internationalized components with consistent UI patterns for efficient platform management.
 *   **Admin Panel**: MVP features include dashboard, user management (view, verify, suspend), payment/subscription management (manual recording/activation), event/submission oversight (view, admin edits, delete), topic CRUD, email template editing (strictly Arabic only via `ar` key in JSONB), email log viewing.
+    *   **Admin Authentication**: Secure invitation-based onboarding with dedicated login flow, standardized components (`AuthLayout`, `AuthCard`, `AdminLoginForm`, `AdminCreateAccountForm`, etc.) and robust security checks.
+    *   **Admin Dashboard**: Standardized responsive components (`AdminNavbar`, `AdminSidebar`) with consistent interface patterns, full internationalization, and RTL support.
+    *   **Admin UI Components**: Reusable, typed components for common admin operations (`StatusBadge`, `DocumentPreview`, `ApproveRejectActions`, `SearchFilter`).
+    *   **Admin Utilities**: Centralized utilities for authentication, navigation, formatting, table operations, and form handling.
 *   **Database i18n Structure (Core Requirement)**:
     *   Implement dynamic user-facing translatable fields (e.g., event names, bios, topic names) using JSONB columns from the start (e.g., `name_translations`). **Crucially, populate and query ONLY the 'ar' key for MVP**. This structure prepares for future languages but enforces Arabic-only functionality initially.
     *   Static location data (`wilayas`, `dairas`) uses simple `name_ar` and `name_other` text fields, with `name_ar` being primary for MVP.

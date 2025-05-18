@@ -15,9 +15,11 @@ import {
   HiTemplate, 
   HiMail, 
   HiLogout,
-  HiShieldCheck 
+  HiShieldCheck,
+  HiUser 
 } from 'react-icons/hi';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 /**
  * Props for the AdminSidebar component
@@ -38,6 +40,8 @@ interface AdminSidebarProps {
   };
   /** Current locale for link generation */
   locale: string;
+  /** Admin name to display at top of sidebar */
+  adminName?: string;
 }
 
 /**
@@ -48,8 +52,10 @@ interface AdminSidebarProps {
  * @param props - Component props
  * @returns Admin sidebar component
  */
-export default function AdminSidebar({ translations, locale }: AdminSidebarProps) {
+export default function AdminSidebar({ translations, locale, adminName }: AdminSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   
   // Generate URLs with locale
   const addLocaleToPath = (path: string) => `/${locale}/admin${path}`;
@@ -61,14 +67,34 @@ export default function AdminSidebar({ translations, locale }: AdminSidebarProps
     return pathname === fullPathForMatching || pathname?.startsWith(`${fullPathForMatching}/`);
   };
   
+  // Handle logout action
+  const handleLogout = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (isLoggingOut) return;
+    
+    setIsLoggingOut(true);
+    
+    // Redirect to the server-side logout handler
+    router.push(`/${locale}/admin/logout`);
+  };
+  
   return (
     <aside
       id="sidebar-multi-level-sidebar"
-      className="fixed top-16 left-0 bottom-0 z-40 w-64 transition-transform -translate-x-full rtl:translate-x-full rtl:right-0 rtl:left-auto sm:translate-x-0 bg-white border-r rtl:border-l rtl:border-r-0 border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+      className="fixed top-16 left-0 bottom-0 z-40 w-64 transition-transform -translate-x-full rtl:translate-x-full rtl:right-0 rtl:left-auto md:translate-x-0 md:block bg-white border-r rtl:border-l rtl:border-r-0 border-gray-200 dark:bg-gray-800 dark:border-gray-700 overflow-y-auto"
       aria-label="Admin sidebar"
     >
-      <Sidebar className="w-full border-none" aria-label="Admin sidebar">
+      <Sidebar className="w-full border-none pt-2" aria-label="Admin sidebar">
         <SidebarItemGroup>
+          {/* Admin profile section - non-clickable */}
+          {adminName && (
+            <div className="flex items-center px-3 py-2 text-base font-normal text-gray-900 rounded-lg dark:text-white mb-2 border-b border-gray-200 dark:border-gray-700">
+              <HiUser className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400" />
+              <span className="flex-1 ms-3 whitespace-nowrap rtl:text-right">{adminName}</span>
+            </div>
+          )}
+          
           <SidebarItem 
             href={addLocaleToPath('/dashboard')} 
             icon={HiChartPie}
@@ -151,10 +177,10 @@ export default function AdminSidebar({ translations, locale }: AdminSidebarProps
           </SidebarItem>
           
           <SidebarItem 
-            href={`/${locale}/admin/logout`}
+            href={addLocaleToPath('/logout')}
             icon={HiLogout}
-            active={isActive('/logout')}
-            className="rtl:text-right"
+            onClick={handleLogout}
+            className={`rtl:text-right ${isLoggingOut ? 'opacity-50 pointer-events-none' : ''}`}
           >
             {translations.logout}
           </SidebarItem>

@@ -20,7 +20,10 @@
     "unexpectedStateMessage": "حدثت حالة غير متوقعة. يرجى تحديث الصفحة والمحاولة مرة أخرى.",
     "loadingProcessing": "جارٍ المعالجة...",
     "redirectingToLogin": "جارٍ إعادة توجيهك إلى صفحة تسجيل الدخول...",
-    "redirectFailedTitle": "فشل إعادة التوجيه"
+    "redirectFailedTitle": "فشل إعادة التوجيه",
+    "submitting": "جاري الإرسال...",
+    "loginSuccessToast": "تم تسجيل الدخول بنجاح! جاري التوجيه...",
+    "loginFailed": "فشل تسجيل الدخول"
   },
   "HomePage": {
     "title": "مرحباً بكم في منصة Eventy360"

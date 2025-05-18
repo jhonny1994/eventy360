@@ -4,7 +4,7 @@ import { createServerSupabaseClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 
 export default async function AdminCreateAccountPage({ params }: { params: { locale: string } }) {
-  const { locale } = params;
+  const { locale } = await params;
   const t = await getTranslations('AdminAuth.CreateAccountPage');
   
   // Security check: if user is logged in but not admin, redirect to login
@@ -30,7 +30,7 @@ export default async function AdminCreateAccountPage({ params }: { params: { loc
   
   return (
     <AuthLayout 
-      illustrationSrc="/illustrations/admin_setup.svg"
+      illustrationSrc="/illustrations/signup.svg"
       illustrationAlt={t('illustrationAlt')}
     >
       <AuthCard 
