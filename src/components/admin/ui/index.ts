@@ -1,6 +1,6 @@
 /**
- * Admin UI Components
- * Export all admin UI components for easier imports
+ * Admin UI components index
+ * Export all UI components for easier imports
  */
 
 export { default as StatusBadge } from './StatusBadge';

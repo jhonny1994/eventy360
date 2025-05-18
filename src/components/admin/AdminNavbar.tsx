@@ -7,51 +7,74 @@ import {
   NavbarToggle 
 } from 'flowbite-react';
 
+/**
+ * Props for the AdminNavbar component
+ */
 interface AdminNavbarProps {
+  /** Site name to display in the navbar */
   siteName: string;
+  /** Current locale for internationalization */
   locale: string;
+  /** Optional admin name to display in the navbar */
   adminName?: string;
 }
 
-export default function AdminNavbar({ siteName, locale, adminName = 'Admin' }: AdminNavbarProps) {
+/**
+ * Admin dashboard navbar component with responsive design
+ * Supports RTL layouts and integrates with the sidebar
+ * 
+ * @param props - Component props
+ * @returns Admin navbar component
+ */
+export default function AdminNavbar({
+  siteName,
+  locale,
+  adminName,
+}: AdminNavbarProps) {
+  // State to track sidebar open/close state
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  
+
+  // Function to toggle sidebar and update its CSS class
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+    const newState = !isSidebarOpen;
+    setIsSidebarOpen(newState);
     
-    // Find the sidebar element and toggle its class
-    const sidebar = document.getElementById('admin-sidebar');
-    if (sidebar) {
-      sidebar.classList.toggle('translate-x-full');
+    // Update sidebar element's CSS class via DOM
+    const sidebarElement = document.getElementById('sidebar-multi-level-sidebar');
+    if (sidebarElement) {
+      if (newState) {
+        sidebarElement.classList.remove('-translate-x-full', 'rtl:translate-x-full');
+        sidebarElement.classList.add('translate-x-0');
+      } else {
+        sidebarElement.classList.remove('translate-x-0');
+        sidebarElement.classList.add('-translate-x-full', 'rtl:translate-x-full');
+      }
     }
   };
 
   return (
-    <Navbar fluid className="fixed top-0 z-50 w-full border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-      <div className="w-full flex items-center justify-between px-3">
-        {/* Mobile toggle */}
-        <div className="flex items-center md:hidden">
-          <NavbarToggle 
-            onClick={toggleSidebar}
-            className="mr-3" 
-          />
-        </div>
-        
-        {/* Center logo/site name */}
-        <div className="flex-1 flex justify-center md:justify-start">
-          <a href={`/${locale}/admin/dashboard`} className="flex items-center"> 
-            <NavbarBrand as="div">
-              <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">{siteName}</span>
-            </NavbarBrand>
-          </a>
-        </div>
-        
-        {/* Admin name display */}
-        <div className="flex items-center">
-          <span className="px-3 py-1 text-sm font-medium rounded-lg bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+    <Navbar
+      fluid
+      className="fixed w-full z-50 border-b dark:border-gray-700 bg-white dark:bg-gray-800"
+    >
+      <div className="flex md:order-2 rtl:me-auto rtl:ms-0 ltr:ml-auto ltr:mr-0">
+        {adminName && (
+          <div className="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300">
             {adminName}
+          </div>
+        )}
+      </div>
+      <div className="flex items-center rtl:me-2 ltr:ml-2">
+        <NavbarToggle
+          className="md:hidden me-2"
+          onClick={toggleSidebar}
+          aria-controls="sidebar-multi-level-sidebar"
+        />
+        <NavbarBrand href={`/${locale}/admin/dashboard`}>
+          <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
+            {siteName}
           </span>
-        </div>
+        </NavbarBrand>
       </div>
     </Navbar>
   );

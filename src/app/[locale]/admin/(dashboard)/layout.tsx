@@ -1,9 +1,16 @@
 import React from "react";
 import { getTranslations } from "next-intl/server";
-import AdminSidebar from "@/components/admin/AdminSidebar";
-import AdminNavbar from "@/components/admin/AdminNavbar";
-import { createServerSupabaseClient } from "@/utils/supabase/server";
+import { AdminNavbar, AdminSidebar } from "@/components/admin";
+import { requireAdmin, getAdminProfile } from "@/utils/admin/auth";
 
+/**
+ * Layout component for admin dashboard section
+ * Includes sidebar navigation and navbar
+ * Enforces admin authentication
+ *
+ * @param props - Component props including children and locale
+ * @returns Layout component with navbar, sidebar and main content area
+ */
 export default async function AdminLayout({
   children,
   params,
@@ -11,31 +18,16 @@ export default async function AdminLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  const { locale } = await params;
+  const { locale } = params;
+
+  // Ensure the user is authenticated and has admin rights
+  const user = await requireAdmin(locale);
 
   // Get translations using the locale from params
   const t = await getTranslations("AdminDashboard.Layout");
 
-  // Initialize Supabase client using the SSR client
-  const supabase = await createServerSupabaseClient();
-
-  // Get authenticated user
-  const { data } = await supabase.auth.getUser();
-  const userId = data?.user?.id;
-
-  // Fetch admin profile
-  let adminName = "Admin"; // Default fallback
-  if (userId) {
-    const { data: adminProfile, error } = await supabase
-      .from("admin_profiles")
-      .select("name")
-      .eq("profile_id", userId)
-      .single();
-
-    if (adminProfile && !error) {
-      adminName = adminProfile.name;
-    }
-  }
+  // Fetch admin profile with name
+  const adminProfile = await getAdminProfile(user.id);
 
   const sidebarTranslations = {
     dashboard: t("sidebar.dashboard"),
@@ -56,15 +48,15 @@ export default async function AdminLayout({
       <AdminNavbar
         siteName={t("siteName")}
         locale={locale}
-        adminName={adminName}
+        adminName={adminProfile.name}
       />
 
-      {/* Sidebar with Flowbite Sidebar component */}
+      {/* Sidebar and main content */}
       <div className="flex flex-1 pt-16">
         <AdminSidebar translations={sidebarTranslations} locale={locale} />
 
         {/* Main content area */}
-        <div className="p-4 sm:mr-64 flex-1 overflow-y-auto">
+        <div className="p-4 sm:ms-64 flex-1 overflow-y-auto">
           <div className="p-4 rounded-lg mt-2">{children}</div>
         </div>
       </div>

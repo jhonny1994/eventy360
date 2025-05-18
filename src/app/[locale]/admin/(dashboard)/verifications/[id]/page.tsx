@@ -6,9 +6,7 @@ import { requireAdmin } from '@/utils/admin/auth';
 import Link from 'next/link';
 import Image from 'next/image';
 import { formatDate } from '@/utils/admin/format';
-import StatusBadge from '@/components/admin/ui/StatusBadge';
-import DocumentPreview from '@/components/admin/ui/DocumentPreview';
-import ApproveRejectActions from '@/components/admin/ui/ApproveRejectActions';
+import { StatusBadge, DocumentPreview, ApproveRejectActions } from '@/components/admin/ui';
 
 /**
  * Admin page for viewing verification request details

@@ -6,7 +6,7 @@ import { requireAdmin } from "@/utils/admin/auth";
 import { formatDate } from "@/utils/admin/format";
 import Link from "next/link";
 import Image from "next/image";
-import StatusBadge from "@/components/admin/ui/StatusBadge";
+import { StatusBadge } from "@/components/admin/ui";
 
 enum VerificationStatus {
   PENDING = "pending",
