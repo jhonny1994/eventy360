@@ -28,17 +28,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
+        try {
+          setSession(session);
+          setUser(session?.user ?? null);
+          setLoading(false);
+        } catch (error) {
+          console.error('Error in auth state change handler:', error);
+          // If there's an error with the session, clear it
+          if (error instanceof Error && 
+              (error.message.includes('Refresh Token') || 
+               error.message.includes('refresh token'))) {
+            // Clear session state but don't try to sign out again
+            setSession(null);
+            setUser(null);
+          }
+          setLoading(false);
+        }
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    // Initial session check with error handling
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error getting session:', error);
+        // Handle refresh token errors specifically
+        if (error instanceof Error && 
+            (error.message.includes('Refresh Token') || 
+             error.message.includes('refresh token'))) {
+          // Clear local session state
+          setSession(null);
+          setUser(null);
+          // Attempt a clean sign out without throwing more errors
+          supabase.auth.signOut().catch(e => console.error('Error signing out after token error:', e));
+        }
+        setLoading(false);
+      });
 
     return () => {
       authListener?.subscription.unsubscribe();
@@ -57,6 +86,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error('Error signing out:', error);
       toast.error(t('logoutError'));
+      // Even if there's an error, clear the local session state
+      setSession(null);
+      setUser(null);
     }
   };
 

@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useRouter } from '@/i18n/navigation';
-import { createClient } from '@/lib/supabase/client';
 import { AuthLoadingState, AuthError } from '@/components/admin/auth';
 
 export default function AdminRedirectPage() {
@@ -24,9 +23,23 @@ export default function AdminRedirectPage() {
       const params = new URLSearchParams(window.location.search);
       const authAction = params.get('auth_action');
       const errorParam = params.get('error');
-
-      if (authAction === 'admin_invite_accepted') {
+      const source = params.get('source');
+      const uid = params.get('uid');
+      
+      // Direct handling for admin invite accepted
+      if (authAction === 'admin_invite_accepted' && source === 'magic_link_processed' && uid) {
         setRedirectSource('admin_invite');
+        
+        // If we have UID but the session isn't loading properly, provide a manual login option
+        const timeoutId = setTimeout(() => {
+          if (!user && !authLoading) {
+            console.log('[AdminRedirectPage] Session not established after timeout');
+            setError('Session not properly established. Please try logging in directly.');
+            setIsLoading(false);
+          }
+        }, 5000); // Give it 5 seconds to establish session
+        
+        return () => clearTimeout(timeoutId);
       } else if (errorParam) {
         const errorDesc = params.get('error_description');
         setError(errorDesc || errorParam);
@@ -34,13 +47,12 @@ export default function AdminRedirectPage() {
         setRedirectAttempted(true);
       }
     }
-  }, []);
+  }, [user, authLoading]);
 
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const directClient = createClient();
-        const { data: sessionData, error: sessionError } = await directClient.auth.getSession();
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
           throw new Error(`Session error: ${sessionError.message}`);
@@ -61,7 +73,7 @@ export default function AdminRedirectPage() {
     if (!sessionChecked && !redirectAttempted) {
       checkSession();
     }
-  }, [user, authLoading, sessionChecked, redirectAttempted]);
+  }, [user, authLoading, sessionChecked, redirectAttempted, supabase]);
 
   useEffect(() => {
     if (redirectAttempted || authLoading || error || !sessionChecked) {

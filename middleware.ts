@@ -2,12 +2,14 @@ import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/utils/supabase/middleware";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { type CookieOptions } from "@supabase/ssr";
+import { createMiddlewareClient } from "@/utils/supabase/middleware-client";
 
 const AUTH_SYSTEM_PATHS = [
   "/auth/callback",
   "/auth/confirm",
   "/admin/auth/magic-callback",
+  "/callback"
 ];
 
 const UNAUTHENTICATED_USER_ACCESSIBLE_PATHS = [
@@ -51,6 +53,17 @@ export async function middleware(request: NextRequest) {
   }
 
   if (pathWithoutLocale === "/redirect") {
+    // Check for email confirmation URL parameter
+    const urlParams = new URL(request.url).searchParams;
+    const authAction = urlParams.get('auth_action');
+    const isEmailJustConfirmed = authAction === 'email_confirmed';
+    
+    // If this is an email confirmation redirect, don't redirect again
+    // Let the client-side redirect page handle it with proper UI
+    if (isEmailJustConfirmed) {
+      return supabaseResponseAfterSessionUpdate;
+    }
+    
     if (!user) {
       const loginUrl = new URL(`/${currentLocale}/login`, request.url);
       const redirectResponse = NextResponse.redirect(loginUrl);
@@ -69,22 +82,7 @@ export async function middleware(request: NextRequest) {
     }
     
     try {
-      const supabaseMiddlewareClient = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-          cookies: {
-            getAll() {
-              return request.cookies.getAll();
-            },
-            setAll(cookiesToSet) {
-              cookiesToSet.forEach(({ name, value }) =>
-                request.cookies.set(name, value)
-              );
-            },
-          },
-        }
-      );
+      const supabaseMiddlewareClient = createMiddlewareClient(request);
       
       const { data: profileData, error: profileQueryError } =
         await supabaseMiddlewareClient
@@ -144,23 +142,9 @@ export async function middleware(request: NextRequest) {
     }
 
     try {
-      const supabaseMiddlewareClient = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-          cookies: {
-            getAll() {
-              return request.cookies.getAll();
-            },
-            setAll(cookiesToSet) {
-              cookiesToSet.forEach(({ name, value }) =>
-                request.cookies.set(name, value)
-              );
-            },
-          },
-        }
-      );
+      const supabaseMiddlewareClient = createMiddlewareClient(request);
 
+      // First, check if the user has a record in profiles
       const { data: profileData, error: profileQueryError } =
         await supabaseMiddlewareClient
           .from("profiles")
@@ -183,7 +167,19 @@ export async function middleware(request: NextRequest) {
         return redirectResponse;
       }
 
-      if (!profileData.is_extended_profile_complete) {
+      // Check if the admin profile exists
+      const { data: adminProfileData } = 
+        await supabaseMiddlewareClient
+          .from("admin_profiles")
+          .select("name")
+          .eq("profile_id", user.id)
+          .maybeSingle();
+
+      // If no admin profile or incomplete profile, direct to create-account
+      // This ensures invited admins set up their account properly
+      if (!profileData.is_extended_profile_complete || 
+          !adminProfileData || 
+          !adminProfileData.name) {
         const createAccountUrl = new URL(
           `/${currentLocale}/admin/create-account`,
           request.url
@@ -246,22 +242,7 @@ export async function middleware(request: NextRequest) {
     return supabaseResponseAfterSessionUpdate;
   }
   
-  const supabaseMiddlewareClient = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          );
-        },
-      },
-    }
-  );
+  const supabaseMiddlewareClient = createMiddlewareClient(request);
 
   try {
     const { data: profileData, error: profileQueryError } =
@@ -318,61 +299,50 @@ export async function middleware(request: NextRequest) {
       return redirectResponse;
     }
     
-    return supabaseResponseAfterSessionUpdate;
-  } catch {
-    return supabaseResponseAfterSessionUpdate;
-  }
-
-  // Admin login/register should redirect to admin redirect if user is already authenticated
-  if (pathWithoutLocale === "/admin/login" && user) {
-    const redirectUrl = new URL(
-      `/${currentLocale}/admin/redirect`,
-      request.url
-    );
-    const redirectResponse = NextResponse.redirect(redirectUrl);
-    copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
-    return redirectResponse;
-  }
-
-  // Check if user is trying to access admin paths but is not an admin
-  if (user && pathWithoutLocale.startsWith('/admin/') && 
-      !UNAUTHENTICATED_USER_ACCESSIBLE_PATHS.includes(pathWithoutLocale)) {
-    try {
-      const supabaseMiddlewareClient = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-          cookies: {
-            getAll() { return request.cookies.getAll(); },
-            setAll(cookiesToSet) {
-              cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-            },
-          },
-        }
+    // Admin login/register should redirect to admin redirect if user is already authenticated
+    if (pathWithoutLocale === "/admin/login" && user) {
+      const redirectUrl = new URL(
+        `/${currentLocale}/admin/redirect`,
+        request.url
       );
-      
-      // Since we've checked that user is not null above, we can use non-null assertion (!) here
-      const { data: profileData } = await supabaseMiddlewareClient
-        .from('profiles')
-        .select('user_type')
-        .eq('id', user!.id)
-        .single();
-
-      // Handle the profileData potentially being null with proper type checking
-      if (!profileData || ((profileData as { user_type?: string })?.user_type !== 'admin')) {
-        // Not an admin, redirect to regular profile
-        const profileUrl = new URL(`/${currentLocale}/profile`, request.url);
-        const redirectResponse = NextResponse.redirect(profileUrl);
-        copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
-        return redirectResponse;
-      }
-    } catch {
-      // Error checking admin status, redirect to login for safety
-      const loginUrl = new URL(`/${currentLocale}/login`, request.url);
-      const redirectResponse = NextResponse.redirect(loginUrl);
+      const redirectResponse = NextResponse.redirect(redirectUrl);
       copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
       return redirectResponse;
     }
+
+    // Check if user is trying to access admin paths but is not an admin
+    if (user && pathWithoutLocale.startsWith('/admin/') && 
+        !UNAUTHENTICATED_USER_ACCESSIBLE_PATHS.includes(pathWithoutLocale)) {
+      try {
+        const supabaseMiddlewareClient = createMiddlewareClient(request);
+        
+        // Since we've checked that user is not null above, we can use non-null assertion (!) here
+        const { data: profileData } = await supabaseMiddlewareClient
+          .from('profiles')
+          .select('user_type')
+          .eq('id', user!.id)
+          .single();
+
+        // Handle the profileData potentially being null with proper type checking
+        if (!profileData || ((profileData as { user_type?: string })?.user_type !== 'admin')) {
+          // Not an admin, redirect to regular profile
+          const profileUrl = new URL(`/${currentLocale}/profile`, request.url);
+          const redirectResponse = NextResponse.redirect(profileUrl);
+          copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+          return redirectResponse;
+        }
+      } catch {
+        // Error checking admin status, redirect to login for safety
+        const loginUrl = new URL(`/${currentLocale}/login`, request.url);
+        const redirectResponse = NextResponse.redirect(loginUrl);
+        copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+        return redirectResponse;
+      }
+    }
+    
+    return supabaseResponseAfterSessionUpdate;
+  } catch {
+    return supabaseResponseAfterSessionUpdate;
   }
 }
 

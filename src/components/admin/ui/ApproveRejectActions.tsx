@@ -50,12 +50,15 @@ export default function ApproveRejectActions({
   
   const router = useRouter();
 
+  // Create Supabase client at component level
+  const supabase = createClient();
+
   const handleApprove = async () => {
     setIsSubmitting(true);
     setErrorMessage(null);
     
     try {
-      const supabase = createClient();
+      // Use the component-level supabase client instead of creating new one
       const { error } = await supabase
         .from('verification_requests')
         .update({
@@ -97,7 +100,6 @@ export default function ApproveRejectActions({
     setErrorMessage(null);
     
     try {
-      const supabase = createClient();
       const { error } = await supabase
         .from('verification_requests')
         .update({

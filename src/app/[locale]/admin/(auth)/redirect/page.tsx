@@ -1,7 +1,7 @@
 "use client";
 
-import { AdminRedirectPage } from '@/components/admin/auth';
+import AdminRedirectPage from '@/components/admin/auth/AdminRedirectPage';
 
-export default function AdminAuthRedirectPage() {
+export default function AdminRedirectRoute() {
   return <AdminRedirectPage />;
 }

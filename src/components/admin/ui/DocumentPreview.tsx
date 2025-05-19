@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Spinner, Alert, Button } from "flowbite-react";
 import { HiExclamationCircle, HiDocumentText, HiRefresh } from "react-icons/hi";
 import Image from "next/image";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/database.types";
 
 type DocumentPreviewProps = {
   documentPath: string;
@@ -38,7 +40,11 @@ export default function DocumentPreview({
   const [documentUrl, setDocumentUrl] = useState<string | null>(null);
   const [isImage, setIsImage] = useState(false);
 
-  const supabase = createClient();
+  // Use useRef to maintain a single instance of the Supabase client
+  const supabaseRef = useRef<SupabaseClient<Database> | null>(null);
+  if (!supabaseRef.current) {
+    supabaseRef.current = createClient();
+  }
 
   const fetchDocument = useCallback(async () => {
     if (!documentPath) {
@@ -80,7 +86,7 @@ export default function DocumentPreview({
       console.log("Using bucket:", bucketName, "and path:", filePath);
 
       // Generate a longer-lived URL (5 minutes) to avoid frequent refreshes
-      const { data, error } = await supabase.storage
+      const { data, error } = await supabaseRef.current!.storage
         .from(bucketName)
         .createSignedUrl(filePath, 300);
 
@@ -89,9 +95,9 @@ export default function DocumentPreview({
         
         // Check for specific error types
         if (error.message.includes("Not Found")) {
-          throw new Error(`${translations.notFound || "Document not found"}`);
+          throw new Error(translations.notFound || "Document not found");
         } else if (error.message.includes("permission")) {
-          throw new Error(`Permission error: ${error.message}`);
+          throw new Error(`${translations.unknownError || "Permission error"}: ${error.message}`);
         } else {
           throw error;
         }
@@ -114,7 +120,7 @@ export default function DocumentPreview({
     } finally {
       setLoading(false);
     }
-  }, [documentPath, supabase, translations]);
+  }, [documentPath, translations]);
 
   useEffect(() => {
     fetchDocument();

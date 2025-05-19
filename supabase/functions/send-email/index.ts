@@ -237,14 +237,16 @@ async function processNotificationEmail(supabase: SupabaseClient, notificationId
     
     // 5. Process template with placeholders
     if (typedNotification.payload_data) {
-      const placeholderPattern = /\\[([A-Za-z0-9_.-]+)\\]/g; // More specific placeholder pattern
+      // Fixed regex pattern - corrected escape sequence for square brackets
+      const placeholderPattern = /\[([A-Za-z0-9_.-]+)\]/g; 
 
       // Process subject
       let match;
       while ((match = placeholderPattern.exec(subject)) !== null) {
         const placeholderKey = match[1];
         const replacementValue = String(getNestedProperty(typedNotification.payload_data, placeholderKey) || `[${placeholderKey}]`);
-        subject = subject.replace(new RegExp(`\\\\[${placeholderKey}\\\\]`, 'g'), replacementValue);
+        // Fixed regex pattern in the replace method
+        subject = subject.replace(new RegExp(`\\[${placeholderKey}\\]`, 'g'), replacementValue);
       }
       
       // Process body

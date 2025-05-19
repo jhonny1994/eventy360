@@ -31,11 +31,14 @@ export default function DownloadDocumentButton({
 }: DownloadDocumentButtonProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Get the Supabase client once at component initialization
+  // The createClient() function already implements a singleton pattern
   const supabase = createClient();
 
   const downloadDocument = useCallback(async () => {
     if (!documentPath) {
-      setError('Document path is missing');
+      setError(translations.documentNotFound || 'Document path is missing');
       return;
     }
 
@@ -55,7 +58,7 @@ export default function DownloadDocumentButton({
         bucketName = documentPath.substring(0, firstSlashIndex);
         filePath = documentPath.substring(firstSlashIndex + 1);
       } else {
-        throw new Error('Invalid document path format');
+        throw new Error(translations.documentNotFound || 'Invalid document path format');
       }
 
       console.log(`Downloading from bucket: ${bucketName}, path: ${filePath}`);
@@ -74,7 +77,7 @@ export default function DownloadDocumentButton({
       }
 
       if (!data) {
-        throw new Error('Failed to download document');
+        throw new Error(translations.downloadError || 'Failed to download document');
       }
       
       // Create blob URL and trigger download
@@ -93,11 +96,11 @@ export default function DownloadDocumentButton({
       
     } catch (err) {
       console.error("Download error:", err);
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : (translations.downloadError || 'Unknown error'));
     } finally {
       setLoading(false);
     }
-  }, [documentPath, supabase, translations]);
+  }, [documentPath, supabase.storage, translations.documentNotFound, translations.downloadError]);
 
   // Determine button appearance based on variant
   if (variant === 'icon') {

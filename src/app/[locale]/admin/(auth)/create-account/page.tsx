@@ -22,12 +22,26 @@ export default async function AdminCreateAccountPage({ params }: { params: { loc
     .select('name')
     .eq('profile_id', user.id)
     .single();
+    
+  // Also check the main profile's completion flag
+  const { data: mainProfile } = await supabase
+    .from('profiles')
+    .select('is_extended_profile_complete, user_type')
+    .eq('id', user.id)
+    .single();
   
-  // If admin profile already set up, redirect to dashboard
-  if (adminProfile?.name) {
+  // Only redirect to dashboard if BOTH conditions are met:
+  // 1. Admin profile exists with a name
+  // 2. Main profile is marked as complete
+  // 3. User type is actually "admin"
+  if (adminProfile?.name && 
+      mainProfile?.is_extended_profile_complete === true && 
+      mainProfile?.user_type === 'admin') {
     redirect(`/${locale}/admin/dashboard`);
   }
   
+  // If we're here, at least one of the conditions wasn't met,
+  // so we should show the account setup form
   return (
     <AuthLayout 
       illustrationSrc="/illustrations/signup.svg"

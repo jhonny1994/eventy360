@@ -7,6 +7,7 @@
     "redirectFailedDescription": "يُرجى المحاولة مرة أخرى أو العودة إلى صفحة تسجيل الدخول",
     "debugInformation": "معلومات التصحيح التقني",
     "emailConfirmedRedirecting": "تم تأكيد بريدك الإلكتروني بنجاح! جارٍ توجيهك إلى الخطوة التالية",
+    "emailConfirmedRedirectingDescription": "سيتم توجيهكم إلى صفحة استكمال الملف الشخصي خلال لحظات...",
     "closeButton": "إغلاق",
     "loading": "جار التحميل",
     "goToLoginPage": "الانتقال إلى {pageName}",
@@ -158,7 +159,8 @@
       "illustrationAlt": "رسم توضيحي لتأكيد البريد الإلكتروني",
       "emailSuccessfullyConfirmedTitle": "تم تأكيد بريدكم الإلكتروني بنجاح!",
       "emailSuccessfullyConfirmedMessage": "يمكنكم الآن المتابعة لإكمال ملفكم الشخصي والوصول إلى جميع خدمات المنصة",
-      "continueButton": "متابعة"
+      "continueButton": "متابعة",
+      "processingRequest": "جارٍ معالجة طلب تأكيد البريد الإلكتروني..."
     },
     "CompleteProfilePage": {
       "title": "استكمال الملف الشخصي",

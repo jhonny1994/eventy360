@@ -1,7 +1,7 @@
 "use client";
 
-import { AdminAuthCallbackPage } from '@/components/admin/auth';
+import AdminAuthCallbackPage from '@/components/admin/auth/AdminAuthCallbackPage';
 
-export default function AdminMagicCallbackPage() {
+export default function MagicCallback() {
   return <AdminAuthCallbackPage />;
 } 

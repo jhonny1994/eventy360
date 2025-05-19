@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { createCallbackClient } from '@/utils/supabase/callback-client';
 
 export async function GET(request: NextRequest, props: { params: Promise<{ locale: string }> }) {
   const params = await props.params;
@@ -11,35 +11,11 @@ export async function GET(request: NextRequest, props: { params: Promise<{ local
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
 
-
-
   const targetRedirectUrl = `${origin}/${locale}/redirect`;
   const response = NextResponse.redirect(targetRedirectUrl, 303);
 
   if (code) {
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return request.cookies.get(name)?.value;
-          },
-          set(name: string, value: string, options: CookieOptions) {
-            
-            response.cookies.set(name, value, options);
-          },
-          remove(name: string, options: CookieOptions) {
-            
-            response.cookies.delete({ 
-              name,
-              path: options.path,
-              domain: options.domain,
-            });
-          },
-        },
-      }
-    );
+    const supabase = createCallbackClient(request, response);
 
     const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
@@ -58,10 +34,9 @@ export async function GET(request: NextRequest, props: { params: Promise<{ local
     return response;
   }
 
-
   const url = new URL(targetRedirectUrl);
   url.searchParams.set('error', 'auth_callback_missing_code');
 
   response.headers.set('Location', url.toString());
   return response;
-} 
+}

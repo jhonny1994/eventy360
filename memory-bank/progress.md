@@ -1,26 +1,27 @@
 # Project Progress: Eventy360
 
 ## Project Overview
-Eventy360 is a Next.js application with Supabase backend, offering multilingual support (English, French, Arabic) for connecting researchers and event organizers in academia. **The project now follows a detailed 6-Phase MVP Development Plan.**
+Eventy360 is a Next.js application with Supabase backend, offering multilingual support (English, French, Arabic) for connecting researchers and event organizers in academia. The project follows a detailed 6-Phase MVP Development Plan.
 
-**Conceptual Model Updates (Consistent with latest policies - 05/20/2025 - *replace with actual date*)**
-- User Verification (`is_verified`) is a visual badge only and does not gate features.
-- Feature access for Free/Expired subscription tiers is explicitly defined (e.g., no topic emails for expired researchers, read-only for expired organizers on event mgt).
-- Topic deletion by Admins cascades to `event_topics`.
-- These definitions are reflected in `projectbrief.md`, `productContext.md`, `systemPatterns.md`, and `activeContext.md`.
+**Conceptual Model**
+- User Verification (`is_verified`) is a visual badge only and does not gate features
+- Feature access for Free/Expired subscription tiers is explicitly defined:
+  - No topic emails for expired researchers
+  - Read-only access for expired organizers on event management
+- Topic deletion by Admins cascades to `event_topics`
 
 ## Current Focus
-**Executing Phase 1 of the MVP Development Plan:** Focusing on Subscription Backbone & Core Admin tools.
+**Phase 1: Subscription Backbone & Core Admin** - Payment and subscription management implementation.
 
 ## High-Level Status (Against New 6-Phase Plan)
 
 | Phase                                                              | Status      | Notes                                                                                                                               |
 | :----------------------------------------------------------------- | :---------- | :---------------------------------------------------------------------------------------------------------------------------------- |
 | **Pre-Plan Work (Auth & Profile Foundation)**                        | ✅ Complete | Core authentication, profile completion, basic profile display, i18n, styling, DB schema foundation.                               |
-| **Phase 1: Subscription Backbone & Core Admin**                    | 🟡 In Progress | Admin authentication flow complete. Admin dashboard implemented. Verification system complete with email notifications, pagination, and performance optimizations. Working on payment/subscription lifecycle, payment history display.         |
+| **Phase 1: Subscription Backbone & Core Admin**                    | 🟡 In Progress | **Completed:** Admin authentication, Verification system with emails (including bug fixes for duplicate notifications)<br>**In Progress:** Payment/subscription management               |
 | **Phase 2: Event Management & Topic Control**                      | ⚪ Planned   |                                                                                                                                     |
 | **Phase 3: Submission System**                                     | ⚪ Planned   |                                                                                                                                     |
-| **Phase 4: Comprehensive Notification System & Email Management**    | ⚪ Planned   | Email notification foundations in place with Arabic language support. Further enhancements planned in Phase 4.                                                                                                                                 |
+| **Phase 4: Comprehensive Notification System & Email Management**    | ⚪ Planned   | Email notification foundations in place with Arabic language support and duplicate prevention. Further enhancements planned in Phase 4.                                                                                                                                 |
 | **Phase 5: Value-Added MVP Features & Admin Panel Consolidation**  | ⚪ Planned   |                                                                                                                                     |
 | **Phase 6: Testing, Deployment Preparation & Launch**              | ⚪ Planned   | Testing is also an ongoing activity throughout all phases.                                                                          |
 
@@ -30,7 +31,7 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 - Console shows: `Route "/[locale]/callback" used params.locale. params should be awaited...`
 - Doesn't break functionality, low priority
 
-## Completed Features (Categorized under Pre-Plan Work & Ongoing Refinements)
+## ✅ Completed Features
 
 ### Core Infrastructure
 - Next.js App Router project with TypeScript
@@ -48,6 +49,7 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 - Verification request table with triggers for status changes
 - Performance optimization with appropriate indexes for verification queries
 - Language column for user profiles with Arabic default
+- Fixed duplicate notification issues in database triggers
 
 ### Authentication System
 - Login and registration with email/password
@@ -87,6 +89,15 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 - Email notifications for verification status changes
 - Performance optimizations with database indexes for common query patterns
 - Pagination implementation for verification request listings
+- Fixed duplicate email issue when admin approves verification requests
+
+### Email Notification System (Foundation Complete) ✅
+- Core email sending Edge Functions implemented
+- Notification queue system with appropriate triggers
+- Email templates for verification status changes
+- Fixed language selection logic to default to Arabic
+- Improved trigger functions to prevent duplicate notifications
+- Proper error handling and logging
 
 ### UI Components & Refinements
 - **`PricingModal.tsx`**: 
@@ -99,93 +110,76 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
     - Consistent styling and error handling
     - Verification management interface with pagination and filtering
 
-## In-Progress Features (Corresponds to Phase 1 of New Plan)
+## 🚀 In-Progress Features (Phase 1)
 
-*   **A. User Account & Profile Foundations (Review & Badge Display):**
-    *   ✅ Review existing Auth/Profile flows for consistency with new policies (e.g., `is_verified` badge display on profile page).
-*   **B. Admin Panel - Core MVP Operations:**
-    *   ✅ **Basic Admin Access & Layout:** Secure routes, standardized navigation components (`AdminNavbar`, `AdminSidebar`), and dashboard layout with proper internationalization and RTL support.
-    *   ✅ **Admin Authentication Flow:** Standardized authentication components for admin login, account creation, error handling, and redirects with centralized exports via index files.
-    *   ✅ **User Management/Verification System:** Admin interface for reviewing verification requests, approving/rejecting with notes, viewing documents, with pagination and performance optimizations.
-    *   Payment & Subscription Management (Admin UI: List payments, record new manual payment via RPC, update payment status via RPC).
-    *   Verify/Refine `handle_payment_verification()` DB function.
-    *   `admin_actions_log` table creation and logging integration for admin user/payment actions.
-*   **C. Subscription Lifecycle & User Communication:**
-    *   Frontend: Display clear instructions for manual offline payment for upgrades (Partially addressed by `PricingModal` and `PaymentInstructionsDisplay` refinements).
-    *   Backend: `check_subscriptions_expiry` Edge Function implementation/verification.
-    *   Frontend: Display Payment History in user profiles.
-    *   Admin Panel: Display Payment History for users.
-*   **D. Initial Notification Framework Setup:**
-    *   ✅ Core email sending Edge Functions (`send-email`, `process-notification-queue`) setup/verification.
-    *   ✅ Populate initial Arabic email templates in `email_templates` (User Verified Badge, Payment/Subscription status, Trial Expiry, Admin Invitation).
-    *   ✅ Initial notification queueing logic integration (including for Admin Invitation).
-    *   ✅ Email notifications for verification status changes (approved/rejected).
-    *   ✅ Fixed language preferences to properly default to Arabic.
+### A. User Account & Profile Foundations
+- ✅ Verification badge display on profile page
 
-## Planned Features (Phases 2-6 of New Plan)
+### B. Admin Panel - Core MVP Operations
+- ✅ **Basic Admin Access & Layout:** Secure routes, standardized navigation components (`AdminNavbar`, `AdminSidebar`), and dashboard layout with proper internationalization and RTL support.
+- ✅ **Admin Authentication Flow:** Standardized authentication components for admin login, account creation, error handling, and redirects with centralized exports via index files.
+- ✅ **User Management/Verification System:** Admin interface for reviewing verification requests, approving/rejecting with notes, viewing documents, with pagination and performance optimizations.
+- 🔄 Payment & Subscription Management (Admin UI: List payments, record new manual payment via RPC, update payment status via RPC).
+- 🔄 Verify/Refine `handle_payment_verification()` DB function.
+- 🔄 `admin_actions_log` table creation and logging integration for admin user/payment actions.
 
-1.  **Phase 2: Event Management & Topic Control**
-    *   Admin Topic Management (CRUD, cascade delete policy, logging).
-    *   Organizer Event Creation (form, backend logic, subscription checks, `event_topics` linking).
-    *   Organizer Event Dashboard (basic list).
-    *   Public/Researcher Event Discovery (listing, search/filter, detail page).
-    *   Event Bookmarking (for active subscriptions, read-only for expired).
-    *   Admin Event Oversight (view/edit all events).
-    *   Event-related Notifications (new event to topic subscribers - no emails for free/expired, deadline reminders to organizers).
-2.  **Phase 3: Submission System**
-    *   Researcher Submission (form, backend logic with subscription checks, file uploads to Storage).
-    *   Researcher Submission Tracking (UI, read-only for expired).
-    *   Organizer Submission Management (view submissions for own events, download files securely, update status/feedback).
-    *   Admin Submission Oversight (view all).
-    *   Submission-related Notifications (to researcher & organizer).
-3.  **Phase 4: Comprehensive Notification System & Email Management**
-    *   Full review and robust implementation of email sending Edge Functions (`send-email`, `process-notification-queue`, `retry-failed-emails`).
-    *   Complete population of all Arabic `email_templates`.
-    *   System-wide review and implementation of notification queueing logic (ensure no topic emails for free/expired).
-    *   Admin Email Management (template edit, log viewing, logging template edits).
-4.  **Phase 5: Value-Added MVP Features & Admin Panel Consolidation**
-    *   Research Repository (event flag, UI, backend RPC).
-    *   Global Search Bar (Events, Repository) & FTS optimization.
-    *   Admin Panel Central Dashboard (stats, navigation).
-    *   Admin Panel UI/UX Refinement.
-5.  **Phase 6: Testing, Deployment Preparation & Launch**
-    *   Comprehensive Testing Cycles (Unit, Integration, E2E, UAT).
-    *   Performance & Security Review.
-    *   Deployment Preparation (Prod environments, data seeding, CI/CD, backups).
-    *   Launch & Post-Launch Monitoring.
+### C. Subscription Lifecycle & User Communication
+- 🔄 Frontend: Display clear instructions for manual offline payment for upgrades (Partially addressed by `PricingModal` and `PaymentInstructionsDisplay` refinements).
+- 🔄 Backend: `check_subscriptions_expiry` Edge Function implementation/verification.
+- 🔄 Frontend: Display Payment History in user profiles.
+- 🔄 Admin Panel: Display Payment History for users.
 
-## 1. What Works (Completed Features/Areas - Includes Pre-Plan Foundational Work & Ongoing Refinements)
+### D. Initial Notification Framework Setup
+- ✅ Core email sending Edge Functions (`send-email`, `process-notification-queue`) setup/verification.
+- ✅ Populate initial Arabic email templates in `email_templates` (User Verified Badge, Payment/Subscription status, Trial Expiry, Admin Invitation).
+- ✅ Initial notification queueing logic integration (including for Admin Invitation).
+- ✅ Email notifications for verification status changes (approved/rejected).
+- ✅ Fixed language preferences to properly default to Arabic.
+- ✅ Fixed duplicate notification issues in database triggers.
 
-- Core authentication flows (Login, Register, Password Reset)
-- Email confirmation flow and callback handling
-- Complete-profile form with validation and submission
-- Middleware redirection functionality
-- Translation system improvements (including comprehensive Arabic translation update, targeted refinements for pricing/payment, and new key additions)
-- Database schema and constraints (initial)
-- Minimal profile page for testing
-- Refined Profile Notification System (Implementation and Testing)
-- Profile Picture Upload (Implementation and Cleanup)
-- `PricingModal.tsx` UI/UX and logic enhancements
-- Admin authentication system with standardized components, properly structured imports, and security checks
-- Admin dashboard layout with internationalized and standardized `AdminNavbar` and `AdminSidebar` components
-- ✅ Verification system for document upload and review (both organizer and admin interfaces)
-- ✅ Document preview and download functionality for verification
-- ✅ Database triggers for verification status changes including enum type casting fix
-- ✅ Email notifications for verification status changes with Arabic language support
-- ✅ Pagination for verification request listings with performance optimizations
+## 📅 Planned Features
 
-## 2. What's Left to Build (Now tracked by Phases 1-6 of the New Plan)
+### Phase 2: Event Management & Topic Control
+- Admin Topic Management (CRUD, cascade delete policy, logging).
+- Organizer Event Creation (form, backend logic, subscription checks, `event_topics` linking).
+- Organizer Event Dashboard (basic list).
+- Public/Researcher Event Discovery (listing, search/filter, detail page).
+- Event Bookmarking (for active subscriptions, read-only for expired).
+- Admin Event Oversight (view/edit all events).
+- Event-related Notifications (new event to topic subscribers - no emails for free/expired, deadline reminders to organizers).
 
-- Payment and subscription management in admin panel
-- Payment history display for users
-- Event management and topic control (Phase 2)
-- Submission system (Phase 3)
-- Comprehensive notification system and email management (Phase 4)
-- Value-added MVP features and admin panel consolidation (Phase 5)
-- Testing, deployment preparation and launch (Phase 6)
+### Phase 3: Submission System
+- Researcher Submission (form, backend logic with subscription checks, file uploads to Storage).
+- Researcher Submission Tracking (UI, read-only for expired).
+- Organizer Submission Management (view submissions for own events, download files securely, update status/feedback).
+- Admin Submission Oversight (view all).
+- Submission-related Notifications (to researcher & organizer).
 
-## 3. Current Status
-The project has successfully implemented foundational user authentication, profile completion, basic profile viewing/editing features, admin authentication, and the complete verification system with email notifications and pagination. The focus is now on completing the remaining parts of Phase 1 of the 6-Phase MVP Development Plan, with payment and subscription management as the next immediate goal.
+### Phase 4: Comprehensive Notification System & Email Management
+- Full review and robust implementation of email sending Edge Functions (`send-email`, `process-notification-queue`, `retry-failed-emails`).
+- Complete population of all Arabic `email_templates`.
+- System-wide review and implementation of notification queueing logic (ensure no topic emails for free/expired).
+- Admin Email Management (template edit, log viewing, logging template edits).
+
+### Phase 5: Value-Added MVP Features & Admin Panel Consolidation
+- Research Repository (event flag, UI, backend RPC).
+- Global Search Bar (Events, Repository) & FTS optimization.
+- Admin Panel Central Dashboard (stats, navigation).
+- Admin Panel UI/UX Refinement.
+
+### Phase 6: Testing, Deployment Preparation & Launch
+- Comprehensive Testing Cycles (Unit, Integration, E2E, UAT).
+- Performance & Security Review.
+- Deployment Preparation (Prod environments, data seeding, CI/CD, backups).
+- Launch & Post-Launch Monitoring.
+
+## Current Status Summary
+The project has successfully implemented foundational user authentication, profile completion, basic profile viewing/editing features, admin authentication, and the complete verification system with email notifications (including a bug fix for duplicate emails). With the verification system now fully operational, the focus has shifted to implementing payment and subscription management as part of Phase 1 completion.
+
+## Next Immediate Tasks
+1. Implement payment management in admin panel
+2. Create admin actions logging system
+3. Develop payment history display for users and admins
 
 ## 4. Known Issues & TODOs
 

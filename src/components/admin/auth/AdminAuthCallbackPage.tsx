@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from '@/i18n/navigation';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -15,6 +15,10 @@ export default function AdminAuthCallbackPage() {
   const locale = params.locale as string;
   const t = useTranslations('AdminAuth.CallbackPage');
   
+  // Create Supabase client at component level using useMemo
+  // This ensures we only create one instance per component lifecycle
+  const supabase = useMemo(() => createClient(), []);
+  
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [redirecting, setRedirecting] = useState(false);
@@ -25,7 +29,7 @@ export default function AdminAuthCallbackPage() {
     setIsLoading(true); 
     setRedirecting(true); 
     try {
-      const supabase = createClient();
+      // No need to create client here, using the one from useMemo
 
       const hashParams = new URLSearchParams(hash.substring(1));
       const accessToken = hashParams.get('access_token');
@@ -34,7 +38,7 @@ export default function AdminAuthCallbackPage() {
       const tokenType = hashParams.get('token_type') || 'bearer';
       
       if (!accessToken || !refreshToken) {
-        throw new Error('Magic link tokens (access or refresh) missing from URL hash');
+        throw new Error(t('invalidOrExpiredInvite'));
       }
       
       await supabase.auth.signOut();
@@ -49,14 +53,14 @@ export default function AdminAuthCallbackPage() {
         throw new Error(`Failed to set session: ${setSessionError.message}`);
       }
       if (!sessionDataFromSet?.session || !sessionDataFromSet?.user) {
-        throw new Error('setSession did not return a session or user object, though no error was thrown.');
+        throw new Error(t('unexpectedState'));
       }
 
-      const verificationClient = createClient();
-      const { data: { user: verifiedUser }, error: getUserError } = await verificationClient.auth.getUser();
+      // Use the same client instance for this call too
+      const { data: { user: verifiedUser }, error: getUserError } = await supabase.auth.getUser();
 
       if (getUserError || !verifiedUser) {
-        throw new Error(getUserError ? (getUserError as AuthError).message : 'Get user verification failed after setSession');
+        throw new Error(getUserError ? (getUserError as AuthError).message : t('profileRetrievalError'));
       }
       
       const lsKey = `sb-${new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!).host.split('.')[0]}-auth-token`;
@@ -90,7 +94,7 @@ export default function AdminAuthCallbackPage() {
       setIsLoading(false);
       setRedirecting(false); 
     }
-  }, [router]);
+  }, [router, supabase, t]);
 
   useEffect(() => {
     if (processedHash || redirecting || attemptedMagicLinkAuth) return;
