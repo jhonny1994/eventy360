@@ -176,6 +176,8 @@ async function processNotificationEmail(supabase: SupabaseClient, notificationId
       } else if (userData && userData.user) {
         recipientEmail = userData.user.email;
         
+        // Try to get language preference from profile tables
+        let languageFound = false;
         const profileTypes = ['researcher_profiles', 'organizer_profiles'];
         for (const profileType of profileTypes) {
           const { data: profileData } = await supabase
@@ -184,13 +186,22 @@ async function processNotificationEmail(supabase: SupabaseClient, notificationId
             .eq("profile_id", typedNotification.recipient_profile_id)
             .maybeSingle();
           
-          if (profileData) {
-            const typedProfileData = profileData as { language?: string };
-            if (typedProfileData.language) {
-              userPreferredLanguage = typedProfileData.language;
+          if (profileData && profileData.language) {
+            // Validate the language exists in the template before using it
+            if (typedTemplate.subject_translations[profileData.language] && 
+                typedTemplate.body_html_translations[profileData.language]) {
+              userPreferredLanguage = profileData.language;
+              languageFound = true;
+              console.log(`Found valid language preference: ${userPreferredLanguage}`);
+            } else {
+              console.log(`User preferred language '${profileData.language}' not available in template, using Arabic`);
             }
             break; 
           }
+        }
+        
+        if (!languageFound) {
+          console.log("No valid language preference found, using default Arabic");
         }
       }
     } else if (typedNotification.payload_data && typedNotification.payload_data.recipient_email) {
@@ -207,11 +218,12 @@ async function processNotificationEmail(supabase: SupabaseClient, notificationId
       throw new Error(`Required Arabic translation missing for template ${typedTemplate.template_key}`);
     }
 
+    // Set default subject and body to Arabic
     let subject = typedTemplate.subject_translations.ar;
     let htmlBody = typedTemplate.body_html_translations.ar;
     let langToUse = 'ar';
 
-    // If user has a different preferred language AND that template exists, use it. Otherwise, stick to Arabic.
+    // Only use non-Arabic language if explicitly found and valid
     if (userPreferredLanguage !== 'ar' &&
         typedTemplate.subject_translations[userPreferredLanguage] &&
         typedTemplate.body_html_translations[userPreferredLanguage]) {

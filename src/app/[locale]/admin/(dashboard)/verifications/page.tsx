@@ -6,7 +6,7 @@ import { requireAdmin } from "@/utils/admin/auth";
 import { formatDate } from "@/utils/admin/format";
 import Link from "next/link";
 import Image from "next/image";
-import { StatusBadge } from "@/components/admin/ui";
+import { StatusBadge, PaginationClient } from "@/components/admin/ui";
 import StatusFilter from './StatusFilter';
 
 enum VerificationStatus {
@@ -19,14 +19,20 @@ type VerificationListProps = {
   searchParams: {
     status?: string;
     search?: string;
+    page?: string;
+    page_size?: string;
   };
   params: { locale: string };
 };
 
+// Default values for pagination
+const DEFAULT_PAGE_SIZE = 10;
+const DEFAULT_PAGE = 1;
+
 /**
  * Admin verification requests list page
  * Shows all verification requests with status and actions
- * Supports filtering by status and searching by user name
+ * Supports filtering by status, searching by user name, and pagination
  */
 export default async function AdminVerificationsPage({
   params,
@@ -35,8 +41,15 @@ export default async function AdminVerificationsPage({
   const { locale } = await params;
   // Await searchParams before accessing its properties
   const searchParamsData = await searchParams;
-  const { status, search } = searchParamsData;
+  const { status, search, page: pageParam, page_size: pageSizeParam } = searchParamsData;
   const t = await getTranslations("AdminVerifications");
+
+  // Parse pagination parameters with defaults
+  const page = pageParam ? parseInt(pageParam, 10) : DEFAULT_PAGE;
+  const pageSize = pageSizeParam ? parseInt(pageSizeParam, 10) : DEFAULT_PAGE_SIZE;
+  
+  // Calculate offset for pagination
+  const offset = (page - 1) * pageSize;
 
   // Ensure user is admin
   await requireAdmin(locale);
@@ -45,24 +58,39 @@ export default async function AdminVerificationsPage({
   const supabase = await createServerSupabaseClient();
 
   // Build query with filters
-  let query = supabase.from("verification_request_details").select("*");
+  let countQuery = supabase.from("verification_request_details").select("*", { count: "exact", head: true });
+  let dataQuery = supabase
+    .from("verification_request_details")
+    .select("*")
+    .range(offset, offset + pageSize - 1); // Use range for pagination (offset to offset+limit-1)
 
-  // Apply status filter if provided
+  // Apply status filter if provided to both queries
   if (status && Object.values(VerificationStatus).includes(status as VerificationStatus)) {
-    query = query.eq("status", status as VerificationStatus);
+    countQuery = countQuery.eq("status", status as VerificationStatus);
+    dataQuery = dataQuery.eq("status", status as VerificationStatus);
   }
 
-  // Apply search filter if provided
+  // Apply search filter if provided to both queries
   if (search) {
-    query = query.ilike("user_name", `%${search}%`);
+    countQuery = countQuery.ilike("user_name", `%${search}%`);
+    dataQuery = dataQuery.ilike("user_name", `%${search}%`);
   }
 
-  // Execute query with ordering: pending first, then most recent
-  const { data: verificationRequests, error } = await query
+  // Apply ordering: pending first, then most recent
+  dataQuery = dataQuery
     .order("status", { ascending: false }) // This puts 'pending' first (alphabetically after 'approved'/'rejected')
     .order("submitted_at", { ascending: false });
 
-  // Get count of pending requests
+  // Execute both queries in parallel for better performance
+  const [countResult, dataResult] = await Promise.all([
+    countQuery,
+    dataQuery
+  ]);
+
+  const { count: totalRequests, error: countError } = countResult;
+  const { data: verificationRequests, error: dataError } = dataResult;
+
+  // Get count of pending requests (for the badge)
   const { count: pendingCount } = await supabase
     .from("verification_request_details")
     .select("*", { count: "exact", head: true })
@@ -84,6 +112,22 @@ export default async function AdminVerificationsPage({
     rejected: t("status.rejected"),
   };
 
+  // Pagination translations
+  const paginationTranslations = {
+    showing: t("pagination.showing"),
+    of: t("pagination.of"),
+    entries: t("pagination.entries"),
+    previousPage: t("pagination.previousPage"),
+    nextPage: t("pagination.nextPage"),
+    pageSize: t("pagination.pageSize"),
+  };
+
+  // Calculate total pages
+  const totalPages = totalRequests ? Math.ceil(totalRequests / pageSize) : 0;
+
+  // Combine errors
+  const error = countError || dataError;
+
   return (
     <div className="w-full">
       {/* Page header */}
@@ -104,6 +148,8 @@ export default async function AdminVerificationsPage({
             pendingCount={pendingCount || 0}
             locale={locale}
             search={search}
+            page={page}
+            pageSize={pageSize}
             translations={filterTranslations}
           />
         </div>
@@ -111,6 +157,8 @@ export default async function AdminVerificationsPage({
         <div className="w-full sm:w-auto sm:min-w-[300px]">
           <form action={`/${locale}/admin/verifications`} method="get">
             {status && <input type="hidden" name="status" value={status} />}
+            {page && <input type="hidden" name="page" value={page.toString()} />}
+            {pageSize && <input type="hidden" name="page_size" value={pageSize.toString()} />}
             <div className="relative">
               <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                 <HiSearch className="w-4 h-4 text-gray-500 dark:text-gray-400" />
@@ -144,83 +192,99 @@ export default async function AdminVerificationsPage({
             {search || status ? t("filters.noMatchingRequests") : t("noRequests")}
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                  <th scope="col" className="px-4 py-3">
-                    {t("table.user")}
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    {t("table.userType")}
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    {t("table.submittedAt")}
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    {t("table.status")}
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    {t("table.actions")}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {verificationRequests.map((request) => (
-                  <tr
-                    key={request.id}
-                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                  >
-                    {/* User column with profile picture and name */}
-                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
-                      <div className="flex items-center gap-3">
-                        {request.profile_picture_url ? (
-                          <Image
-                            src={request.profile_picture_url}
-                            alt={request.user_name || "User"}
-                            width={32}
-                            height={32}
-                            className="w-8 h-8 rounded-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                        )}
-                        {request.user_name || "Unknown User"}
-                      </div>
-                    </td>
-
-                    {/* User type column */}
-                    <td className="px-4 py-3">
-                      {request.user_type && t(`userTypes.${request.user_type}`)}
-                    </td>
-
-                    {/* Submission date column */}
-                    <td className="px-4 py-3">
-                      {formatDate(request.submitted_at, locale)}
-                    </td>
-
-                    {/* Status column with badge */}
-                    <td className="px-4 py-3">
-                      <StatusBadge
-                        status={request.status}
-                        translations={statusTranslations}
-                      />
-                    </td>
-
-                    {/* Actions column with view button */}
-                    <td className="px-4 py-3">
-                      <Link href={`/${locale}/admin/verifications/${request.id}`}>
-                        <Button size="xs" color="info">
-                          <HiEye className="mr-1 h-4 w-4" />
-                          {t("actions.view")}
-                        </Button>
-                      </Link>
-                    </td>
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                  <tr>
+                    <th scope="col" className="px-4 py-3">
+                      {t("table.user")}
+                    </th>
+                    <th scope="col" className="px-4 py-3">
+                      {t("table.userType")}
+                    </th>
+                    <th scope="col" className="px-4 py-3">
+                      {t("table.submittedAt")}
+                    </th>
+                    <th scope="col" className="px-4 py-3">
+                      {t("table.status")}
+                    </th>
+                    <th scope="col" className="px-4 py-3">
+                      {t("table.actions")}
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {verificationRequests.map((request) => (
+                    <tr
+                      key={request.id}
+                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                    >
+                      {/* User column with profile picture and name */}
+                      <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
+                        <div className="flex items-center gap-3">
+                          {request.profile_picture_url ? (
+                            <Image
+                              src={request.profile_picture_url}
+                              alt={request.user_name || "User"}
+                              width={32}
+                              height={32}
+                              className="w-8 h-8 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                          )}
+                          {request.user_name || "Unknown User"}
+                        </div>
+                      </td>
+
+                      {/* User type column */}
+                      <td className="px-4 py-3">
+                        {request.user_type && t(`userTypes.${request.user_type}`)}
+                      </td>
+
+                      {/* Submission date column */}
+                      <td className="px-4 py-3">
+                        {formatDate(request.submitted_at, locale)}
+                      </td>
+
+                      {/* Status column with badge */}
+                      <td className="px-4 py-3">
+                        <StatusBadge
+                          status={request.status}
+                          translations={statusTranslations}
+                        />
+                      </td>
+
+                      {/* Actions column with view button */}
+                      <td className="px-4 py-3">
+                        <Link href={`/${locale}/admin/verifications/${request.id}`}>
+                          <Button size="xs" color="info">
+                            <HiEye className="mr-1 h-4 w-4" />
+                            {t("actions.view")}
+                          </Button>
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            
+            {/* Pagination */}
+            <div className="px-4 py-3">
+              <PaginationClient
+                currentPage={page}
+                totalPages={totalPages}
+                pageSize={pageSize}
+                totalItems={totalRequests || 0}
+                status={status}
+                search={search}
+                locale={locale}
+                translations={paginationTranslations}
+              />
+            </div>
+          </>
         )}
       </Card>
     </div>

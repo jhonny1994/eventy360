@@ -699,12 +699,20 @@
     },
     "actions": {
       "view": "عرض",
-      "approve": "قبول",
+      "approve": "الموافقة",
       "reject": "رفض"
+    },
+    "pagination": {
+      "showing": "عرض",
+      "of": "من أصل",
+      "entries": "عنصر",
+      "previousPage": "الصفحة السابقة",
+      "nextPage": "الصفحة التالية",
+      "pageSize": "عناصر في الصفحة"
     },
     "userTypes": {
       "researcher": "باحث",
-      "organizer": "منظم",
+      "organizer": "منظّم",
       "admin": "مسؤول"
     },
     "details": {

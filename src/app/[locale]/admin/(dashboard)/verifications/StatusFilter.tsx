@@ -10,6 +10,8 @@ interface StatusFilterProps {
   pendingCount: number;
   locale: string;
   search?: string;
+  page?: number;
+  pageSize?: number;
   translations: {
     allRequests: string;
     pending: string;
@@ -26,6 +28,7 @@ export default function StatusFilter({
   pendingCount,
   locale,
   search,
+  pageSize = 10,
   translations,
 }: StatusFilterProps) {
   // Build URLs for filter links
@@ -33,6 +36,9 @@ export default function StatusFilter({
     const params = new URLSearchParams();
     if (filterStatus) params.set("status", filterStatus);
     if (search) params.set("search", search);
+    // Reset to page 1 when changing filters
+    params.set("page", "1"); 
+    params.set("page_size", pageSize.toString());
     return `/${locale}/admin/verifications?${params.toString()}`;
   };
 
