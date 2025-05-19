@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Spinner, Alert } from "flowbite-react";
-import { HiExclamationCircle, HiDocumentText } from "react-icons/hi";
+import { Spinner, Alert, Button } from "flowbite-react";
+import { HiExclamationCircle, HiDocumentText, HiRefresh } from "react-icons/hi";
 import Image from "next/image";
 
 type DocumentPreviewProps = {
@@ -12,6 +12,13 @@ type DocumentPreviewProps = {
     loading: string;
     notFound: string;
     openInNewTab: string;
+    documentPathMissing?: string;
+    invalidDocumentPath?: string;
+    invalidDocumentStructure?: string;
+    failedToGenerateUrl?: string;
+    unknownError?: string;
+    verificationDocument?: string;
+    refreshDocument?: string;
   };
 };
 
@@ -33,52 +40,85 @@ export default function DocumentPreview({
 
   const supabase = createClient();
 
-  useEffect(() => {
-    const fetchDocument = async () => {
-      if (!documentPath) {
-        setError("Document path is missing");
-        setLoading(false);
-        return;
+  const fetchDocument = useCallback(async () => {
+    if (!documentPath) {
+      setError(translations.documentPathMissing || "Document path is missing");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      
+      console.log("Original document path:", documentPath);
+      
+      let bucketName: string;
+      let filePath: string;
+      
+      // In the database we store paths like "verification_documents/user_id/filename"
+      // But for storage.createSignedUrl, we need bucket="verification_documents" and path="user_id/filename"
+      if (documentPath.startsWith('verification_documents/')) {
+        // This is the format stored in the verification_requests table
+        bucketName = 'verification_documents';
+        filePath = documentPath.substring('verification_documents/'.length);
+        console.log("Path format detected: database record path");
+      } else if (documentPath.includes('/')) {
+        // Fallback to the old parsing logic
+        const firstSlashIndex = documentPath.indexOf('/');
+        bucketName = documentPath.substring(0, firstSlashIndex);
+        filePath = documentPath.substring(firstSlashIndex + 1);
+        console.log("Path format detected: generic path");
+      } else {
+        throw new Error(translations.invalidDocumentPath || "Invalid document path format");
       }
 
-      try {
-        // Parse bucket and path from document_path (format: bucket_name/user_id/filename)
-        const [bucketName, ...pathParts] = documentPath.split("/");
-        const filePath = pathParts.join("/");
+      if (!bucketName || !filePath) {
+        throw new Error(translations.invalidDocumentPath || "Invalid document path format");
+      }
 
-        if (!bucketName || !filePath) {
-          throw new Error("Invalid document path format");
-        }
+      console.log("Using bucket:", bucketName, "and path:", filePath);
 
-        const { data, error } = await supabase.storage
-          .from(bucketName)
-          .createSignedUrl(filePath, 60); // 60 seconds expiry
+      // Generate a longer-lived URL (5 minutes) to avoid frequent refreshes
+      const { data, error } = await supabase.storage
+        .from(bucketName)
+        .createSignedUrl(filePath, 300);
 
-        if (error) {
+      if (error) {
+        console.error("Storage error:", error);
+        
+        // Check for specific error types
+        if (error.message.includes("Not Found")) {
+          throw new Error(`${translations.notFound || "Document not found"}`);
+        } else if (error.message.includes("permission")) {
+          throw new Error(`Permission error: ${error.message}`);
+        } else {
           throw error;
         }
-
-        if (!data || !data.signedUrl) {
-          throw new Error("Failed to generate document URL");
-        }
-
-        setDocumentUrl(data.signedUrl);
-
-        // Check if document is an image based on file extension
-        const fileExtension = filePath.split(".").pop()?.toLowerCase();
-        setIsImage(
-          ["jpg", "jpeg", "png", "gif", "webp"].includes(fileExtension || "")
-        );
-      } catch (err) {
-        console.error("Error fetching document:", err);
-        setError(err instanceof Error ? err.message : "Unknown error");
-      } finally {
-        setLoading(false);
       }
-    };
 
+      if (!data || !data.signedUrl) {
+        throw new Error(translations.failedToGenerateUrl || "Failed to generate document URL");
+      }
+
+      setDocumentUrl(data.signedUrl);
+
+      // Check if document is an image based on file extension
+      const fileExtension = filePath.split(".").pop()?.toLowerCase();
+      setIsImage(
+        ["jpg", "jpeg", "png", "gif", "webp"].includes(fileExtension || "")
+      );
+    } catch (err) {
+      console.error("Error fetching document:", err);
+      setError(err instanceof Error ? err.message : (translations.unknownError || "Unknown error"));
+    } finally {
+      setLoading(false);
+    }
+  }, [documentPath, supabase, translations]);
+
+  useEffect(() => {
     fetchDocument();
-  }, [documentPath, supabase]);
+  }, [fetchDocument]);
 
   if (loading) {
     return (
@@ -91,31 +131,61 @@ export default function DocumentPreview({
 
   if (error || !documentUrl) {
     return (
-      <Alert color="failure" icon={HiExclamationCircle}>
-        <span>
-          {translations.notFound}: {error}
-        </span>
+      <Alert color="failure" icon={HiExclamationCircle} className="mt-2 mb-4">
+        <div className="flex flex-col space-y-2">
+          <span>{error || translations.notFound}</span>
+          <Button color="light" size="xs" onClick={fetchDocument} className="self-start">
+            <HiRefresh className="mr-1 h-4 w-4" />
+            {translations.refreshDocument || "Refresh document"}
+          </Button>
+        </div>
       </Alert>
     );
   }
 
   if (isImage) {
     return (
-      <div className="flex justify-center">
-        <Image
-          src={documentUrl}
-          alt="Verification Document"
-          width={600}
-          height={800}
-          className="max-w-full max-h-[600px] object-contain rounded border dark:border-gray-700"
-        />
+      <div className="flex flex-col items-center">
+        <div className="relative w-full max-w-full">
+          <Image
+            src={documentUrl}
+            alt={translations.verificationDocument || "Verification Document"}
+            width={600}
+            height={800}
+            className="max-w-full max-h-[600px] object-contain rounded border dark:border-gray-700"
+            onError={() => {
+              setError(translations.notFound || "Error loading image");
+            }}
+            unoptimized // Use for external URLs
+          />
+        </div>
+        <div className="mt-4 flex space-x-2">
+          <Button 
+            onClick={fetchDocument}
+            color="light"
+            size="sm"
+          >
+            <HiRefresh className="mr-1 h-4 w-4" />
+            {translations.refreshDocument || "Refresh document"}
+          </Button>
+          <Button
+            href={documentUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            color="light"
+            size="sm"
+            as="a"
+          >
+            {translations.openInNewTab || "Open in new tab"}
+          </Button>
+        </div>
       </div>
     );
   }
 
   // For PDF or other document types, render an embed/iframe with download link fallback
   return (
-    <div className="document-container">
+    <div className="document-container flex flex-col">
       <object
         data={documentUrl}
         type="application/pdf"
@@ -131,10 +201,30 @@ export default function DocumentPreview({
             rel="noopener noreferrer"
             className="text-blue-600 dark:text-blue-400 hover:underline"
           >
-            {translations.openInNewTab}
+            {translations.openInNewTab || "Open document in new tab"}
           </a>
         </div>
       </object>
+      <div className="mt-4 flex space-x-2 justify-center">
+        <Button 
+          onClick={fetchDocument}
+          color="light"
+          size="sm"
+        >
+          <HiRefresh className="mr-1 h-4 w-4" />
+          {translations.refreshDocument || "Refresh document"}
+        </Button>
+        <Button
+          href={documentUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          color="light"
+          size="sm"
+          as="a"
+        >
+          {translations.openInNewTab || "Open in new tab"}
+        </Button>
+      </div>
     </div>
   );
 }

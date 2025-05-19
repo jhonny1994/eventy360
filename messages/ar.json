@@ -274,6 +274,7 @@
       "pictureUploadSuccess": "تم تحميل الصورة الشخصية بنجاح."
     },
     "sidebarUserTypeLabel": "نوع المستخدم",
+    "requestVerification": "طلب توثيق الحساب",
     "PaymentHistory": {
       "title": "سجل المدفوعات",
       "loading": "جارٍ تحميل سجل المدفوعات...",
@@ -304,7 +305,18 @@
       "alreadyVerified": "حساب موثّق",
       "verifiedDescription": "تم توثيق حسابكم بالفعل. شكراً لتقديم المستندات اللازمة.",
       "pendingVerification": "طلب التوثيق قيد المراجعة",
-      "pendingDescription": "تم استلام طلب التوثيق الخاص بكم وهو قيد المراجعة حالياً. سيتم إعلامكم عند الانتهاء من المراجعة."
+      "pendingDescription": "تم استلام طلب التوثيق الخاص بكم وهو قيد المراجعة حالياً. سيتم إعلامكم عند الانتهاء من المراجعة.",
+      "checkingVerificationStatus": "جاري التحقق من حالة التوثيق...",
+      "verificationStatusError": "تعذر التحقق من حالة التوثيق. يرجى تحديث الصفحة.",
+      "resubmitAfterRejection": "إعادة تقديم طلب التوثيق",
+      "downloadDocument": "تحميل المستند",
+      "downloading": "جارٍ التحميل...",
+      "downloadError": "فشل تحميل المستند",
+      "documentNotFound": "لم يتم العثور على المستند",
+      "uploadedDocument": "المستند المرفوع"
+    },
+    "VerificationSection": {
+      "verificationStatusError": "فشل التحقق من حالة التوثيق"
     }
   },
   "Enums": {
@@ -672,6 +684,12 @@
       "approved": "تمت الموافقة",
       "rejected": "مرفوض"
     },
+    "filters": {
+      "allRequests": "جميع الطلبات",
+      "searchUserPlaceholder": "البحث عن اسم المستخدم...",
+      "search": "بحث",
+      "noMatchingRequests": "لا توجد طلبات مطابقة للمعايير المحددة."
+    },
     "table": {
       "user": "المستخدم",
       "userType": "نوع المستخدم",
@@ -708,7 +726,33 @@
       "processingStatus": "حالة المعالجة",
       "processedBy": "تمت المعالجة بواسطة",
       "processedAt": "تاريخ المعالجة",
-      "rejectionReason": "سبب الرفض"
+      "rejectionReason": "سبب الرفض",
+      "errorLoading": "خطأ في تحميل طلب التوثيق",
+      "requestNotFound": "لم يتم العثور على طلب التوثيق.",
+      "approveSuccess": "تمت الموافقة على طلب التوثيق بنجاح",
+      "rejectSuccess": "تم رفض طلب التوثيق بنجاح",
+      "actionError": "حدث خطأ أثناء معالجة الطلب",
+      "reasonRequired": "سبب الرفض مطلوب",
+      "verificationApproved": "تم توثيق الحساب بنجاح",
+      "documentPreview": {
+        "documentPathMissing": "مسار المستند مفقود",
+        "invalidDocumentPath": "تنسيق مسار المستند غير صالح",
+        "invalidDocumentStructure": "بنية مسار المستند غير صالحة",
+        "failedToGenerateUrl": "فشل إنشاء عنوان URL للمستند",
+        "unknownError": "خطأ غير معروف",
+        "verificationDocument": "مستند التوثيق",
+        "refreshDocument": "تحديث المستند"
+      },
+      "approveRejectActions": {
+        "reasonTooShort": "سبب الرفض قصير جدًا. يرجى تقديم المزيد من التفاصيل.",
+        "approveConfirmation": "هل أنت متأكد من أنك تريد الموافقة على طلب التوثيق هذا؟ سيؤدي ذلك إلى وضع علامة على حساب المستخدم كموثق.",
+        "rejectConfirmation": "يرجى تقديم سبب لرفض طلب التوثيق هذا. سيكون السبب مرئيًا للمستخدم.",
+        "minimumCharactersNote": "الحد الأدنى 10 أحرف. كن محددًا بشأن سبب رفض الطلب.",
+        "internalNotesHint": "هذه الملاحظات للاستخدام الداخلي فقط ولن تتم مشاركتها مع المستخدم."
+      },
+      "downloadDocument": "تحميل المستند",
+      "downloadError": "فشل تحميل المستند",
+      "documentAvailable": "المستند متوفر للتحميل"
     }
   }
 }

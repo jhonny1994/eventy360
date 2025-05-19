@@ -72,8 +72,9 @@ Deno.serve(async (req: Request) => {
     // Create Supabase client with the auth header
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     
-    if (!supabaseUrl || !supabaseAnonKey) {
+    if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceKey) {
       console.error("Missing Supabase environment variables");
       return new Response(
         JSON.stringify({ error: "Server configuration error" }),
@@ -81,6 +82,7 @@ Deno.serve(async (req: Request) => {
       );
     }
     
+    // Create two clients: one with user auth for profile checks and one with service role for storage
     const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
       global: {
         headers: {
@@ -88,6 +90,9 @@ Deno.serve(async (req: Request) => {
         },
       },
     });
+    
+    // Service role client for storage operations - bypasses RLS
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
     // Get user details from auth token
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
@@ -105,8 +110,8 @@ Deno.serve(async (req: Request) => {
     const fileName = `${timestamp}_${sanitizedFileName}`;
     const filePath = `${user.id}/${fileName}`;
 
-    // Upload file to storage bucket
-    const { error: uploadError } = await supabaseClient.storage
+    // Upload file to storage bucket using service role client
+    const { error: uploadError } = await supabaseAdmin.storage
       .from(BUCKET_NAME)
       .upload(filePath, file, {
         contentType: file.type,
@@ -124,7 +129,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Create a record in the verification_requests table
+    // Create a record in the verification_requests table (use user token for this operation)
     const { data: requestData, error: requestError } = await supabaseClient
       .from("verification_requests")
       .insert([
@@ -139,7 +144,7 @@ Deno.serve(async (req: Request) => {
 
     if (requestError) {
       // If request creation fails, attempt to delete the uploaded file to maintain consistency
-      await supabaseClient.storage.from(BUCKET_NAME).remove([filePath]);
+      await supabaseAdmin.storage.from(BUCKET_NAME).remove([filePath]);
       
       console.error("Verification request error:", requestError);
       return new Response(
@@ -152,7 +157,7 @@ Deno.serve(async (req: Request) => {
     }
 
     // Get public URL for the uploaded file
-    const { data: publicUrlData } = supabaseClient.storage
+    const { data: publicUrlData } = supabaseAdmin.storage
       .from(BUCKET_NAME)
       .getPublicUrl(filePath);
 

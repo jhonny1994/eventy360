@@ -93,13 +93,15 @@ export default function VerificationDocumentUploader({
         body: formData,
       });
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || t('uploadError'));
-      }
+      const responseData = await response.json();
       
-      // Success - we don't need the returned data
-      await response.json();
+      if (!response.ok) {
+        // Check for storage policy errors
+        if (responseData.details?.includes('policy')) {
+          throw new Error(t('uploadPolicyError'));
+        }
+        throw new Error(responseData.error || t('uploadError'));
+      }
       
       // Success!
       setSuccessMessage(t('uploadSuccess'));

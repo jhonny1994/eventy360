@@ -1,12 +1,13 @@
 import { getTranslations } from "next-intl/server";
 import { Card, Button } from "flowbite-react";
-import { HiEye } from "react-icons/hi";
+import { HiEye, HiSearch } from "react-icons/hi";
 import { createServerSupabaseClient } from "@/utils/supabase/server";
 import { requireAdmin } from "@/utils/admin/auth";
 import { formatDate } from "@/utils/admin/format";
 import Link from "next/link";
 import Image from "next/image";
 import { StatusBadge } from "@/components/admin/ui";
+import StatusFilter from './StatusFilter';
 
 enum VerificationStatus {
   PENDING = "pending",
@@ -14,16 +15,27 @@ enum VerificationStatus {
   REJECTED = "rejected",
 }
 
+type VerificationListProps = {
+  searchParams: {
+    status?: string;
+    search?: string;
+  };
+  params: { locale: string };
+};
+
 /**
  * Admin verification requests list page
  * Shows all verification requests with status and actions
+ * Supports filtering by status and searching by user name
  */
 export default async function AdminVerificationsPage({
   params,
-}: {
-  params: { locale: string };
-}) {
+  searchParams = {},
+}: VerificationListProps) {
   const { locale } = await params;
+  // Await searchParams before accessing its properties
+  const searchParamsData = await searchParams;
+  const { status, search } = searchParamsData;
   const t = await getTranslations("AdminVerifications");
 
   // Ensure user is admin
@@ -32,10 +44,21 @@ export default async function AdminVerificationsPage({
   // Initialize Supabase client
   const supabase = await createServerSupabaseClient();
 
-  // Fetch verification requests, pending first
-  const { data: verificationRequests, error } = await supabase
-    .from("verification_request_details")
-    .select("*")
+  // Build query with filters
+  let query = supabase.from("verification_request_details").select("*");
+
+  // Apply status filter if provided
+  if (status && Object.values(VerificationStatus).includes(status as VerificationStatus)) {
+    query = query.eq("status", status as VerificationStatus);
+  }
+
+  // Apply search filter if provided
+  if (search) {
+    query = query.ilike("user_name", `%${search}%`);
+  }
+
+  // Execute query with ordering: pending first, then most recent
+  const { data: verificationRequests, error } = await query
     .order("status", { ascending: false }) // This puts 'pending' first (alphabetically after 'approved'/'rejected')
     .order("submitted_at", { ascending: false });
 
@@ -53,6 +76,14 @@ export default async function AdminVerificationsPage({
     unknown: "Unknown",
   };
 
+  // Prepare filter translations
+  const filterTranslations = {
+    allRequests: t("filters.allRequests"),
+    pending: t("status.pending"),
+    approved: t("status.approved"),
+    rejected: t("status.rejected"),
+  };
+
   return (
     <div className="w-full">
       {/* Page header */}
@@ -65,6 +96,43 @@ export default async function AdminVerificationsPage({
         </p>
       </div>
 
+      {/* Filter section */}
+      <div className="flex flex-col sm:flex-row justify-between mb-4 gap-4">
+        <div className="flex items-center">
+          <StatusFilter
+            activeFilter={status || null}
+            pendingCount={pendingCount || 0}
+            locale={locale}
+            search={search}
+            translations={filterTranslations}
+          />
+        </div>
+        
+        <div className="w-full sm:w-auto sm:min-w-[300px]">
+          <form action={`/${locale}/admin/verifications`} method="get">
+            {status && <input type="hidden" name="status" value={status} />}
+            <div className="relative">
+              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                <HiSearch className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+              </div>
+              <input
+                type="search"
+                name="search"
+                defaultValue={search}
+                className="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder={t("filters.searchUserPlaceholder")}
+              />
+              <button
+                type="submit"
+                className="absolute top-0 end-0 p-2 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                {t("filters.search")}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
       {/* Main content */}
       <Card>
         {error ? (
@@ -73,7 +141,7 @@ export default async function AdminVerificationsPage({
           </div>
         ) : !verificationRequests || verificationRequests.length === 0 ? (
           <div className="p-4 text-center text-gray-500 dark:text-gray-400">
-            {t("noRequests")}
+            {search || status ? t("filters.noMatchingRequests") : t("noRequests")}
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -141,17 +209,12 @@ export default async function AdminVerificationsPage({
 
                     {/* Actions column with view button */}
                     <td className="px-4 py-3">
-                      <div className="flex gap-2">
-                        <Link
-                          href={`/${locale}/admin/verifications/${request.id}`}
-                          passHref
-                        >
-                          <Button size="xs" color="info">
-                            <HiEye className="mr-1 h-4 w-4" />
-                            {t("actions.view")}
-                          </Button>
-                        </Link>
-                      </div>
+                      <Link href={`/${locale}/admin/verifications/${request.id}`}>
+                        <Button size="xs" color="info">
+                          <HiEye className="mr-1 h-4 w-4" />
+                          {t("actions.view")}
+                        </Button>
+                      </Link>
                     </td>
                   </tr>
                 ))}

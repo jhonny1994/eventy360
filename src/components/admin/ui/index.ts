@@ -1,9 +1,11 @@
 /**
- * Admin UI components index
- * Export all UI components for easier imports
+ * Admin UI components index file.
+ * This file exports all components that are part of the admin UI system.
  */
 
 export { default as StatusBadge } from './StatusBadge';
 export { default as DocumentPreview } from './DocumentPreview';
 export { default as ApproveRejectActions } from './ApproveRejectActions';
-export { default as SearchFilter } from './SearchFilter'; 
+export { default as VerificationFilter } from './VerificationFilter';
+export { default as DownloadDocumentButton } from './DownloadDocumentButton'; 
+export { default as SearchFilter } from './SearchFilter';

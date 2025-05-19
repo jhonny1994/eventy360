@@ -31,6 +31,15 @@ WITH CHECK (
   array_length(storage.foldername(name), 1) = 2
 );
 
+-- Allow edge functions (service role) to upload verification documents
+CREATE POLICY "Service role can upload verification documents" 
+ON storage.objects
+FOR INSERT
+TO service_role
+WITH CHECK (
+  bucket_id = 'verification_documents'
+);
+
 -- Allow users to view their own documents
 CREATE POLICY "Users can view their own verification documents" 
 ON storage.objects
@@ -75,4 +84,4 @@ USING (
 -- This is to maintain audit trail and prevent accidental deletion
 
 -- Add a comment explaining the bucket's purpose
-COMMENT ON TABLE storage.objects IS 'Stores files including avatar images in the "avatars" bucket and verification documents in the "verification_documents" bucket.'; 
+COMMENT ON TABLE storage.objects IS 'Stores files including avatar images in the "avatars" bucket and verification documents in the "verification_documents" bucket.';
