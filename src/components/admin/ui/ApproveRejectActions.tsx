@@ -28,10 +28,11 @@ type ApproveRejectActionsProps = {
     minimumCharactersNote?: string;
     internalNotesHint?: string;
   };
+  apiEndpoint?: string; // Optional API endpoint to use (defaults to verification_requests)
 };
 
 /**
- * Component for approving or rejecting verification requests
+ * Component for approving or rejecting verification requests or payment proofs
  * Includes a modal for entering rejection reasons
  * 
  * @param props - Component props
@@ -40,6 +41,7 @@ type ApproveRejectActionsProps = {
 export default function ApproveRejectActions({
   requestId,
   translations,
+  apiEndpoint,
 }: ApproveRejectActionsProps) {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
@@ -58,17 +60,30 @@ export default function ApproveRejectActions({
     setErrorMessage(null);
     
     try {
-      // Use the component-level supabase client instead of creating new one
-      const { error } = await supabase
-        .from('verification_requests')
-        .update({
-          status: 'approved',
-          notes: adminNotes || null,
-          processed_at: new Date().toISOString(),
-        })
-        .eq('id', requestId);
+      // Handle different API endpoints
+      if (apiEndpoint === 'verify_payment') {
+        // Use the RPC function for payment verification
+        const { error } = await supabase
+          .rpc('verify_payment', {
+            payment_id: requestId,
+            verify_status: 'verified',
+            admin_notes: adminNotes || undefined
+          });
 
-      if (error) throw error;
+        if (error) throw error;
+      } else {
+        // Default behavior for verification requests
+        const { error } = await supabase
+          .from('verification_requests')
+          .update({
+            status: 'approved',
+            notes: adminNotes || null,
+            processed_at: new Date().toISOString(),
+          })
+          .eq('id', requestId);
+
+        if (error) throw error;
+      }
 
       toast.success(translations.approveSuccess);
       setIsApproveModalOpen(false);
@@ -100,17 +115,32 @@ export default function ApproveRejectActions({
     setErrorMessage(null);
     
     try {
-      const { error } = await supabase
-        .from('verification_requests')
-        .update({
-          status: 'rejected',
-          rejection_reason: rejectionReason,
-          notes: adminNotes || null,
-          processed_at: new Date().toISOString(),
-        })
-        .eq('id', requestId);
+      // Handle different API endpoints
+      if (apiEndpoint === 'verify_payment') {
+        // Use the RPC function for payment verification
+        const { error } = await supabase
+          .rpc('verify_payment', {
+            payment_id: requestId,
+            verify_status: 'rejected',
+            admin_notes: adminNotes || undefined,
+            rejection_reason: rejectionReason
+          });
 
-      if (error) throw error;
+        if (error) throw error;
+      } else {
+        // Default behavior for verification requests
+        const { error } = await supabase
+          .from('verification_requests')
+          .update({
+            status: 'rejected',
+            rejection_reason: rejectionReason,
+            notes: adminNotes || null,
+            processed_at: new Date().toISOString(),
+          })
+          .eq('id', requestId);
+
+        if (error) throw error;
+      }
 
       toast.success(translations.rejectSuccess);
       setIsRejectModalOpen(false);
@@ -155,7 +185,7 @@ export default function ApproveRejectActions({
         </div>
         <div className="p-6 space-y-6">
           <p className="text-base text-gray-700 dark:text-gray-300">
-            {translations.approveConfirmation || "Are you sure you want to approve this verification request? This will mark the user account as verified."}
+            {translations.approveConfirmation || "Are you sure you want to approve this request? This action cannot be undone."}
           </p>
           
           {errorMessage && (
@@ -205,7 +235,7 @@ export default function ApproveRejectActions({
         </div>
         <div className="p-6 space-y-6">
           <p className="text-base text-gray-700 dark:text-gray-300">
-            {translations.rejectConfirmation || "Please provide a reason for rejecting this verification request. The reason will be visible to the user."}
+            {translations.rejectConfirmation || "Please provide a reason for rejecting this request. The reason will be visible to the user."}
           </p>
           
           {errorMessage && (
@@ -249,7 +279,7 @@ export default function ApproveRejectActions({
             {isSubmitting && (
               <Spinner size="sm" className="mr-2" />
             )}
-            {translations.submit}
+            {translations.reject}
           </Button>
           <Button
             color="gray"

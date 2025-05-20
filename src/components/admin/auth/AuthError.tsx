@@ -28,7 +28,7 @@ export default function AuthError({
 }: AuthErrorProps) {
   const router = useRouter();
   const params = useParams();
-  const locale = params.locale as string || 'en';
+  const locale = params.locale as string || 'ar';
   const t = useTranslations('Common');
   
   const errorTitle = title || t('unexpectedErrorAlertTitle');

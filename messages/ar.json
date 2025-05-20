@@ -430,6 +430,113 @@
       "paymentManagement": "إدارة المدفوعات"
     }
   },
+  "AdminPayments": {
+    "recordPayment": "تسجيل دفع يدوي",
+    "backToPayments": "العودة إلى المدفوعات",
+    "recordPaymentDescription": "استخدم هذا النموذج لتسجيل عملية دفع يدوية لمستخدم. قم بالبحث عن المستخدم أولاً ثم أدخل تفاصيل الدفع.",
+    "allPayments": {
+      "title": "جميع المدفوعات",
+      "description": "عرض وإدارة جميع المدفوعات في النظام.",
+      "viewPendingPayments": "عرض المدفوعات المعلقة",
+      "recordManualPayment": "تسجيل دفع يدوي"
+    },
+    "pendingPayments": {
+      "title": "المدفوعات المعلقة",
+      "description": "عرض وإدارة المدفوعات التي تنتظر التحقق.",
+      "viewAllPayments": "عرض جميع المدفوعات"
+    },
+    "status": {
+      "pendingVerification": "قيد التحقق",
+      "verified": "تم التحقق",
+      "rejected": "مرفوض"
+    },
+    "payments": {
+      "id": "معرّف الدفع",
+      "status": "الحالة",
+      "amount": "المبلغ",
+      "paymentMethod": "طريقة الدفع",
+      "billingPeriod": "فترة الفوترة",
+      "reportedAt": "تاريخ الإبلاغ",
+      "userDetails": "تفاصيل المستخدم",
+      "verifiedAt": "تاريخ التحقق",
+      "verifiedBy": "تم التحقق بواسطة",
+      "rejectReason": "سبب الرفض",
+      "adminNotes": "ملاحظات المسؤول",
+      "paymentProof": "إثبات الدفع",
+      "noProofUploaded": "لم يتم تحميل إثبات الدفع",
+      "downloadProof": "تحميل إثبات الدفع",
+      "updateStatus": "تحديث الحالة",
+      "verify": "التحقق",
+      "reject": "رفض",
+      "verifySuccess": "تم التحقق من الدفع بنجاح",
+      "rejectSuccess": "تم رفض الدفع بنجاح",
+      "operationError": "حدث خطأ أثناء العملية",
+      "viewDetails": "عرض التفاصيل",
+      "rejectionReason": "سبب الرفض",
+      "rejectionReasonPlaceholder": "يرجى ذكر سبب رفض الدفع...",
+      "adminNotesLabel": "ملاحظات المسؤول (اختياري)",
+      "adminNotesPlaceholder": "أضف أي ملاحظات داخلية تتعلق بهذا الدفع...",
+      "submitReject": "تأكيد الرفض",
+      "cancelReject": "إلغاء",
+      "submitVerify": "تأكيد التحقق",
+      "cancelVerify": "إلغاء",
+      "verifyConfirmTitle": "تأكيد التحقق من الدفع",
+      "verifyConfirmMessage": "هل أنت متأكد من أنك تريد التحقق من هذا الدفع؟ سيؤدي ذلك إلى تفعيل الاشتراك للمستخدم.",
+      "rejectConfirmTitle": "تأكيد رفض الدفع",
+      "rejectConfirmMessage": "هل أنت متأكد من أنك تريد رفض هذا الدفع؟ سيتم إخطار المستخدم بسبب الرفض."
+    },
+    "filters": {
+      "allPayments": "جميع المدفوعات",
+      "search": "بحث",
+      "searchUserPlaceholder": "البحث عن المستخدم...",
+      "noMatchingPayments": "لا توجد مدفوعات مطابقة لمعايير البحث"
+    },
+    "table": {
+      "user": "المستخدم",
+      "amount": "المبلغ",
+      "billingPeriod": "فترة الفوترة",
+      "paymentMethod": "طريقة الدفع",
+      "reportedAt": "تاريخ الإبلاغ",
+      "status": "الحالة",
+      "actions": "الإجراءات"
+    },
+    "pagination": {
+      "showing": "عرض",
+      "of": "من أصل",
+      "entries": "عنصر",
+      "previousPage": "الصفحة السابقة",
+      "nextPage": "الصفحة التالية",
+      "pageSize": "عناصر في الصفحة"
+    },
+    "details": {
+      "title": "تفاصيل الدفع",
+      "back": "العودة",
+      "paymentInfo": "معلومات الدفع",
+      "userInfo": "معلومات المستخدم",
+      "statusHistory": "سجل الحالة",
+      "noStatusHistory": "لا يوجد سجل للحالة"
+    },
+    "noPayments": "لا توجد مدفوعات للعرض",
+    "fetchError": "خطأ في جلب المدفوعات:",
+    "paymentRecorded": "تم تسجيل الدفع بنجاح",
+    "genericError": "حدث خطأ. يرجى المحاولة مرة أخرى.",
+    "paymentNotFound": "لم يتم العثور على الدفع المطلوب",
+    "paymentDetailError": "خطأ في جلب تفاصيل الدفع",
+    "currency": "د.ج",
+    "title": "تسجيل دفع جديد",
+    "userSearchLabel": "البحث عن المستخدم",
+    "userSearchPlaceholder": "أدخل اسم المستخدم أو البريد الإلكتروني...",
+    "search": "بحث",
+    "selectUserRequired": "يرجى تحديد مستخدم",
+    "amountLabel": "المبلغ",
+    "amountPlaceholder": "أدخل مبلغ الدفع...",
+    "billingPeriodLabel": "فترة الفوترة",
+    "paymentMethodLabel": "طريقة الدفع",
+    "adminNotesLabel": "ملاحظات المسؤول (اختياري)",
+    "adminNotesPlaceholder": "أدخل أي ملاحظات إضافية...",
+    "submitPayment": "تسجيل الدفع",
+    "submitting": "جاري التسجيل..."
+  },
   "PaymentInstructions": {
     "title": "تعليمات الدفع اليدوي",
     "intro": "لتفعيل أو تجديد اشتراككم، يُرجى اتباع إحدى طرق الدفع اليدوي المبينة أدناه. يتم تفعيل الاشتراكات يدوياً بعد التحقق من عملية الدفع في غضون 24 إلى 48 ساعة عمل.",
@@ -763,6 +870,11 @@
       "downloadDocument": "تحميل المستند",
       "downloadError": "فشل تحميل المستند",
       "documentAvailable": "المستند متوفر للتحميل"
+    }
+  },
+  "UIComponents": {
+    "BackButton": {
+      "defaultLabel": "العودة"
     }
   }
 }

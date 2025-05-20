@@ -11,3 +11,4 @@ export { default as DownloadDocumentButton } from './DownloadDocumentButton';
 export { default as SearchFilter } from './SearchFilter';
 export { default as PaginationControl } from './PaginationControl';
 export { default as PaginationClient } from './PaginationClient';
+export { default as BackButton } from '../../ui/BackButton';

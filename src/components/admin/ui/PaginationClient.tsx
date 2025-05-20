@@ -8,9 +8,6 @@ interface PaginationClientProps {
   totalPages: number;
   pageSize: number;
   totalItems: number;
-  locale: string;
-  status?: string | null;
-  search?: string;
   translations: {
     showing: string;
     of: string;
@@ -19,6 +16,13 @@ interface PaginationClientProps {
     nextPage?: string;
     pageSize?: string;
   };
+  // Generic props for different pages
+  basePath?: string; // The base URL path for navigation
+  locale?: string; // Optional locale for backward compatibility
+  searchParams?: Record<string, string | undefined>; // Generic search params
+  // Legacy props for backward compatibility
+  status?: string | null;
+  search?: string;
 }
 
 /**
@@ -32,10 +36,13 @@ export default function PaginationClient({
   totalPages,
   pageSize,
   totalItems,
+  translations,
+  basePath,
   locale,
+  searchParams = {},
+  // Legacy props
   status,
   search,
-  translations,
 }: PaginationClientProps) {
   const router = useRouter();
   
@@ -46,32 +53,60 @@ export default function PaginationClient({
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams();
     
-    // Keep existing filters
-    if (status) params.set('status', status);
-    if (search) params.set('search', search);
+    // Add all search params
+    Object.entries(searchParams).forEach(([key, value]) => {
+      if (value) params.set(key, value);
+    });
+    
+    // Legacy support
+    if (status && !searchParams.status) params.set('status', status);
+    if (search && !searchParams.search) params.set('search', search);
     
     // Set new pagination parameters
     params.set('page', page.toString());
     params.set('page_size', pageSize.toString());
     
+    // Determine the URL path
+    let path = '/admin/verifications'; // Default path for backward compatibility
+    
+    if (basePath) {
+      path = basePath; // New way: explicit path
+    } else if (locale) {
+      path = `/${locale}/admin/verifications`; // Old way with locale
+    }
+    
     // Navigate to the new URL
-    router.push(`/${locale}/admin/verifications?${params.toString()}`);
+    router.push(`${path}?${params.toString()}`);
   };
   
   // Handle page size change
   const handlePageSizeChange = (newPageSize: number) => {
     const params = new URLSearchParams();
     
-    // Keep existing filters
-    if (status) params.set('status', status);
-    if (search) params.set('search', search);
+    // Add all search params
+    Object.entries(searchParams).forEach(([key, value]) => {
+      if (value) params.set(key, value);
+    });
+    
+    // Legacy support
+    if (status && !searchParams.status) params.set('status', status);
+    if (search && !searchParams.search) params.set('search', search);
     
     // Reset to page 1 when changing page size
     params.set('page', '1');
     params.set('page_size', newPageSize.toString());
     
+    // Determine the URL path
+    let path = '/admin/verifications'; // Default path for backward compatibility
+    
+    if (basePath) {
+      path = basePath; // New way: explicit path
+    } else if (locale) {
+      path = `/${locale}/admin/verifications`; // Old way with locale
+    }
+    
     // Navigate to the new URL
-    router.push(`/${locale}/admin/verifications?${params.toString()}`);
+    router.push(`${path}?${params.toString()}`);
   };
   
   return (

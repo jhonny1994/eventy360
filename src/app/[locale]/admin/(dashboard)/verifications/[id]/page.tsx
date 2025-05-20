@@ -1,12 +1,11 @@
 import { getTranslations } from 'next-intl/server';
-import { Card, Button, Alert, Badge } from 'flowbite-react';
-import { HiArrowLeft, HiUser, HiCalendar, HiClock, HiDocumentText, HiOfficeBuilding } from 'react-icons/hi';
+import { Card, Alert, Badge } from 'flowbite-react';
+import { HiUser, HiCalendar, HiClock, HiDocumentText, HiOfficeBuilding } from 'react-icons/hi';
 import { createServerSupabaseClient } from '@/utils/supabase/server';
 import { requireAdmin } from '@/utils/admin/auth';
-import Link from 'next/link';
 import Image from 'next/image';
 import { formatDate } from '@/utils/admin/format';
-import { StatusBadge, ApproveRejectActions, DownloadDocumentButton } from '@/components/admin/ui';
+import { StatusBadge, ApproveRejectActions, DownloadDocumentButton, BackButton } from '@/components/admin/ui';
 
 /**
  * Admin page for viewing verification request details
@@ -77,12 +76,11 @@ export default async function VerificationDetailsPage({
         <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
           {t('details.title')}
         </h1>
-        <Link href={`/${locale}/admin/verifications`}>
-          <Button color="gray" size="sm">
-            <HiArrowLeft className="mr-1 h-4 w-4" />
-            {t('details.back')}
-          </Button>
-        </Link>
+        <BackButton 
+          href={`/${locale}/admin/verifications`}
+          label={t('details.back')} 
+          color="gray"
+        />
       </div>
 
       {error ? (

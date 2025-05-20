@@ -44,7 +44,7 @@ SELECT
   -- Use Arabic translation (ar) as primary, fallback to English or researcher name
   CASE
     WHEN p.user_type = 'organizer' THEN 
-      COALESCE(op.name_translations->>'ar', op.name_translations->>'en')
+      COALESCE(op.name_translations->>'ar', op.name_translations->>'ar')
     WHEN p.user_type = 'researcher' THEN 
       rp.name
     ELSE 'Unknown'

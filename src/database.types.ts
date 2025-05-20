@@ -518,6 +518,7 @@ export type Database = {
           created_at: string
           daira_id: number
           institution_type: Database["public"]["Enums"]["institution_type_enum"]
+          language: string
           name_translations: Json
           profile_id: string
           profile_picture_url: string | null
@@ -529,6 +530,7 @@ export type Database = {
           created_at?: string
           daira_id: number
           institution_type: Database["public"]["Enums"]["institution_type_enum"]
+          language?: string
           name_translations: Json
           profile_id: string
           profile_picture_url?: string | null
@@ -540,6 +542,7 @@ export type Database = {
           created_at?: string
           daira_id?: number
           institution_type?: Database["public"]["Enums"]["institution_type_enum"]
+          language?: string
           name_translations?: Json
           profile_id?: string
           profile_picture_url?: string | null
@@ -578,7 +581,10 @@ export type Database = {
           billing_period: Database["public"]["Enums"]["billing_period_enum"]
           created_at: string
           id: string
+          payer_notes: string | null
           payment_method_reported: Database["public"]["Enums"]["payment_method_enum"]
+          proof_document_path: string | null
+          reference_number: string | null
           reported_at: string
           status: Database["public"]["Enums"]["payment_status_enum"]
           subscription_id: string | null
@@ -593,7 +599,10 @@ export type Database = {
           billing_period: Database["public"]["Enums"]["billing_period_enum"]
           created_at?: string
           id?: string
+          payer_notes?: string | null
           payment_method_reported: Database["public"]["Enums"]["payment_method_enum"]
+          proof_document_path?: string | null
+          reference_number?: string | null
           reported_at?: string
           status?: Database["public"]["Enums"]["payment_status_enum"]
           subscription_id?: string | null
@@ -608,7 +617,10 @@ export type Database = {
           billing_period?: Database["public"]["Enums"]["billing_period_enum"]
           created_at?: string
           id?: string
+          payer_notes?: string | null
           payment_method_reported?: Database["public"]["Enums"]["payment_method_enum"]
+          proof_document_path?: string | null
+          reference_number?: string | null
           reported_at?: string
           status?: Database["public"]["Enums"]["payment_status_enum"]
           subscription_id?: string | null
@@ -674,6 +686,7 @@ export type Database = {
           created_at: string
           daira_id: number
           institution: string
+          language: string
           name: string
           profile_id: string
           profile_picture_url: string | null
@@ -686,6 +699,7 @@ export type Database = {
           created_at?: string
           daira_id: number
           institution: string
+          language?: string
           name: string
           profile_id: string
           profile_picture_url?: string | null
@@ -698,6 +712,7 @@ export type Database = {
           created_at?: string
           daira_id?: number
           institution?: string
+          language?: string
           name?: string
           profile_id?: string
           profile_picture_url?: string | null
@@ -1106,6 +1121,37 @@ export type Database = {
         Args: { profile_data: Json }
         Returns: undefined
       }
+      get_subscription_details: {
+        Args: { target_user_id?: string }
+        Returns: Json
+      }
+      get_subscription_pricing: {
+        Args: {
+          user_type: Database["public"]["Enums"]["user_type_enum"]
+          billing_period: Database["public"]["Enums"]["billing_period_enum"]
+        }
+        Returns: Json
+      }
+      gtrgm_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_decompress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_in: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_options: {
+        Args: { "": unknown }
+        Returns: undefined
+      }
+      gtrgm_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
       http: {
         Args: { request: Database["public"]["CompositeTypes"]["http_request"] }
         Returns: Database["public"]["CompositeTypes"]["http_response"]
@@ -1169,6 +1215,28 @@ export type Database = {
         }
         Returns: undefined
       }
+      record_manual_payment: {
+        Args: {
+          target_user_id: string
+          amount: number
+          billing_period: Database["public"]["Enums"]["billing_period_enum"]
+          payment_method?: Database["public"]["Enums"]["payment_method_enum"]
+          admin_notes?: string
+        }
+        Returns: Json
+      }
+      set_limit: {
+        Args: { "": number }
+        Returns: number
+      }
+      show_limit: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      show_trgm: {
+        Args: { "": string }
+        Returns: string[]
+      }
       text_to_bytea: {
         Args: { data: string }
         Returns: string
@@ -1176,6 +1244,15 @@ export type Database = {
       urlencode: {
         Args: { data: Json } | { string: string } | { string: string }
         Returns: string
+      }
+      verify_payment: {
+        Args: {
+          payment_id: string
+          verify_status: Database["public"]["Enums"]["payment_status_enum"]
+          admin_notes?: string
+          rejection_reason?: string
+        }
+        Returns: Json
       }
     }
     Enums: {
