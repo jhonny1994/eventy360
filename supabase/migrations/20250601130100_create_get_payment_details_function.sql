@@ -22,7 +22,7 @@ BEGIN
     p.user_type,
     CASE
       WHEN p.user_type = 'researcher' THEN rp.name
-      WHEN p.user_type = 'organizer' THEN op.name_translations->>'en'
+      WHEN p.user_type = 'organizer' THEN op.name_translations->>'ar'
       WHEN p.user_type = 'admin' THEN ap.name
       ELSE 'Unknown User'
     END AS user_name,

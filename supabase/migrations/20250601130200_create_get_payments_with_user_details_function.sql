@@ -11,7 +11,7 @@ BEGIN
     'user_id', p.user_id,
     'user_name', CASE
       WHEN profiles.user_type = 'researcher' THEN rp.name
-      WHEN profiles.user_type = 'organizer' THEN op.name_translations->>'en'
+      WHEN profiles.user_type = 'organizer' THEN op.name_translations->>'ar'
       WHEN profiles.user_type = 'admin' THEN ap.name
       ELSE 'Unknown User'
     END,
