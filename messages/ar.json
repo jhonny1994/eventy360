@@ -1061,5 +1061,35 @@
     "BackButton": {
       "defaultLabel": "العودة"
     }
+  },
+  "Subscription": {
+    "free": "مجاني",
+    "paidResearcher": "باحث مشترك",
+    "paidOrganizer": "منظّم مشترك",
+    "trial": "تجريبي",
+    "expired": "منتهي",
+    "cancelled": "ملغى",
+    "daysRemaining": "{days} يوم متبقي",
+    "trialTooltip": "الاشتراك التجريبي: {days} يوم متبقي",
+    "subscriptionTooltip": "اشتراك نشط: {days} يوم متبقي",
+    "premiumFeatureTitle": "ميزة خاصة بالمشتركين",
+    "premiumFeatureDescription": "هذه الميزة متاحة فقط للمشتركين في الباقات المدفوعة أو للمستخدمين في الفترة التجريبية",
+    "currentSubscription": "اشتراكك الحالي",
+    "upgradeSubscription": "ترقية الاشتراك",
+    "subscriptionStatus": "حالة الاشتراك",
+    "subscriptionExpiry": "تاريخ انتهاء الاشتراك",
+    "subscriptionTier": "نوع الاشتراك",
+    "subscriptionManagement": "إدارة الاشتراك",
+    "renewSubscription": "تجديد الاشتراك",
+    "cancelSubscription": "إلغاء الاشتراك",
+    "paymentHistory": "سجل المدفوعات",
+    "upgradeTooltip": "قم بترقية اشتراكك للوصول إلى جميع الميزات",
+    "subscriptionInfo": "معلومات الاشتراك",
+    "subscriptionExpired": "انتهى اشتراكك",
+    "subscriptionExpiredDescription": "قم بتجديد اشتراكك للاستمتاع بجميع الميزات",
+    "subscriptionTrialEndingSoon": "فترتك التجريبية تنتهي قريباً",
+    "subscriptionTrialEndingSoonDescription": "اشترك الآن للاستمرار في الاستفادة من جميع الميزات",
+    "featuresIncluded": "الميزات المتضمنة",
+    "viewAllFeatures": "عرض جميع الميزات"
   }
 }
