@@ -89,7 +89,7 @@ export default function ApproveRejectActions({
           .rpc('verify_payment', {
             payment_id: requestId,
             verify_status: 'verified',
-            admin_notes: adminNotes || undefined
+            p_admin_notes: adminNotes || undefined
           });
 
         if (error) throw error;
@@ -144,7 +144,7 @@ export default function ApproveRejectActions({
           .rpc('verify_payment', {
             payment_id: requestId,
             verify_status: 'rejected',
-            admin_notes: adminNotes || undefined,
+            p_admin_notes: adminNotes || undefined,
             rejection_reason: rejectionReason
           });
 

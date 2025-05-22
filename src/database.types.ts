@@ -1121,6 +1121,14 @@ export type Database = {
         Args: { profile_data: Json }
         Returns: undefined
       }
+      get_payment_details: {
+        Args: { payment_id: string }
+        Returns: Json
+      }
+      get_payments_with_user_details: {
+        Args: Record<PropertyKey, never>
+        Returns: Json[]
+      }
       get_subscription_details: {
         Args: { target_user_id?: string }
         Returns: Json
@@ -1249,7 +1257,7 @@ export type Database = {
         Args: {
           payment_id: string
           verify_status: Database["public"]["Enums"]["payment_status_enum"]
-          admin_notes?: string
+          p_admin_notes?: string
           rejection_reason?: string
         }
         Returns: Json

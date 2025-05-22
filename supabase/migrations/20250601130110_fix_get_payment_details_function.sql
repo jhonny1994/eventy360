@@ -1,4 +1,11 @@
--- Create function to get detailed payment information with user details
+-- Fix the bug in get_payment_details function
+-- The issue is in the line that checks v_admin_verifier_profile.admin_name
+-- before properly ensuring that v_admin_verifier_profile is assigned
+
+-- Drop the existing function first
+DROP FUNCTION IF EXISTS public.get_payment_details(UUID);
+
+-- Create the fixed function
 CREATE OR REPLACE FUNCTION public.get_payment_details(payment_id UUID)
 RETURNS JSONB
 LANGUAGE plpgsql
@@ -9,6 +16,7 @@ DECLARE
   v_user_profile RECORD;
   v_admin_verifier_profile RECORD;
   v_result JSONB;
+  v_has_admin_verifier BOOLEAN := FALSE;
 BEGIN
   -- Get payment record
   SELECT * INTO v_payment FROM payments WHERE id = payment_id;
@@ -45,6 +53,9 @@ BEGIN
     INTO v_admin_verifier_profile
     FROM admin_profiles ap
     WHERE ap.profile_id = v_payment.admin_verifier_id;
+    
+    -- Set flag if we got a verifier profile
+    v_has_admin_verifier := FOUND;
   END IF;
   
   -- Build result JSON
@@ -70,8 +81,9 @@ BEGIN
     'updated_at', v_payment.updated_at
   );
   
-  -- Add admin verifier name if available
-  IF v_payment.admin_verifier_id IS NOT NULL AND v_admin_verifier_profile IS NOT NULL AND v_admin_verifier_profile.admin_name IS NOT NULL THEN
+  -- Add admin verifier name if available and the field exists
+  -- Use the FOUND flag to check if the query actually returned a record
+  IF v_has_admin_verifier AND v_admin_verifier_profile.admin_name IS NOT NULL THEN
     v_result := v_result || jsonb_build_object('admin_verifier_name', v_admin_verifier_profile.admin_name);
   END IF;
   
@@ -80,4 +92,4 @@ END;
 $$;
 
 -- Add comment to function
-COMMENT ON FUNCTION public.get_payment_details(UUID) IS 'Gets detailed payment information including user profile details for admin payment verification.'; 
+COMMENT ON FUNCTION public.get_payment_details(UUID) IS 'Gets detailed payment information including user profile details for admin payment verification. Fixed to properly handle null verifier profiles.';

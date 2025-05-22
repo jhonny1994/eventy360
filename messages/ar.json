@@ -639,7 +639,46 @@
       "paymentInfo": "معلومات الدفع",
       "userInfo": "معلومات المستخدم",
       "statusHistory": "سجل الحالة",
-      "noStatusHistory": "لا يوجد سجل للحالة"
+      "documentNotFound": "لم يتم العثور على المستند",
+      "openInNewTab": "فتح في علامة تبويب جديدة",
+      "documentPathMissing": "مسار المستند مفقود",
+      "invalidDocumentPath": "تنسيق مسار المستند غير صالح",
+      "invalidDocumentStructure": "بنية المستند غير صالحة",
+      "failedToGenerateUrl": "فشل إنشاء رابط المستند",
+      "unknownError": "حدث خطأ غير معروف",
+      "paymentProof": "إثبات الدفع",
+      "refreshDocument": "تحديث المستند",
+      "downloadDocument": "تحميل المستند",
+      "downloadError": "خطأ في تحميل المستند",
+      "retry": "إعادة المحاولة",
+      "approvePayment": "الموافقة على الدفع",
+      "rejectPayment": "رفض الدفع",
+      "rejectReason": "سبب الرفض",
+      "rejectReasonPlaceholder": "يرجى ذكر سبب رفض الدفع...",
+      "adminNotes": "ملاحظات المسؤول",
+      "adminNotesPlaceholder": "أضف أي ملاحظات داخلية تتعلق بهذا الدفع...",
+      "submit": "تأكيد",
+      "cancel": "إلغاء",
+      "approveSuccess": "تم التحقق من الدفع بنجاح",
+      "rejectSuccess": "تم رفض الدفع بنجاح",
+      "actionError": "حدث خطأ أثناء العملية",
+      "reasonRequired": "سبب الرفض مطلوب",
+      "noStatusHistory": "لا يوجد سجل للحالة",
+      "errorLoading": "خطأ في تحميل تفاصيل الدفع",
+      "verifiedAt": "تاريخ التحقق",
+      "verifiedBy": "تم التحقق بواسطة",
+      "approveRejectActions": {
+        "reasonTooShort": "سبب الرفض قصير جدًا",
+        "approveConfirmation": "هل أنت متأكد من أنك تريد الموافقة على هذا الدفع؟",
+        "rejectConfirmation": "هل أنت متأكد من أنك تريد رفض هذا الدفع؟",
+        "minimumCharactersNote": "الحد الأدنى 10 أحرف. كن محددًا بشأن سبب الرفض.",
+        "internalNotesHint": "هذه الملاحظات للاستخدام الداخلي فقط ولن تكون مرئية للمستخدم"
+      },
+      "amount": "المبلغ",
+      "paymentMethod": "طريقة الدفع",
+      "billingPeriod": "فترة الفوترة",
+      "reportedAt": "تاريخ الإبلاغ",
+      "actions": "الإجراءات"
     },
     "noPayments": "لا توجد مدفوعات للعرض",
     "fetchError": "خطأ في جلب المدفوعات:",
@@ -676,6 +715,11 @@
     "pending": {
       "title": "المدفوعات المعلقة",
       "count": "{count, plural, zero {لا توجد مدفوعات معلقة} one {مدفوعة واحدة معلقة} two {مدفوعتان معلقتان} few {# مدفوعات معلقة} many {# مدفوعة معلقة} other {# مدفوعة معلقة}}"
+    },
+    "userTypes": {
+      "researcher": "باحث",
+      "organizer": "منظّم",
+      "admin": "مسؤول"
     }
   },
   "PaymentInstructions": {
