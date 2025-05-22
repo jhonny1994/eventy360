@@ -35,6 +35,7 @@ export const getStatusBadgeProps = (
 ): { color: BadgeColor; label: string } => {
   switch (status) {
     case "pending":
+    case "pending_verification":
       return { color: "warning", label: t("status.pending") };
     case "approved":
     case "verified":

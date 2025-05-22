@@ -3,8 +3,8 @@ import { redirect } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
 import EditProfileFormComponent from '../ui/EditProfileForm';
 import type { Database } from '@/database.types';
-
-
+import ProfilePageHeader from '../ui/ProfilePageHeader';
+import ProfileCard from '../ui/ProfileCard';
 
 type ExtendedProfileForPage = Database['public']['Tables']['profiles']['Row'] & {
   researcher_profiles: Database['public']['Tables']['researcher_profiles']['Row'] | null;
@@ -16,7 +16,6 @@ type Props = {
 };
 
 export default async function EditProfilePage(props: Props) {
-
   const { locale } = await props.params;
 
   const supabase = await createServerSupabaseClient();
@@ -30,7 +29,6 @@ export default async function EditProfilePage(props: Props) {
     return null;
   }
 
-
   const { data: profileData, error: profileError } = await supabase
     .from('profiles')
     .select(`
@@ -42,28 +40,42 @@ export default async function EditProfilePage(props: Props) {
     .single<ExtendedProfileForPage>();
 
   if (profileError) {
-
-
     return (
-      <div className="container mx-auto px-4 py-8 text-center">
-        <h1 className="text-2xl font-semibold mb-4">{t('editProfileTitle')}</h1>
-        <p className="text-red-500">{tGeneric('dataFetchError')}</p>
+      <div className="space-y-6">
+        <ProfilePageHeader 
+          title={t('editProfileTitle')} 
+          iconName="user"
+          iconBgColor="bg-blue-100 dark:bg-blue-900"
+          iconTextColor="text-blue-600 dark:text-blue-300"
+          locale={locale}
+        />
+        <ProfileCard locale={locale}>
+          <div className="text-center">
+            <p className="text-red-500">{tGeneric('dataFetchError')}</p>
+          </div>
+        </ProfileCard>
       </div>
     );
   }
 
   if (!profileData) {
-
-
     return (
-      <div className="container mx-auto px-4 py-8 text-center">
-        <h1 className="text-2xl font-semibold mb-4">{t('editProfileTitle')}</h1>
-        <p>{tGeneric('noDataFound')}</p>
+      <div className="space-y-6">
+        <ProfilePageHeader 
+          title={t('editProfileTitle')} 
+          iconName="user"
+          iconBgColor="bg-blue-100 dark:bg-blue-900"
+          iconTextColor="text-blue-600 dark:text-blue-300"
+          locale={locale}
+        />
+        <ProfileCard locale={locale}>
+          <div className="text-center">
+            <p>{tGeneric('noDataFound')}</p>
+          </div>
+        </ProfileCard>
       </div>
     );
   }
-
-
 
   if (profileData.user_type === 'admin') {
     redirect({ href: `/profile?message=${encodeURIComponent(t('adminEditNotAllowed'))}`, locale });
@@ -71,11 +83,18 @@ export default async function EditProfilePage(props: Props) {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-center mb-8">{t('editProfileTitle')}</h1>
+    <div className="space-y-6">
+      <ProfilePageHeader 
+        title={t('editProfileTitle')} 
+        iconName="user"
+        iconBgColor="bg-blue-100 dark:bg-blue-900"
+        iconTextColor="text-blue-600 dark:text-blue-300"
+        locale={locale}
+      />
+      
+      <ProfileCard locale={locale}>
         <EditProfileFormComponent userProfileData={profileData} locale={locale} />
-      </div>
+      </ProfileCard>
     </div>
   );
-} 
+}

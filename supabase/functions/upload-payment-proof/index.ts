@@ -158,7 +158,7 @@ Deno.serve(async (req: Request) => {
     }
 
     // Create a payment record
-    const { data: paymentData, error: paymentError } = await supabaseClient
+    const { data: paymentRecord, error: paymentError } = await supabaseClient
       .from("payments")
       .insert([
         {
@@ -199,7 +199,7 @@ Deno.serve(async (req: Request) => {
       JSON.stringify({
         success: true,
         message: "Payment proof uploaded successfully",
-        paymentId: paymentData.id,
+        paymentId: paymentRecord.id,
         filePath: `${BUCKET_NAME}/${filePath}`,
         publicUrl: publicUrlData.publicUrl,
       }),

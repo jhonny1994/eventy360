@@ -18,7 +18,7 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 | Phase                                                              | Status      | Notes                                                                                                                               |
 | :----------------------------------------------------------------- | :---------- | :---------------------------------------------------------------------------------------------------------------------------------- |
 | **Pre-Plan Work (Auth & Profile Foundation)**                        | ✅ Complete | Core authentication, profile completion, basic profile display, i18n, styling, DB schema foundation.                               |
-| **Phase 1: Subscription Backbone & Core Admin**                    | 🟡 In Progress | **Completed:** Admin authentication, Verification system with emails (including bug fixes for duplicate notifications)<br>**In Progress:** Payment/subscription management               |
+| **Phase 1: Subscription Backbone & Core Admin**                    | 🟡 In Progress | **Completed:** Admin authentication, Verification system with emails (including bug fixes for duplicate notifications), User Payment Reporting Components<br>**In Progress:** Admin Payment Management                |
 | **Phase 2: Event Management & Topic Control**                      | ⚪ Planned   |                                                                                                                                     |
 | **Phase 3: Submission System**                                     | ⚪ Planned   |                                                                                                                                     |
 | **Phase 4: Comprehensive Notification System & Email Management**    | ⚪ Planned   | Email notification foundations in place with Arabic language support and duplicate prevention. Further enhancements planned in Phase 4.                                                                                                                                 |
@@ -109,6 +109,12 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
     - Responsive design with collapsible sidebar
     - Consistent styling and error handling
     - Verification management interface with pagination and filtering
+- **Payment Components**:
+    - User-facing payment reporting with detailed `PaymentHistoryDisplay` component
+    - Multi-step `ReportPaymentForm` with validation and document upload
+    - `PaymentSection` component in user profile for unified payment management
+    - Enhanced `PaymentInstructionsDisplay` with better UX and detailed guidance
+    - Robust `PaymentProofUpload` component with file validation and error handling
 
 ## 🚀 In-Progress Features (Phase 1)
 
@@ -124,9 +130,10 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 - 🔄 `admin_actions_log` table creation and logging integration for admin user/payment actions.
 
 ### C. Subscription Lifecycle & User Communication
-- 🔄 Frontend: Display clear instructions for manual offline payment for upgrades (Partially addressed by `PricingModal` and `PaymentInstructionsDisplay` refinements).
+- ✅ Frontend: Display clear instructions for manual offline payment for upgrades (Implemented enhanced `PaymentInstructionsDisplay` component).
 - 🔄 Backend: `check_subscriptions_expiry` Edge Function implementation/verification.
-- 🔄 Frontend: Display Payment History in user profiles.
+- ✅ Frontend: Display Payment History in user profiles (Implemented with `PaymentHistoryDisplay` component).
+- ✅ Frontend: Allow users to report payments and upload payment proof (Implemented with `ReportPaymentForm` and `PaymentProofUpload`).
 - 🔄 Admin Panel: Display Payment History for users.
 
 ### D. Initial Notification Framework Setup

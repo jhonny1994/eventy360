@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { Card, Alert, Badge } from 'flowbite-react';
-import { HiUser, HiCalendar, HiClock, HiDocumentText, HiCurrencyDollar, HiCreditCard } from 'react-icons/hi';
+import { HiUser, HiCalendar, HiClock, HiDocumentText, HiCurrencyDollar, HiCreditCard, HiExclamationCircle } from 'react-icons/hi';
 import { createServerSupabaseClient } from '@/utils/supabase/server';
 import { requireAdmin } from '@/utils/admin/auth';
 import Image from 'next/image';
@@ -12,6 +12,7 @@ import { callRpcFunction } from '@/lib/hooks/useRpcFunction';
 /**
  * Admin page for viewing and verifying payment details
  * Shows user info, payment details, uploaded proof document, and approval/rejection actions
+ * Enhanced with improved RTL support
  */
 export default async function PaymentDetailsPage({
   params
@@ -19,6 +20,7 @@ export default async function PaymentDetailsPage({
   params: { locale: string; id: string }
 }) {
   const { locale, id } = await params;
+  const isRtl = locale === 'ar';
   const t = await getTranslations('AdminPayments');
   const commonT = await getTranslations('Common');
 
@@ -68,7 +70,8 @@ export default async function PaymentDetailsPage({
     download: t('details.downloadDocument'),
     downloading: commonT('loading'),
     downloadError: t('details.downloadError'),
-    documentNotFound: t('details.documentNotFound')
+    documentNotFound: t('details.documentNotFound'),
+    retry: t('details.retry') || 'Retry'
   };
 
   // Prepare translations for approve/reject actions
@@ -93,13 +96,13 @@ export default async function PaymentDetailsPage({
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full" dir={isRtl ? 'rtl' : 'ltr'}>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
           {t('details.title')}
         </h1>
         <BackButton 
-          href={`/${locale}/admin/payments/pending`}
+          href={`/${locale}/admin/payments`}
           label={t('details.back')} 
           color="gray"
         />
@@ -124,12 +127,13 @@ export default async function PaymentDetailsPage({
             <Card className="mb-6">
               <div className="flex justify-between items-start">
                 <h3 className="text-xl font-medium mb-4 flex items-center">
-                  <HiUser className="mr-2 h-5 w-5 text-gray-500" />
+                  <HiUser className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 text-gray-500`} />
                   {t('details.userInfo')}
                 </h3>
                 <StatusBadge 
                   status={payment.status} 
                   translations={statusBadgeTranslations} 
+                  locale={locale}
                 />
               </div>
               
@@ -149,7 +153,7 @@ export default async function PaymentDetailsPage({
                     </div>
                   )}
                 </div>
-                <div className="ml-4">
+                <div className={`${isRtl ? 'mr-4' : 'ml-4'}`}>
                   <h4 className="text-lg font-medium">
                     {payment.user_name || t('details.unknownUser')}
                   </h4>
@@ -158,7 +162,7 @@ export default async function PaymentDetailsPage({
                     className="mt-1"
                   >
                     <div className="flex items-center">
-                      <HiUser className="mr-1 h-3 w-3" />
+                      <HiUser className={`${isRtl ? 'ml-1' : 'mr-1'} h-3 w-3`} />
                       {payment.user_type && t(`userTypes.${payment.user_type}`)}
                     </div>
                   </Badge>
@@ -168,24 +172,24 @@ export default async function PaymentDetailsPage({
               {/* Payment Info Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <div className="flex items-start">
-                  <div className="mr-2 text-gray-500">
+                  <div className={`${isRtl ? 'ml-2' : 'mr-2'} text-gray-500`}>
                     <HiCurrencyDollar className="h-5 w-5" />
                   </div>
-                  <div>
+                  <div className={isRtl ? 'text-right' : 'text-left'}>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       {t('details.amount')}:
                     </p>
                     <p className="font-medium">
-                      {payment.amount} DZD
+                      {payment.amount} {t('currency')}
                     </p>
                   </div>
                 </div>
                 
                 <div className="flex items-start">
-                  <div className="mr-2 text-gray-500">
+                  <div className={`${isRtl ? 'ml-2' : 'mr-2'} text-gray-500`}>
                     <HiCreditCard className="h-5 w-5" />
                   </div>
-                  <div>
+                  <div className={isRtl ? 'text-right' : 'text-left'}>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       {t('details.paymentMethod')}:
                     </p>
@@ -196,10 +200,10 @@ export default async function PaymentDetailsPage({
                 </div>
                 
                 <div className="flex items-start">
-                  <div className="mr-2 text-gray-500">
+                  <div className={`${isRtl ? 'ml-2' : 'mr-2'} text-gray-500`}>
                     <HiCalendar className="h-5 w-5" />
                   </div>
-                  <div>
+                  <div className={isRtl ? 'text-right' : 'text-left'}>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       {t('details.billingPeriod')}:
                     </p>
@@ -210,10 +214,10 @@ export default async function PaymentDetailsPage({
                 </div>
                 
                 <div className="flex items-start">
-                  <div className="mr-2 text-gray-500">
-                    <HiCalendar className="h-5 w-5" />
+                  <div className={`${isRtl ? 'ml-2' : 'mr-2'} text-gray-500`}>
+                    <HiClock className="h-5 w-5" />
                   </div>
-                  <div>
+                  <div className={isRtl ? 'text-right' : 'text-left'}>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       {t('details.reportedAt')}:
                     </p>
@@ -225,7 +229,7 @@ export default async function PaymentDetailsPage({
                 
                 {payment.verified_at && (
                   <div className="flex items-start">
-                    <div className="mr-2 text-gray-500">
+                    <div className={`${isRtl ? 'ml-2' : 'mr-2'} text-gray-500`}>
                       <HiClock className="h-5 w-5" />
                     </div>
                     <div>
@@ -241,7 +245,7 @@ export default async function PaymentDetailsPage({
                 
                 {payment.admin_verifier_name && (
                   <div className="flex items-start">
-                    <div className="mr-2 text-gray-500">
+                    <div className={`${isRtl ? 'ml-2' : 'mr-2'} text-gray-500`}>
                       <HiUser className="h-5 w-5" />
                     </div>
                     <div>
@@ -257,10 +261,10 @@ export default async function PaymentDetailsPage({
                 
                 {payment.reference_number && (
                   <div className="flex items-start">
-                    <div className="mr-2 text-gray-500">
+                    <div className={`${isRtl ? 'ml-2' : 'mr-2'} text-gray-500`}>
                       <HiDocumentText className="h-5 w-5" />
                     </div>
-                    <div>
+                    <div className={isRtl ? 'text-right' : 'text-left'}>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
                         {t('details.referenceNumber')}:
                       </p>
@@ -270,33 +274,42 @@ export default async function PaymentDetailsPage({
                     </div>
                   </div>
                 )}
-              </div>
-              
-              {/* Payer Notes (if applicable) */}
-              {payment.payer_notes && (
-                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                    {t('details.payerNotes')}:
-                  </p>
-                  <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700">
-                    <p className="whitespace-pre-line text-sm">
-                      {payment.payer_notes}
-                    </p>
+                
+                {payment.payer_notes && (
+                  <div className="flex items-start md:col-span-2">
+                    <div className={`${isRtl ? 'ml-2' : 'mr-2'} text-gray-500`}>
+                      <HiDocumentText className="h-5 w-5" />
+                    </div>
+                    <div className={isRtl ? 'text-right' : 'text-left'}>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {t('details.notes')}:
+                      </p>
+                      <p className="font-medium">
+                        {payment.payer_notes}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
               
               {/* Rejection Reason (if applicable) */}
               {payment.status === 'rejected' && payment.admin_notes && (
                 <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                    {t('details.rejectionReason')}:
-                  </p>
-                  <Alert color="failure">
-                    <p className="whitespace-pre-line">
-                      {payment.admin_notes}
-                    </p>
-                  </Alert>
+                  <div className="flex items-start">
+                    <div className={`${isRtl ? 'ml-2' : 'mr-2'} text-red-500`}>
+                      <HiExclamationCircle className="h-5 w-5" />
+                    </div>
+                    <div className={isRtl ? 'text-right' : 'text-left'}>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                        {t('details.rejectionReason')}:
+                      </p>
+                      <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded border border-red-200 dark:border-red-900">
+                        <p className="whitespace-pre-line text-sm text-red-700 dark:text-red-300">
+                          {payment.admin_notes}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
               
@@ -321,9 +334,10 @@ export default async function PaymentDetailsPage({
                     {t('details.actions')}:
                   </h4>
                   <ApproveRejectActions 
-                    requestId={payment.id} 
-                    translations={actionTranslations}
-                    apiEndpoint="verify_payment" // Different from verification requests
+                    requestId={id} 
+                    translations={actionTranslations} 
+                    apiEndpoint="verify_payment"
+                    locale={locale}
                   />
                 </div>
               )}
@@ -332,9 +346,9 @@ export default async function PaymentDetailsPage({
 
           {/* Right Column: Payment Proof Document */}
           <div className="lg:col-span-1">
-            <Card>
+            <Card className="h-full flex flex-col">
               <h3 className="text-xl font-medium mb-4 flex items-center">
-                <HiDocumentText className="mr-2 h-5 w-5 text-gray-500" />
+                <HiDocumentText className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 text-gray-500`} />
                 {t('details.paymentProof')}
               </h3>
               
@@ -343,6 +357,7 @@ export default async function PaymentDetailsPage({
                   <DocumentPreview
                     documentPath={payment.proof_document_path}
                     translations={documentPreviewTranslations}
+                    locale={locale}
                   />
                   
                   <div className="mt-4 flex justify-center">
@@ -350,6 +365,7 @@ export default async function PaymentDetailsPage({
                       documentPath={payment.proof_document_path}
                       translations={downloadTranslations}
                       size="md"
+                      locale={locale}
                     />
                   </div>
                 </div>

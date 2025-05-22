@@ -8,6 +8,7 @@ import { routing } from '@/i18n/routing';
 import { AuthProvider } from '@/components/providers/AuthProvider';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { ToastProvider } from '@/components/providers/ToastProvider';
+import FlowbiteProvider from '@/components/providers/FlowbiteProvider';
 
 
 const inter = Inter({
@@ -62,9 +63,11 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
         >
             <AuthProvider>
               <ToastProvider>
-                 <div className="relative flex min-h-screen flex-col">
-                   <main className="flex-1">{children}</main>
-                 </div>
+                <FlowbiteProvider>
+                  <div className="relative flex min-h-screen flex-col">
+                    <main className="flex-1">{children}</main>
+                  </div>
+                </FlowbiteProvider>
               </ToastProvider>
             </AuthProvider>
           </ThemeProvider>

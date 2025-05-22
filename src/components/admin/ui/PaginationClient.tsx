@@ -38,7 +38,7 @@ export default function PaginationClient({
   totalItems,
   translations,
   basePath,
-  locale,
+  locale = 'en',
   searchParams = {},
   // Legacy props
   status,
@@ -119,6 +119,7 @@ export default function PaginationClient({
       onPageChange={handlePageChange}
       onPageSizeChange={handlePageSizeChange}
       translations={translations}
+      locale={locale}
     />
   );
 } 

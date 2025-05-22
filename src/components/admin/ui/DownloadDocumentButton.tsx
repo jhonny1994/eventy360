@@ -1,177 +1,177 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Button, Spinner, Tooltip } from 'flowbite-react';
-import { HiDownload, HiExclamationCircle } from 'react-icons/hi';
+import { Button, Spinner } from 'flowbite-react';
+import { FiDownload, FiX } from 'react-icons/fi';
 import { createClient } from '@/lib/supabase/client';
 
 interface DownloadDocumentButtonProps {
-  documentPath: string;
+  documentPath: string | null;
   translations: {
     download: string;
     downloading: string;
     downloadError: string;
-    documentNotFound: string;
+    retry: string;
   };
   variant?: 'default' | 'icon' | 'link';
-  size?: 'xs' | 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
+  locale?: string;
 }
 
 /**
- * A button component specifically for downloading verification documents
- * Handles path parsing and direct file downloads from Supabase storage
+ * Button to download documents from Supabase storage
+ * Supports RTL languages with proper icon positioning
  */
 export default function DownloadDocumentButton({
   documentPath,
   translations,
   variant = 'default',
   size = 'sm',
-  className = ''
+  className = '',
+  locale = 'en'
 }: DownloadDocumentButtonProps) {
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  // Get the Supabase client once at component initialization
-  // The createClient() function already implements a singleton pattern
-  const supabase = createClient();
+  const isRtl = locale === 'ar';
 
   const downloadDocument = useCallback(async () => {
     if (!documentPath) {
-      setError(translations.documentNotFound || 'Document path is missing');
+      setError('No document path provided');
       return;
     }
 
+    setIsLoading(true);
+    setError(null);
+
     try {
-      setLoading(true);
-      setError(null);
-      
-      // Parse the document path correctly
-      let bucketName: string;
-      let filePath: string;
-      
-      if (documentPath.startsWith('verification_documents/')) {
-        bucketName = 'verification_documents';
-        filePath = documentPath.substring('verification_documents/'.length);
-      } else if (documentPath.includes('/')) {
-        const firstSlashIndex = documentPath.indexOf('/');
-        bucketName = documentPath.substring(0, firstSlashIndex);
-        filePath = documentPath.substring(firstSlashIndex + 1);
-      } else {
-        throw new Error(translations.documentNotFound || 'Invalid document path format');
+      // Parse the document path to extract bucket and file path
+      const pathParts = documentPath.split('/');
+      if (pathParts.length < 2) {
+        throw new Error('Invalid document path format');
       }
 
-      console.log(`Downloading from bucket: ${bucketName}, path: ${filePath}`);
+      // The first part is the bucket name, the rest is the file path
+      const bucketName = pathParts[0];
+      const filePath = pathParts.slice(1).join('/');
+
+      const supabase = createClient();
       
-      // Download the file directly
-      const { data, error } = await supabase.storage
+      // Get the file data
+      const { data, error: downloadError } = await supabase
+        .storage
         .from(bucketName)
         .download(filePath);
-        
-      if (error) {
-        console.error("Storage download error:", error);
-        if (error.message.includes('Not Found')) {
-          throw new Error(translations.documentNotFound || 'Document not found');
-        }
-        throw error;
+
+      if (downloadError) {
+        throw new Error(downloadError.message);
       }
 
       if (!data) {
-        throw new Error(translations.downloadError || 'Failed to download document');
+        throw new Error('No data returned from storage');
       }
-      
-      // Create blob URL and trigger download
+
+      // Create a download link
       const url = URL.createObjectURL(data);
       const a = document.createElement('a');
       a.href = url;
-      
-      // Extract filename from path
-      const filename = filePath.split('/').pop() || 'document';
-      a.download = filename;
-      
+      a.download = filePath.split('/').pop() || 'document'; // Use filename or default
       document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      
+      document.body.removeChild(a);
     } catch (err) {
-      console.error("Download error:", err);
-      setError(err instanceof Error ? err.message : (translations.downloadError || 'Unknown error'));
+      console.error('Error downloading document:', err);
+      setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
-  }, [documentPath, supabase.storage, translations.documentNotFound, translations.downloadError]);
+  }, [documentPath]);
 
-  // Determine button appearance based on variant
-  if (variant === 'icon') {
-    return (
-      <Tooltip content={error || translations.download}>
-        <Button
-          size={size}
-          color={error ? "failure" : "light"}
-          onClick={downloadDocument}
-          disabled={loading}
-          className={className}
-        >
-          {loading ? (
-            <Spinner size="sm" />
-          ) : error ? (
-            <HiExclamationCircle className="h-5 w-5" />
-          ) : (
-            <HiDownload className="h-5 w-5" />
-          )}
-        </Button>
-      </Tooltip>
-    );
+  // Don't render anything if there's no document
+  if (!documentPath) {
+    return null;
   }
 
-  if (variant === 'link') {
+  // Default variant - regular button
+  if (variant === 'default') {
     return (
-      <button
-        onClick={downloadDocument}
-        disabled={loading}
-        className={`text-blue-600 hover:text-blue-800 underline font-medium inline-flex items-center ${className}`}
+      <Button
+        size={size}
+        color={error ? 'failure' : 'light'}
+        onClick={error ? () => setError(null) : downloadDocument}
+        className={className}
+        disabled={isLoading}
+        title={error ? translations.downloadError : translations.download}
+        dir={isRtl ? 'rtl' : 'ltr'}
       >
-        {loading ? (
+        {isLoading ? (
           <>
-            <Spinner size="sm" className="mr-2" />
+            <Spinner size="sm" className={isRtl ? 'ml-2' : 'mr-2'} />
             <span>{translations.downloading}</span>
+          </>
+        ) : error ? (
+          <>
+            <FiX className={isRtl ? 'ml-2' : 'mr-2'} />
+            <span>{translations.retry}</span>
           </>
         ) : (
           <>
-            <HiDownload className="h-4 w-4 mr-1" />
+            <FiDownload className={isRtl ? 'ml-2' : 'mr-2'} />
             <span>{translations.download}</span>
           </>
         )}
-      </button>
+      </Button>
     );
   }
 
-  // Default button style
+  // Icon-only variant
+  if (variant === 'icon') {
+    return (
+      <Button
+        size={size}
+        color={error ? 'failure' : 'light'}
+        onClick={error ? () => setError(null) : downloadDocument}
+        className={`p-2 ${className}`}
+        disabled={isLoading}
+        title={error ? translations.downloadError : translations.download}
+      >
+        {isLoading ? (
+          <Spinner size="sm" />
+        ) : error ? (
+          <FiX className="h-5 w-5" />
+        ) : (
+          <FiDownload className="h-5 w-5" />
+        )}
+      </Button>
+    );
+  }
+
+  // Link variant
   return (
-    <Button
-      size={size}
-      color={error ? "failure" : "primary"}
-      onClick={downloadDocument}
-      disabled={loading}
-      className={className}
+    <button
+      onClick={error ? () => setError(null) : downloadDocument}
+      className={`inline-flex items-center text-blue-600 hover:underline ${className}`}
+      disabled={isLoading}
+      title={error ? translations.downloadError : translations.download}
+      dir={isRtl ? 'rtl' : 'ltr'}
     >
-      {loading ? (
+      {isLoading ? (
         <>
-          <Spinner size="sm" className="mr-2" />
+          <Spinner size="sm" className={isRtl ? 'ml-2' : 'mr-2'} />
           <span>{translations.downloading}</span>
         </>
       ) : error ? (
         <>
-          <HiExclamationCircle className="mr-2 h-5 w-5" />
-          <span>{translations.downloadError}</span>
+          <FiX className={isRtl ? 'ml-2' : 'mr-2'} />
+          <span>{translations.retry}</span>
         </>
       ) : (
         <>
-          <HiDownload className="mr-2 h-5 w-5" />
+          <FiDownload className={isRtl ? 'ml-2' : 'mr-2'} />
           <span>{translations.download}</span>
         </>
       )}
-    </Button>
+    </button>
   );
-} 
+}

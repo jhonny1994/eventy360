@@ -10,15 +10,18 @@ interface VerificationDocumentUploaderProps {
   isVerified: boolean;
   hasPendingRequest: boolean;
   onUploadSuccess?: () => void;
+  locale?: string;
 }
 
 export default function VerificationDocumentUploader({
   isVerified,
   hasPendingRequest,
-  onUploadSuccess
+  onUploadSuccess,
+  locale = 'en'
 }: VerificationDocumentUploaderProps) {
   const t = useTranslations('ProfilePage.VerificationDocument');
   const supabase = createClient();
+  const isRtl = locale === 'ar';
   
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -131,7 +134,7 @@ export default function VerificationDocumentUploader({
   if (isVerified) {
     return (
       <Card className="mb-4">
-        <div className="flex items-center gap-3">
+        <div dir={isRtl ? 'rtl' : 'ltr'} className="flex items-center gap-3">
           <div className="p-2 bg-green-100 rounded-full">
             <HiDocumentText className="h-6 w-6 text-green-600" />
           </div>
@@ -152,7 +155,7 @@ export default function VerificationDocumentUploader({
   if (hasPendingRequest) {
     return (
       <Card className="mb-4">
-        <div className="flex items-center gap-3">
+        <div dir={isRtl ? 'rtl' : 'ltr'} className="flex items-center gap-3">
           <div className="p-2 bg-yellow-100 rounded-full">
             <HiDocumentText className="h-6 w-6 text-yellow-600" />
           </div>
@@ -171,59 +174,61 @@ export default function VerificationDocumentUploader({
 
   return (
     <Card className="mb-4">
-      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-        {t('uploadTitle')}
-      </h3>
-      
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-        {t('uploadDescription')}
-      </p>
-      
-      {error && (
-        <Alert color="failure" icon={HiExclamationCircle} className="mb-4">
-          <span>{error}</span>
-        </Alert>
-      )}
-      
-      {successMessage && (
-        <Alert color="success" className="mb-4">
-          <span>{successMessage}</span>
-        </Alert>
-      )}
-      
-      <div className="flex flex-col">
-        <div className="mb-4">
-          <input
-            ref={fileInputRef}
-            type="file"
-            className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-            accept=".pdf,.jpg,.jpeg,.png"
-            onChange={handleFileChange}
-            disabled={uploading}
-          />
-          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            {t('fileRequirements')}
-          </p>
-        </div>
+      <div dir={isRtl ? 'rtl' : 'ltr'}>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+          {t('uploadTitle')}
+        </h3>
         
-        <div className="flex justify-end">
-          <Button 
-            color="primary" 
-            onClick={handleUpload}
-            disabled={!file || uploading}
-          >
-            {uploading ? (
-              <>
-                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
-                {t('uploading')}
-              </>
-            ) : (
-              <>
-                <HiUpload className="mr-2 h-5 w-5" />
-                {t('uploadButton')}
-              </>
-            )}
-          </Button>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+          {t('uploadDescription')}
+        </p>
+        
+        {error && (
+          <Alert color="failure" icon={HiExclamationCircle} className="mb-4">
+            <span>{error}</span>
+          </Alert>
+        )}
+        
+        {successMessage && (
+          <Alert color="success" className="mb-4">
+            <span>{successMessage}</span>
+          </Alert>
+        )}
+        
+        <div className="flex flex-col">
+          <div className="mb-4">
+            <input
+              ref={fileInputRef}
+              type="file"
+              className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+              accept=".pdf,.jpg,.jpeg,.png"
+              onChange={handleFileChange}
+              disabled={uploading}
+            />
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              {t('fileRequirements')}
+            </p>
+          </div>
+          
+          <div className={`flex ${isRtl ? 'justify-start' : 'justify-end'}`}>
+            <Button 
+              color="primary" 
+              onClick={handleUpload}
+              disabled={!file || uploading}
+            >
+              {uploading ? (
+                <>
+                  <div className={`${isRtl ? 'ml-2' : 'mr-2'} h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]`} />
+                  {t('uploading')}
+                </>
+              ) : (
+                <>
+                  <HiUpload className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5`} />
+                  {t('uploadButton')}
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </div>
     </Card>

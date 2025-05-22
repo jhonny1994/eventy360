@@ -62,7 +62,7 @@
     *   **MVP Implementation (TEXT Fields)**: `wilayas.name_ar`, `wilayas.name_other`, `dairas.name_ar`, `dairas.name_other` are populated directly during seeding.
     *   **Primary Language**: Arabic (`ar`) is the primary language. Its key **must** be present and populated in JSONB fields for MVP. `name_ar` must be populated for location tables.
     *   **Querying (MVP)**: Application logic **must** query `translations_column ->> 'ar'` for JSONB fields, and `name_ar` for location tables. No other keys are accessed.
-    *   **Querying (Future - JSONB Fields)**: When `en`/`fr` are added to JSONB fields, application logic will query the requested locale (e.g., `translations_column ->> 'en'`) and **must** implement fallback logic to Arabic (`translations_column ->> 'ar'`) if the requested locale's value is null or the key is missing.
+    *   **Querying (Future - JSONB Fields)**: When `en`/`fr` are added to JSONB fields, application logic will query the requested locale (e.g., `translations_column ->> 'ar'`) and **must** implement fallback logic to Arabic (`translations_column ->> 'ar'`) if the requested locale's value is null or the key is missing.
     *   **Querying (Future - TEXT Fields)**: `name_other` column in `wilayas`/`dairas` will be used for French/English display.
     *   **Indexing**: Utilize GIN indexes on JSONB columns. Standard indexes on `name_ar`, `name_other`.
 *   **ENUM Types**: Extensive use of PostgreSQL ENUMs for constrained categorical data (e.g., `user_type_enum`, `event_status_enum`, `submission_status_enum`) ensures data integrity.

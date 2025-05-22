@@ -24,7 +24,26 @@
     "redirectFailedTitle": "فشل إعادة التوجيه",
     "submitting": "جاري الإرسال...",
     "loginSuccessToast": "تم تسجيل الدخول بنجاح! جاري التوجيه...",
-    "loginFailed": "فشل تسجيل الدخول"
+    "loginFailed": "فشل تسجيل الدخول",
+    "billing_period_enum": {
+      "monthly": "شهري",
+      "quarterly": "ربع سنوي",
+      "biannual": "نصف سنوي",
+      "annual": "سنوي"
+    },
+    "payment_method_enum": {
+      "bank": "تحويل بنكي",
+      "check": "شيك",
+      "cash": "نقداً",
+      "online": "دفع إلكتروني"
+    }
+  },
+  "Navigation": {
+    "profileDashboard": "لوحة التحكم",
+    "profile": "الملف الشخصي",
+    "verification": "التوثيق",
+    "subscriptions": "الاشتراكات والمدفوعات",
+    "security": "إعدادات الأمان"
   },
   "HomePage": {
     "title": "مرحباً بكم في منصة Eventy360"
@@ -195,7 +214,8 @@
       "locationDataFetchError": "تعذّر تحميل البيانات الجغرافية. يُرجى المحاولة مرة أخرى",
       "cancelButton": "إلغاء",
       "updateSuccess": "تم تحديث الملف الشخصي بنجاح",
-      "uploadPolicyError": "خطأ في عملية الرفع بسبب محددات الأمان"
+      "uploadPolicyError": "خطأ في عملية الرفع بسبب محددات الأمان",
+      "locationTitle": "معلومات الموقع"
     }
   },
   "Validations": {
@@ -240,6 +260,14 @@
     "verificationLabel": "حالة التوثيق",
     "notVerifiedLabel": "غير موثّق",
     "dashboardTitle": "لوحة التحكم",
+    "profileCompletion": "اكتمال الملف الشخصي",
+    "submissionsCount": "عدد المشاركات",
+    "eventsCreated": "الفعاليات المنشأة",
+    "recentActivity": "النشاط الأخير",
+    "noRecentActivity": "لا يوجد نشاط حديث",
+    "quickActions": "إجراءات سريعة",
+    "requestVerification": "طلب توثيق الحساب",
+    "manageSubscription": "إدارة الاشتراك",
     "subscriptionStatus": "حالة الاشتراك",
     "currentTier": "الباقة الحالية",
     "trialEndsAt": "تنتهي الفترة التجريبية في",
@@ -247,7 +275,6 @@
     "upgradeTo": "الترقية إلى",
     "premiumTier": "الباقة المميزة",
     "reactivateSubscription": "إعادة تفعيل الاشتراك",
-    "eventsCreated": "الفعاليات المنشأة",
     "activeEvents": "الفعاليات النشطة",
     "totalSubmissions": "إجمالي المشاركات",
     "pendingReviews": "المراجعات قيد الانتظار",
@@ -256,12 +283,29 @@
     "noActiveEvents": "لا توجد فعاليات نشطة حالياً",
     "recentSubmissions": "آخر المشاركات",
     "noSubmissionsReceived": "لم يتم استلام أي مشاركات حتى الآن",
+    "security": {
+      "title": "إعدادات الأمان",
+      "changePassword": "تغيير كلمة المرور",
+      "passwordDescription": "لتغيير كلمة المرور الخاصة بك، سنرسل لك رسالة بريد إلكتروني برابط لإعادة تعيين كلمة المرور",
+      "changePasswordButton": "إرسال رابط إعادة تعيين كلمة المرور",
+      "twoFactorAuth": "المصادقة الثنائية",
+      "twoFactorDescription": "تعزيز أمان حسابك باستخدام طبقة إضافية من الحماية. هذه الميزة قادمة قريباً.",
+      "enableTwoFactorButton": "تفعيل المصادقة الثنائية",
+      "comingSoon": "قريباً"
+    },
     "common": {
       "locationLabel": "الموقع",
       "joinedLabel": "تاريخ الانضمام"
     },
+    "researcher": {
+      "institutionLabel": "المؤسسة",
+      "positionLabel": "المنصب الأكاديمي"
+    },
     "organizer": {
       "institutionTypeLabel": "نوع المؤسسة"
+    },
+    "admin": {
+      "roleLabel": "الدور"
     },
     "avatarCleanupError": "حدث خطأ في إزالة الصورة الشخصية السابقة",
     "avatarCleanupSuccess": "تمت إزالة الصور الشخصية السابقة بنجاح",
@@ -276,7 +320,6 @@
       "pictureUploadSuccess": "تم تحميل الصورة الشخصية بنجاح."
     },
     "sidebarUserTypeLabel": "نوع المستخدم",
-    "requestVerification": "طلب توثيق الحساب",
     "PaymentHistory": {
       "title": "سجل المدفوعات",
       "loading": "جارٍ تحميل سجل المدفوعات...",
@@ -318,7 +361,18 @@
       "uploadedDocument": "المستند المرفوع"
     },
     "VerificationSection": {
-      "verificationStatusError": "فشل التحقق من حالة التوثيق"
+      "verificationStatusError": "فشل التحقق من حالة التوثيق",
+      "verifiedDescription": "هذا الحساب موثق. يمكنك الوصول الكامل إلى جميع ميزات المنصة المتاحة لنوع حسابك.",
+      "notVerifiedDescription": "هذا الحساب غير موثق بعد. يرجى تحميل مستند رسمي للتحقق من هويتك.",
+      "verificationInfoTitle": "معلومات عن عملية التوثيق",
+      "verificationInfoDesc": "التوثيق هو عملية مهمة للتأكد من هوية المستخدمين على منصتنا والحفاظ على بيئة موثوقة وآمنة للجميع.",
+      "docsTitle": "ما هي الوثائق المقبولة؟",
+      "docsList": {
+        "academicId": "بطاقة هوية أكاديمية",
+        "officialLetter": "خطاب رسمي من المؤسسة",
+        "membershipCard": "بطاقة عضوية مهنية",
+        "otherDocs": "وثائق رسمية أخرى تثبت انتماءك الأكاديمي أو المهني"
+      }
     }
   },
   "Enums": {
@@ -421,6 +475,75 @@
     "dataFetchError": "حدث خطأ أثناء جلب البيانات.",
     "noDataFound": "لم يتم العثور على البيانات المطلوبة."
   },
+  "PaymentSection": {
+    "title": "المدفوعات والاشتراكات",
+    "tabs": {
+      "history": "سجل المدفوعات",
+      "report": "تسجيل دفعة جديدة"
+    },
+    "PaymentProof": {
+      "fileRequirements": "PDF، JPG، أو PNG. الحد الأقصى للحجم 10 ميغابايت.",
+      "fileTypeError": "نوع الملف غير مدعوم. يرجى استخدام PDF، JPG، أو PNG.",
+      "fileSizeError": "حجم الملف يتجاوز الحد المسموح به ({{maxSize}}MB)",
+      "noFileSelectedError": "يرجى اختيار ملف أولاً",
+      "authError": "خطأ في المصادقة. يرجى تسجيل الدخول مرة أخرى",
+      "uploadError": "حدث خطأ أثناء تحميل الملف. يرجى المحاولة مرة أخرى",
+      "uploadPolicyError": "ليس لديك صلاحية تحميل هذا النوع من الملفات",
+      "uploadSuccess": "تم تحميل إثبات الدفع بنجاح. سيتم مراجعة الدفع قريبًا.",
+      "uploading": "جاري التحميل...",
+      "uploadButton": "تحميل الإثبات"
+    },
+    "ReportPayment": {
+      "title": "تسجيل دفعة جديدة",
+      "uploadTitle": "تحميل إثبات الدفع",
+      "paymentDetails": "تفاصيل الدفع",
+      "amount": "المبلغ",
+      "currency": "دينار جزائري",
+      "billingPeriod": "فترة الاشتراك",
+      "paymentMethod": "طريقة الدفع",
+      "referenceNumber": "رقم المرجع",
+      "errors": {
+        "amountPositive": "يجب أن يكون المبلغ رقمًا موجبًا",
+        "notesTooLong": "الملاحظات طويلة جدًا (الحد الأقصى 500 حرف)",
+        "missingPaymentData": "بيانات الدفع مفقودة. يرجى بدء العملية من جديد."
+      },
+      "continueButton": "متابعة",
+      "amountLabel": "المبلغ",
+      "amountPlaceholder": "أدخل مبلغ الدفع",
+      "billingPeriodLabel": "فترة الاشتراك",
+      "paymentMethodLabel": "طريقة الدفع",
+      "referenceNumberLabel": "رقم المرجع (اختياري)",
+      "referenceNumberPlaceholder": "أدخل رقم المرجع أو رقم المعاملة",
+      "notesLabel": "ملاحظات (اختياري)",
+      "notesPlaceholder": "أي معلومات إضافية عن الدفع",
+      "uploadInstructions": "يرجى تحميل إثبات الدفع الخاص بك لتأكيد عملية الدفع. سيراجع المسؤول المستند ويقوم بتفعيل اشتراكك.",
+      "submitting": "جاري الإرسال...",
+      "backToForm": "العودة إلى النموذج"
+    },
+    "History": {
+      "title": "سجل المدفوعات",
+      "loadError": "حدث خطأ أثناء تحميل سجل المدفوعات",
+      "errorUserNotLoaded": "تعذر تحميل بيانات المستخدم",
+      "noPayments": "لا توجد مدفوعات مسجلة",
+      "reportPaymentButton": "تسجيل دفعة جديدة",
+      "viewDocument": "عرض المستند",
+      "noDocument": "لا يوجد مستند",
+      "status": {
+        "pending": "قيد المراجعة",
+        "verified": "تم التحقق",
+        "rejected": "مرفوض",
+        "unknown": "غير معروف"
+      },
+      "table": {
+        "date": "التاريخ",
+        "amount": "المبلغ",
+        "period": "الفترة",
+        "method": "الطريقة",
+        "status": "الحالة",
+        "document": "المستند"
+      }
+    }
+  },
   "AdminPage": {
     "dashboardTitle": "لوحة تحكم المسؤول",
     "welcomeMessage": "مرحباً بك في لوحة تحكم المسؤول. من هنا يمكنك إدارة مختلف جوانب المنصة.",
@@ -448,7 +571,8 @@
     "status": {
       "pendingVerification": "قيد التحقق",
       "verified": "تم التحقق",
-      "rejected": "مرفوض"
+      "rejected": "مرفوض",
+      "pending_verification": "قيد التحقق"
     },
     "payments": {
       "id": "معرّف الدفع",
@@ -498,7 +622,8 @@
       "paymentMethod": "طريقة الدفع",
       "reportedAt": "تاريخ الإبلاغ",
       "status": "الحالة",
-      "actions": "الإجراءات"
+      "actions": "الإجراءات",
+      "viewDetails": "عرض التفاصيل"
     },
     "pagination": {
       "showing": "عرض",
@@ -535,7 +660,23 @@
     "adminNotesLabel": "ملاحظات المسؤول (اختياري)",
     "adminNotesPlaceholder": "أدخل أي ملاحظات إضافية...",
     "submitPayment": "تسجيل الدفع",
-    "submitting": "جاري التسجيل..."
+    "submitting": "جاري التسجيل...",
+    "billingPeriods": {
+      "monthly": "شهري",
+      "quarterly": "ربع سنوي",
+      "biannual": "نصف سنوي",
+      "annual": "سنوي"
+    },
+    "paymentMethods": {
+      "bank": "تحويل بنكي",
+      "check": "شيك",
+      "cash": "نقداً",
+      "online": "دفع إلكتروني"
+    },
+    "pending": {
+      "title": "المدفوعات المعلقة",
+      "count": "{count, plural, zero {لا توجد مدفوعات معلقة} one {مدفوعة واحدة معلقة} two {مدفوعتان معلقتان} few {# مدفوعات معلقة} many {# مدفوعة معلقة} other {# مدفوعة معلقة}}"
+    }
   },
   "PaymentInstructions": {
     "title": "تعليمات الدفع اليدوي",

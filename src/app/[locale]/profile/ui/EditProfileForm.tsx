@@ -643,255 +643,346 @@ function EditProfileFormComponent({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8" noValidate>
       {formError && (
         <Alert color="failure" icon={HiInformationCircle}>
           {formError}
         </Alert>
       )}
 
-      {/* Profile Picture Upload Section */}
-      <div className="space-y-2">
-        <Label htmlFor="profilePictureFile">
-          {tEdit("profilePictureLabel")}
-        </Label>
-        {previewUrl && (
-          <div className="mt-2 flex justify-center">
-            <Avatar
-              alt={tEdit("profilePicturePreviewAlt")}
-              rounded
-              size="xl"
-              img={(props) => {
-                const { className: avatarProvidedClassName, ...restProps } =
-                  props;
-                return (
-                  <Image
-                    {...restProps}
-                    src={previewUrl}
-                    alt={tEdit("profilePicturePreviewAlt")}
-                    width={128}
-                    height={128}
-                    referrerPolicy="no-referrer"
-                    className={
-                      avatarProvidedClassName || "rounded-full object-cover"
-                    }
-                    priority
-                    onError={() => {
-                      console.warn(
-                        "Failed to load image preview from URL:",
-                        previewUrl
-                      );
-                    }}
-                  />
-                );
-              }}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left column - Profile picture */}
+        <div className="lg:col-span-1">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+              {tEdit("profilePictureLabel")}
+            </h3>
+            
+            {/* Profile picture preview */}
+            {previewUrl && (
+              <div className="my-4 flex justify-center">
+                <Avatar
+                  alt={tEdit("profilePicturePreviewAlt")}
+                  rounded
+                  size="xl"
+                  img={(props) => {
+                    const { className: avatarProvidedClassName, ...restProps } =
+                      props;
+                    return (
+                      <Image
+                        {...restProps}
+                        src={previewUrl}
+                        alt={tEdit("profilePicturePreviewAlt")}
+                        width={128}
+                        height={128}
+                        referrerPolicy="no-referrer"
+                        className={
+                          avatarProvidedClassName || "rounded-full object-cover"
+                        }
+                        priority
+                        onError={() => {
+                          console.warn(
+                            "Failed to load image preview from URL:",
+                            previewUrl
+                          );
+                        }}
+                      />
+                    );
+                  }}
+                />
+              </div>
+            )}
+            
+            <FileInput
+              id="profilePictureFile"
+              onChange={handleFileChange}
+              accept="image/png, image/jpeg, image/webp, image/gif"
+              className="mt-3"
             />
+            <HelperText className="mt-1">
+              {tEdit("profilePictureHelperText")}
+            </HelperText>
+            
+            {uploadError && (
+              <Alert color="failure" className="mt-3 text-sm">
+                {uploadError}
+              </Alert>
+            )}
+            
+            {uploading && (
+              <div className="flex items-center space-x-2 mt-3">
+                <Spinner size="sm" aria-label={tEdit("uploadingSpinnerLabel")} />
+                <span>{tEdit("uploadingText")}</span>
+              </div>
+            )}
           </div>
-        )}
-        <FileInput
-          id="profilePictureFile"
-          onChange={handleFileChange}
-          accept="image/png, image/jpeg, image/webp, image/gif"
-          className="mt-1"
-        />
-        <HelperText className="mt-1">
-          {tEdit("profilePictureHelperText")}
-        </HelperText>
-        {uploadError && (
-          <Alert color="failure" className="mt-2 text-sm">
-            {uploadError}
-          </Alert>
-        )}
-        {uploading && (
-          <div className="flex items-center space-x-2 mt-2">
-            <Spinner size="sm" aria-label={tEdit("uploadingSpinnerLabel")} />
-            <span>{tEdit("uploadingText")}</span>
+        </div>
+        
+        {/* Right column - Profile information */}
+        <div className="lg:col-span-2">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+              {userProfileData.user_type === "researcher" 
+                ? t("subtitleResearcher") 
+                : t("subtitleOrganizer")}
+            </h3>
+            
+            <div className="space-y-6">
+              {userProfileData.user_type === "researcher" && (
+                <>
+                  <div>
+                    <Label htmlFor="name" className="mb-2 block">
+                      {t("researcherNameLabel")}
+                    </Label>
+                    <TextInput
+                      id="name"
+                      {...register("name")}
+                      placeholder={t("researcherNameLabel")}
+                    />
+                    {isResearcherError(errors, userProfileData.user_type) &&
+                      errors.name && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.name.message}
+                        </p>
+                      )}
+                  </div>
+                  <div>
+                    <Label htmlFor="institution">
+                      {t("institutionLabel")}
+                    </Label>
+                    <TextInput
+                      id="institution"
+                      {...register("institution")}
+                      placeholder={t("institutionLabel")}
+                    />
+                    {isResearcherError(errors, userProfileData.user_type) &&
+                      errors.institution && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.institution.message}
+                        </p>
+                      )}
+                  </div>
+                  <div>
+                    <Label htmlFor="academic_position">
+                      {t("academicPositionLabel")}
+                    </Label>
+                    <TextInput
+                      id="academic_position"
+                      {...register("academic_position")}
+                      placeholder={t("academicPositionLabel")}
+                    />
+                    {isResearcherError(errors, userProfileData.user_type) &&
+                      errors.academic_position && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.academic_position.message}
+                        </p>
+                      )}
+                  </div>
+                </>
+              )}
+
+              {userProfileData.user_type === "organizer" && (
+                <>
+                  <div>
+                    <Label htmlFor="organization_name_ar">
+                      {t("organizationNameLabel")}
+                    </Label>
+                    <TextInput
+                      id="organization_name_ar"
+                      {...register("organization_name_ar")}
+                      placeholder={t("organizationNameLabel")}
+                      dir="rtl"
+                    />
+                    {isOrganizerError(errors, userProfileData.user_type) &&
+                      errors.organization_name_ar && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.organization_name_ar.message}
+                        </p>
+                      )}
+                  </div>
+                  <div>
+                    <Label htmlFor="institution_type">
+                      {t("institutionTypeLabel")}
+                    </Label>
+                    <Controller
+                      name="institution_type"
+                      control={control}
+                      render={({ field }) => (
+                        <div className="relative">
+                          <Select 
+                            id="institution_type" 
+                            {...field}
+                            dir={locale === "ar" ? "rtl" : "ltr"}
+                            style={locale === "ar" ? { textAlign: 'right', paddingRight: '2.5rem' } : {}}
+                          >
+                            {institutionTypeEnumValues.map((type) => (
+                              <option key={type} value={type}>
+                                {tEnums(`InstitutionType.${type}`)}
+                              </option>
+                            ))}
+                          </Select>
+                        </div>
+                      )}
+                    />
+                    {isOrganizerError(errors, userProfileData.user_type) &&
+                      errors.institution_type && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.institution_type.message}
+                        </p>
+                      )}
+                  </div>
+                </>
+              )}
+
+              <div>
+                <Label htmlFor="bio_ar">
+                  {t("bioLabel")}
+                </Label>
+                <Textarea
+                  id="bio_ar"
+                  {...register("bio_ar")}
+                  placeholder={t("bioLabel")}
+                  rows={4}
+                  dir="rtl"
+                />
+                {errors.bio_ar && (
+                  <p className="text-red-500 text-sm mt-1">{errors.bio_ar.message}</p>
+                )}
+              </div>
+
+              {/* Location fields section with a divider */}
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                <h4 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-4">
+                  {t("locationTitle") || "Location Information"}
+                </h4>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="wilaya_id">
+                      {t("wilayaLabel")}
+                    </Label>
+                    <Controller
+                      name="wilaya_id"
+                      control={control}
+                      render={({ field }) => (
+                        <div className="relative">
+                          <Select 
+                            id="wilaya_id" 
+                            {...field}
+                            dir={locale === "ar" ? "rtl" : "ltr"}
+                            style={locale === "ar" ? { textAlign: 'right', paddingRight: '2.5rem' } : {}}
+                          >
+                            <option value="">{t("selectPlaceholder")}</option>
+                            {wilayas.map((wilaya) => (
+                              <option key={wilaya.id} value={wilaya.id.toString()}>
+                                {locale === "ar" ? wilaya.name_ar : wilaya.name_other}
+                              </option>
+                            ))}
+                          </Select>
+                        </div>
+                      )}
+                    />
+                    {errors.wilaya_id && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.wilaya_id.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="daira_id">
+                      {t("dairaLabel")}
+                    </Label>
+                    <Controller
+                      name="daira_id"
+                      control={control}
+                      render={({ field }) => (
+                        <div className="relative">
+                          <Select
+                            id="daira_id"
+                            {...field}
+                            disabled={!selectedWilayaId || filteredDairas.length === 0}
+                            dir={locale === "ar" ? "rtl" : "ltr"}
+                            style={locale === "ar" ? { textAlign: 'right', paddingRight: '2.5rem' } : {}}
+                          >
+                            <option value="">{t("selectPlaceholder")}</option>
+                            {filteredDairas.map((daira) => (
+                              <option key={daira.id} value={daira.id.toString()}>
+                                {locale === "ar" ? daira.name_ar : daira.name_other}
+                              </option>
+                            ))}
+                          </Select>
+                        </div>
+                      )}
+                    />
+                    {errors.daira_id && (
+                      <p className="text-red-500 text-sm mt-1">{errors.daira_id.message}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        )}
+        </div>
       </div>
 
-      {userProfileData.user_type === "researcher" && (
-        <>
-          <div>
-            <Label htmlFor="name">{t("researcherNameLabel")}</Label>
-            <TextInput
-              id="name"
-              {...register("name")}
-              placeholder={t("researcherNameLabel")}
-            />
-            {isResearcherError(errors, userProfileData.user_type) &&
-              errors.name && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.name.message}
-                </p>
-              )}
-          </div>
-          <div>
-            <Label htmlFor="institution">{t("institutionLabel")}</Label>
-            <TextInput
-              id="institution"
-              {...register("institution")}
-              placeholder={t("institutionLabel")}
-            />
-            {isResearcherError(errors, userProfileData.user_type) &&
-              errors.institution && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.institution.message}
-                </p>
-              )}
-          </div>
-          <div>
-            <Label htmlFor="academic_position">
-              {t("academicPositionLabel")}
-            </Label>
-            <TextInput
-              id="academic_position"
-              {...register("academic_position")}
-              placeholder={t("academicPositionLabel")}
-            />
-            {isResearcherError(errors, userProfileData.user_type) &&
-              errors.academic_position && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.academic_position.message}
-                </p>
-              )}
-          </div>
-        </>
-      )}
-
-      {userProfileData.user_type === "organizer" && (
-        <>
-          <div>
-            <Label htmlFor="organization_name_ar">
-              {t("organizationNameLabel")}
-            </Label>
-            <TextInput
-              id="organization_name_ar"
-              {...register("organization_name_ar")}
-              placeholder={t("organizationNameLabel")}
-              dir="rtl"
-            />
-            {isOrganizerError(errors, userProfileData.user_type) &&
-              errors.organization_name_ar && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.organization_name_ar.message}
-                </p>
-              )}
-          </div>
-          <div>
-            <Label htmlFor="institution_type">
-              {t("institutionTypeLabel")}
-            </Label>
-            <Controller
-              name="institution_type"
-              control={control}
-              render={({ field }) => (
-                <Select id="institution_type" {...field}>
-                  {institutionTypeEnumValues.map((type) => (
-                    <option key={type} value={type}>
-                      {tEnums(`InstitutionType.${type}`)}
-                    </option>
-                  ))}
-                </Select>
-              )}
-            />
-            {isOrganizerError(errors, userProfileData.user_type) &&
-              errors.institution_type && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.institution_type.message}
-                </p>
-              )}
-          </div>
-        </>
-      )}
-
-      <div>
-        <Label htmlFor="bio_ar">{t("bioLabel")}</Label>
-        <Textarea
-          id="bio_ar"
-          {...register("bio_ar")}
-          placeholder={t("bioLabel")}
-          rows={4}
-          dir="rtl"
-        />
-        {errors.bio_ar && (
-          <p className="text-red-500 text-sm mt-1">{errors.bio_ar.message}</p>
-        )}
-      </div>
-
-      <div>
-        <Label htmlFor="wilaya_id">{t("wilayaLabel")}</Label>
-        <Controller
-          name="wilaya_id"
-          control={control}
-          render={({ field }) => (
-            <Select id="wilaya_id" {...field}>
-              <option value="">{t("selectPlaceholder")}</option>
-              {wilayas.map((wilaya) => (
-                <option key={wilaya.id} value={wilaya.id.toString()}>
-                  {locale === "ar" ? wilaya.name_ar : wilaya.name_other}
-                </option>
-              ))}
-            </Select>
-          )}
-        />
-        {errors.wilaya_id && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.wilaya_id.message}
-          </p>
-        )}
-      </div>
-
-      <div>
-        <Label htmlFor="daira_id">{t("dairaLabel")}</Label>
-        <Controller
-          name="daira_id"
-          control={control}
-          render={({ field }) => (
-            <Select
-              id="daira_id"
-              {...field}
-              disabled={!selectedWilayaId || filteredDairas.length === 0}
+      {/* Form actions */}
+      <div className={`flex flex-col sm:flex-row ${locale === 'ar' ? 'sm:justify-start' : 'sm:justify-end'} gap-3 mt-6`}>
+        {locale === 'ar' ? (
+          <>
+            <Button
+              type="submit"
+              disabled={isLoading || !isDirty}
+              className="w-full sm:w-auto"
+              color="primary"
             >
-              <option value="">{t("selectPlaceholder")}</option>
-              {filteredDairas.map((daira) => (
-                <option key={daira.id} value={daira.id.toString()}>
-                  {locale === "ar" ? daira.name_ar : daira.name_other}
-                </option>
-              ))}
-            </Select>
-          )}
-        />
-        {errors.daira_id && (
-          <p className="text-red-500 text-sm mt-1">{errors.daira_id.message}</p>
+              {isLoading ? (
+                <>
+                  <Spinner size="sm" />
+                  <span className="ms-3">{t("loadingButton")}</span>
+                </>
+              ) : (
+                tEdit("editProfileButton")
+              )}
+            </Button>
+            <Button
+              type="button"
+              onClick={() => router.push(`/${locale}/profile`)}
+              disabled={isLoading}
+              className="w-full sm:w-auto"
+              color="light"
+            >
+              {t("cancelButton") || "Cancel"}
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              type="button"
+              onClick={() => router.push(`/${locale}/profile`)}
+              disabled={isLoading}
+              className="w-full sm:w-auto"
+              color="light"
+            >
+              {t("cancelButton") || "Cancel"}
+            </Button>
+            <Button
+              type="submit"
+              disabled={isLoading || !isDirty}
+              className="w-full sm:w-auto"
+              color="primary"
+            >
+              {isLoading ? (
+                <>
+                  <Spinner size="sm" />
+                  <span className="ms-3">{t("loadingButton")}</span>
+                </>
+              ) : (
+                tEdit("editProfileButton")
+              )}
+            </Button>
+          </>
         )}
-      </div>
-
-      <div className="flex flex-col sm:flex-row gap-3 pt-2">
-        <Button
-          type="submit"
-          disabled={isLoading || !isDirty}
-          className="w-full sm:w-auto"
-          color="primary"
-        >
-          {isLoading ? (
-            <>
-              <Spinner size="sm" />
-              <span className="ps-3">{t("loadingButton")}</span>
-            </>
-          ) : (
-            tEdit("editProfileButton")
-          )}
-        </Button>
-        <Button
-          type="button"
-          onClick={() => router.push("/profile")}
-          disabled={isLoading}
-          className="w-full sm:w-auto"
-          color="light"
-        >
-          {t("cancelButton") || "Cancel"}
-        </Button>
       </div>
     </form>
   );

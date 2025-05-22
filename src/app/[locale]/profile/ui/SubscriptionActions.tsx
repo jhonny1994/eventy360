@@ -29,7 +29,8 @@ interface SubscriptionActionsProps {
   subscriptionData: Subscription | null; // Changed type to Subscription
   appSettings: AppSettings | null; // Added appSettings prop
   userType: "researcher" | "organizer" | null; // Added userType prop
-  // Add locale if needed for any specific formatting within this component, though translations are passed via texts
+  locale?: string; // Added locale prop
+  userId?: string; // Added userId prop
 }
 
 export default function SubscriptionActions({
@@ -37,6 +38,8 @@ export default function SubscriptionActions({
   subscriptionData,
   appSettings,
   userType,
+  locale = 'ar',
+  userId
 }: SubscriptionActionsProps) {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showPricingModal, setShowPricingModal] = useState(false);
@@ -120,6 +123,8 @@ export default function SubscriptionActions({
           setIsOpen={setShowPaymentModal}
           appSettings={appSettings}
           selectedPlan={selectedPlan}
+          locale={locale}
+          userId={userId}
         />
       )}
     </>

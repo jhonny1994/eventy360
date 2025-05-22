@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, Spinner, Alert } from 'flowbite-react';
+import { Spinner, Alert, Badge } from 'flowbite-react';
 import { createClient } from '@/lib/supabase/client';
-import { HiExclamationCircle } from 'react-icons/hi';
+import { HiExclamationCircle, HiShieldCheck, HiShieldExclamation } from 'react-icons/hi';
 import VerificationDocumentUploader from '@/components/profile/VerificationDocumentUploader';
 
 interface VerificationSectionProps {
@@ -26,6 +26,7 @@ interface VerificationSectionProps {
 /**
  * Client component that handles verification section in profile
  * Manages verification request status and displays the appropriate UI
+ * Enhanced with RTL support and improved styling
  * 
  * @param props Component props
  * @returns Verification section UI
@@ -33,10 +34,13 @@ interface VerificationSectionProps {
 export default function VerificationSection({
   isVerified,
   translations,
-  userId}: VerificationSectionProps) {
+  userId,
+  locale = 'en'
+}: VerificationSectionProps) {
   const [hasPendingRequest, setHasPendingRequest] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isRtl = locale === 'ar';
   
   const supabase = createClient();
 
@@ -74,72 +78,72 @@ export default function VerificationSection({
   // Internal handler for upload success - no need for external callback
   const handleUploadSuccess = () => {
     setHasPendingRequest(true);
-    // We handle the state update internally now
   };
 
   if (isLoading) {
     return (
-      <Card className="shadow-md">
-        <div className="p-5 flex items-center justify-center h-40">
-          <Spinner size="lg" />
-        </div>
-      </Card>
+      <div className="flex items-center justify-center h-40">
+        <Spinner size="lg" aria-label="Loading verification status..." />
+      </div>
     );
   }
 
   // Show error state if there's an error
   if (error) {
     return (
-      <Card className="shadow-md">
-        <div className="p-5">
-          <Alert color="failure" icon={HiExclamationCircle}>
-            <span>{error}</span>
-          </Alert>
-        </div>
-      </Card>
+      <Alert color="failure" icon={HiExclamationCircle}>
+        <span>{error}</span>
+      </Alert>
     );
   }
 
   return (
-    <Card className="shadow-md">
-      <div className="p-5">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-          <div className="flex items-center gap-2">
-            <h2 className="text-xl font-bold">{translations.verifiedLabel}</h2>
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-              isVerified
-                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-            }`}>
-              {isVerified ? translations.verified : translations.notVerified}
-            </span>
-          </div>
+    <div dir={isRtl ? 'rtl' : 'ltr'}>
+      <div className="flex items-center mb-6">
+        <div className="flex items-center gap-3">
+          <h2 className="text-xl font-bold">{translations.verifiedLabel}</h2>
+          {isVerified ? (
+            <Badge color="success" className="px-3 py-1.5 text-sm">
+              <div className="flex items-center gap-1.5">
+                <HiShieldCheck className="h-4 w-4" />
+                <span>{translations.verified}</span>
+              </div>
+            </Badge>
+          ) : (
+            <Badge color="warning" className="px-3 py-1.5 text-sm">
+              <div className="flex items-center gap-1.5">
+                <HiShieldExclamation className="h-4 w-4" />
+                <span>{translations.notVerified}</span>
+              </div>
+            </Badge>
+          )}
         </div>
+      </div>
 
-        {/* For users who are already verified, show verification status */}
-        {isVerified ? (
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-5 border border-gray-200 dark:border-gray-700">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {translations.verificationDescription.verified}
+      {/* For users who are already verified, show verification status */}
+      {isVerified ? (
+        <div className={`bg-green-50 dark:bg-green-900/20 rounded-lg p-5 border border-green-200 dark:border-green-800`}>
+          <p className="text-green-700 dark:text-green-300">
+            {translations.verificationDescription.verified}
+          </p>
+        </div>
+      ) : (
+        /* For users not verified, show uploader or pending request status */
+        <div className={`bg-gray-50 dark:bg-gray-800 rounded-lg p-5 border border-gray-200 dark:border-gray-700`}>
+          <div className="mb-4">
+            <p className="text-gray-600 dark:text-gray-400">
+              {translations.verificationDescription.notVerified}
             </p>
           </div>
-        ) : (
-          /* For users not verified, show uploader or pending request status */
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-5 border border-gray-200 dark:border-gray-700">
-            <div className="flex-1 mb-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {translations.verificationDescription.notVerified}
-              </p>
-            </div>
-            
-            <VerificationDocumentUploader 
-              isVerified={isVerified}
-              hasPendingRequest={hasPendingRequest}
-              onUploadSuccess={handleUploadSuccess}
-            />
-          </div>
-        )}
-      </div>
-    </Card>
+          
+          <VerificationDocumentUploader 
+            isVerified={isVerified}
+            hasPendingRequest={hasPendingRequest}
+            onUploadSuccess={handleUploadSuccess}
+            locale={locale}
+          />
+        </div>
+      )}
+    </div>
   );
 } 

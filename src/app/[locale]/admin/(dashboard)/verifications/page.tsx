@@ -128,8 +128,21 @@ export default async function AdminVerificationsPage({
   // Combine errors
   const error = countError || dataError;
 
+  // Check if we're using RTL layout
+  const isRtl = locale === 'ar';
+  
+  // Function to get appropriate text align class based on RTL
+  const getTextAlignClass = () => {
+    return isRtl ? 'text-right' : 'text-left';
+  };
+
+  // Stronger RTL text direction enforcement classes
+  const getRtlClass = () => {
+    return isRtl ? 'rtl' : 'ltr';
+  };
+
   return (
-    <div className="w-full">
+    <div className="w-full" dir={isRtl ? 'rtl' : 'ltr'}>
       {/* Page header */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
@@ -160,19 +173,19 @@ export default async function AdminVerificationsPage({
             {page && <input type="hidden" name="page" value={page.toString()} />}
             {pageSize && <input type="hidden" name="page_size" value={pageSize.toString()} />}
             <div className="relative">
-              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+              <div className={`absolute inset-y-0 ${isRtl ? 'end-0 pe-3' : 'start-0 ps-3'} flex items-center pointer-events-none`}>
                 <HiSearch className="w-4 h-4 text-gray-500 dark:text-gray-400" />
               </div>
               <input
                 type="search"
                 name="search"
                 defaultValue={search}
-                className="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className={`block w-full p-2 ${isRtl ? 'pe-10' : 'ps-10'} text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
                 placeholder={t("filters.searchUserPlaceholder")}
               />
               <button
                 type="submit"
-                className="absolute top-0 end-0 p-2 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                className={`absolute top-0 ${isRtl ? 'start-0' : 'end-0'} p-2 text-sm font-medium h-full text-white bg-blue-700 ${isRtl ? 'rounded-s-lg' : 'rounded-e-lg'} border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800`}
               >
                 {t("filters.search")}
               </button>
@@ -194,22 +207,22 @@ export default async function AdminVerificationsPage({
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <table className={`w-full text-sm text-gray-500 dark:text-gray-400 ${getRtlClass()}`} dir={isRtl ? 'rtl' : 'ltr'} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
-                    <th scope="col" className="px-4 py-3">
+                    <th scope="col" className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                       {t("table.user")}
                     </th>
-                    <th scope="col" className="px-4 py-3">
+                    <th scope="col" className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                       {t("table.userType")}
                     </th>
-                    <th scope="col" className="px-4 py-3">
+                    <th scope="col" className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                       {t("table.submittedAt")}
                     </th>
-                    <th scope="col" className="px-4 py-3">
+                    <th scope="col" className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                       {t("table.status")}
                     </th>
-                    <th scope="col" className="px-4 py-3">
+                    <th scope="col" className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                       {t("table.actions")}
                     </th>
                   </tr>
@@ -218,11 +231,12 @@ export default async function AdminVerificationsPage({
                   {verificationRequests.map((request) => (
                     <tr
                       key={request.id}
-                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                      className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 ${getRtlClass()}`}
+                      dir={isRtl ? 'rtl' : 'ltr'}
                     >
                       {/* User column with profile picture and name */}
-                      <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
-                        <div className="flex items-center gap-3">
+                      <td className={`px-4 py-3 font-medium text-gray-900 dark:text-white ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                        <div className={`flex items-center gap-3 ${isRtl ? 'justify-end flex-row-reverse' : 'justify-start'}`}>
                           {request.profile_picture_url ? (
                             <Image
                               src={request.profile_picture_url}
@@ -239,28 +253,29 @@ export default async function AdminVerificationsPage({
                       </td>
 
                       {/* User type column */}
-                      <td className="px-4 py-3">
+                      <td className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                         {request.user_type && t(`userTypes.${request.user_type}`)}
                       </td>
 
                       {/* Submission date column */}
-                      <td className="px-4 py-3">
+                      <td className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                         {formatDate(request.submitted_at, locale)}
                       </td>
 
                       {/* Status column with badge */}
-                      <td className="px-4 py-3">
+                      <td className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                         <StatusBadge
                           status={request.status}
                           translations={statusTranslations}
+                          locale={locale}
                         />
                       </td>
 
                       {/* Actions column with view button */}
-                      <td className="px-4 py-3">
+                      <td className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                         <Link href={`/${locale}/admin/verifications/${request.id}`}>
                           <Button size="xs" color="info">
-                            <HiEye className="mr-1 h-4 w-4" />
+                            <HiEye className={`${isRtl ? 'ml-1' : 'mr-1'} h-4 w-4`} />
                             {t("actions.view")}
                           </Button>
                         </Link>
@@ -278,10 +293,12 @@ export default async function AdminVerificationsPage({
                 totalPages={totalPages}
                 pageSize={pageSize}
                 totalItems={totalRequests || 0}
-                status={status}
-                search={search}
-                locale={locale}
                 translations={paginationTranslations}
+                basePath={`/${locale}/admin/verifications`}
+                searchParams={{
+                  status: status,
+                  search: search
+                }}
               />
             </div>
           </>

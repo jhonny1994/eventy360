@@ -22,11 +22,13 @@ type DocumentPreviewProps = {
     verificationDocument?: string;
     refreshDocument?: string;
   };
+  locale?: string; // Add locale prop for RTL support
 };
 
 /**
  * Component to preview verification documents
  * Handles both images and PDFs with appropriate rendering
+ * Supports RTL languages with proper icon positioning
  *
  * @param props - Component props
  * @returns Document preview UI based on document type
@@ -34,11 +36,31 @@ type DocumentPreviewProps = {
 export default function DocumentPreview({
   documentPath,
   translations,
+  locale = 'en', // Default to English
 }: DocumentPreviewProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [documentUrl, setDocumentUrl] = useState<string | null>(null);
   const [isImage, setIsImage] = useState(false);
+  
+  // Determine if we're using RTL
+  const isRtl = locale === 'ar';
+  
+  // Get appropriate margin class based on RTL or LTR
+  const getIconMarginClass = () => {
+    if (isRtl) {
+      return 'ml-1'; // For RTL languages, margin on left
+    }
+    return 'mr-1'; // For LTR languages, margin on right
+  };
+  
+  // Get appropriate space class for flex containers
+  const getSpaceClass = () => {
+    if (isRtl) {
+      return 'space-x-reverse space-x-2'; // For RTL languages
+    }
+    return 'space-x-2'; // For LTR languages
+  };
 
   // Use useRef to maintain a single instance of the Supabase client
   const supabaseRef = useRef<SupabaseClient<Database> | null>(null);
@@ -128,9 +150,9 @@ export default function DocumentPreview({
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex items-center justify-center h-64" dir={isRtl ? 'rtl' : 'ltr'}>
         <Spinner size="lg" />
-        <span className="ml-2">{translations.loading}</span>
+        <span className={isRtl ? 'mr-2' : 'ml-2'}>{translations.loading}</span>
       </div>
     );
   }
@@ -138,10 +160,10 @@ export default function DocumentPreview({
   if (error || !documentUrl) {
     return (
       <Alert color="failure" icon={HiExclamationCircle} className="mt-2 mb-4">
-        <div className="flex flex-col space-y-2">
+        <div className="flex flex-col space-y-2" dir={isRtl ? 'rtl' : 'ltr'}>
           <span>{error || translations.notFound}</span>
           <Button color="light" size="xs" onClick={fetchDocument} className="self-start">
-            <HiRefresh className="mr-1 h-4 w-4" />
+            <HiRefresh className={getIconMarginClass()} />
             {translations.refreshDocument || "Refresh document"}
           </Button>
         </div>
@@ -151,7 +173,7 @@ export default function DocumentPreview({
 
   if (isImage) {
     return (
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center" dir={isRtl ? 'rtl' : 'ltr'}>
         <div className="relative w-full max-w-full">
           <Image
             src={documentUrl}
@@ -165,13 +187,13 @@ export default function DocumentPreview({
             unoptimized // Use for external URLs
           />
         </div>
-        <div className="mt-4 flex space-x-2">
+        <div className={`mt-4 flex ${getSpaceClass()}`}>
           <Button 
             onClick={fetchDocument}
             color="light"
             size="sm"
           >
-            <HiRefresh className="mr-1 h-4 w-4" />
+            <HiRefresh className={getIconMarginClass()} />
             {translations.refreshDocument || "Refresh document"}
           </Button>
           <Button
@@ -191,7 +213,7 @@ export default function DocumentPreview({
 
   // For PDF or other document types, render an embed/iframe with download link fallback
   return (
-    <div className="document-container flex flex-col">
+    <div className="document-container flex flex-col" dir={isRtl ? 'rtl' : 'ltr'}>
       <object
         data={documentUrl}
         type="application/pdf"
@@ -200,7 +222,7 @@ export default function DocumentPreview({
         className="border rounded dark:border-gray-700"
       >
         <div className="flex items-center justify-center p-4 bg-gray-100 dark:bg-gray-700 rounded border">
-          <HiDocumentText className="h-6 w-6 mr-2" />
+          <HiDocumentText className={`h-6 w-6 ${getIconMarginClass()}`} />
           <a
             href={documentUrl}
             target="_blank"
@@ -211,13 +233,13 @@ export default function DocumentPreview({
           </a>
         </div>
       </object>
-      <div className="mt-4 flex space-x-2 justify-center">
+      <div className={`mt-4 flex ${getSpaceClass()} justify-center`}>
         <Button 
           onClick={fetchDocument}
           color="light"
           size="sm"
         >
-          <HiRefresh className="mr-1 h-4 w-4" />
+          <HiRefresh className={getIconMarginClass()} />
           {translations.refreshDocument || "Refresh document"}
         </Button>
         <Button

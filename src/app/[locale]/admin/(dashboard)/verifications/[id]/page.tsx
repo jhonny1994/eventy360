@@ -108,6 +108,7 @@ export default async function VerificationDetailsPage({
                 <StatusBadge 
                   status={verificationRequest.status} 
                   translations={statusTranslations} 
+                  locale={locale}
                 />
               </div>
               
@@ -244,6 +245,7 @@ export default async function VerificationDetailsPage({
                     documentPath={verificationRequest.document_path}
                     translations={downloadTranslations}
                     size="md"
+                    locale={locale}
                   />
                 </div>
               ) : (
@@ -264,6 +266,7 @@ export default async function VerificationDetailsPage({
                 <ApproveRejectActions 
                   requestId={id} 
                   translations={actionTranslations} 
+                  locale={locale}
                 />
               </Card>
             ) : (
@@ -279,6 +282,7 @@ export default async function VerificationDetailsPage({
                     <StatusBadge
                       status={verificationRequest.status}
                       translations={statusTranslations}
+                      locale={locale}
                     />
                   </div>
                   
