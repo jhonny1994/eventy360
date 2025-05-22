@@ -173,6 +173,19 @@ export default function RecordPaymentForm() {
     setUserSearchTerm('');
   };
 
+  // Function to clear subscription cache for the user
+  const clearUserSubscriptionCache = (userId: string) => {
+    if (typeof window === 'undefined') return;
+    
+    try {
+      const cacheKey = `eventy360_subscription_${userId}`;
+      localStorage.removeItem(cacheKey);
+      console.log(`Cleared subscription cache for user ${userId}`);
+    } catch (error) {
+      console.error('Error clearing subscription cache:', error);
+    }
+  };
+
   // Handle form submission
   const onSubmit = async (data: RecordPaymentFormData) => {
     setIsSubmitting(true);
@@ -195,6 +208,10 @@ export default function RecordPaymentForm() {
       
       if (result) {
         const response = result as unknown as RecordPaymentResponse;
+        
+        // Clear subscription cache for the user
+        clearUserSubscriptionCache(data.userId);
+        
         setFormSuccess(t('paymentRecorded'));
         reset();
         

@@ -4,6 +4,8 @@ import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { type CookieOptions } from "@supabase/ssr";
 import { createMiddlewareClient } from "@/utils/supabase/middleware-client";
+import { applySubscriptionGuard } from "@/middleware/applySubscriptionGuard";
+import { SubscriptionRestriction } from "@/middleware/subscriptionMiddleware";
 
 const AUTH_SYSTEM_PATHS = [
   "/auth/callback",
@@ -337,6 +339,46 @@ export async function middleware(request: NextRequest) {
         const redirectResponse = NextResponse.redirect(loginUrl);
         copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
         return redirectResponse;
+      }
+    }
+    
+    // Apply subscription guards for premium routes
+    // This should run after authentication checks but before returning the final response
+    if (user && user.email_confirmed_at) {
+      // Configure subscription-protected routes
+      const subscriptionGuardsConfig = [
+        // Premium features routes
+        {
+          pathPattern: /^\/[a-z]{2}\/premium-features.*/,
+          restriction: SubscriptionRestriction.REQUIRE_PAID
+        },
+        // Researcher-specific premium routes
+        {
+          pathPattern: /^\/[a-z]{2}\/researcher\/advanced.*/,
+          restriction: SubscriptionRestriction.REQUIRE_RESEARCHER
+        },
+        // Organizer-specific premium routes
+        {
+          pathPattern: /^\/[a-z]{2}\/organizer\/manage.*/,
+          restriction: SubscriptionRestriction.REQUIRE_ORGANIZER
+        },
+        // Routes that also accept trial subscriptions
+        {
+          pathPattern: /^\/[a-z]{2}\/trial-features.*/,
+          restriction: SubscriptionRestriction.ACCEPT_TRIAL
+        }
+      ];
+      
+      // Apply subscription guards
+      const guardedResponse = await applySubscriptionGuard(
+        request, 
+        supabaseResponseAfterSessionUpdate, 
+        subscriptionGuardsConfig
+      );
+      
+      // If a route matched and was guarded, return that response
+      if (guardedResponse) {
+        return guardedResponse;
       }
     }
     

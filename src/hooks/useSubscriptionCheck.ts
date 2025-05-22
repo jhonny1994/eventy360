@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSubscription } from "./useSubscription";
+import { useSubscription, clearSubscriptionCache } from "./useSubscription";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 /**
  * Possible subscription check results from middleware
@@ -58,8 +59,13 @@ export function useSubscriptionCheck(
   } = options;
   const router = useRouter();
   const pathname = usePathname();
-  const { subscriptionData, canAccessPremiumFeature, loading } =
-    useSubscription();
+  const { user } = useAuth();
+  const { 
+    subscriptionData, 
+    canAccessPremiumFeature, 
+    loading,
+    refreshSubscriptionData  // Use the refresh function
+  } = useSubscription();
   const [middlewareResult, setMiddlewareResult] =
     useState<SubscriptionCheckResult>(null);
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
@@ -80,6 +86,11 @@ export function useSubscriptionCheck(
           setHasAccess(true);
         } else if (content?.startsWith("failed-")) {
           setHasAccess(false);
+
+          // If check failed, clear the subscription cache to force a refresh next time
+          if (user?.id) {
+            clearSubscriptionCache(user.id);
+          }
 
           if (redirectOnFailure) {
             const localeMatch = pathname.match(/^\/([a-z]{2})(\/.*)?$/);
@@ -109,6 +120,7 @@ export function useSubscriptionCheck(
     redirectPath,
     router,
     showToastOnRedirect,
+    user
   ]);
 
   // If no middleware result, use client-side check
@@ -118,6 +130,11 @@ export function useSubscriptionCheck(
       setHasAccess(hasAccess);
 
       if (!hasAccess && redirectOnFailure) {
+        // If check failed on client-side, clear cache and force refresh data next time
+        if (user?.id) {
+          clearSubscriptionCache(user.id);
+        }
+
         const localeMatch = pathname.match(/^\/([a-z]{2})(\/.*)?$/);
         const locale = localeMatch ? localeMatch[1] : "ar"; // Default to Arabic locale
 
@@ -147,6 +164,7 @@ export function useSubscriptionCheck(
     showToastOnRedirect,
     options,
     router,
+    user
   ]);
 
   return {
@@ -154,5 +172,6 @@ export function useSubscriptionCheck(
     loading: loading || hasAccess === null,
     middlewareResult,
     subscriptionData,
+    refreshSubscriptionData // Expose the refresh function
   };
 }

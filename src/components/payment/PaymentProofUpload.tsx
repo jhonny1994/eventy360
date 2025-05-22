@@ -5,6 +5,8 @@ import { Button, Alert } from 'flowbite-react';
 import { HiExclamationCircle, HiUpload } from 'react-icons/hi';
 import { createClient } from '@/lib/supabase/client';
 import { useTranslations, useLocale } from 'next-intl';
+import { clearSubscriptionCache } from '@/hooks/useSubscription';
+import { useAuth } from '@/components/providers/AuthProvider';
 
 interface PaymentProofUploadProps {
   paymentData: {
@@ -28,6 +30,7 @@ export default function PaymentProofUpload({
   const defaultLocale = useLocale();
   const currentLocale = locale || defaultLocale;
   const isRtl = currentLocale === 'ar';
+  const { user } = useAuth();
   
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -118,6 +121,11 @@ export default function PaymentProofUpload({
       setFile(null);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
+      }
+      
+      // Clear subscription cache to force refresh subscription data
+      if (user?.id) {
+        clearSubscriptionCache(user.id);
       }
       
       // Call onUploadSuccess callback with payment ID if provided

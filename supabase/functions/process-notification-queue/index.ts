@@ -203,7 +203,11 @@ async function processNotificationBatch(supabase: SupabaseClient, notifications:
 
       // For critical notifications, attempt an immediate retry once
       if (notification.attempts === 1 && // Only retry once immediately
-          ['payment_received_pending_verification', 'subscription_activated', 'admin_invitation'].includes(notification.template_key || '')) {
+          ['payment_received_pending_verification', 
+           'payment_verified_notification',
+           'payment_rejected_notification',
+           'subscription_activated', 
+           'admin_invitation'].includes(notification.template_key || '')) {
         
         console.log(`Immediate retry for critical notification ${notification.id} - ${notification.template_key}`);
         

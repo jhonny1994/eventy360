@@ -1090,6 +1090,13 @@
     "subscriptionTrialEndingSoon": "فترتك التجريبية تنتهي قريباً",
     "subscriptionTrialEndingSoonDescription": "اشترك الآن للاستمرار في الاستفادة من جميع الميزات",
     "featuresIncluded": "الميزات المتضمنة",
-    "viewAllFeatures": "عرض جميع الميزات"
+    "viewAllFeatures": "عرض جميع الميزات",
+    "paymentVerifiedTitle": "تم التحقق من الدفع",
+    "paymentVerifiedDescription": "تم التحقق من دفعتك وتفعيل اشتراكك",
+    "paymentRejectedTitle": "تم رفض الدفع",
+    "paymentRejectedDescription": "لم نتمكن من التحقق من دفعتك. يرجى مراجعة التفاصيل والمحاولة مرة أخرى",
+    "verifyingPayment": "جارٍ التحقق من الدفع...",
+    "paymentDetails": "تفاصيل الدفع",
+    "subscriptionDetails": "تفاصيل الاشتراك"
   }
 }

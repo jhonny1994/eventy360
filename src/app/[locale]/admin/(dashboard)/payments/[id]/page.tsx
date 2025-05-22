@@ -338,6 +338,7 @@ export default async function PaymentDetailsPage({
                     translations={actionTranslations} 
                     apiEndpoint="verify_payment"
                     locale={locale}
+                    userId={payment.user_id}
                   />
                 </div>
               )}

@@ -30,6 +30,7 @@ type ApproveRejectActionsProps = {
   };
   apiEndpoint?: string; // Optional API endpoint to use (defaults to verification_requests)
   locale?: string; // Added locale prop for RTL support
+  userId?: string; // Optional user ID for cache clearing
 };
 
 /**
@@ -45,6 +46,7 @@ export default function ApproveRejectActions({
   translations,
   apiEndpoint,
   locale = 'en', // Default to English
+  userId
 }: ApproveRejectActionsProps) {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
@@ -77,6 +79,28 @@ export default function ApproveRejectActions({
   // Create Supabase client at component level
   const supabase = createClient();
 
+  // Function to clear subscription cache for the affected user
+  const clearUserSubscriptionCache = async () => {
+    if (!userId) {
+      console.log('No userId provided for cache clearing');
+      return;
+    }
+
+    // Clear the subscription cache for the user via LocalStorage
+    if (typeof window !== 'undefined') {
+      const cacheKey = `eventy360_subscription_${userId}`;
+      try {
+        localStorage.removeItem(cacheKey);
+        console.log(`Cleared subscription cache for user ${userId}`);
+      } catch (error) {
+        console.error('Error clearing subscription cache:', error);
+      }
+    }
+
+    // If we wanted to be more thorough, we could also call an API endpoint
+    // that would clear the cache for all devices the user might be logged into
+  };
+
   const handleApprove = async () => {
     setIsSubmitting(true);
     setErrorMessage(null);
@@ -93,6 +117,9 @@ export default function ApproveRejectActions({
           });
 
         if (error) throw error;
+        
+        // Clear subscription cache for the user after successful verification
+        await clearUserSubscriptionCache();
       } else {
         // Default behavior for verification requests
         const { error } = await supabase
@@ -149,6 +176,9 @@ export default function ApproveRejectActions({
           });
 
         if (error) throw error;
+        
+        // Clear subscription cache for the user after rejection
+        await clearUserSubscriptionCache();
       } else {
         // Default behavior for verification requests
         const { error } = await supabase
