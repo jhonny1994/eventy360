@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { PaginationControl } from '@/components/admin/ui';
 
 interface PaginationClientProps {
@@ -38,16 +39,28 @@ export default function PaginationClient({
   totalItems,
   translations,
   basePath,
-  locale = 'en',
   searchParams = {},
   // Legacy props
   status,
   search,
 }: PaginationClientProps) {
   const router = useRouter();
+  const appLocale = useLocale();
   
   // Available page size options
   const pageSizeOptions = [10, 25, 50, 100];
+  
+  // Function to get the correctly formatted path based on RTL considerations
+  const getFormattedPath = () => {
+    if (basePath) {
+      // If basePath is explicitly provided, use it as-is (RTL handled by route)
+      return basePath;
+    }
+    
+    // Use the application locale for constructing the path
+    // This ensures proper RTL handling through the locale middleware
+    return `/${appLocale}/admin/verifications`;
+  };
   
   // Handle page change
   const handlePageChange = (page: number) => {
@@ -66,14 +79,8 @@ export default function PaginationClient({
     params.set('page', page.toString());
     params.set('page_size', pageSize.toString());
     
-    // Determine the URL path
-    let path = '/admin/verifications'; // Default path for backward compatibility
-    
-    if (basePath) {
-      path = basePath; // New way: explicit path
-    } else if (locale) {
-      path = `/${locale}/admin/verifications`; // Old way with locale
-    }
+    // Get the properly formatted path
+    const path = getFormattedPath();
     
     // Navigate to the new URL
     router.push(`${path}?${params.toString()}`);
@@ -96,14 +103,8 @@ export default function PaginationClient({
     params.set('page', '1');
     params.set('page_size', newPageSize.toString());
     
-    // Determine the URL path
-    let path = '/admin/verifications'; // Default path for backward compatibility
-    
-    if (basePath) {
-      path = basePath; // New way: explicit path
-    } else if (locale) {
-      path = `/${locale}/admin/verifications`; // Old way with locale
-    }
+    // Get the properly formatted path
+    const path = getFormattedPath();
     
     // Navigate to the new URL
     router.push(`${path}?${params.toString()}`);
@@ -119,7 +120,6 @@ export default function PaginationClient({
       onPageChange={handlePageChange}
       onPageSizeChange={handlePageSizeChange}
       translations={translations}
-      locale={locale}
     />
   );
 } 

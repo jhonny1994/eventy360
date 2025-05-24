@@ -1,707 +1,242 @@
 {
   "tasks": [
     {
-      "id": "61c6545e-396f-436a-831b-e98311ebafc6",
-      "name": "Analyze Profile Form Notifications",
-      "description": "Review the current implementation of success and error notifications using `react-hot-toast` in `EditProfileForm.tsx`. Understand how errors from Supabase operations (DB updates, Storage uploads) are currently handled or logged.",
+      "id": "33a9ad28-5e68-4049-bac3-ed8336081bce",
+      "name": "Create Admin Topics Page",
+      "description": "Implement the main admin topics page route at `/admin/topics`. This page will display a table of all topics with pagination, search functionality, and actions to create, edit, or delete topics. The implementation should follow the same patterns as other admin pages, particularly payments management.",
       "status": "已完成",
       "dependencies": [],
-      "createdAt": "2025-05-10T15:23:30.234Z",
-      "updatedAt": "2025-05-10T15:25:36.789Z",
+      "createdAt": "2025-05-22T18:32:58.976Z",
+      "updatedAt": "2025-05-22T18:37:45.990Z",
       "relatedFiles": [
         {
-          "path": "src/app/[locale]/profile/ui/EditProfileForm.tsx",
-          "type": "REFERENCE",
-          "description": "The main component handling profile edits and notifications."
+          "path": "src/app/[locale]/admin/(dashboard)/topics/page.tsx",
+          "type": "CREATE",
+          "description": "Main admin topics listing page with table and actions"
         },
         {
-          "path": "src/messages/ar.json",
+          "path": "src/app/[locale]/admin/(dashboard)/payments/page.tsx",
           "type": "REFERENCE",
-          "description": "The Arabic translation file containing existing and future notification messages."
+          "description": "Reference for admin page structure and patterns"
         }
       ],
-      "implementationGuide": "Read `EditProfileForm.tsx`. Identify all `toast.success` and `toast.error` calls. Trace the origin of error messages passed to `toast.error`. Note how Supabase errors are caught and processed (`try...catch`, error object properties).",
-      "verificationCriteria": "Document existing notification points and the current error handling flow in a temporary note or comment.",
-      "summary": "Analyzed existing toast notification usage and Supabase error handling in EditProfileForm.tsx. Documented where toasts are used, current translation key usage, and how caught errors are passed to toasts, noting the lack of specific Supabase error object parsing.",
-      "completedAt": "2025-05-10T15:25:36.788Z"
+      "implementationGuide": "1. Create `/src/app/[locale]/admin/(dashboard)/topics/page.tsx` with:\n- Server component using getTranslations\n- requireAdmin authentication check\n- Supabase client initialization\n- Direct query to fetch topics with ordering by creation date\n- Client-side pagination similar to payments page\n- Search implementation using topic name across languages\n- Table with columns: Arabic name, Created date, Actions\n- 'Create Topic' button that opens modal\n- RTL support for Arabic locale\n\nThe component should reuse admin UI patterns and components such as Card, Button, and pagination from Flowbite.",
+      "verificationCriteria": "- Page loads and displays topics in a table\n- Authentication prevents non-admin access\n- Pagination works correctly\n- Search filter functions properly\n- Create button exists and opens modal\n- UI is consistent with other admin pages\n- RTL layout works correctly for Arabic locale",
+      "analysisResult": "The Topic Management feature for Eventy360 will allow admins to create, edit, and delete topics that can be used by events and subscribed to by researchers. The implementation should maintain UI consistency with existing admin components and follow project patterns for Arabic language support and RTL display. Direct Supabase queries should be used where appropriate instead of creating new RPC functions, and all admin actions must be logged properly.",
+      "summary": "Successfully implemented the Admin Topics page following the patterns in other admin pages. Created a table listing topics with proper sorting, pagination, search functionality, and RTL support. Added translations for Arabic. The page is fully functional and maintains the same UI patterns as other admin pages for consistency.",
+      "completedAt": "2025-05-22T18:37:45.988Z"
     },
     {
-      "id": "82b6a39a-5da3-431c-ab38-dc594510b8fa",
-      "name": "Add Profile Notification Translations",
-      "description": "Define clear and specific translation keys for refined success and error messages (generic update success/error, specific errors for DB constraints, Storage issues, etc.) in `messages/ar.json`. Add the Arabic text for these messages.",
+      "id": "cb2d9051-a3d8-4738-b3e4-d8da3745f37c",
+      "name": "Implement Topic Search Filter",
+      "description": "Create a search filter component specifically for topics, following the same patterns as other admin filters like StatusFilter. The component should allow filtering topics by name across all languages (Arabic, English, French) and maintain URL parameters for shareable filtered views.",
       "status": "已完成",
       "dependencies": [
         {
-          "taskId": "61c6545e-396f-436a-831b-e98311ebafc6"
+          "taskId": "33a9ad28-5e68-4049-bac3-ed8336081bce"
         }
       ],
-      "createdAt": "2025-05-10T15:23:30.234Z",
-      "updatedAt": "2025-05-10T15:26:52.648Z",
+      "createdAt": "2025-05-22T18:32:58.976Z",
+      "updatedAt": "2025-05-22T18:46:46.612Z",
       "relatedFiles": [
         {
-          "path": "src/messages/ar.json",
-          "type": "TO_MODIFY",
-          "description": "The Arabic translation file to be updated with new notification messages."
-        }
-      ],
-      "implementationGuide": "Based on the analysis in Task 1 and potential error types, brainstorm user-friendly message strings in Arabic. Create new keys in `messages/ar.json` (e.g., under `ProfilePage.Toasts`). Ensure consistency with existing translation structure.",
-      "verificationCriteria": "The `messages/ar.json` file should contain new keys for profile update success, generic error, and at least 3-4 specific potential error scenarios (e.g., duplicate entry, storage upload failed, permission denied).",
-      "summary": "Added new translation keys and their Arabic text for refined profile update success and error notifications to messages/ar.json under the ProfilePage.Toasts namespace, including specific messages for potential backend and storage errors.",
-      "completedAt": "2025-05-10T15:26:52.645Z"
-    },
-    {
-      "id": "0efabdd2-588d-49b1-8dbe-c39ead9e3dee",
-      "name": "Implement Supabase Error Parsing",
-      "description": "Create or update error handling logic within `EditProfileForm.tsx` to inspect the error objects returned by Supabase client calls. Implement a mechanism (e.g., switch statement, if/else if) to identify specific error patterns (codes, messages) and select the appropriate translated message key defined in Task 2. Include a generic fallback.",
-      "status": "已完成",
-      "dependencies": [
+          "path": "src/app/[locale]/admin/(dashboard)/topics/SearchFilter.tsx",
+          "type": "CREATE",
+          "description": "Search filter component for topics page"
+        },
         {
-          "taskId": "82b6a39a-5da3-431c-ab38-dc594510b8fa"
-        }
-      ],
-      "createdAt": "2025-05-10T15:23:30.234Z",
-      "updatedAt": "2025-05-10T15:35:57.547Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/profile/ui/EditProfileForm.tsx",
-          "type": "TO_MODIFY",
-          "description": "The component where error handling logic will be implemented."
-        }
-      ],
-      "implementationGuide": "Modify the `onSubmitHandler` and profile picture upload functions in `EditProfileForm.tsx`. Add logic within the `catch` blocks to check the error object. Based on error properties (e.g., `error.code`, `error.message`), select the appropriate translation key. Use a default key for unhandled errors. Pseudocode: `if (error.code === \"23505\") return t(\"ProfilePage.Toasts.errorUniqueConstraint\"); else if (...) ... return t(\"ProfilePage.Toasts.errorGeneric\");`",
-      "verificationCriteria": "The error handling logic in `EditProfileForm.tsx` should correctly identify and map at least 3-4 specific error conditions to their corresponding new translation keys. A generic error should be displayed for other cases.",
-      "summary": "Implemented the `getTranslatedErrorMessage` helper function in `EditProfileForm.tsx` to parse Supabase errors based on codes/messages and return specific translated messages using `next-intl`. Integrated this helper into the catch blocks for profile data and picture updates. Encountered persistent linter errors related to the `useCallback` dependency array which could not be resolved automatically after multiple attempts.",
-      "completedAt": "2025-05-10T15:35:57.546Z"
-    },
-    {
-      "id": "00f88fe4-7ee4-4a12-9ab3-241dc28ba0c1",
-      "name": "Update Profile Form Notifications",
-      "description": "Update the toast notification calls in `EditProfileForm.tsx` to use the refined error parsing logic implemented in Task 3 and the new translation keys defined in Task 2. Ensure success messages are also using the new translation keys (if defined).",
-      "status": "已完成",
-      "dependencies": [
-        {
-          "taskId": "0efabdd2-588d-49b1-8dbe-c39ead9e3dee"
-        }
-      ],
-      "createdAt": "2025-05-10T15:23:30.234Z",
-      "updatedAt": "2025-05-10T15:37:42.607Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/profile/ui/EditProfileForm.tsx",
-          "type": "TO_MODIFY",
-          "description": "The component where toast calls will be updated."
-        }
-      ],
-      "implementationGuide": "In `EditProfileForm.tsx`, replace existing `toast.error(...)` calls in the relevant `catch` blocks with calls that utilize the new error parsing logic to get the appropriate translated message. Update `toast.success(...)` calls if new success message keys were added in Task 2. Ensure `react-hot-toast` functions are called with the correct translated strings.",
-      "verificationCriteria": "Profile update success and error messages displayed to the user should be the new, specific, and translated messages based on the outcome of the operation.",
-      "summary": "Updated toast notifications in `EditProfileForm.tsx` to use the `getTranslatedErrorMessage` helper function for displaying specific, translated error messages from Supabase operations (profile and role-specific table updates, storage uploads). Ensured the success toast uses the correct new translation key (`ProfilePage.Toasts.updateSuccess`). Consolidated error reporting to use toasts as the primary feedback mechanism.",
-      "completedAt": "2025-05-10T15:37:42.606Z"
-    },
-    {
-      "id": "3c18fd35-b2f3-4c0e-bb9d-9a7221c05b68",
-      "name": "Test Refined Profile Notifications",
-      "description": "Test the refined success and error notification system in `EditProfileForm.tsx`. Test various scenarios including successful updates, validation errors (client-side, though these use inline messages, verify no toast conflicts), and simulated or actual backend errors (e.g., attempting to set a duplicate unique field, attempting unauthorized action if possible). Verify correct messages are displayed.",
-      "status": "已完成",
-      "dependencies": [
-        {
-          "taskId": "00f88fe4-7ee4-4a12-9ab3-241dc28ba0c1"
-        }
-      ],
-      "createdAt": "2025-05-10T15:23:30.234Z",
-      "updatedAt": "2025-05-10T15:38:59.512Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/profile/ui/EditProfileForm.tsx",
+          "path": "src/app/[locale]/admin/(dashboard)/payments/StatusFilter.tsx",
           "type": "REFERENCE",
-          "description": "The component to be tested."
+          "description": "Reference implementation for filter components"
         }
       ],
-      "implementationGuide": "Interact with the Edit Profile form. Perform successful updates. Attempt actions that should trigger specific backend errors (e.g., use browser developer tools to modify a request to trigger a unique constraint violation if feasible, or ensure test data allows such scenarios). Verify the content and appearance of success and error toasts.",
-      "verificationCriteria": "All test scenarios should result in the correct, specific, and translated success or error notification being displayed. No incorrect or missing notifications should occur.",
-      "summary": "Successfully tested profile update notifications across various scenarios (success, validation, backend errors). Verified correct, specific, and translated toasts are displayed as expected.",
-      "completedAt": "2025-05-10T15:38:59.510Z"
+      "implementationGuide": "1. Create `/src/app/[locale]/admin/(dashboard)/topics/SearchFilter.tsx` client component:\n- Accept props: activeSearch, locale, translations\n- Use form with method=\"get\" to maintain URL params\n- Add hidden inputs for current pagination params\n- Implement search input with HiSearch icon\n- Ensure proper RTL support\n- Style consistently with other filter components\n\nDesign should match existing filter components like StatusFilter in the payments section.",
+      "verificationCriteria": "- Component renders correctly\n- Search maintains other URL parameters\n- Proper RTL support for Arabic locale\n- Consistent styling with other admin filters\n- Search icon positioned correctly based on locale\n- Clear button works when search has value",
+      "analysisResult": "The Topic Management feature for Eventy360 will allow admins to create, edit, and delete topics that can be used by events and subscribed to by researchers. The implementation should maintain UI consistency with existing admin components and follow project patterns for Arabic language support and RTL display. Direct Supabase queries should be used where appropriate instead of creating new RPC functions, and all admin actions must be logged properly.",
+      "summary": "Successfully implemented the Topic Search Filter component following the patterns in other admin components. The filter allows searching topics by name across all translations (Arabic, English, French) and maintains URL parameters for shareable filtered views. Added proper RTL support with correct icon positioning for Arabic and implemented a clear search button for better user experience.",
+      "completedAt": "2025-05-22T18:46:46.611Z"
     },
     {
-      "id": "d13c2808-cb12-400f-8b5a-fd60a8fcb917",
-      "name": "Review all Arabic Translations",
-      "description": "Read the entire `messages/ar.json` file and systematically review all existing Arabic translations for professionalism, academic/business appropriateness, clarity, accuracy, consistency, and cultural relevance for Algeria.",
+      "id": "58f29062-9d24-473a-82f5-90bc52d307a0",
+      "name": "Create Topic Modal Components",
+      "description": "Implement modal components for creating and editing topics. The modals should include form fields for multilingual topic names (Arabic required, others optional), show a preview of the generated slug, and handle form validation and submission.",
+      "status": "已完成",
+      "dependencies": [
+        {
+          "taskId": "33a9ad28-5e68-4049-bac3-ed8336081bce"
+        }
+      ],
+      "createdAt": "2025-05-22T18:32:58.976Z",
+      "updatedAt": "2025-05-22T18:51:43.230Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/admin/(dashboard)/topics/CreateTopicModal.tsx",
+          "type": "CREATE",
+          "description": "Modal for creating new topics"
+        },
+        {
+          "path": "src/app/[locale]/admin/(dashboard)/topics/EditTopicModal.tsx",
+          "type": "CREATE",
+          "description": "Modal for editing existing topics"
+        },
+        {
+          "path": "src/lib/schemas/topicSchema.ts",
+          "type": "CREATE",
+          "description": "Zod validation schema for topic forms"
+        }
+      ],
+      "implementationGuide": "1. Create client components for topic modals:\n- CreateTopicModal.tsx - For creating new topics\n- EditTopicModal.tsx - For editing existing topics\n\nEach modal should include:\n- Modal wrapper using Flowbite Modal component\n- Form with fields for Arabic, English, and French names\n- Client-side validation with React Hook Form and Zod\n- Display of auto-generated slug from Arabic name (read-only)\n- Proper error handling and success messages\n- RTL support for Arabic locale\n- Submit and Cancel buttons\n\nImplement common validation logic in a shared getTopicSchema function.",
+      "verificationCriteria": "- Modals open and close correctly\n- Form validation works (Arabic name required)\n- Slug generation from Arabic name functions correctly\n- Submit button disabled until form is valid\n- Success messages shown on completion\n- Error messages shown for validation errors\n- RTL layout correct for Arabic locale\n- Both create and edit operations function properly",
+      "analysisResult": "The Topic Management feature for Eventy360 will allow admins to create, edit, and delete topics that can be used by events and subscribed to by researchers. The implementation should maintain UI consistency with existing admin components and follow project patterns for Arabic language support and RTL display. Direct Supabase queries should be used where appropriate instead of creating new RPC functions, and all admin actions must be logged properly.",
+      "summary": "Successfully implemented topic modal components for creating and editing topics with proper multilingual support. The components include:\n1. CreateTopicModal - For creating new topics with Arabic required and other languages optional\n2. EditTopicModal - For editing existing topics with pre-populated fields\n3. TopicSchema - Zod validation ensuring Arabic name is required with proper slug generation\n4. TopicActionButtons - Client component to handle the modal state and actions\n\nThe implementation includes:\n- RTL support for Arabic language\n- Form validation with real-time slug generation\n- Error handling with proper error messages\n- Success notifications\n- Integration with the admin_actions_log table\n- Complete translations added to the Arabic language file",
+      "completedAt": "2025-05-22T18:51:43.229Z"
+    },
+    {
+      "id": "20ad4d89-9dd0-4366-a115-2c482f3a4339",
+      "name": "Implement Topic Database Operations",
+      "description": "Implement client-side functions for creating, updating, and deleting topics using direct Supabase client queries. These functions should handle data validation, error handling, and proper logging to the admin_actions_log table.",
       "status": "已完成",
       "dependencies": [],
-      "createdAt": "2025-05-10T15:28:56.475Z",
-      "updatedAt": "2025-05-10T15:29:20.466Z",
+      "createdAt": "2025-05-22T18:32:58.976Z",
+      "updatedAt": "2025-05-24T08:18:35.473Z",
       "relatedFiles": [
         {
-          "path": "messages/ar.json",
-          "type": "REFERENCE",
-          "description": "The main Arabic translation file to be reviewed."
+          "path": "src/utils/admin/topics.ts",
+          "type": "CREATE",
+          "description": "Utility functions for topic database operations"
         }
       ],
-      "implementationGuide": "Use the `read_file` tool to get the content of `messages/ar.json`. Iterate through the JSON structure, examining each key-value pair. Take notes on translations that can be improved.",
-      "verificationCriteria": "Produce a set of notes or a list identifying translations that need refinement and the reasons why.",
-      "summary": "Completed a systematic review of all Arabic translations in messages/ar.json. Identified specific translations for refinement to improve professionalism, academic/business appropriateness, consistency, and cultural relevance, documenting suggested changes and rationale.",
-      "completedAt": "2025-05-10T15:29:20.465Z"
+      "implementationGuide": "1. Create utility functions in `/src/utils/admin/topics.ts`:\n- createTopic: Insert new topic with name_translations, generated slug\n- updateTopic: Update existing topic, regenerate slug if Arabic name changed\n- deleteTopic: Delete topic by ID\n- generateSlug: Helper to create slugs from Arabic name\n- logTopicAction: Log to admin_actions_log with appropriate action type\n\nAll functions should:\n- Validate input data\n- Use direct Supabase client queries\n- Handle errors gracefully with useful error messages\n- Log admin actions with appropriate details\n\nUse transactions where appropriate to ensure data consistency.",
+      "verificationCriteria": "- createTopic successfully inserts new topic with correct data\n- updateTopic correctly updates existing topic\n- deleteTopic removes topic and cascades to related tables\n- Validation prevents invalid data\n- Proper error handling for DB constraints\n- Admin actions are logged correctly\n- Slugs are generated correctly from Arabic names\n- Error messages are user-friendly",
+      "analysisResult": "The Topic Management feature for Eventy360 will allow admins to create, edit, and delete topics that can be used by events and subscribed to by researchers. The implementation should maintain UI consistency with existing admin components and follow project patterns for Arabic language support and RTL display. Direct Supabase queries should be used where appropriate instead of creating new RPC functions, and all admin actions must be logged properly.",
+      "summary": "Successfully implemented topic database operations with comprehensive utility functions for creating, updating, deleting, and checking topic usage. Includes proper error handling, data validation, and admin action logging. The implementation follows best practices with strongly typed parameters and return values.",
+      "completedAt": "2025-05-24T08:18:35.472Z"
     },
     {
-      "id": "af82ed19-cf33-4bf7-86f5-508d071ccabc",
-      "name": "Propose Refined Arabic Translations",
-      "description": "Based on the review in Task 1, propose refined Arabic translations for all identified keys. Ensure the proposed translations adhere to professional, academic, and business standards for the Algerian context.",
+      "id": "a086f315-1d22-4611-9127-065f51160611",
+      "name": "Implement Topics RLS Policies",
+      "description": "Create a database migration to implement Row Level Security (RLS) policies for the topics table. Policies should allow admins full CRUD access, while regular authenticated users should only have read access.",
       "status": "已完成",
-      "dependencies": [
-        {
-          "taskId": "d13c2808-cb12-400f-8b5a-fd60a8fcb917"
-        }
-      ],
-      "createdAt": "2025-05-10T15:28:56.475Z",
-      "updatedAt": "2025-05-10T15:39:37.004Z",
+      "dependencies": [],
+      "createdAt": "2025-05-22T18:32:58.976Z",
+      "updatedAt": "2025-05-24T08:23:08.111Z",
       "relatedFiles": [
         {
-          "path": "path/to/review/notes.md",
-          "type": "REFERENCE",
-          "description": "Notes or list from the review task."
-        },
-        {
-          "path": "messages/ar.json",
-          "type": "REFERENCE",
-          "description": "The main Arabic translation file for context."
+          "path": "supabase/migrations/20250523000000_topics_rls_policies.sql",
+          "type": "CREATE",
+          "description": "Migration for topics table RLS policies"
         }
       ],
-      "implementationGuide": "For each translation identified in Task 1, brainstorm and formulate improved Arabic wording. Consider the context where the translation is used in the UI (based on the key name and surrounding keys). Document the original and proposed translations.",
-      "verificationCriteria": "Produce a structured list of proposed changes, showing the original key, original translation, and the proposed refined translation.",
-      "summary": "The proposal for refined Arabic translations was effectively completed by the user's manual edit and acceptance of the updated messages/ar.json file.",
-      "completedAt": "2025-05-10T15:39:37.003Z"
+      "implementationGuide": "1. Create a new migration file in `/supabase/migrations/` with:\n- Enable RLS on topics table if not already enabled\n- Add policy for admins to have full CRUD access\n- Add policy for authenticated users to have read-only access\n\nThe migration should follow the existing pattern for RLS policies and ensure proper security while maintaining required access levels.",
+      "verificationCriteria": "- RLS is enabled on topics table\n- Admins can perform all CRUD operations\n- Regular users can only read topics\n- Non-authenticated users cannot access topics\n- Policies are consistent with existing RLS patterns\n- Migration applies successfully",
+      "analysisResult": "The Topic Management feature for Eventy360 will allow admins to create, edit, and delete topics that can be used by events and subscribed to by researchers. The implementation should maintain UI consistency with existing admin components and follow project patterns for Arabic language support and RTL display. Direct Supabase queries should be used where appropriate instead of creating new RPC functions, and all admin actions must be logged properly.",
+      "summary": "Created a migration file that implements RLS policies for the topics table, allowing admins full CRUD access and regular authenticated users read-only access, while restricting unauthenticated users from accessing topics at all. The implementation follows the project's established RLS patterns for consistency.",
+      "completedAt": "2025-05-24T08:23:08.110Z"
     },
     {
-      "id": "37ae0e9f-c1f7-4b99-ab52-1574e7233330",
-      "name": "Generate Translation Update Edit",
-      "description": "Generate the `code_edit` content required to update the `messages/ar.json` file with the proposed refined translations from Task 2. This should be in the format required by the `edit_file` tool.",
+      "id": "bc9b108d-eed1-4ac1-bf44-8d829d0f4f98",
+      "name": "Create Reusable TopicSelector Component",
+      "description": "Develop a reusable TopicSelector component that can be used in both admin contexts and event creation/editing. The component should support selecting single or multiple topics, with proper RTL support and consistent styling with the rest of the application.",
       "status": "已完成",
-      "dependencies": [
-        {
-          "taskId": "af82ed19-cf33-4bf7-86f5-508d071ccabc"
-        }
-      ],
-      "createdAt": "2025-05-10T15:28:56.475Z",
-      "updatedAt": "2025-05-10T15:39:48.333Z",
+      "dependencies": [],
+      "createdAt": "2025-05-22T18:32:58.976Z",
+      "updatedAt": "2025-05-24T08:25:18.677Z",
       "relatedFiles": [
         {
-          "path": "path/to/proposed/changes.json",
-          "type": "REFERENCE",
-          "description": "Structured list of proposed changes."
-        },
-        {
-          "path": "messages/ar.json",
-          "type": "REFERENCE",
-          "description": "The original Arabic translation file structure."
+          "path": "src/components/ui/TopicSelector.tsx",
+          "type": "CREATE",
+          "description": "Reusable component for selecting topics"
         }
       ],
-      "implementationGuide": "Using the structured list of proposed changes, construct the `code_edit` string. Use the `// ... existing code ...` marker for unchanged sections. Ensure the JSON structure remains valid after the changes.",
-      "verificationCriteria": "Produce a valid `code_edit` string that accurately reflects all proposed translation refinements and can be applied to `messages/ar.json` using the `edit_file` tool.",
-      "summary": "The task of generating the code_edit for the translation update was superseded and completed by the user's direct manual edit and acceptance of the updated messages/ar.json file.",
-      "completedAt": "2025-05-10T15:39:48.332Z"
+      "implementationGuide": "1. Create `/src/components/ui/TopicSelector.tsx` with:\n- Client component with React hooks\n- Props for single/multiple selection modes\n- Supabase client integration to fetch topics\n- Support for initial selected value(s)\n- Dropdown or multi-select UI using Flowbite components\n- Full RTL support\n- Loading state handling\n- Error handling\n- Callback for selection changes\n\nThe component should be highly reusable and maintain consistency with other form elements in the application.",
+      "verificationCriteria": "- Component renders correctly\n- Loads topics from database\n- Allows selecting single or multiple topics\n- Handles initial values correctly\n- Proper RTL support\n- Loading and error states handled\n- Callback fires with correct selected values\n- Consistent styling with other UI components",
+      "analysisResult": "The Topic Management feature for Eventy360 will allow admins to create, edit, and delete topics that can be used by events and subscribed to by researchers. The implementation should maintain UI consistency with existing admin components and follow project patterns for Arabic language support and RTL display. Direct Supabase queries should be used where appropriate instead of creating new RPC functions, and all admin actions must be logged properly.",
+      "summary": "Implemented a reusable TopicSelector component that supports both single and multiple topic selection with RTL language support. The component integrates with Supabase to fetch topics, handles loading and error states, and provides callbacks for selection changes. The implementation follows the project's design patterns, uses the singleton Supabase client pattern, and properly handles internationalization.",
+      "completedAt": "2025-05-24T08:25:18.676Z"
     },
     {
-      "id": "8156811c-b2b9-4c5e-868c-1a1ef61aaaeb",
-      "name": "Apply Translation Update Edit",
-      "description": "Use the `edit_file` tool to apply the generated `code_edit` content to the `messages/ar.json` file, thereby updating the translations.",
+      "id": "ee913ab1-9fff-4ee7-8375-9e912dd9d55a",
+      "name": "Update Translation Files for Topic Management",
+      "description": "Add all necessary translation keys for the topic management feature to the translation files. This includes page titles, button labels, form fields, validation messages, success/error notifications, and other UI text elements.",
       "status": "已完成",
-      "dependencies": [
-        {
-          "taskId": "37ae0e9f-c1f7-4b99-ab52-1574e7233330"
-        }
-      ],
-      "createdAt": "2025-05-10T15:28:56.475Z",
-      "updatedAt": "2025-05-10T15:39:57.325Z",
+      "dependencies": [],
+      "createdAt": "2025-05-22T18:32:58.976Z",
+      "updatedAt": "2025-05-24T08:28:27.075Z",
       "relatedFiles": [
         {
           "path": "messages/ar.json",
           "type": "TO_MODIFY",
-          "description": "The Arabic translation file to be updated."
+          "description": "Arabic translations for topic management"
+        },
+        {
+          "path": "messages/en.json",
+          "type": "TO_MODIFY",
+          "description": "English translations for topic management"
+        },
+        {
+          "path": "messages/fr.json",
+          "type": "TO_MODIFY",
+          "description": "French translations for topic management"
         }
       ],
-      "implementationGuide": "Call the `edit_file` tool with `target_file` set to `messages/ar.json` and `code_edit` set to the output of Task 3. Provide a clear instruction for the edit.",
-      "verificationCriteria": "The `edit_file` tool should execute successfully, and the output should show the proposed translation changes applied to the `messages/ar.json` file.",
-      "summary": "The task of applying the translation update edit was superseded and completed by the user's direct manual edit and acceptance of the updated messages/ar.json file.",
-      "completedAt": "2025-05-10T15:39:57.324Z"
+      "implementationGuide": "1. Update translation files in `/messages/` directory (ar.json, en.json, fr.json) with new keys:\n- AdminTopics namespace with keys for page title, description, table headers, actions, filters\n- TopicForm namespace with keys for form labels, placeholders, buttons, validation\n- Success/error message keys\n- Modal titles and content\n\nEnsure Arabic translations are high quality and appropriate for the academic audience. Follow existing translation patterns for consistency.",
+      "verificationCriteria": "- All translation files updated with new keys\n- Arabic translations are high quality and appropriate\n- English and French translations are accurate\n- Keys follow existing naming conventions\n- No missing translations for UI elements\n- RTL considerations addressed in text where needed",
+      "analysisResult": "The Topic Management feature for Eventy360 will allow admins to create, edit, and delete topics that can be used by events and subscribed to by researchers. The implementation should maintain UI consistency with existing admin components and follow project patterns for Arabic language support and RTL display. Direct Supabase queries should be used where appropriate instead of creating new RPC functions, and all admin actions must be logged properly.",
+      "summary": "Updated and created translation files for topic management. Enhanced the Arabic translations with additional keys for the TopicSelector component. Created comprehensive English and French translation files with all necessary keys for topic management, including page titles, form labels, error messages, and UI text following existing naming conventions and ensuring high-quality translations suitable for an academic audience.",
+      "completedAt": "2025-05-24T08:28:27.074Z"
     },
     {
-      "id": "45350fe5-f914-4f50-bd13-68168e84efb1",
-      "name": "Verify Updated Translations",
-      "description": "Review the `messages/ar.json` file after the edit has been applied to ensure all proposed translation changes are correctly reflected and the JSON file is still valid.",
+      "id": "3cb31d2c-ba66-4415-98c9-12c0361fb8d4",
+      "name": "Implement Delete Topic Confirmation",
+      "description": "Create a confirmation dialog component for deleting topics, warning users about the cascading effect on event_topics and researcher_topic_subscriptions. This is essential to prevent accidental deletion of topics that may be in use across the platform.",
       "status": "已完成",
       "dependencies": [
         {
-          "taskId": "8156811c-b2b9-4c5e-868c-1a1ef61aaaeb"
-        }
-      ],
-      "createdAt": "2025-05-10T15:28:56.475Z",
-      "updatedAt": "2025-05-10T15:40:06.419Z",
-      "relatedFiles": [
-        {
-          "path": "messages/ar.json",
-          "type": "REFERENCE",
-          "description": "The updated Arabic translation file."
-        }
-      ],
-      "implementationGuide": "Use the `read_file` tool to get the content of the updated `messages/ar.json`. Manually or programmatically verify that the proposed changes are present and that the file is valid JSON.",
-      "verificationCriteria": "Confirm that all proposed translation refinements have been accurately applied and the `messages/ar.json` file is valid JSON.",
-      "summary": "Reviewed the messages/ar.json file after the user's manual edit and confirmed that all proposed translation changes were correctly reflected and the JSON file is valid.",
-      "completedAt": "2025-05-10T15:40:06.418Z"
-    },
-    {
-      "id": "e42106db-2643-4ef8-be2d-baaeb513f902",
-      "name": "Phase 1.A.1: Review and Update Profile for 'is_verified' Badge Display",
-      "description": "Review existing user profile frontend components (e.g., in `src/app/[locale]/profile/ui/`) to ensure the `is_verified` (Verification Badge) status, fetched from `profiles.is_verified`, is correctly and clearly displayed to the user. Ensure the display is consistent with the Arabic-first UI and RTL layout. This task primarily involves frontend adjustments.",
-      "status": "已完成",
-      "dependencies": [],
-      "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-11T19:05:26.262Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/profile/ui/",
-          "type": "TO_MODIFY",
-          "description": "Profile UI components likely need modification"
+          "taskId": "33a9ad28-5e68-4049-bac3-ed8336081bce"
         },
         {
-          "path": "messages/ar.json",
-          "type": "TO_MODIFY",
-          "description": "For any new UI text translations"
+          "taskId": "20ad4d89-9dd0-4366-a115-2c482f3a4339"
         }
       ],
-      "implementationGuide": "1. Identify relevant profile display components.\n2. Fetch `profiles.is_verified` field for the logged-in user.\n3. Conditionally render a visual badge or indicator based on this flag.\n4. Style the badge appropriately using Flowbite/Tailwind, ensuring RTL compatibility.\n5. Add necessary Arabic translations for any associated text via `messages/ar.json`.",
-      "verificationCriteria": "The 'is_verified' badge (or its absence) is correctly displayed on user profile pages based on the `profiles.is_verified` database flag. UI is RTL compliant and uses correct Arabic translations.",
-      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount.",
-      "summary": "Task `Phase 1.A.1` is complete. The `ProfileSidebarClient.tsx` component already had the logic to display the verification status using `isVerified`, `translations.verifiedBadge`, `translations.verificationLabel`, and `translations.notVerifiedLabel` props. The task involved adding the missing `verificationLabel` and `notVerifiedLabel` translations to `messages/ar.json` under the `ProfilePage` namespace and ensuring `ProfilePage.tsx` correctly passed these looked-up translations to the sidebar component. The display is now fully functional and localized.",
-      "completedAt": "2025-05-11T19:05:26.260Z"
-    },
-    {
-      "id": "b3ea087d-b9eb-4cc6-87a0-fc48a9c79377",
-      "name": "Phase 1.B.1: Implement `admin_actions_log` Table",
-      "description": "Create the `admin_actions_log` table in the Supabase database. Define columns for `id`, `created_at`, `admin_user_id` (FK to profiles), `action_type` (ENUM: e.g., 'awarded_badge', 'removed_badge', 'recorded_payment', 'updated_payment_status'), `target_user_id` (FK to profiles, nullable), `target_entity_id` (UUID, nullable, e.g., payment_id), and `details` (JSONB for contextual info). Apply appropriate RLS policies (Admins can read, only system/triggers can write, or specific RPCs).",
-      "status": "已完成",
-      "dependencies": [],
-      "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-11T19:06:12.268Z",
+      "createdAt": "2025-05-22T18:32:58.976Z",
+      "updatedAt": "2025-05-24T08:30:47.998Z",
       "relatedFiles": [
         {
-          "path": "supabase/migrations/",
+          "path": "src/app/[locale]/admin/(dashboard)/topics/DeleteTopicConfirmation.tsx",
           "type": "CREATE",
-          "description": "New migration file to be created here"
+          "description": "Confirmation dialog for topic deletion"
         }
       ],
-      "implementationGuide": "1. Write SQL DDL for creating the table and ENUM type for `action_type`.\n2. Include appropriate indexes (e.g., on `admin_user_id`, `target_user_id`, `created_at`, `action_type`).\n3. Define RLS policies: Admins SELECT access. INSERT access likely restricted to `SECURITY DEFINER` functions or specific service roles if using RPCs to log.\n4. Create a new migration file in `supabase/migrations/`.",
-      "verificationCriteria": "The `admin_actions_log` table and its associated ENUM type are created in the database with correct schema and RLS policies. Migration file is present.",
-      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount.",
-      "summary": "Task `Phase 1.B.1` is complete. A new Supabase migration file (`supabase/migrations/20250510120000_create_admin_actions_log.sql`) was created. This file contains the SQL DDL to: 1. Create an ENUM `admin_action_type` with various admin actions. 2. Create the `admin_actions_log` table with columns for `id`, `created_at`, `admin_user_id`, `action_type`, `target_user_id`, `target_entity_id`, `target_entity_type`, `details` (JSONB), and `ip_address`. 3. Add appropriate indexes for performance. 4. Define RLS policies: Admins can read all logs; admin users can insert their own log entries (assuming RPCs run in user context); direct updates and deletes are denied for audit integrity.",
-      "completedAt": "2025-05-11T19:06:12.267Z"
+      "implementationGuide": "1. Create `DeleteTopicConfirmation.tsx` client component with:\n- Flowbite Modal for confirmation dialog\n- Warning message about cascade effects\n- Option to show usage count\n- Danger-styled delete button\n- Cancel option\n- Loading state during deletion\n- Success/error handling\n\nEnsure the component follows existing UI patterns and provides clear feedback to administrators about the consequences of deletion.",
+      "verificationCriteria": "- Confirmation dialog appears before deletion\n- Warning clearly explains cascade effects\n- Delete and Cancel buttons function correctly\n- Loading state shown during deletion\n- Success message on completion\n- Error handling for failed deletion\n- UI consistent with other confirmation dialogs",
+      "analysisResult": "The Topic Management feature for Eventy360 will allow admins to create, edit, and delete topics that can be used by events and subscribed to by researchers. The implementation should maintain UI consistency with existing admin components and follow project patterns for Arabic language support and RTL display. Direct Supabase queries should be used where appropriate instead of creating new RPC functions, and all admin actions must be logged properly.",
+      "summary": "Implemented a comprehensive DeleteTopicConfirmation component that warns users about the cascading effects of deleting topics. The component fetches and displays usage data showing how many events and subscriptions are associated with the topic, provides clear warning messages, and includes proper loading states and error handling. Integrated the confirmation dialog with TopicActionButtons to ensure it appears when a user attempts to delete a topic.",
+      "completedAt": "2025-05-24T08:30:47.997Z"
     },
     {
-      "id": "b16e689b-7bb0-4661-a441-2e5dc01eb2cf",
-      "name": "Phase 1.B.2: Create Secure Admin Route Group & Basic Layout",
-      "description": "Implement a new route group for `/admin` in the Next.js application. Secure this route group using middleware to ensure only users with an 'admin' role can access it. Create a basic Admin Panel layout component (e.g., `AdminLayout.tsx`) with simple navigation (e.g., sidebar links for User Management, Payment Management).",
-      "status": "已完成",
-      "dependencies": [],
-      "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-11T19:07:55.125Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/admin/layout.tsx",
-          "type": "CREATE",
-          "description": "New Admin layout component"
-        },
-        {
-          "path": "src/app/[locale]/admin/page.tsx",
-          "type": "CREATE",
-          "description": "Admin dashboard/home page"
-        },
-        {
-          "path": "middleware.ts",
-          "type": "TO_MODIFY",
-          "description": "To add route protection for /admin"
-        }
-      ],
-      "implementationGuide": "1. Create `src/app/[locale]/admin/layout.tsx` and `src/app/[locale]/admin/page.tsx`.\n2. Update `middleware.ts` to check for an admin role (e.g., by checking a custom JWT claim if set by Supabase Auth, or calling an RPC `is_current_user_admin()`) for routes starting with `/[locale]/admin`.\n3. Redirect non-admins to a 404 or home page.\n4. Design `AdminLayout.tsx` with a persistent sidebar and content area. Placeholder links for now.",
-      "verificationCriteria": "Admin routes (`/admin/*`) are accessible only by authenticated admin users. Non-admins are redirected. A basic layout with navigation placeholders is visible for admins.",
-      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount.",
-      "summary": "Task `Phase 1.B.2` is complete. Created `src/app/[locale]/admin/page.tsx` (basic dashboard page) and `src/app/[locale]/admin/layout.tsx`. The layout includes a simple sidebar navigation and server-side logic to protect the admin routes: it fetches the authenticated user and their profile, redirecting to login if no user, or to the home page if the user's `user_type` is not 'admin'. Added `AdminPage` translations to `messages/ar.json` and created `messages/en.json` with corresponding translations. A linter error in the layout regarding the type of the translation function `t` was also fixed.",
-      "completedAt": "2025-05-11T19:07:55.124Z"
-    },
-    {
-      "id": "76483521-411f-40f4-9e50-012ca0246a10",
-      "name": "Phase 1.B.3: Develop Admin RPC - Manage User Verification Badge",
-      "description": "Create a Supabase Edge Function or Database RPC function (e.g., `manage_user_verification_badge`) that allows an admin to set or unset the `is_verified` flag on a user's profile and logs this action to `admin_actions_log`. The function must verify the caller is an admin.",
+      "id": "838b55a7-5891-4022-9543-7672d8f917fe",
+      "name": "Add Usage Count to Topics Table",
+      "description": "Enhance the topics table to show how many events and researcher subscriptions are associated with each topic. This information helps administrators understand the impact of modifying or deleting topics.",
       "status": "已完成",
       "dependencies": [
         {
-          "taskId": "b3ea087d-b9eb-4cc6-87a0-fc48a9c79377"
+          "taskId": "33a9ad28-5e68-4049-bac3-ed8336081bce"
         }
       ],
-      "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-13T08:15:53.131Z",
-      "implementationGuide": "1. Decide on Edge Function vs. DB RPC (DB RPC might be simpler if only DB ops are involved and auth context is available).\n2. Function signature: `(target_user_id UUID, new_verified_status BOOLEAN)`.\n3. Inside function: Verify caller is admin (`auth.role = 'service_role'` if Edge Function with service key, or check `auth.uid()` against an admin list if DB RPC called by admin user).\n4. Update `profiles.is_verified` for `target_user_id`.\n5. Insert a record into `admin_actions_log` with relevant details.\n6. Return success/failure.",
-      "verificationCriteria": "Admin can call the RPC/Edge Function to change a user's `is_verified` status. The change is reflected in the `profiles` table. An appropriate record is created in `admin_actions_log`. Non-admins cannot execute this function.",
-      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount.",
-      "summary": "Completed the implementation of the `manage-user-verification-badge` Supabase Edge Function. This function securely allows admin users to update the `is_verified` status of other users in the `profiles` table and logs the action in the `admin_actions_log`. Necessary RLS policies were added to support this functionality.",
-      "completedAt": "2025-05-13T08:15:53.130Z"
-    },
-    {
-      "id": "1c24a48a-aaf1-405d-8934-fd946346a721",
-      "name": "Phase 1.B.4: Admin UI - User Management (View & Manage Badge)",
-      "description": "Create an Admin UI page for User Management (`/admin/users`). Display a list of users (from `profiles` table) with pagination. For each user, show their current `is_verified` status and provide a button/toggle to call the `manage_user_verification_badge` RPC/Edge function to change this status. Display feedback (success/error toasts).",
-      "status": "進行中",
-      "dependencies": [
-        {
-          "taskId": "b16e689b-7bb0-4661-a441-2e5dc01eb2cf"
-        },
-        {
-          "taskId": "76483521-411f-40f4-9e50-012ca0246a10"
-        }
-      ],
-      "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-15T09:39:55.162Z",
+      "createdAt": "2025-05-22T18:32:58.977Z",
+      "updatedAt": "2025-05-24T08:36:06.823Z",
       "relatedFiles": [
         {
-          "path": "src/app/[locale]/admin/users/page.tsx",
-          "type": "CREATE",
-          "description": "New Admin UI for user management"
-        }
-      ],
-      "implementationGuide": "1. Create `src/app/[locale]/admin/users/page.tsx`.\n2. Fetch user list from `profiles` (implement server-side pagination).\n3. Display users in a table with current badge status.\n4. Add UI element (button/switch) to trigger the RPC call from Task 1.B.3.\n5. Handle loading states and display success/error toasts using `react-hot-toast` and translated messages.",
-      "verificationCriteria": "Admins can view a paginated list of users. Admins can toggle the `is_verified` badge for users. UI provides feedback. Changes are logged (verified by checking `admin_actions_log` indirectly).",
-      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
-    },
-    {
-      "id": "c3875a66-266a-49c2-a933-c3bca5f4264f",
-      "name": "Phase 1.B.5: Develop Admin RPC - Record Manual Payment",
-      "description": "Create a Supabase Edge Function or Database RPC function (e.g., `record_manual_payment`) that allows an admin to record a new payment. Input parameters: `target_user_id`, `amount`, `currency`, `payment_method`, `reference_id` (optional), `status` (ENUM: 'verified', 'pending'). The function must verify the caller is an admin, insert into the `payments` table, and log to `admin_actions_log`. If status is 'verified', the existing `handle_payment_verification` trigger should handle subscription updates.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "b3ea087d-b9eb-4cc6-87a0-fc48a9c79377"
-        }
-      ],
-      "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-11T19:00:44.194Z",
-      "implementationGuide": "1. Decide on Edge Function vs. DB RPC.\n2. Function signature: `(target_user_id UUID, amount NUMERIC, currency TEXT, payment_method TEXT, reference_id TEXT, status payment_status_enum)`.\n3. Verify caller is admin.\n4. Insert into `payments` table.\n5. Insert a record into `admin_actions_log`.\n6. Return success/failure. The `handle_payment_verification` trigger on `payments` table is expected to manage subscription logic if status is 'verified'.",
-      "verificationCriteria": "Admin can call the RPC/Edge Function to record a new payment. The payment is recorded in the `payments` table. An action is logged in `admin_actions_log`. If payment status is 'verified', associated subscription is updated (indirectly via trigger).",
-      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
-    },
-    {
-      "id": "46076825-c485-4862-841d-c7854d873519",
-      "name": "Phase 1.B.6: Admin UI - Payment & Subscription Management (Record Payment)",
-      "description": "Create an Admin UI page for Payment Management (`/admin/payments`). Include a form for admins to submit details for a new manual payment, calling the `record_manual_payment` RPC/Edge function. Display feedback. Also, list existing payments with pagination.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "b16e689b-7bb0-4661-a441-2e5dc01eb2cf"
-        },
-        {
-          "taskId": "c3875a66-266a-49c2-a933-c3bca5f4264f"
-        }
-      ],
-      "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-11T19:00:44.194Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/admin/payments/page.tsx",
-          "type": "CREATE",
-          "description": "New Admin UI for payment management"
-        }
-      ],
-      "implementationGuide": "1. Create `src/app/[locale]/admin/payments/page.tsx`.\n2. Implement a form for recording new payments (fields matching Task 1.B.5 inputs).\n3. On submit, call the RPC from Task 1.B.5.\n4. Display success/error toasts.\n5. Fetch and display a paginated list of existing payments from `payments` table.",
-      "verificationCriteria": "Admins can use a form to record new manual payments. Payments are listed with pagination. UI provides feedback. Changes are logged (verified by checking `admin_actions_log` indirectly).",
-      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
-    },
-    {
-      "id": "617ed93b-1887-4b8a-847d-e1cbb1c8a03f",
-      "name": "Phase 1.B.7: Verify/Refine `handle_payment_verification()` DB Function",
-      "description": "Review the existing `supabase/migrations/..._handle_payment_verification.sql` trigger function. Ensure it correctly updates/creates `subscriptions` records when a payment is marked 'verified' in the `payments` table. Test its behavior thoroughly, including trial-to-paid transitions and extending existing subscriptions. Refine if necessary.",
-      "status": "已完成",
-      "dependencies": [],
-      "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-11T19:09:16.321Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/migrations/",
+          "path": "src/app/[locale]/admin/(dashboard)/topics/page.tsx",
           "type": "TO_MODIFY",
-          "description": "Relevant migration file for handle_payment_verification"
+          "description": "Add usage counts to topics table"
         }
       ],
-      "implementationGuide": "1. Locate the SQL file for `handle_payment_verification`.\n2. Analyze its logic for correctness (trial handling, new subscription, extension of existing).\n3. Manually insert test data into `payments` (with status 'verified') and `profiles` tables to simulate various scenarios.\n4. Verify that `subscriptions` table is updated as expected.\n5. If issues are found, update the SQL function and create a new migration.",
-      "verificationCriteria": "The `handle_payment_verification` trigger function reliably and correctly updates user subscriptions upon verification of a payment, handling different user/subscription states.",
-      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount.",
-      "summary": "Task `Phase 1.B.7` is complete. Since the exact current implementation of `handle_payment_verification` could not be directly read from existing migration files, a new migration `supabase/migrations/20250510120100_refine_handle_payment_verification_trigger.sql` was created. This file contains a robust and refined version of the `billing_period_to_interval` helper function and the `handle_payment_verification` trigger function. The trigger function now correctly handles creating new subscriptions, converting trials to paid, reactivating expired subscriptions, and extending active subscriptions, all based on a payment being marked 'verified'. It also updates the `payments.subscription_id` field. This approach ensures the logic is sound and documented in migrations going forward.",
-      "completedAt": "2025-05-11T19:09:16.319Z"
-    },
-    {
-      "id": "9fb128da-2c91-4ac6-bf21-3dbf13f503ba",
-      "name": "Phase 1.C.1: Frontend - Display Manual Offline Payment Instructions",
-      "description": "On relevant user-facing pages (e.g., subscription upgrade page, profile subscription status card), display clear, static Arabic instructions for how users can make manual offline payments (bank transfer, check, cash details as per business requirements).",
-      "status": "已完成",
-      "dependencies": [],
-      "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-11T19:13:21.028Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/profile/ui/",
-          "type": "TO_MODIFY",
-          "description": "Potential location for payment instructions"
-        },
-        {
-          "path": "messages/ar.json",
-          "type": "TO_MODIFY",
-          "description": "For payment instruction text"
-        }
-      ],
-      "implementationGuide": "1. Identify UI components where payment instructions are needed.\n2. Add text content (in Arabic, using `messages/ar.json`) with the offline payment details.\n3. Style the instructions for clarity.",
-      "verificationCriteria": "Clear, correct, and well-formatted Arabic instructions for manual offline payment are visible to users in appropriate sections of the application.",
-      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount.",
-      "summary": "Task `Phase 1.C.1` is complete. Created Arabic and English translations for manual payment instructions under the `PaymentInstructions` namespace in `messages/ar.json` and `messages/en.json`. Developed a reusable client component `src/components/ui/PaymentInstructionsDisplay.tsx` to display these instructions, including formatting for an email link. Integrated this component into the user's profile page (`src/app/[locale]/profile/page.tsx`), where it will be conditionally displayed if the user does not currently have an active paid subscription ('paid_researcher' or 'paid_organizer').",
-      "completedAt": "2025-05-11T19:13:21.026Z"
-    },
-    {
-      "id": "6dbcc036-5718-4d86-95ac-5dc6a7eaad7b",
-      "name": "Phase 1.C.2: Backend - Implement/Verify `check_subscriptions_expiry` Edge Function",
-      "description": "Develop or verify the Supabase Edge Function (`check-subscriptions-expiry`) written in Deno. This function, scheduled via Supabase Cron (e.g., daily), should query the `subscriptions` table for active subscriptions nearing expiry or already expired. It should update their status accordingly (e.g., to 'expired', 'grace_period') and queue notifications (e.g., 'trial_ending_soon', 'subscription_expired') in `notification_queue`.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "f84b508e-7494-4361-80d5-d1d05605cd44"
-        }
-      ],
-      "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-11T19:00:44.194Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/functions/check-subscriptions-expiry/index.ts",
-          "type": "TO_MODIFY",
-          "description": "Edge Function code"
-        }
-      ],
-      "implementationGuide": "1. Create/review `supabase/functions/check-subscriptions-expiry/index.ts`.\n2. Implement logic to fetch relevant subscriptions.\n3. Update subscription statuses in the DB.\n4. Insert notification tasks into `notification_queue` table for relevant users.\n5. Ensure robust error handling and logging within the function.\n6. Configure Supabase Cron Job to run this function daily.",
-      "verificationCriteria": "The `check_subscriptions_expiry` Edge Function correctly identifies expiring/expired subscriptions, updates their statuses in the DB, and queues appropriate notifications. Cron job is configured.",
-      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
-    },
-    {
-      "id": "0b7b8e17-243f-4b30-b5d6-2850c0f6bb91",
-      "name": "Phase 1.C.3: Frontend - Display Payment History (User Profile)",
-      "description": "In the user's profile section, add a new UI component to display their payment history. Fetch payment records for the logged-in user from the `payments` table and display them in a clear, chronological list (showing amount, date, status, reference).",
-      "status": "已完成",
-      "dependencies": [],
-      "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-13T07:53:29.665Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/profile/ui/",
-          "type": "CREATE",
-          "description": "New component for payment history"
-        }
-      ],
-      "implementationGuide": "1. Create a new component for displaying payment history.\n2. Fetch data from `payments` table, filtered by `auth.uid()`.\n3. Display data in a table or list format.\n4. Ensure Arabic text and RTL compliance.",
-      "verificationCriteria": "Users can view their own payment history accurately in their profile section. The display is clear, chronological, and RTL compliant.",
-      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount.",
-      "summary": "Implemented the Payment History display feature in the user profile. Created PaymentHistoryDisplay.tsx, fetched and displayed payment data in a table. Added translations and integrated the component into the profile page. Minor TODOs remain for currency formatting and status translation within the component.",
-      "completedAt": "2025-05-13T07:53:29.663Z"
-    },
-    {
-      "id": "75443170-2e00-43cd-a571-9c8f54e7694b",
-      "name": "Phase 1.C.4: Admin UI - Display Payment History for Users",
-      "description": "Extend the Admin Payment Management UI (Task 1.B.6) to allow admins to view the payment history for a specific user, perhaps by clicking on a user from the user list or searching/selecting a user.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "46076825-c485-4862-841d-c7854d873519"
-        },
-        {
-          "taskId": "0b7b8e17-243f-4b30-b5d6-2850c0f6bb91"
-        }
-      ],
-      "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-11T19:00:44.194Z",
-      "implementationGuide": "1. In `src/app/[locale]/admin/payments/page.tsx` or a new sub-route, add functionality to select a user.\n2. Fetch and display payment history for the selected user from `payments` table.\n3. Reuse payment display format from Task 1.C.3 if possible.",
-      "verificationCriteria": "Admins can view the payment history for any specific user through the Admin Panel.",
-      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
-    },
-    {
-      "id": "c6fd2604-ed3a-4e1c-9218-b60eb94e2f9a",
-      "name": "Phase 1.D.1: Setup/Verify Core Email Sending Edge Functions",
-      "description": "Setup or verify the core email sending Edge Functions: `send-email` (interacts with Resend API, takes recipient, subject, body) and `process-notification-queue` (Deno, scheduled via Supabase Cron - e.g., every minute - reads from `notification_queue`, calls `send-email`, updates task status). Ensure Resend API key is securely stored as a Supabase secret.",
-      "status": "進行中",
-      "dependencies": [],
-      "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-13T08:07:32.455Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/functions/send-email/index.ts",
-          "type": "TO_MODIFY",
-          "description": "Edge Function for sending email"
-        },
-        {
-          "path": "supabase/functions/process-notification-queue/index.ts",
-          "type": "TO_MODIFY",
-          "description": "Edge Function for processing notification queue"
-        }
-      ],
-      "implementationGuide": "1. Review/create `supabase/functions/send-email/index.ts`. Ensure it correctly uses Resend API and handles errors. Use Supabase secrets for API key.\n2. Review/create `supabase/functions/process-notification-queue/index.ts`. Logic: fetch pending from `notification_queue`, call `send-email` for each, update status in `notification_queue`.\n3. Configure Supabase Cron for `process-notification-queue`.",
-      "verificationCriteria": "The `send-email` function can send emails via Resend. The `process-notification-queue` function processes tasks from the queue and calls `send-email`. Resend API key is secure. Cron job is configured.",
-      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount."
-    },
-    {
-      "id": "8170dd79-93e9-473d-9741-d0fc2875ea56",
-      "name": "Phase 1.D.2: Populate Initial Arabic Email Templates (Including Admin Invitation)",
-      "description": "Populate the `email_templates` table with the initial set of Arabic email templates, **including the 'admin_invitation' template**. Templates should be stored in JSONB with an `ar` key holding the HTML/text content. Initial templates: User Verified Badge Awarded/Removed, Payment Received & Pending Verification, Subscription Activated, Trial Ending Soon, Trial Expired, **Admin Invitation**.",
-      "status": "已完成",
-      "dependencies": [],
-      "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-13T14:26:37.544Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/seed.sql",
-          "type": "TO_MODIFY",
-          "description": "Optional: if using a seed script for templates"
-        }
-      ],
-      "implementationGuide": "1. Design HTML/text content for each required email template in Arabic.\n2. Create SQL INSERT statements or a seeding script to populate `email_templates` table. Example keys: `user_verified_badge_awarded`, `payment_pending_user_notification`, `subscription_activated_user_notification`, `trial_ending_soon_user_notification`, `trial_expired_user_notification`.\n3. Ensure template content uses placeholders for dynamic data (e.g., user name, event name, dates).",
-      "verificationCriteria": "The `email_templates` table is populated with the specified initial templates, including the 'admin_invitation' template, with correct Arabic content in the JSONB column.",
-      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount.",
-      "summary": "Successfully populated the email_templates table with all required templates (user_verified_badge_awarded, user_verified_badge_removed, payment_received_pending_verification, subscription_activated, trial_ending_soon, trial_expired, admin_invitation) in proper JSONB format with Arabic content and placeholders for dynamic data. Templates are professional and include proper greetings and closings appropriate for academic context.",
-      "completedAt": "2025-05-13T14:26:37.542Z"
-    },
-    {
-      "id": "f84b508e-7494-4361-80d5-d1d05605cd44",
-      "name": "Phase 1.D.3: Implement Initial Notification Queueing Logic (Including Admin Invitation)",
-      "description": "Implement the backend logic (DB triggers or direct inserts in RPCs/Edge Functions) to add tasks to the `notification_queue` table for the initial set of events: User `is_verified` status changes (award/remove badge), manual payment recorded (by admin, status pending), subscription successfully activated (after payment verification), trial ending soon (from `check_subscriptions_expiry`), trial expired (from `check_subscriptions_expiry`). Admin Invitation email queueing is COMPLETE as of user's manual implementation of `invite-admin` function. The queue task should reference the correct `email_template_key` and recipient details for the remaining events.",
-      "status": "待處理",
-      "dependencies": [
-        {
-          "taskId": "76483521-411f-40f4-9e50-012ca0246a10"
-        },
-        {
-          "taskId": "c3875a66-266a-49c2-a933-c3bca5f4264f"
-        },
-        {
-          "taskId": "617ed93b-1887-4b8a-847d-e1cbb1c8a03f"
-        },
-        {
-          "taskId": "8170dd79-93e9-473d-9741-d0fc2875ea56"
-        },
-        {
-          "taskId": "c6fd2604-ed3a-4e1c-9218-b60eb94e2f9a"
-        }
-      ],
-      "createdAt": "2025-05-11T19:00:44.194Z",
-      "updatedAt": "2025-05-14T17:03:39.914Z",
-      "implementationGuide": "1. Modify `manage_user_verification_badge` RPC (Task 1.B.3) to insert into `notification_queue` (template keys: `user_verified_badge_awarded`, `user_verified_badge_removed`).\n2. Modify `record_manual_payment` RPC (Task 1.B.5) to insert into `notification_queue` if payment is 'pending' (template key: `payment_pending_user_notification`).\n3. Modify `handle_payment_verification` trigger (Task 1.B.7) to insert into `notification_queue` upon successful subscription activation (template key: `subscription_activated_user_notification`).\n4. Ensure `check_subscriptions_expiry` function (Task 1.C.2) correctly inserts tasks for `trial_ending_soon_user_notification` and `trial_expired_user_notification`.",
-      "verificationCriteria": "Notification queue entries are correctly created for all specified events, including admin invitation, with appropriate template keys and recipient data.",
-      "analysisResult": "Phase 1 focuses on implementing the Subscription Backbone & Core Admin tools. This includes enabling manual admin operations for user verification (badge) and payment/subscription management, setting up the initial notification framework with Arabic templates, ensuring users have clear payment instructions and history, and that profile systems reflect verification status. It leverages existing auth and profile data, introducing new admin UIs, RPCs, Edge Functions, and database tables like `admin_actions_log`. Key considerations include Admin Panel pagination, granular RPCs, detailed logging, and batch processing for notifications if load becomes high. Adherence to Arabic-first, existing code styles, and security best practices is paramount.",
-      "notes": "Admin Invitation email queueing part is completed by the user."
-    },
-    {
-      "id": "ff192d5f-bd50-40dc-8345-40df0c71b973",
-      "name": "Phase 1.B.3.1: Develop Admin Invitation Backend",
-      "description": "Implement backend logic (e.g., a Supabase Edge Function) to handle admin user creation upon invitation, token generation, and queuing the invitation email. This involves inserting into auth.users and profiles tables, generating a secure token, and creating a notification queue entry for the email.",
-      "status": "已完成",
-      "dependencies": [],
-      "createdAt": "2025-05-13T14:06:20.730Z",
-      "updatedAt": "2025-05-13T16:17:10.761Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/functions/invite-admin/index.ts",
-          "type": "CREATE",
-          "description": "New Edge Function for admin invitation backend logic."
-        },
-        {
-          "path": "supabase/migrations/",
-          "type": "CREATE",
-          "description": "Possible migration for temporary token storage table or profile modifications."
-        },
-        {
-          "path": "src/database.types.ts",
-          "type": "REFERENCE",
-          "description": "Supabase database types."
-        }
-      ],
-      "implementationGuide": "1. Create a new Edge Function (e.g., `invite-admin`).\\\\n2. Function should be callable by an authenticated admin or service role.\\\\n3. Input: invited admin email address.\\\\n4. Use Supabase admin client (with service role key) to create user in `auth.users` and insert into `profiles` with `user_type=\\'admin\\'` and `is_extended_profile_complete=false`.\\\\n5. Generate a secure, time-limited token (e.g., using `crypto.randomUUID()` and storing it in a temporary table or metadata with expiry).\\\\n6. Insert a task into `notification_queue` for the \\'admin\\_invitation\\' email template, including the tokenized link and recipient email.\\\\n7. Return success/error response.",
-      "verificationCriteria": "A new admin user is created in auth.users and profiles table with correct type and status. An invitation email task is queued in notification_queue with the correct template key and a valid tokenized link. Only authorized users can call the function.",
-      "summary": "Created the `invite-admin` Supabase Edge Function. This function securely handles new admin invitations by: 1. Verifying the invoker is an admin. 2. Creating an auth.users entry. 3. Creating a profiles entry (user_type: 'admin', is_extended_profile_complete: false). 4. Optionally creating an admin_profiles entry. 5. Generating an invitation link using Supabase's built-in functionality. 6. Queueing an 'admin_invitation' email. Includes error handling and cleanup logic. Also created the `_shared/cors.ts` file.",
-      "completedAt": "2025-05-13T16:17:10.760Z"
-    },
-    {
-      "id": "e6f25b66-4546-4f11-86c3-bb0b529e240f",
-      "name": "Phase 1.B.3.2: Create Admin Account Creation Page",
-      "description": "Develop a frontend page where invited administrators can set their password and complete initial profile details using a secure invitation token.",
-      "status": "已完成",
-      "dependencies": [
-        {
-          "taskId": "ff192d5f-bd50-40dc-8345-40df0c71b973"
-        }
-      ],
-      "createdAt": "2025-05-13T14:06:20.730Z",
-      "updatedAt": "2025-05-13T16:46:42.662Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/admin/create-account/page.tsx",
-          "type": "CREATE",
-          "description": "Admin account creation frontend page."
-        },
-        {
-          "path": "src/app/[locale]/admin/create-account/ui/",
-          "type": "CREATE",
-          "description": "UI components for the admin account creation form."
-        },
-        {
-          "path": "src/lib/supabase/client.ts",
-          "type": "REFERENCE",
-          "description": "Supabase client utility."
-        },
-        {
-          "path": "src/lib/schemas/admin.ts",
-          "type": "CREATE",
-          "description": "Zod schema for admin profile completion form."
-        }
-      ],
-      "implementationGuide": "1. Create a new Next.js page at `/admin/create-account` (Client Component).\\n2. Extract token from URL parameters.\\n3. Implement client-side logic to validate the token with a backend endpoint (e.g., another Edge Function or API route).\\n4. If token is valid, display a form for setting password and potentially basic admin profile fields (e.g., name from `admin_profiles`).\\n5. Use Supabase client to update user password and insert/update `admin_profiles` data.\\n6. Handle validation and submission states.\\n7. Redirect to the dedicated admin login page upon success.\\n8. Display error messages for invalid/expired tokens or submission failures.",
-      "verificationCriteria": "The page loads correctly with a valid token. User can set password and complete profile info. Account is finalized in the backend. User is redirected to login. Invalid/expired tokens show appropriate error messages.",
-      "summary": "Implemented the admin account creation page at /admin/create-account. This page allows an invited admin to set their password and full name. It relies on Supabase's invite token flow to establish a session. UI is consistent with other auth pages. Added new translations to ar.json. Key functionalities: password update, admin_profiles name update, profiles.is_extended_profile_complete update. User is signed out and redirected to admin login after completion. Score 90 due to the need for thorough end-to-end testing of the invite flow and robust error handling for edge cases around token validity not fully testable without live environment.",
-      "completedAt": "2025-05-13T16:46:42.660Z"
-    },
-    {
-      "id": "2fd70694-61b4-4b4d-a9d8-d320c06b35ad",
-      "name": "Phase 1.B.3.3: Implement Dedicated Admin Login Page",
-      "description": "Create a separate login page specifically for administrators, distinct from the main user login.",
-      "status": "已完成",
-      "dependencies": [
-        {
-          "taskId": "ff192d5f-bd50-40dc-8345-40df0c71b973"
-        }
-      ],
-      "createdAt": "2025-05-13T14:06:20.730Z",
-      "updatedAt": "2025-05-13T16:41:49.827Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/admin/login/page.tsx",
-          "type": "CREATE",
-          "description": "Dedicated admin login frontend page."
-        },
-        {
-          "path": "src/app/[locale]/admin/login/ui/",
-          "type": "CREATE",
-          "description": "UI components for the admin login form."
-        },
-        {
-          "path": "src/lib/supabase/client.ts",
-          "type": "REFERENCE",
-          "description": "Supabase client utility."
-        },
-        {
-          "path": "src/lib/schemas/auth.ts",
-          "type": "REFERENCE",
-          "description": "Existing Zod schema for login form validation."
-        }
-      ],
-      "implementationGuide": "1. Create a new Next.js page at `/admin/login` (Client Component).\\n2. Implement a login form (email/password) using React Hook Form and Zod validation.\\n3. Use Supabase client `signInWithPassword` for authentication.\\n4. After successful authentication, fetch the user's profile to verify `user_type` is 'admin'.\\n5. If admin, redirect to the main admin dashboard page (e.g., `/admin`).\\n6. If not admin, show an error message (e.g., \"Invalid credentials\" or \"Not authorized\").\\n7. Handle loading and error states during login process.",
-      "verificationCriteria": "Admins can successfully log in via this page and are redirected to the admin dashboard. Non-admins attempting to log in receive an error. Validation works correctly.",
-      "summary": "Implemented a dedicated admin login page at /admin/login. Copied user login UI, added admin-specific translations (Arabic only, as per current i18n config), and implemented logic in AdminLoginForm.tsx to verify user_type is 'admin' after Supabase auth. Non-admins are signed out with an error. Redirects to /redirect for now (placeholder for admin dashboard). Removed 'forgot password' and 'register' links from admin page. Next steps: Implement actual admin dashboard, consider admin password recovery, and add other language support if needed.",
-      "completedAt": "2025-05-13T16:41:49.825Z"
+      "implementationGuide": "1. Extend the topic database query in the topics page to include counts:\n- Join with event_topics and count unique event_ids\n- Join with researcher_topic_subscriptions and count unique profile_ids\n- Return counts with topic data\n\n2. Add columns to the topics table for:\n- Events count\n- Subscriptions count\n\nUse this data to also enhance the delete confirmation dialog. Consider performance implications and optimize the queries appropriately.",
+      "verificationCriteria": "- Table displays event count for each topic\n- Table displays subscription count for each topic\n- Counts are accurate\n- Performance remains good with larger datasets\n- UI remains consistent and readable\n- RTL layout maintained correctly",
+      "analysisResult": "The Topic Management feature for Eventy360 will allow admins to create, edit, and delete topics that can be used by events and subscribed to by researchers. The implementation should maintain UI consistency with existing admin components and follow project patterns for Arabic language support and RTL display. Direct Supabase queries should be used where appropriate instead of creating new RPC functions, and all admin actions must be logged properly.",
+      "summary": "Implemented a real-time usage count display in the topics admin table that shows the number of events and subscriptions associated with each topic. Created a TopicUsageCount client component that fetches usage data from the backend, displays a badge with the total count, and provides a tooltip showing detailed event and subscription counts. Also updated the UI to ensure proper RTL support and added all necessary translations to the Arabic language file.",
+      "completedAt": "2025-05-24T08:36:06.821Z"
     }
   ]
 }

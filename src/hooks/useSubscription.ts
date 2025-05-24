@@ -118,6 +118,7 @@ export const useSubscription = (targetUserId?: string) => {
   const [subscriptionData, setSubscriptionData] = useState<UserSubscriptionData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<PostgrestError | null>(null);
+  const [apiErrorOccurred, setApiErrorOccurred] = useState(false);
 
   useEffect(() => {
     const fetchSubscriptionDetails = async () => {
@@ -150,11 +151,14 @@ export const useSubscription = (targetUserId?: string) => {
         );
 
         if (rpcError) {
+          console.error("Error fetching subscription details:", rpcError);
           setError(rpcError);
+          setApiErrorOccurred(true);
           setLoading(false);
           return;
         }
 
+        setApiErrorOccurred(false);
         setSubscriptionData(data as UserSubscriptionData);
         
         // Cache data if it's for the current user
@@ -162,7 +166,9 @@ export const useSubscription = (targetUserId?: string) => {
           setCachedSubscriptionData(user.id, data as UserSubscriptionData);
         }
       } catch (e) {
+        console.error("Exception in subscription details fetch:", e);
         setError(e as PostgrestError);
+        setApiErrorOccurred(true);
       } finally {
         setLoading(false);
       }
@@ -174,18 +180,53 @@ export const useSubscription = (targetUserId?: string) => {
   }, [supabase, user, authLoading, targetUserId]);
 
   const hasPaidSubscription = () => {
+    if (apiErrorOccurred) {
+      // If there was an API error, check if the user was recently created (within 30 days)
+      // and assume they're on a trial if so
+      if (user?.created_at) {
+        const createdDate = new Date(user.created_at);
+        const now = new Date();
+        const daysSinceCreation = Math.floor((now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
+        return daysSinceCreation <= 30; // Assume user is on trial if account is less than 30 days old
+      }
+      return false;
+    }
+    
     if (!subscriptionData?.has_subscription) return false;
     if (!subscriptionData?.subscription?.is_active) return false;
     return ['paid_researcher', 'paid_organizer'].includes(subscriptionData.subscription.tier);
   };
 
   const hasActiveTrialSubscription = () => {
+    if (apiErrorOccurred) {
+      // If there was an API error, check if the user was recently created (within 30 days)
+      // and assume they're on a trial if so
+      if (user?.created_at) {
+        const createdDate = new Date(user.created_at);
+        const now = new Date();
+        const daysSinceCreation = Math.floor((now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
+        return daysSinceCreation <= 30; // Assume user is on trial if account is less than 30 days old
+      }
+      return false;
+    }
+    
     if (!subscriptionData?.has_subscription) return false;
     if (!subscriptionData?.subscription?.is_active) return false;
     return subscriptionData.subscription.status === 'trial';
   };
 
   const canAccessPremiumFeature = () => {
+    // If we had an API error and the user's account is new (less than 30 days),
+    // we'll allow access to premium features under the assumption they're on a trial
+    if (apiErrorOccurred) {
+      if (user?.created_at) {
+        const createdDate = new Date(user.created_at);
+        const now = new Date();
+        const daysSinceCreation = Math.floor((now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
+        return daysSinceCreation <= 30; // Assume user is on trial if account is less than 30 days old
+      }
+    }
+    
     return hasPaidSubscription() || hasActiveTrialSubscription();
   };
 
@@ -221,11 +262,14 @@ export const useSubscription = (targetUserId?: string) => {
       );
 
       if (rpcError) {
+        console.error("Error refreshing subscription details:", rpcError);
         setError(rpcError);
+        setApiErrorOccurred(true);
         setLoading(false);
         return;
       }
 
+      setApiErrorOccurred(false);
       setSubscriptionData(data as UserSubscriptionData);
       
       // Cache fresh data if it's for the current user
@@ -233,7 +277,9 @@ export const useSubscription = (targetUserId?: string) => {
         setCachedSubscriptionData(user.id, data as UserSubscriptionData);
       }
     } catch (e) {
+      console.error("Exception in subscription refresh:", e);
       setError(e as PostgrestError);
+      setApiErrorOccurred(true);
     } finally {
       setLoading(false);
     }
@@ -242,13 +288,14 @@ export const useSubscription = (targetUserId?: string) => {
   return { 
     subscriptionData, 
     loading: authLoading || loading, 
-    error, 
+    error,
+    apiErrorOccurred,
     hasPaidSubscription,
     hasActiveTrialSubscription,
     canAccessPremiumFeature,
     getDaysRemaining,
     getSubscriptionTier,
     getSubscriptionStatus,
-    refreshSubscriptionData  // Expose refresh function
+    refreshSubscriptionData
   };
 }; 

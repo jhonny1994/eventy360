@@ -43,7 +43,8 @@
     "profile": "الملف الشخصي",
     "verification": "التوثيق",
     "subscriptions": "الاشتراكات والمدفوعات",
-    "security": "إعدادات الأمان"
+    "security": "إعدادات الأمان",
+    "topics": "المواضيع"
   },
   "HomePage": {
     "title": "مرحباً بكم في منصة Eventy360"
@@ -373,6 +374,22 @@
         "membershipCard": "بطاقة عضوية مهنية",
         "otherDocs": "وثائق رسمية أخرى تثبت انتماءك الأكاديمي أو المهني"
       }
+    },
+    "topicSubscriptions": {
+      "title": "اشتراكات المواضيع",
+      "description": "اشترك في المواضيع التي تهمك لتلقي إشعارات حول الفعاليات الجديدة",
+      "noTopicsAvailable": "لا توجد مواضيع متاحة حالياً",
+      "loadingAriaLabel": "جار تحميل المواضيع...",
+      "errorFetchingData": "حدث خطأ أثناء جلب بيانات المواضيع",
+      "errorUserNotAuthenticated": "يجب تسجيل الدخول للوصول إلى هذه الميزة",
+      "errorUpdatingSubscription": "حدث خطأ أثناء تحديث الاشتراك في الموضوع",
+      "subscriptionRequired": "يجب أن يكون لديك اشتراك نشط لإدارة اشتراكات المواضيع",
+      "subscribeSuccess": "تم الاشتراك في الموضوع بنجاح",
+      "unsubscribeSuccess": "تم إلغاء الاشتراك من الموضوع بنجاح",
+      "subscribed": "مشترك",
+      "topicsCount": "{count, plural, zero {لا توجد مواضيع} one {موضوع واحد} two {موضوعان} few {# مواضيع} many {# موضوعاً} other {# موضوع}}",
+      "subscribedCount": "{count, plural, zero {لا توجد اشتراكات} one {اشتراك واحد} two {اشتراكان} few {# اشتراكات} many {# اشتراكاً} other {# اشتراك}}",
+      "noTopicsCount": "لا توجد مواضيع"
     }
   },
   "Enums": {
@@ -1055,6 +1072,97 @@
       "downloadDocument": "تحميل المستند",
       "downloadError": "فشل تحميل المستند",
       "documentAvailable": "المستند متوفر للتحميل"
+    }
+  },
+  "AdminTopics": {
+    "title": "إدارة المواضيع",
+    "description": "إنشاء وتعديل وحذف وإدارة مواضيع البحث والفعاليات.",
+    "createTopicButton": "إضافة موضوع جديد",
+    "fetchError": "حدث خطأ أثناء جلب المواضيع:",
+    "noTopics": "لا توجد مواضيع لعرضها.",
+    "loading": "جاري تحميل المواضيع...",
+    "selector": {
+      "placeholder": "اختر موضوعاً...",
+      "placeholderMultiple": "اختر مواضيع...",
+      "noTopicsAvailable": "لا توجد مواضيع متاحة",
+      "loadingTopics": "جاري تحميل المواضيع..."
+    },
+    "errors": {
+      "slugExists": "المعرّف النصي موجود بالفعل، يرجى استخدام اسم مختلف",
+      "unexpected": "حدث خطأ غير متوقع",
+      "deleteFailed": "فشل حذف الموضوع",
+      "usageFetchFailed": "فشل في جلب بيانات الاستخدام",
+      "usageLoadFailed": "تعذر تحميل الاستخدام"
+    },
+    "table": {
+      "name": "الاسم",
+      "slug": "المعرّف النصي",
+      "createdAt": "تاريخ الإنشاء",
+      "actions": "الإجراءات",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "untitled": "بدون عنوان",
+      "usageCount": "عدد الاستخدامات",
+      "eventCount": "الفعاليات: {eventCount}",
+      "subscriptionCount": "الاشتراكات: {subscriptionCount}"
+    },
+    "filters": {
+      "search": "بحث",
+      "searchPlaceholder": "البحث عن موضوع...",
+      "noMatchingTopics": "لا توجد مواضيع مطابقة لمعايير البحث."
+    },
+    "pagination": {
+      "showing": "عرض",
+      "of": "من",
+      "entries": "سجل",
+      "previousPage": "الصفحة السابقة",
+      "nextPage": "الصفحة التالية",
+      "pageSize": "حجم الصفحة:"
+    },
+    "create": {
+      "title": "إضافة موضوع جديد",
+      "nameArLabel": "الاسم باللغة العربية",
+      "nameArPlaceholder": "أدخل اسم الموضوع باللغة العربية",
+      "nameArRequired": "الاسم باللغة العربية مطلوب",
+      "nameArMinLength": "يجب أن يتكون الاسم من 3 أحرف على الأقل",
+      "nameEnLabel": "الاسم باللغة الإنجليزية",
+      "nameEnPlaceholder": "أدخل اسم الموضوع باللغة الإنجليزية (اختياري)",
+      "nameFrLabel": "الاسم باللغة الفرنسية",
+      "nameFrPlaceholder": "أدخل اسم الموضوع باللغة الفرنسية (اختياري)",
+      "slugPreviewLabel": "معاينة المعرّف النصي",
+      "cancelButton": "إلغاء",
+      "submitButton": "إضافة",
+      "submitting": "جاري الإضافة...",
+      "success": "تم إضافة الموضوع بنجاح",
+      "error": "حدث خطأ أثناء إضافة الموضوع",
+      "slugExistsError": "المعرّف النصي موجود بالفعل، يرجى استخدام اسم مختلف"
+    },
+    "edit": {
+      "title": "تعديل الموضوع",
+      "nameArLabel": "الاسم باللغة العربية",
+      "nameArPlaceholder": "أدخل اسم الموضوع باللغة العربية",
+      "nameArRequired": "الاسم باللغة العربية مطلوب",
+      "nameArMinLength": "يجب أن يتكون الاسم من 3 أحرف على الأقل",
+      "nameEnLabel": "الاسم باللغة الإنجليزية",
+      "nameEnPlaceholder": "أدخل اسم الموضوع باللغة الإنجليزية (اختياري)",
+      "nameFrLabel": "الاسم باللغة الفرنسية",
+      "nameFrPlaceholder": "أدخل اسم الموضوع باللغة الفرنسية (اختياري)",
+      "slugPreviewLabel": "معاينة المعرّف النصي",
+      "cancelButton": "إلغاء",
+      "submitButton": "حفظ التغييرات",
+      "submitting": "جاري الحفظ...",
+      "success": "تم تعديل الموضوع بنجاح",
+      "error": "حدث خطأ أثناء تعديل الموضوع",
+      "slugExistsError": "المعرّف النصي موجود بالفعل، يرجى استخدام اسم مختلف"
+    },
+    "delete": {
+      "title": "حذف الموضوع",
+      "confirmMessage": "هل أنت متأكد أنك تريد حذف هذا الموضوع؟ لا يمكن التراجع عن هذا الإجراء.",
+      "inUseWarning": "هذا الموضوع مستخدم حالياً في {eventCount} فعالية و {subscriptionCount} اشتراك. حذفه سيؤدي إلى تأثيرات متتالية.",
+      "confirmButton": "نعم، احذف",
+      "deleteAnyway": "حذف على أي حال",
+      "cancelButton": "إلغاء",
+      "submitting": "جاري الحذف..."
     }
   },
   "UIComponents": {

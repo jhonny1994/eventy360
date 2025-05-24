@@ -4,24 +4,24 @@ import { useState, useRef } from 'react';
 import { Button, Card, Alert } from 'flowbite-react';
 import { HiExclamationCircle, HiUpload, HiDocumentText } from 'react-icons/hi';
 import { createClient } from '@/lib/supabase/client';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface VerificationDocumentUploaderProps {
   isVerified: boolean;
   hasPendingRequest: boolean;
   onUploadSuccess?: () => void;
-  locale?: string;
+  locale?: string; // Kept for backward compatibility
 }
 
 export default function VerificationDocumentUploader({
   isVerified,
   hasPendingRequest,
-  onUploadSuccess,
-  locale = 'en'
+  onUploadSuccess
 }: VerificationDocumentUploaderProps) {
   const t = useTranslations('ProfilePage.VerificationDocument');
   const supabase = createClient();
-  const isRtl = locale === 'ar';
+  const appLocale = useLocale();
+  const isRtl = appLocale === 'ar';
   
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);

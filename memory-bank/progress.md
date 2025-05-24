@@ -11,15 +11,15 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 - Topic deletion by Admins cascades to `event_topics`
 
 ## Current Focus
-**Phase 1: Subscription Backbone & Core Admin** - Payment and subscription management implementation.
+**Phase 2: Event Management & Topic Control** - Implementing topic management, event creation, and event discovery features.
 
 ## High-Level Status (Against New 6-Phase Plan)
 
 | Phase                                                              | Status      | Notes                                                                                                                               |
 | :----------------------------------------------------------------- | :---------- | :---------------------------------------------------------------------------------------------------------------------------------- |
 | **Pre-Plan Work (Auth & Profile Foundation)**                        | ✅ Complete | Core authentication, profile completion, basic profile display, i18n, styling, DB schema foundation.                               |
-| **Phase 1: Subscription Backbone & Core Admin**                    | 🟡 In Progress | **Completed:** Admin authentication, Verification system with emails (including bug fixes for duplicate notifications), User Payment Reporting Components<br>**In Progress:** Admin Payment Management                |
-| **Phase 2: Event Management & Topic Control**                      | ⚪ Planned   |                                                                                                                                     |
+| **Phase 1: Subscription Backbone & Core Admin**                    | ✅ Complete | Admin authentication, Verification system with emails, User Payment Reporting Components, Payment Management, Subscription System with caching and route protection |
+| **Phase 2: Event Management & Topic Control**                      | 🟡 In Progress | Beginning implementation of topic management and event creation features |
 | **Phase 3: Submission System**                                     | ⚪ Planned   |                                                                                                                                     |
 | **Phase 4: Comprehensive Notification System & Email Management**    | ⚪ Planned   | Email notification foundations in place with Arabic language support and duplicate prevention. Further enhancements planned in Phase 4.                                                                                                                                 |
 | **Phase 5: Value-Added MVP Features & Admin Panel Consolidation**  | ⚪ Planned   |                                                                                                                                     |
@@ -99,6 +99,34 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 - Improved trigger functions to prevent duplicate notifications
 - Proper error handling and logging
 
+### Subscription System (Complete) ✅
+- **Server-side Protection:**
+  - `subscriptionMiddleware.ts` for checking subscription status
+  - `applySubscriptionGuard.ts` for middleware integration
+  - Different restriction types (REQUIRE_PAID, REQUIRE_RESEARCHER, REQUIRE_ORGANIZER, ACCEPT_TRIAL)
+  - Middleware integration in main Next.js middleware file
+- **Client-side Protection:**
+  - `withSubscriptionGuard.tsx` HOC for protecting components
+  - `useSubscription.ts` hook with caching for subscription data
+  - `useSubscriptionCheck.ts` hook for middleware integration
+- **Performance Optimization:**
+  - LocalStorage-based caching with 15-minute TTL
+  - Strategic cache clearing on subscription status changes
+  - Cache invalidation in critical user flows (payment verification, upload)
+- **UI Components:**
+  - `SubscriptionStatusIndicator.tsx` with RTL support
+  - Consistent styling and badge display for subscription status
+- **Payment Management:**
+  - Admin payment verification interface
+  - Manual payment recording functionality
+  - User payment history display
+  - Payment proof upload with secure storage
+  - Subscription billing period handling
+- **Database Integration:**
+  - Enhanced `handle_payment_verification` trigger
+  - Email notifications for payment events
+  - Proper cascade of subscription status changes
+
 ### UI Components & Refinements
 - **`PricingModal.tsx`**: 
     - Enhanced UI/UX: Increased width, standardized button colors, improved internal content alignment and spacing.
@@ -116,44 +144,27 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
     - Enhanced `PaymentInstructionsDisplay` with better UX and detailed guidance
     - Robust `PaymentProofUpload` component with file validation and error handling
 
-## 🚀 In-Progress Features (Phase 1)
+## 🚀 In-Progress Features (Phase 2)
 
-### A. User Account & Profile Foundations
-- ✅ Verification badge display on profile page
+### A. Topic Management System
+- 🔄 Admin UI for creating and managing topics
+- 🔄 Database schema for topics and topic associations
+- 🔄 Topic selection and linking for events
+- 🔄 Topic subscription mechanism for researchers
 
-### B. Admin Panel - Core MVP Operations
-- ✅ **Basic Admin Access & Layout:** Secure routes, standardized navigation components (`AdminNavbar`, `AdminSidebar`), and dashboard layout with proper internationalization and RTL support.
-- ✅ **Admin Authentication Flow:** Standardized authentication components for admin login, account creation, error handling, and redirects with centralized exports via index files.
-- ✅ **User Management/Verification System:** Admin interface for reviewing verification requests, approving/rejecting with notes, viewing documents, with pagination and performance optimizations.
-- 🔄 Payment & Subscription Management (Admin UI: List payments, record new manual payment via RPC, update payment status via RPC).
-- 🔄 Verify/Refine `handle_payment_verification()` DB function.
-- 🔄 `admin_actions_log` table creation and logging integration for admin user/payment actions.
+### B. Event Creation Interface
+- 🔄 Event creation form for organizers
+- 🔄 Backend logic for event storage
+- 🔄 Subscription-based restrictions
+- 🔄 Event lifecycle management
 
-### C. Subscription Lifecycle & User Communication
-- ✅ Frontend: Display clear instructions for manual offline payment for upgrades (Implemented enhanced `PaymentInstructionsDisplay` component).
-- 🔄 Backend: `check_subscriptions_expiry` Edge Function implementation/verification.
-- ✅ Frontend: Display Payment History in user profiles (Implemented with `PaymentHistoryDisplay` component).
-- ✅ Frontend: Allow users to report payments and upload payment proof (Implemented with `ReportPaymentForm` and `PaymentProofUpload`).
-- 🔄 Admin Panel: Display Payment History for users.
-
-### D. Initial Notification Framework Setup
-- ✅ Core email sending Edge Functions (`send-email`, `process-notification-queue`) setup/verification.
-- ✅ Populate initial Arabic email templates in `email_templates` (User Verified Badge, Payment/Subscription status, Trial Expiry, Admin Invitation).
-- ✅ Initial notification queueing logic integration (including for Admin Invitation).
-- ✅ Email notifications for verification status changes (approved/rejected).
-- ✅ Fixed language preferences to properly default to Arabic.
-- ✅ Fixed duplicate notification issues in database triggers.
+### C. Event Discovery
+- 🔄 Event listing and filtering interface
+- 🔄 Detailed event view pages
+- 🔄 Search functionality
+- 🔄 Event bookmarking for users
 
 ## 📅 Planned Features
-
-### Phase 2: Event Management & Topic Control
-- Admin Topic Management (CRUD, cascade delete policy, logging).
-- Organizer Event Creation (form, backend logic, subscription checks, `event_topics` linking).
-- Organizer Event Dashboard (basic list).
-- Public/Researcher Event Discovery (listing, search/filter, detail page).
-- Event Bookmarking (for active subscriptions, read-only for expired).
-- Admin Event Oversight (view/edit all events).
-- Event-related Notifications (new event to topic subscribers - no emails for free/expired, deadline reminders to organizers).
 
 ### Phase 3: Submission System
 - Researcher Submission (form, backend logic with subscription checks, file uploads to Storage).
@@ -181,16 +192,16 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 - Launch & Post-Launch Monitoring.
 
 ## Current Status Summary
-The project has successfully implemented foundational user authentication, profile completion, basic profile viewing/editing features, admin authentication, and the complete verification system with email notifications (including a bug fix for duplicate emails). With the verification system now fully operational, the focus has shifted to implementing payment and subscription management as part of Phase 1 completion.
+The project has successfully completed Phase 1, implementing the subscription backbone and core admin functionality. This includes user authentication, profile completion, verification system, payment management, subscription protection for routes and components, and email notifications. With the subscription system now fully operational, the focus has shifted to Phase 2: implementing topic management and event creation features.
 
 ## Next Immediate Tasks
-1. Implement payment management in admin panel
-2. Create admin actions logging system
-3. Develop payment history display for users and admins
+1. Implement topic management in admin panel
+2. Create event creation interface for organizers
+3. Develop event discovery components
 
 ## 4. Known Issues & TODOs
 
-- Complete the payment and subscription management features in the admin panel
-- Investigate and resolve the persistent linter error related to the dependency array in `EditProfileForm.tsx` (though the user applied a manual fix, understanding the root cause could be beneficial for future development).
+- Callback route warning in console (low priority, no functionality impact)
+- Email templates need testing with various device sizes
 - Ensure comprehensive end-to-end testing is conducted for all new features as they are implemented (as part of each Phase and culminating in Phase 6).
 - Refine UI/UX based on user feedback from testing (ongoing).

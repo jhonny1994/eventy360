@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge } from "flowbite-react";
+import { useLocale } from "next-intl";
 import { getStatusBadgeProps, type BadgeColor } from "@/utils/admin/format";
 
 type StatusBadgeProps = {
@@ -11,22 +12,24 @@ type StatusBadgeProps = {
     rejected: string;
     unknown: string;
   };
-  locale?: string; // Added locale prop for RTL support
+  locale?: string; // Kept for backward compatibility
 };
 
 /**
  * A consistent status badge component for admin UI
  * Supports RTL languages with proper text alignment
+ * Uses the application's locale context for consistent RTL behavior
  *
  * @param props - Component props
  * @returns Status badge with appropriate color based on status
  */
 export default function StatusBadge({
   status,
-  translations,
-  locale = 'en' // Default to English
+  translations
 }: StatusBadgeProps) {
-  const isRtl = locale === 'ar';
+  // Get locale from the application context
+  const appLocale = useLocale();
+  const isRtl = appLocale === 'ar';
   
   const { color, label } = getStatusBadgeProps(status, (key: string) => {
     const keyPart = key.split(".")[1]; // Extract 'pending', 'approved', etc. from 'status.pending'

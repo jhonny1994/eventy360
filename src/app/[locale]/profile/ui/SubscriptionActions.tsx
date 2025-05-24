@@ -5,6 +5,7 @@ import { Button } from "flowbite-react";
 import PaymentInstructionsDisplay from "@/components/ui/PaymentInstructionsDisplay";
 import PricingModal from "@/components/ui/PricingModal";
 import type { AppSettings } from "@/lib/appConfig";
+import { useLocale } from "next-intl";
 
 // Match the Subscription interface from ProfilePage.tsx
 interface Subscription {
@@ -29,7 +30,7 @@ interface SubscriptionActionsProps {
   subscriptionData: Subscription | null; // Changed type to Subscription
   appSettings: AppSettings | null; // Added appSettings prop
   userType: "researcher" | "organizer" | null; // Added userType prop
-  locale?: string; // Added locale prop
+  locale?: string; // Kept for backward compatibility
   userId?: string; // Added userId prop
 }
 
@@ -38,9 +39,9 @@ export default function SubscriptionActions({
   subscriptionData,
   appSettings,
   userType,
-  locale = 'ar',
   userId
 }: SubscriptionActionsProps) {
+  const appLocale = useLocale();
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showPricingModal, setShowPricingModal] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<{
@@ -123,7 +124,7 @@ export default function SubscriptionActions({
           setIsOpen={setShowPaymentModal}
           appSettings={appSettings}
           selectedPlan={selectedPlan}
-          locale={locale}
+          locale={appLocale}
           userId={userId}
         />
       )}

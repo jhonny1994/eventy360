@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import { Button, Spinner } from 'flowbite-react';
 import { FiDownload, FiX } from 'react-icons/fi';
 import { createClient } from '@/lib/supabase/client';
+import { useLocale } from 'next-intl';
 
 interface DownloadDocumentButtonProps {
   documentPath: string | null;
@@ -16,12 +17,13 @@ interface DownloadDocumentButtonProps {
   variant?: 'default' | 'icon' | 'link';
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
-  locale?: string;
+  locale?: string; // Kept for backward compatibility
 }
 
 /**
  * Button to download documents from Supabase storage
  * Supports RTL languages with proper icon positioning
+ * Uses the application's locale context for consistent RTL behavior
  */
 export default function DownloadDocumentButton({
   documentPath,
@@ -29,11 +31,11 @@ export default function DownloadDocumentButton({
   variant = 'default',
   size = 'sm',
   className = '',
-  locale = 'en'
 }: DownloadDocumentButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const isRtl = locale === 'ar';
+  const appLocale = useLocale();
+  const isRtl = appLocale === 'ar';
 
   const downloadDocument = useCallback(async () => {
     if (!documentPath) {

@@ -6,6 +6,7 @@ import { HiCheck, HiX, HiExclamationCircle } from 'react-icons/hi';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
+import { useLocale } from 'next-intl';
 
 type ApproveRejectActionsProps = {
   requestId: string;
@@ -29,7 +30,7 @@ type ApproveRejectActionsProps = {
     internalNotesHint?: string;
   };
   apiEndpoint?: string; // Optional API endpoint to use (defaults to verification_requests)
-  locale?: string; // Added locale prop for RTL support
+  locale?: string; // Kept for backward compatibility
   userId?: string; // Optional user ID for cache clearing
 };
 
@@ -37,6 +38,7 @@ type ApproveRejectActionsProps = {
  * Component for approving or rejecting verification requests or payment proofs
  * Includes a modal for entering rejection reasons
  * Supports RTL languages with proper icon positioning
+ * Uses the application's locale context for consistent RTL behavior
  * 
  * @param props - Component props
  * @returns Action buttons and rejection modal
@@ -45,7 +47,6 @@ export default function ApproveRejectActions({
   requestId,
   translations,
   apiEndpoint,
-  locale = 'en', // Default to English
   userId
 }: ApproveRejectActionsProps) {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
@@ -56,9 +57,11 @@ export default function ApproveRejectActions({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
   const router = useRouter();
+  // Get locale from application context
+  const appLocale = useLocale();
   
   // Determine if we're using RTL
-  const isRtl = locale === 'ar';
+  const isRtl = appLocale === 'ar';
   
   // Get appropriate margin class based on RTL or LTR
   const getIconMarginClass = () => {
@@ -66,14 +69,6 @@ export default function ApproveRejectActions({
       return 'ml-1'; // For RTL languages, margin on left
     }
     return 'mr-1'; // For LTR languages, margin on right
-  };
-  
-  // Get space class for button containers
-  const getSpaceClass = () => {
-    if (isRtl) {
-      return 'space-x-reverse space-x-2'; // For RTL languages
-    }
-    return 'space-x-2'; // For LTR languages
   };
 
   // Create Supabase client at component level
@@ -250,30 +245,44 @@ export default function ApproveRejectActions({
             <Label htmlFor="admin-notes-approve">{translations.adminNotes}</Label>
             <Textarea
               id="admin-notes-approve"
+              placeholder={translations.adminNotesPlaceholder}
               value={adminNotes}
               onChange={(e) => setAdminNotes(e.target.value)}
-              placeholder={translations.adminNotesPlaceholder}
               rows={3}
+              dir={isRtl ? 'rtl' : 'ltr'}
+              className={isRtl ? 'text-right' : 'text-left'}
             />
+            {translations.internalNotesHint && (
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                {translations.internalNotesHint}
+              </p>
+            )}
           </div>
         </div>
-        <div className={`flex items-center justify-end p-4 ${getSpaceClass()} border-t border-gray-200 rounded-b dark:border-gray-600`} dir={isRtl ? 'rtl' : 'ltr'}>
+        <div className="flex justify-end p-4 border-t rounded-b space-x-2" dir={isRtl ? 'rtl' : 'ltr'}>
+          <Button
+            color="gray"
+            onClick={() => setIsApproveModalOpen(false)}
+            disabled={isSubmitting}
+          >
+            {translations.cancel}
+          </Button>
           <Button
             color="success"
             onClick={handleApprove}
             disabled={isSubmitting}
           >
-            {isSubmitting && (
+            {isSubmitting ? (
+              <>
               <Spinner size="sm" className={getIconMarginClass()} />
+                {translations.submit}
+              </>
+            ) : (
+              <>
+                <HiCheck className={getIconMarginClass()} />
+                {translations.submit}
+              </>
             )}
-            {translations.approve}
-          </Button>
-          <Button
-            color="gray"
-            onClick={() => !isSubmitting && setIsApproveModalOpen(false)}
-            disabled={isSubmitting}
-          >
-            {translations.cancel}
           </Button>
         </div>
       </Modal>
@@ -287,7 +296,7 @@ export default function ApproveRejectActions({
         </div>
         <div className="p-6 space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
           <p className="text-base text-gray-700 dark:text-gray-300">
-            {translations.rejectConfirmation || "Please provide a reason for rejecting this request. The reason will be visible to the user."}
+            {translations.rejectConfirmation || "Are you sure you want to reject this request? This action cannot be undone."}
           </p>
           
           {errorMessage && (
@@ -296,49 +305,69 @@ export default function ApproveRejectActions({
             </Alert>
           )}
           
-          <div className="space-y-4">
             <div>
-              <Label htmlFor="rejection-reason">{translations.rejectReason} *</Label>
+            <Label htmlFor="rejection-reason" className="block mb-2">
+              {translations.rejectReason}
+              {translations.minimumCharactersNote && (
+                <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
+                  {translations.minimumCharactersNote}
+                </span>
+              )}
+            </Label>
               <Textarea
                 id="rejection-reason"
+              placeholder={translations.rejectReasonPlaceholder}
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
-                placeholder={translations.rejectReasonPlaceholder}
                 rows={3}
                 required
+              dir={isRtl ? 'rtl' : 'ltr'}
+              className={isRtl ? 'text-right' : 'text-left'}
               />
-              <p className="text-xs text-gray-500 mt-1">{translations.minimumCharactersNote || "Minimum 10 characters. Be specific about why the request is being rejected."}</p>
             </div>
+          
             <div>
               <Label htmlFor="admin-notes">{translations.adminNotes}</Label>
               <Textarea
                 id="admin-notes"
+              placeholder={translations.adminNotesPlaceholder}
                 value={adminNotes}
                 onChange={(e) => setAdminNotes(e.target.value)}
-                placeholder={translations.adminNotesPlaceholder}
                 rows={3}
-              />
-              <p className="text-xs text-gray-500 mt-1">{translations.internalNotesHint || "These notes are for internal use only and will not be shared with the user."}</p>
-            </div>
+              dir={isRtl ? 'rtl' : 'ltr'}
+              className={isRtl ? 'text-right' : 'text-left'}
+            />
+            {translations.internalNotesHint && (
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                {translations.internalNotesHint}
+              </p>
+            )}
           </div>
         </div>
-        <div className={`flex items-center justify-end p-4 ${getSpaceClass()} border-t border-gray-200 rounded-b dark:border-gray-600`} dir={isRtl ? 'rtl' : 'ltr'}>
-          <Button
-            color="failure"
-            onClick={handleReject}
-            disabled={isSubmitting || !rejectionReason.trim()}
-          >
-            {isSubmitting && (
-              <Spinner size="sm" className={getIconMarginClass()} />
-            )}
-            {translations.reject}
-          </Button>
+        <div className="flex justify-end p-4 border-t rounded-b space-x-2" dir={isRtl ? 'rtl' : 'ltr'}>
           <Button
             color="gray"
-            onClick={() => !isSubmitting && setIsRejectModalOpen(false)}
+            onClick={() => setIsRejectModalOpen(false)}
             disabled={isSubmitting}
           >
             {translations.cancel}
+          </Button>
+          <Button
+            color="failure"
+            onClick={handleReject}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <Spinner size="sm" className={getIconMarginClass()} />
+                {translations.submit}
+              </>
+            ) : (
+              <>
+                <HiX className={getIconMarginClass()} />
+                {translations.submit}
+              </>
+            )}
           </Button>
         </div>
       </Modal>

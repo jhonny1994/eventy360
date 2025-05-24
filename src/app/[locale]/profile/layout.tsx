@@ -122,6 +122,7 @@ export default async function ProfileLayout({
     verification: navT('verification'),
     subscriptions: navT('subscriptions'),
     security: navT('security'),
+    topics: navT('topics'),
   };
 
 

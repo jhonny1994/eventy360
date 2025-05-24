@@ -1,5 +1,6 @@
 'use client';
 
+import { useLocale } from 'next-intl';
 import { Button } from 'flowbite-react';
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 
@@ -19,12 +20,14 @@ interface PaginationControlProps {
     nextPage?: string;
     pageSize?: string;
   };
-  locale?: string; // Add locale prop for RTL support
+  // locale prop is kept for backward compatibility but no longer used as default
+  locale?: string;
 }
 
 /**
  * Reusable pagination control for admin tables
  * Supports RTL languages with proper direction and button ordering
+ * Uses the application's locale context for consistent behavior
  * 
  * @param props Component props
  * @returns Pagination control with page size selector
@@ -37,15 +40,17 @@ export default function PaginationControl({
   totalItems,
   pageSizeOptions = [10, 25, 50, 100],
   onPageSizeChange,
-  translations,
-  locale = 'en' // Default to English
+  translations
 }: PaginationControlProps) {
+  // Get the locale from the application context
+  const appLocale = useLocale();
+  
   // Calculate the range of items currently showing
   const startItem = Math.min(totalItems, (currentPage - 1) * pageSize + 1);
   const endItem = Math.min(totalItems, currentPage * pageSize);
   
   // Check if we're using RTL
-  const isRtl = locale === 'ar';
+  const isRtl = appLocale === 'ar';
   
   // Previous/Next icons based on text direction
   const PreviousIcon = isRtl ? HiChevronRight : HiChevronLeft;

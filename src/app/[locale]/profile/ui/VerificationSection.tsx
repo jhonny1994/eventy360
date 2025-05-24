@@ -5,6 +5,7 @@ import { Spinner, Alert, Badge } from 'flowbite-react';
 import { createClient } from '@/lib/supabase/client';
 import { HiExclamationCircle, HiShieldCheck, HiShieldExclamation } from 'react-icons/hi';
 import VerificationDocumentUploader from '@/components/profile/VerificationDocumentUploader';
+import { useLocale } from 'next-intl';
 
 interface VerificationSectionProps {
   isVerified: boolean;
@@ -20,13 +21,14 @@ interface VerificationSectionProps {
     verificationStatusError?: string;
   };
   userId: string;
-  locale?: string;
+  locale?: string; // Kept for backward compatibility
 }
 
 /**
  * Client component that handles verification section in profile
  * Manages verification request status and displays the appropriate UI
  * Enhanced with RTL support and improved styling
+ * Uses the application's locale context for consistent RTL behavior
  * 
  * @param props Component props
  * @returns Verification section UI
@@ -35,12 +37,12 @@ export default function VerificationSection({
   isVerified,
   translations,
   userId,
-  locale = 'en'
 }: VerificationSectionProps) {
   const [hasPendingRequest, setHasPendingRequest] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const isRtl = locale === 'ar';
+  const appLocale = useLocale();
+  const isRtl = appLocale === 'ar';
   
   const supabase = createClient();
 
@@ -140,7 +142,6 @@ export default function VerificationSection({
             isVerified={isVerified}
             hasPendingRequest={hasPendingRequest}
             onUploadSuccess={handleUploadSuccess}
-            locale={locale}
           />
         </div>
       )}

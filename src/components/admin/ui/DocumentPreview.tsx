@@ -7,6 +7,7 @@ import { HiExclamationCircle, HiDocumentText, HiRefresh } from "react-icons/hi";
 import Image from "next/image";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/database.types";
+import { useLocale } from "next-intl";
 
 type DocumentPreviewProps = {
   documentPath: string;
@@ -22,13 +23,14 @@ type DocumentPreviewProps = {
     verificationDocument?: string;
     refreshDocument?: string;
   };
-  locale?: string; // Add locale prop for RTL support
+  locale?: string; // Kept for backward compatibility
 };
 
 /**
  * Component to preview verification documents
  * Handles both images and PDFs with appropriate rendering
  * Supports RTL languages with proper icon positioning
+ * Uses the application's locale context for consistent RTL behavior
  *
  * @param props - Component props
  * @returns Document preview UI based on document type
@@ -36,15 +38,17 @@ type DocumentPreviewProps = {
 export default function DocumentPreview({
   documentPath,
   translations,
-  locale = 'en', // Default to English
 }: DocumentPreviewProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [documentUrl, setDocumentUrl] = useState<string | null>(null);
   const [isImage, setIsImage] = useState(false);
   
+  // Get locale from application context
+  const appLocale = useLocale();
+  
   // Determine if we're using RTL
-  const isRtl = locale === 'ar';
+  const isRtl = appLocale === 'ar';
   
   // Get appropriate margin class based on RTL or LTR
   const getIconMarginClass = () => {
@@ -250,7 +254,7 @@ export default function DocumentPreview({
           size="sm"
           as="a"
         >
-          {translations.openInNewTab || "Open in new tab"}
+          {translations.openInNewTab || "Open document in new tab"}
         </Button>
       </div>
     </div>

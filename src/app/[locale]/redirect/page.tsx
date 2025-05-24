@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Spinner } from 'flowbite-react';
 import { useRouter, useSearchParams, useParams } from 'next/navigation';
@@ -12,8 +12,9 @@ export default function RedirectPage() {
   const searchParams = useSearchParams();
   const params = useParams();
   const locale = params.locale as string;
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, supabase } = useAuth();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [isCheckingProfile, setIsCheckingProfile] = useState(false);
   
   // Get auth_action from URL if present (for email confirmation)
   const authAction = searchParams?.get('auth_action');
@@ -24,7 +25,7 @@ export default function RedirectPage() {
   
   useEffect(() => {
     // Don't redirect while still loading auth state
-    if (authLoading) {
+    if (authLoading || isCheckingProfile) {
       return;
     }
 
@@ -34,7 +35,7 @@ export default function RedirectPage() {
     }
 
     // Set a timeout to do the redirect
-    timerRef.current = setTimeout(() => {
+    timerRef.current = setTimeout(async () => {
       if (user) {
         // User is logged in, route based on profile completion
         if (!user.email_confirmed_at) {
@@ -46,8 +47,31 @@ export default function RedirectPage() {
             router.push(`/${locale}/confirm-email`);
           }
         } else {
-          // Email is confirmed, route to profile completion
+          // Email is confirmed, check if profile is complete
+          setIsCheckingProfile(true);
+          try {
+            const { data, error } = await supabase
+              .from('profiles')
+              .select('is_extended_profile_complete')
+              .eq('id', user.id)
+              .single();
+            
+            if (error) throw error;
+            
+            if (data && data.is_extended_profile_complete) {
+              // Profile is complete, go directly to profile page
+              router.push(`/${locale}/profile`);
+            } else {
+              // Profile needs completion
+              router.push(`/${locale}/complete-profile`);
+            }
+          } catch (err) {
+            console.error('Error checking profile:', err);
+            // If error occurs, default to complete-profile
           router.push(`/${locale}/complete-profile`);
+          } finally {
+            setIsCheckingProfile(false);
+          }
         }
       } else {
         // No user, redirect to login
@@ -61,7 +85,7 @@ export default function RedirectPage() {
         clearTimeout(timerRef.current);
       }
     };
-  }, [user, authLoading, router, isEmailConfirmed, authAction, locale]);
+  }, [user, authLoading, router, isEmailConfirmed, authAction, locale, supabase, isCheckingProfile]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">

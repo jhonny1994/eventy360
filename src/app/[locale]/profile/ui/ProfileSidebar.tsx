@@ -86,6 +86,7 @@ interface TranslationStrings {
   verification: string;
   subscriptions: string;
   security: string;
+  topics?: string;
 }
 
 /**
@@ -152,6 +153,7 @@ export default function ProfileSidebar({
     { name: translations.profile, href: `/${locale}/profile/edit`, icon: HiUser },
     { name: translations.verification, href: `/${locale}/profile/verification`, icon: HiOutlineShieldCheck },
     { name: translations.subscriptions, href: `/${locale}/profile/subscriptions`, icon: HiCreditCard },
+    { name: translations.topics || 'Topics', href: `/${locale}/profile/topics`, icon: HiCalendar },
     { name: translations.security, href: `/${locale}/profile/security`, icon: HiLockClosed },
   ];
 
