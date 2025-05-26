@@ -330,10 +330,13 @@ export type Database = {
       }
       events: {
         Row: {
+          abstract_review_result_date: string | null
+          abstract_submission_deadline: string | null
           brochure_url: string | null
           created_at: string
           created_by: string
           daira_id: number
+          deleted_at: string | null
           email: string
           event_axes_translations: Json
           event_date: string
@@ -343,7 +346,7 @@ export type Database = {
           event_subtitle_translations: Json | null
           event_type: Database["public"]["Enums"]["event_type_enum"]
           format: Database["public"]["Enums"]["event_format_enum"]
-          full_paper_deadline: string
+          full_paper_submission_deadline: string | null
           id: string
           logo_url: string | null
           phone: string
@@ -353,7 +356,6 @@ export type Database = {
           scientific_committees_translations: Json | null
           speakers_keynotes_translations: Json | null
           status: Database["public"]["Enums"]["event_status_enum"]
-          submission_deadline: string
           submission_guidelines_translations: Json
           submission_verdict_deadline: string
           target_audience_translations: Json | null
@@ -363,10 +365,13 @@ export type Database = {
           wilaya_id: number
         }
         Insert: {
+          abstract_review_result_date?: string | null
+          abstract_submission_deadline?: string | null
           brochure_url?: string | null
           created_at?: string
           created_by: string
           daira_id: number
+          deleted_at?: string | null
           email: string
           event_axes_translations: Json
           event_date: string
@@ -376,7 +381,7 @@ export type Database = {
           event_subtitle_translations?: Json | null
           event_type: Database["public"]["Enums"]["event_type_enum"]
           format: Database["public"]["Enums"]["event_format_enum"]
-          full_paper_deadline: string
+          full_paper_submission_deadline?: string | null
           id?: string
           logo_url?: string | null
           phone: string
@@ -385,8 +390,7 @@ export type Database = {
           qr_code_url?: string | null
           scientific_committees_translations?: Json | null
           speakers_keynotes_translations?: Json | null
-          status: Database["public"]["Enums"]["event_status_enum"]
-          submission_deadline: string
+          status?: Database["public"]["Enums"]["event_status_enum"]
           submission_guidelines_translations: Json
           submission_verdict_deadline: string
           target_audience_translations?: Json | null
@@ -396,10 +400,13 @@ export type Database = {
           wilaya_id: number
         }
         Update: {
+          abstract_review_result_date?: string | null
+          abstract_submission_deadline?: string | null
           brochure_url?: string | null
           created_at?: string
           created_by?: string
           daira_id?: number
+          deleted_at?: string | null
           email?: string
           event_axes_translations?: Json
           event_date?: string
@@ -409,7 +416,7 @@ export type Database = {
           event_subtitle_translations?: Json | null
           event_type?: Database["public"]["Enums"]["event_type_enum"]
           format?: Database["public"]["Enums"]["event_format_enum"]
-          full_paper_deadline?: string
+          full_paper_submission_deadline?: string | null
           id?: string
           logo_url?: string | null
           phone?: string
@@ -419,7 +426,6 @@ export type Database = {
           scientific_committees_translations?: Json | null
           speakers_keynotes_translations?: Json | null
           status?: Database["public"]["Enums"]["event_status_enum"]
-          submission_deadline?: string
           submission_guidelines_translations?: Json
           submission_verdict_deadline?: string
           target_audience_translations?: Json | null
@@ -776,19 +782,81 @@ export type Database = {
           },
         ]
       }
-      submissions: {
+      submission_versions: {
         Row: {
           abstract_file_metadata: Json | null
           abstract_file_url: string | null
           abstract_translations: Json
           created_at: string
-          event_id: string
+          feedback_translations: Json | null
           full_paper_file_metadata: Json | null
           full_paper_file_url: string | null
           id: string
+          submission_id: string
+          submitted_at: string
+          title_translations: Json
+          version_number: number
+        }
+        Insert: {
+          abstract_file_metadata?: Json | null
+          abstract_file_url?: string | null
+          abstract_translations: Json
+          created_at?: string
+          feedback_translations?: Json | null
+          full_paper_file_metadata?: Json | null
+          full_paper_file_url?: string | null
+          id?: string
+          submission_id: string
+          submitted_at?: string
+          title_translations: Json
+          version_number: number
+        }
+        Update: {
+          abstract_file_metadata?: Json | null
+          abstract_file_url?: string | null
+          abstract_translations?: Json
+          created_at?: string
+          feedback_translations?: Json | null
+          full_paper_file_metadata?: Json | null
+          full_paper_file_url?: string | null
+          id?: string
+          submission_id?: string
+          submitted_at?: string
+          title_translations?: Json
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submission_versions_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      submissions: {
+        Row: {
+          abstract_file_metadata: Json | null
+          abstract_file_url: string | null
+          abstract_status:
+            | Database["public"]["Enums"]["submission_status_enum"]
+            | null
+          abstract_translations: Json
+          created_at: string
+          current_abstract_version_id: string | null
+          current_full_paper_version_id: string | null
+          deleted_at: string | null
+          event_id: string
+          feedback_history: Json | null
+          full_paper_file_metadata: Json | null
+          full_paper_file_url: string | null
+          full_paper_status:
+            | Database["public"]["Enums"]["submission_status_enum"]
+            | null
+          id: string
           review_date: string | null
           review_feedback_translations: Json | null
-          status: Database["public"]["Enums"]["submission_status_enum"]
           submission_date: string
           submitted_by: string
           title_translations: Json
@@ -797,15 +865,24 @@ export type Database = {
         Insert: {
           abstract_file_metadata?: Json | null
           abstract_file_url?: string | null
+          abstract_status?:
+            | Database["public"]["Enums"]["submission_status_enum"]
+            | null
           abstract_translations: Json
           created_at?: string
+          current_abstract_version_id?: string | null
+          current_full_paper_version_id?: string | null
+          deleted_at?: string | null
           event_id: string
+          feedback_history?: Json | null
           full_paper_file_metadata?: Json | null
           full_paper_file_url?: string | null
+          full_paper_status?:
+            | Database["public"]["Enums"]["submission_status_enum"]
+            | null
           id?: string
           review_date?: string | null
           review_feedback_translations?: Json | null
-          status: Database["public"]["Enums"]["submission_status_enum"]
           submission_date?: string
           submitted_by: string
           title_translations: Json
@@ -814,21 +891,44 @@ export type Database = {
         Update: {
           abstract_file_metadata?: Json | null
           abstract_file_url?: string | null
+          abstract_status?:
+            | Database["public"]["Enums"]["submission_status_enum"]
+            | null
           abstract_translations?: Json
           created_at?: string
+          current_abstract_version_id?: string | null
+          current_full_paper_version_id?: string | null
+          deleted_at?: string | null
           event_id?: string
+          feedback_history?: Json | null
           full_paper_file_metadata?: Json | null
           full_paper_file_url?: string | null
+          full_paper_status?:
+            | Database["public"]["Enums"]["submission_status_enum"]
+            | null
           id?: string
           review_date?: string | null
           review_feedback_translations?: Json | null
-          status?: Database["public"]["Enums"]["submission_status_enum"]
           submission_date?: string
           submitted_by?: string
           title_translations?: Json
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_current_abstract_version"
+            columns: ["current_abstract_version_id"]
+            isOneToOne: false
+            referencedRelation: "submission_versions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_current_full_paper_version"
+            columns: ["current_full_paper_version_id"]
+            isOneToOne: false
+            referencedRelation: "submission_versions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "submissions_event_id_fkey"
             columns: ["event_id"]
@@ -1121,6 +1221,180 @@ export type Database = {
         Args: { profile_data: Json }
         Returns: undefined
       }
+      complete_submission: {
+        Args: { p_submission_id: string }
+        Returns: boolean
+      }
+      create_deadline_notifications: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      discover_events: {
+        Args:
+          | {
+              search_query?: string
+              topic_ids?: string[]
+              wilaya_id_param?: number
+              daira_id_param?: number
+              start_date?: string
+              end_date?: string
+              event_status_filter?: Database["public"]["Enums"]["event_status_enum"][]
+              event_format_filter?: Database["public"]["Enums"]["event_format_enum"][]
+              limit_count?: number
+              offset_count?: number
+            }
+          | {
+              search_query?: string
+              topic_ids?: string[]
+              wilaya_id_param?: number
+              daira_id_param?: number
+              start_date?: string
+              end_date?: string
+              event_status_filter?: Database["public"]["Enums"]["event_status_enum"][]
+              event_format_filter?: Database["public"]["Enums"]["event_format_enum"][]
+              p_organizer_id?: string
+              limit_count?: number
+              offset_count?: number
+            }
+        Returns: {
+          id: string
+          event_name: string
+          event_subtitle: string
+          event_date: string
+          event_end_date: string
+          wilaya_name: string
+          daira_name: string
+          organizer_name: string
+          topics: string[]
+          status: Database["public"]["Enums"]["event_status_enum"]
+          format: Database["public"]["Enums"]["event_format_enum"]
+          logo_url: string
+          abstract_submission_deadline: string
+          rank: number
+        }[]
+      }
+      filter_events_by_date_range: {
+        Args: {
+          start_date?: string
+          end_date?: string
+          limit_count?: number
+          offset_count?: number
+        }
+        Returns: {
+          id: string
+          event_name: string
+          event_subtitle: string
+          event_date: string
+          event_end_date: string
+          wilaya_name: string
+          daira_name: string
+          organizer_name: string
+          topics: string[]
+          status: Database["public"]["Enums"]["event_status_enum"]
+          format: Database["public"]["Enums"]["event_format_enum"]
+          logo_url: string
+          abstract_submission_deadline: string
+        }[]
+      }
+      filter_events_by_location: {
+        Args: {
+          wilaya_id_param: number
+          daira_id_param?: number
+          limit_count?: number
+          offset_count?: number
+        }
+        Returns: {
+          id: string
+          event_name: string
+          event_subtitle: string
+          event_date: string
+          event_end_date: string
+          wilaya_name: string
+          daira_name: string
+          organizer_name: string
+          topics: string[]
+          status: Database["public"]["Enums"]["event_status_enum"]
+          format: Database["public"]["Enums"]["event_format_enum"]
+          logo_url: string
+          abstract_submission_deadline: string
+        }[]
+      }
+      filter_events_by_topic: {
+        Args: {
+          topic_ids: string[]
+          limit_count?: number
+          offset_count?: number
+        }
+        Returns: {
+          id: string
+          event_name: string
+          event_subtitle: string
+          event_date: string
+          event_end_date: string
+          wilaya_name: string
+          daira_name: string
+          organizer_name: string
+          topics: string[]
+          status: Database["public"]["Enums"]["event_status_enum"]
+          format: Database["public"]["Enums"]["event_format_enum"]
+          logo_url: string
+          abstract_submission_deadline: string
+        }[]
+      }
+      get_event_submission_stats: {
+        Args: { event_id: string }
+        Returns: {
+          total_submissions: number
+          abstract_submitted: number
+          abstract_accepted: number
+          abstract_rejected: number
+          full_paper_submitted: number
+          full_paper_accepted: number
+          full_paper_rejected: number
+          revision_requested: number
+          completed: number
+        }[]
+      }
+      get_events_by_status: {
+        Args: {
+          status_filter: Database["public"]["Enums"]["event_status_enum"]
+          limit_count?: number
+          offset_count?: number
+        }
+        Returns: {
+          id: string
+          event_name: string
+          event_subtitle: string
+          event_date: string
+          event_end_date: string
+          wilaya_name: string
+          daira_name: string
+          organizer_name: string
+          topics: string[]
+          status: Database["public"]["Enums"]["event_status_enum"]
+          format: Database["public"]["Enums"]["event_format_enum"]
+          logo_url: string
+          abstract_submission_deadline: string
+        }[]
+      }
+      get_featured_events: {
+        Args: { limit_count?: number }
+        Returns: {
+          id: string
+          event_name: string
+          event_subtitle: string
+          event_date: string
+          event_end_date: string
+          wilaya_name: string
+          daira_name: string
+          organizer_name: string
+          topics: string[]
+          status: Database["public"]["Enums"]["event_status_enum"]
+          format: Database["public"]["Enums"]["event_format_enum"]
+          logo_url: string
+          abstract_submission_deadline: string
+        }[]
+      }
       get_payment_details: {
         Args: { payment_id: string }
         Returns: Json
@@ -1128,6 +1402,44 @@ export type Database = {
       get_payments_with_user_details: {
         Args: Record<PropertyKey, never>
         Returns: Json[]
+      }
+      get_public_events: {
+        Args: { p_limit?: number; p_offset?: number }
+        Returns: {
+          abstract_review_result_date: string | null
+          abstract_submission_deadline: string | null
+          brochure_url: string | null
+          created_at: string
+          created_by: string
+          daira_id: number
+          deleted_at: string | null
+          email: string
+          event_axes_translations: Json
+          event_date: string
+          event_end_date: string
+          event_name_translations: Json
+          event_objectives_translations: Json
+          event_subtitle_translations: Json | null
+          event_type: Database["public"]["Enums"]["event_type_enum"]
+          format: Database["public"]["Enums"]["event_format_enum"]
+          full_paper_submission_deadline: string | null
+          id: string
+          logo_url: string | null
+          phone: string
+          price: number | null
+          problem_statement_translations: Json
+          qr_code_url: string | null
+          scientific_committees_translations: Json | null
+          speakers_keynotes_translations: Json | null
+          status: Database["public"]["Enums"]["event_status_enum"]
+          submission_guidelines_translations: Json
+          submission_verdict_deadline: string
+          target_audience_translations: Json | null
+          updated_at: string
+          website: string | null
+          who_organizes_translations: Json
+          wilaya_id: number
+        }[]
       }
       get_subscription_details: {
         Args: { target_user_id?: string }
@@ -1215,6 +1527,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      purge_expired_deletions: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       queue_trial_expiry_notification: {
         Args: {
           profile_id: string
@@ -1233,6 +1549,53 @@ export type Database = {
         }
         Returns: Json
       }
+      restore_event: {
+        Args: { p_event_id: string }
+        Returns: boolean
+      }
+      restore_submission: {
+        Args: { p_submission_id: string }
+        Returns: boolean
+      }
+      review_abstract: {
+        Args: {
+          p_submission_id: string
+          p_status: Database["public"]["Enums"]["submission_status_enum"]
+          p_feedback_translations: Json
+        }
+        Returns: boolean
+      }
+      review_full_paper: {
+        Args: {
+          p_submission_id: string
+          p_status: Database["public"]["Enums"]["submission_status_enum"]
+          p_feedback_translations: Json
+        }
+        Returns: boolean
+      }
+      search_events: {
+        Args: {
+          search_query: string
+          limit_count?: number
+          offset_count?: number
+        }
+        Returns: {
+          id: string
+          event_name: string
+          event_subtitle: string
+          event_date: string
+          event_end_date: string
+          wilaya_name: string
+          daira_name: string
+          organizer_name: string
+          topics: string[]
+          status: Database["public"]["Enums"]["event_status_enum"]
+          format: Database["public"]["Enums"]["event_format_enum"]
+          logo_url: string
+          abstract_submission_deadline: string
+          rank: number
+        }[]
+      }
       set_limit: {
         Args: { "": number }
         Returns: number
@@ -1245,9 +1608,47 @@ export type Database = {
         Args: { "": string }
         Returns: string[]
       }
+      soft_delete_event: {
+        Args: { p_event_id: string }
+        Returns: boolean
+      }
+      soft_delete_submission: {
+        Args: { p_submission_id: string }
+        Returns: boolean
+      }
+      submit_abstract: {
+        Args: {
+          p_event_id: string
+          p_title_translations: Json
+          p_abstract_translations: Json
+          p_abstract_file_url: string
+          p_abstract_file_metadata: Json
+        }
+        Returns: string
+      }
+      submit_full_paper: {
+        Args: {
+          p_submission_id: string
+          p_full_paper_file_url: string
+          p_full_paper_file_metadata: Json
+        }
+        Returns: string
+      }
+      submit_revision: {
+        Args: {
+          p_submission_id: string
+          p_full_paper_file_url: string
+          p_full_paper_file_metadata: Json
+        }
+        Returns: string
+      }
       text_to_bytea: {
         Args: { data: string }
         Returns: string
+      }
+      update_event_status_based_on_date: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       urlencode: {
         Args: { data: Json } | { string: string } | { string: string }
@@ -1281,7 +1682,13 @@ export type Database = {
       billing_period_enum: "monthly" | "quarterly" | "biannual" | "annual"
       email_log_status_enum: "attempted" | "sent" | "failed" | "retry_attempted"
       event_format_enum: "physical" | "virtual" | "hybrid"
-      event_status_enum: "published" | "active" | "completed" | "canceled"
+      event_status_enum:
+        | "published"
+        | "abstract_review"
+        | "full_paper_submission_open"
+        | "full_paper_review"
+        | "completed"
+        | "canceled"
       event_type_enum:
         | "scientific_event"
         | "cultural_event"
@@ -1300,10 +1707,15 @@ export type Database = {
       payment_status_enum: "pending_verification" | "verified" | "rejected"
       queue_status_enum: "pending" | "processing" | "completed" | "failed"
       submission_status_enum:
-        | "received"
-        | "under_review"
-        | "accepted"
-        | "rejected"
+        | "abstract_submitted"
+        | "abstract_accepted"
+        | "abstract_rejected"
+        | "full_paper_submitted"
+        | "full_paper_accepted"
+        | "full_paper_rejected"
+        | "revision_requested"
+        | "completed"
+      submission_type_enum: "abstract" | "full_paper" | "supplementary"
       subscription_status_enum: "active" | "expired" | "trial" | "cancelled"
       subscription_tier_enum:
         | "free"
@@ -1461,7 +1873,14 @@ export const Constants = {
       billing_period_enum: ["monthly", "quarterly", "biannual", "annual"],
       email_log_status_enum: ["attempted", "sent", "failed", "retry_attempted"],
       event_format_enum: ["physical", "virtual", "hybrid"],
-      event_status_enum: ["published", "active", "completed", "canceled"],
+      event_status_enum: [
+        "published",
+        "abstract_review",
+        "full_paper_submission_open",
+        "full_paper_review",
+        "completed",
+        "canceled",
+      ],
       event_type_enum: [
         "scientific_event",
         "cultural_event",
@@ -1482,11 +1901,16 @@ export const Constants = {
       payment_status_enum: ["pending_verification", "verified", "rejected"],
       queue_status_enum: ["pending", "processing", "completed", "failed"],
       submission_status_enum: [
-        "received",
-        "under_review",
-        "accepted",
-        "rejected",
+        "abstract_submitted",
+        "abstract_accepted",
+        "abstract_rejected",
+        "full_paper_submitted",
+        "full_paper_accepted",
+        "full_paper_rejected",
+        "revision_requested",
+        "completed",
       ],
+      submission_type_enum: ["abstract", "full_paper", "supplementary"],
       subscription_status_enum: ["active", "expired", "trial", "cancelled"],
       subscription_tier_enum: [
         "free",

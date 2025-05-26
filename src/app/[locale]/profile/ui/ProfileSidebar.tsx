@@ -83,6 +83,7 @@ interface TranslationStrings {
   // New navigation translations
   dashboard: string;
   profile: string;
+  events?: string;
   verification: string;
   subscriptions: string;
   security: string;
@@ -151,9 +152,10 @@ export default function ProfileSidebar({
   const navigationItems: NavigationItem[] = [
     { name: translations.dashboard, href: `/${locale}/profile`, icon: HiHome },
     { name: translations.profile, href: `/${locale}/profile/edit`, icon: HiUser },
+    { name: translations.events || 'Events', href: `/${locale}/profile/events`, icon: HiCalendar },
     { name: translations.verification, href: `/${locale}/profile/verification`, icon: HiOutlineShieldCheck },
     { name: translations.subscriptions, href: `/${locale}/profile/subscriptions`, icon: HiCreditCard },
-    { name: translations.topics || 'Topics', href: `/${locale}/profile/topics`, icon: HiCalendar },
+    { name: translations.topics || 'Topics', href: `/${locale}/profile/topics`, icon: HiAcademicCap },
     { name: translations.security, href: `/${locale}/profile/security`, icon: HiLockClosed },
   ];
 

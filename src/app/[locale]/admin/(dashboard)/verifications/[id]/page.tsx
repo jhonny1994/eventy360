@@ -14,7 +14,7 @@ import { StatusBadge, ApproveRejectActions, DownloadDocumentButton, BackButton }
 export default async function VerificationDetailsPage({
   params
 }: {
-  params: { locale: string; id: string }
+  params: Promise<{ locale: string; id: string }>
 }) {
   const { locale, id } = await params;
   const t = await getTranslations('AdminVerifications');
@@ -46,7 +46,8 @@ export default async function VerificationDetailsPage({
     download: t('details.downloadDocument'),
     downloading: commonT('loading'),
     downloadError: t('details.downloadError'),
-    documentNotFound: t('details.documentNotFound')
+    documentNotFound: t('details.documentNotFound'),
+    retry: t('details.retry') || 'Retry'
   };
 
   // Prepare translations for approve/reject actions

@@ -18,13 +18,13 @@ enum PaymentStatus {
 }
 
 type PaymentListProps = {
-  searchParams: {
+  searchParams: Promise<{
     status?: string;
     search?: string;
     page?: string;
     page_size?: string;
-  };
-  params: { locale: string };
+  }>;
+  params: Promise<{ locale: string }>;
 };
 
 // Default values for pagination
@@ -38,12 +38,12 @@ const DEFAULT_PAGE = 1;
  */
 export default async function AdminPaymentsPage({
   params,
-  searchParams = {},
+  searchParams,
 }: PaymentListProps) {
   const { locale } = await params;
   const isRtl = locale === 'ar';
   const searchParamsData = await searchParams;
-  const { status, search, page: pageParam, page_size: pageSizeParam } = searchParamsData;
+  const { status, search, page: pageParam, page_size: pageSizeParam } = searchParamsData || {};
   const t = await getTranslations("AdminPayments");
 
   // Parse pagination parameters with defaults

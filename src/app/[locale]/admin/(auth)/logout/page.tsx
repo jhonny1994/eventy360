@@ -13,7 +13,7 @@ import { redirect } from "next/navigation";
  * @param params - Parameters from the dynamic route including locale
  * @returns Nothing - redirects to login page
  */
-export default async function LogoutPage({ params }: { params: { locale: string } }) {
+export default async function LogoutPage({ params }: { params: Promise<{ locale: string }> }) {
   // Extract locale parameter first
   const { locale } = await params;
   

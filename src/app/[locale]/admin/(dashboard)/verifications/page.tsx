@@ -16,13 +16,13 @@ enum VerificationStatus {
 }
 
 type VerificationListProps = {
-  searchParams: {
+  searchParams: Promise<{
     status?: string;
     search?: string;
     page?: string;
     page_size?: string;
-  };
-  params: { locale: string };
+  }>;
+  params: Promise<{ locale: string }>;
 };
 
 // Default values for pagination
@@ -36,12 +36,12 @@ const DEFAULT_PAGE = 1;
  */
 export default async function AdminVerificationsPage({
   params,
-  searchParams = {},
+  searchParams,
 }: VerificationListProps) {
   const { locale } = await params;
   // Await searchParams before accessing its properties
   const searchParamsData = await searchParams;
-  const { status, search, page: pageParam, page_size: pageSizeParam } = searchParamsData;
+  const { status, search, page: pageParam, page_size: pageSizeParam } = searchParamsData || {};
   const t = await getTranslations("AdminVerifications");
 
   // Parse pagination parameters with defaults

@@ -41,10 +41,354 @@
   "Navigation": {
     "profileDashboard": "لوحة التحكم",
     "profile": "الملف الشخصي",
+    "events": "الفعاليات",
     "verification": "التوثيق",
     "subscriptions": "الاشتراكات والمدفوعات",
     "security": "إعدادات الأمان",
     "topics": "المواضيع"
+  },
+  "Events": {
+    "Creation": {
+      "title": "إنشاء فعالية أكاديمية جديدة",
+      "subtitle": "قم بإنشاء وتنظيم فعالية أكاديمية شاملة",
+      "steps": {
+        "basicInfo": "المعلومات الأساسية",
+        "contentDetails": "تفاصيل المحتوى",
+        "dates": "التواريخ والمواعيد",
+        "topicSelection": "اختيار المواضيع",
+        "topics": "المواضيع"
+      },
+      "navigation": {
+        "previous": "السابق",
+        "next": "التالي",
+        "submit": "إنشاء الفعالية",
+        "cancel": "إلغاء"
+      },
+      "common": {
+        "optional": "(اختياري)"
+      },
+      "progress": {
+        "step": "الخطوة {current} من {total}",
+        "completed": "مكتملة",
+        "current": "الحالية",
+        "pending": "معلقة"
+      },
+      "basicInfo": {
+        "title": "المعلومات الأساسية للفعالية",
+        "description": "ادخل المعلومات الأساسية للفعالية الأكاديمية",
+        "eventNameAr": "اسم الفعالية (بالعربية)",
+        "eventNameArPlaceholder": "أدخل اسم الفعالية باللغة العربية",
+        "eventSubtitleAr": "العنوان الفرعي للفعالية (بالعربية)",
+        "eventSubtitleArPlaceholder": "أدخل العنوان الفرعي للفعالية باللغة العربية",
+        "venue": "مكان الانعقاد",
+        "venuePlaceholder": "أدخل اسم المكان أو العنوان التفصيلي",
+        "fields": {
+          "eventName": {
+            "label": "اسم الفعالية",
+            "placeholder": "أدخل اسم الفعالية الأكاديمية",
+            "description": "اختر اسماً واضحاً ومعبراً عن طبيعة الفعالية"
+          },
+          "eventType": {
+            "label": "نوع الفعالية",
+            "placeholder": "اختر نوع الفعالية",
+            "options": {
+              "conference": "مؤتمر",
+              "workshop": "ورشة عمل",
+              "seminar": "ندوة",
+              "symposium": "ملتقى علمي",
+              "forum": "منتدى",
+              "competition": "مسابقة",
+              "scientific_event": "فعالية علمية",
+              "cultural_event": "فعالية ثقافية",
+              "sports_event": "فعالية رياضية"
+            }
+          },
+          "eventFormat": {
+            "label": "صيغة الفعالية",
+            "placeholder": "اختر صيغة الفعالية",
+            "options": {
+              "in_person": "حضوري",
+              "virtual": "افتراضي",
+              "hybrid": "مختلط (حضوري وافتراضي)",
+              "physical": "حضوري"
+            }
+          },
+          "wilaya": {
+            "label": "الولاية",
+            "placeholder": "اختر الولاية",
+            "description": "حدد الولاية التي ستقام فيها الفعالية"
+          },
+          "daira": {
+            "label": "الدائرة",
+            "placeholder": "اختر الدائرة",
+            "description": "حدد الدائرة التي ستقام فيها الفعالية"
+          },
+          "venue": {
+            "label": "مكان الانعقاد",
+            "placeholder": "أدخل اسم المكان أو العنوان التفصيلي",
+            "description": "حدد المكان الدقيق لانعقاد الفعالية"
+          },
+          "contactEmail": {
+            "label": "البريد الإلكتروني للتواصل",
+            "placeholder": "contact@example.com",
+            "description": "بريد إلكتروني للتواصل حول الفعالية"
+          },
+          "contactPhone": {
+            "label": "رقم الهاتف للتواصل",
+            "placeholder": "+213 xxx xxx xxx",
+            "description": "رقم هاتف للتواصل حول الفعالية (اختياري)"
+          }
+        }
+      },
+      "contentDetails": {
+        "title": "تفاصيل المحتوى والأهداف",
+        "description": "حدد محتوى الفعالية وأهدافها العلمية",
+        "fields": {
+          "problemStatement": {
+            "label": "الإشكالية والهدف",
+            "placeholder": "اشرح الإشكالية الرئيسية والهدف من الفعالية",
+            "description": "وضح المشكلة البحثية أو الموضوع الذي تتناوله الفعالية"
+          },
+          "objectives": {
+            "label": "الأهداف المرجوة",
+            "placeholder": "حدد الأهداف المحددة للفعالية",
+            "description": "اذكر الأهداف الواضحة والقابلة للقياس"
+          },
+          "eventAxes": {
+            "label": "محاور الفعالية",
+            "placeholder": "اذكر المحاور الرئيسية للفعالية",
+            "description": "حدد المحاور والمواضيع الفرعية"
+          },
+          "axes": {
+            "label": "محاور الفعالية",
+            "placeholder": "اذكر المحاور الرئيسية للفعالية",
+            "description": "حدد المحاور والمواضيع الفرعية"
+          },
+          "participationGuidelines": {
+            "label": "شروط وإرشادات المشاركة",
+            "placeholder": "حدد شروط المشاركة والإرشادات للمشاركين",
+            "description": "وضح المتطلبات والإرشادات للمشاركة"
+          },
+          "submissionGuidelines": {
+            "label": "إرشادات تقديم المساهمات",
+            "placeholder": "حدد إرشادات تقديم المساهمات والأوراق البحثية",
+            "description": "اشرح طريقة تقديم الأوراق البحثية والمساهمات"
+          },
+          "whoOrganizes": {
+            "label": "الجهة المنظمة",
+            "placeholder": "اذكر الجهة أو الجهات المنظمة للفعالية",
+            "description": "حدد المؤسسات والجهات المشاركة في تنظيم الفعالية"
+          },
+          "targetAudience": {
+            "label": "الجمهور المستهدف",
+            "placeholder": "حدد الجمهور المستهدف من الفعالية"
+          },
+          "scientificCommittees": {
+            "label": "اللجان العلمية",
+            "placeholder": "أدخل معلومات عن اللجان العلمية للفعالية"
+          },
+          "speakersKeynotes": {
+            "label": "المتحدثون الرئيسيون",
+            "placeholder": "أدخل معلومات عن المتحدثين الرئيسيين"
+          },
+          "price": {
+            "label": "رسوم المشاركة",
+            "placeholder": "أدخل رسوم المشاركة (اترك فارغاً إذا كانت مجانية)",
+            "description": "حدد رسوم المشاركة في الفعالية"
+          },
+          "organizingCommittee": {
+            "label": "معلومات اللجنة المنظمة",
+            "placeholder": "اذكر معلومات اللجنة المنظمة والجهات المشاركة",
+            "description": "معلومات عن الجهة المنظمة والشركاء"
+          }
+        }
+      },
+      "dates": {
+        "title": "التواريخ والمواعيد النهائية",
+        "description": "حدد التواريخ المهمة للفعالية والمواعيد النهائية الأكاديمية",
+        "sequenceInfo": {
+          "title": "تسلسل التواريخ المهمة",
+          "steps": {
+            "abstractSubmission": "الموعد النهائي لتقديم الملخصات",
+            "abstractReview": "إعلان نتائج مراجعة الملخصات",
+            "fullPaperSubmission": "الموعد النهائي لتقديم المساهمات",
+            "submissionVerdict": "إعلان قرارات قبول المساهمات",
+            "fullPaperDeadline": "الموعد النهائي لتقديم البحوث الكاملة",
+            "eventStart": "تاريخ بداية الفعالية"
+          }
+        },
+        "fields": {
+          "eventStartDate": {
+            "label": "تاريخ بداية الفعالية",
+            "description": "التاريخ الذي ستبدأ فيه الفعالية"
+          },
+          "eventEndDate": {
+            "label": "تاريخ نهاية الفعالية",
+            "description": "التاريخ الذي ستنتهي فيه الفعالية"
+          },
+          "abstractSubmissionDeadline": {
+            "label": "الموعد النهائي لتقديم الملخصات",
+            "description": "آخر موعد لتقديم ملخصات البحوث"
+          },
+          "abstractReviewResultDate": {
+            "label": "تاريخ إعلان نتائج مراجعة الملخصات",
+            "description": "موعد إعلان نتائج مراجعة الملخصات المقدمة"
+          },
+          "fullPaperSubmissionDeadline": {
+            "label": "الموعد النهائي لتقديم البحوث الكاملة",
+            "description": "آخر موعد لتقديم البحوث الكاملة"
+          },
+          "revisionDeadline": {
+            "label": "الموعد النهائي للتعديلات",
+            "description": "آخر موعد لتقديم تعديلات البحوث"
+          },
+          "submissionDeadline": {
+            "label": "الموعد النهائي لتقديم المساهمات",
+            "description": "آخر موعد لتقديم المساهمات البحثية"
+          },
+          "submissionVerdictDeadline": {
+            "label": "موعد إعلان قرارات القبول",
+            "description": "تاريخ إعلان قرارات قبول أو رفض المساهمات"
+          },
+          "fullPaperDeadline": {
+            "label": "الموعد النهائي للنسخة النهائية",
+            "description": "آخر موعد لتقديم النسخة النهائية من البحث"
+          },
+          "registrationDeadline": {
+            "label": "الموعد النهائي للتسجيل",
+            "description": "آخر موعد للتسجيل في الفعالية"
+          },
+          "notificationDate": {
+            "label": "تاريخ الإعلان عن النتائج",
+            "description": "تاريخ إعلام المشاركين بقبول أو رفض مشاركاتهم"
+          }
+        }
+      },
+      "topicSelection": {
+        "title": "اختيار المواضيع البحثية",
+        "description": "اختر المواضيع البحثية المرتبطة بالفعالية",
+        "search": {
+          "placeholder": "ابحث عن المواضيع البحثية...",
+          "noResults": "لم يتم العثور على مواضيع مطابقة",
+          "loading": "جارٍ البحث..."
+        },
+        "selection": {
+          "selected": "المواضيع المختارة ({count})",
+          "selectAtLeastOne": "يرجى اختيار موضوع بحثي واحد على الأقل",
+          "remove": "إزالة",
+          "add": "إضافة"
+        },
+        "categories": {
+          "all": "جميع المجالات",
+          "filter": "تصفية حسب المجال"
+        }
+      },
+      "subscription": {
+        "limitReached": {
+          "title": "تم الوصول إلى الحد الأقصى للفعاليات",
+          "freeDescription": "لقد وصلت إلى الحد الأقصى للفعاليات النشطة (1 فعالية) في الخطة المجانية.",
+          "paidDescription": "لقد وصلت إلى الحد الأقصى للفعاليات النشطة ({limit} فعاليات) في خطتك الحالية.",
+          "upgradePrompt": "قم بترقية خطتك لإنشاء المزيد من الفعاليات",
+          "upgradeButton": "ترقية الخطة",
+          "manageEvents": "إدارة الفعاليات الحالية"
+        }
+      },
+      "success": {
+        "title": "تم إنشاء الفعالية بنجاح!",
+        "description": "تم إنشاء فعاليتك الأكاديمية بنجاح. يمكنك الآن إدارتها من لوحة التحكم.",
+        "actions": {
+          "viewEvent": "عرض الفعالية",
+          "createAnother": "إنشاء فعالية أخرى",
+          "backToDashboard": "العودة إلى لوحة التحكم"
+        }
+      },
+      "errors": {
+        "title": "خطأ في إنشاء الفعالية",
+        "generic": "حدث خطأ أثناء إنشاء الفعالية. يرجى المحاولة مرة أخرى.",
+        "validation": "يرجى التحقق من البيانات المدخلة وإصلاح الأخطاء",
+        "network": "خطأ في الاتصال. يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى",
+        "unauthorized": "ليس لديك صلاحية لإنشاء فعاليات. يرجى التحقق من نوع حسابك.",
+        "retry": "إعادة المحاولة"
+      },
+      "loading": {
+        "creating": "جارٍ إنشاء الفعالية...",
+        "loadingTopics": "جارٍ تحميل المواضيع...",
+        "loadingLocations": "جارٍ تحميل المواقع...",
+        "submitting": "جارٍ الإرسال..."
+      },
+      "validation": {
+        "required": "هذا الحقل إلزامي",
+        "invalidEmail": "يُرجى إدخال عنوان بريد إلكتروني صحيح",
+        "invalidUrl": "يُرجى إدخال رابط صحيح",
+        "invalidPrice": "يُرجى إدخال سعر صحيح",
+        "selectAtLeastOneTopic": "يرجى اختيار موضوع بحثي واحد على الأقل",
+        "eventEndDateMustBeAfterStart": "تاريخ النهاية يجب أن يكون بعد تاريخ البداية",
+        "abstractDeadlineMustBeBeforeEvent": "موعد تقديم الملخصات يجب أن يكون قبل بداية الفعالية",
+        "abstractResultMustBeAfterDeadline": "تاريخ نتائج مراجعة الملخصات يجب أن يكون بعد الموعد النهائي لتقديم الملخصات",
+        "submissionDeadlineMustBeAfterAbstractResult": "الموعد النهائي لتقديم الأوراق يجب أن يكون بعد تاريخ نتائج مراجعة الملخصات",
+        "verdictMustBeAfterSubmission": "تاريخ إعلان قرار قبول الأوراق يجب أن يكون بعد الموعد النهائي لتقديمها",
+        "fullPaperMustBeAfterVerdict": "الموعد النهائي لتقديم النسخة النهائية من الورقة يجب أن يكون بعد تاريخ إعلان القرار",
+        "fullPaperSubmissionMustBeAfterAbstractResult": "الموعد النهائي لتقديم الأوراق الكاملة يجب أن يكون بعد تاريخ نتائج مراجعة الملخصات",
+        "fullPaperSubmissionMustBeBeforeEvent": "الموعد النهائي لتقديم الأوراق الكاملة يجب أن يكون قبل تاريخ بدء الفعالية",
+        "fullPaperSubmissionMustBeBeforeVerdict": "يجب أن يكون موعد تقديم الأوراق الكاملة قبل إعلان القرار",
+        "verdictMustBeAfterAbstractResult": "يجب أن يكون إعلان القرار بعد نتائج مراجعة الملخصات",
+        "revisionMustBeAfterVerdict": "الموعد النهائي لتقديم التعديلات يجب أن يكون بعد تاريخ إعلان القرار",
+        "revisionMustBeBeforeEvent": "الموعد النهائي لتقديم التعديلات يجب أن يكون قبل تاريخ بدء الفعالية"
+      }
+    },
+    "discovery": {
+      "title": "اكتشاف الفعاليات الأكاديمية",
+      "description": "ابحث واكتشف الفعاليات الأكاديمية والمؤتمرات العلمية في الجزائر",
+      "searching": "جارٍ البحث...",
+      "resultsCount": "{count, plural, zero {لا توجد فعاليات} one {فعالية واحدة} two {فعاليتان} few {# فعاليات} many {# فعالية} other {# فعالية}}",
+      "noEvents": "لا توجد فعاليات",
+      "noEventsDescription": "لم يتم العثور على فعاليات تطابق معايير البحث الخاصة بك. جرب تعديل المرشحات أو البحث بكلمات مختلفة."
+    },
+    "search": {
+      "placeholder": "ابحث عن الفعاليات بالاسم أو الموضوع أو المنظم...",
+      "button": "بحث",
+      "tip": "استخدم كلمات مفتاحية متعددة للحصول على نتائج أفضل"
+    },
+    "filters": {
+      "title": "مرشحات البحث",
+      "activeCount": "{count, plural, zero {لا توجد مرشحات نشطة} one {مرشح واحد نشط} two {مرشحان نشطان} few {# مرشحات نشطة} many {# مرشحاً نشطاً} other {# مرشح نشط}}",
+      "clearAll": "مسح الكل",
+      "expand": "إظهار المرشحات",
+      "collapse": "إخفاء المرشحات",
+      "apply": "تطبيق المرشحات",
+      "topics": "المواضيع",
+      "selectTopics": "اختر المواضيع...",
+      "location": "الموقع",
+      "allLocations": "جميع الولايات",
+      "status": "الحالة",
+      "allStatuses": "جميع الحالات",
+      "format": "نوع الفعالية",
+      "allFormats": "جميع الأنواع",
+      "startDate": "تاريخ البداية",
+      "selectStartDate": "اختر تاريخ البداية",
+      "endDate": "تاريخ النهاية",
+      "selectEndDate": "اختر تاريخ النهاية"
+    },
+    "card": {
+      "organizer": "المنظم",
+      "submissionDeadline": "موعد تقديم الملخصات",
+      "viewDetails": "عرض التفاصيل",
+      "bookmarkTooltip": "حفظ في المفضلة (قريباً)"
+    },
+    "pagination": {
+      "showing": "عرض",
+      "to": "إلى",
+      "of": "من أصل",
+      "results": "نتيجة",
+      "pageSize": "عدد النتائج",
+      "previous": "السابق",
+      "next": "التالي"
+    },
+    "loading": "جارٍ تحميل الفعاليات...",
+    "errors": {
+      "title": "خطأ في تحميل الفعاليات",
+      "fetchFailed": "فشل في جلب الفعاليات من قاعدة البيانات. يرجى المحاولة مرة أخرى."
+    }
   },
   "HomePage": {
     "title": "مرحباً بكم في منصة Eventy360"
@@ -229,6 +573,19 @@
     "passwordRequired": "يجب إدخال كلمة المرور",
     "passwordsDontMatch": "كلمتا المرور غير متطابقتين",
     "invalidUrl": "يُرجى إدخال رابط صحيح",
+    "invalidEmail": "يُرجى إدخال عنوان بريد إلكتروني صحيح",
+    "invalidPrice": "يُرجى إدخال سعر صحيح",
+    "selectAtLeastOneTopic": "يُرجى اختيار موضوع واحد على الأقل",
+    "eventEndDateMustBeAfterStart": "يجب أن يكون تاريخ انتهاء الفعالية بعد تاريخ البداية",
+    "abstractDeadlineMustBeBeforeEvent": "يجب أن يكون موعد تقديم الملخصات قبل تاريخ الفعالية",
+    "abstractResultMustBeAfterDeadline": "يجب أن يكون موعد نتائج المراجعة بعد موعد تقديم الملخصات",
+    "submissionDeadlineMustBeAfterAbstractResult": "يجب أن يكون موعد تقديم الأوراق بعد موعد نتائج المراجعة",
+    "verdictMustBeAfterSubmission": "يجب أن يكون موعد إعلان القرار بعد موعد تقديم الأوراق",
+    "fullPaperMustBeAfterVerdict": "يجب أن يكون موعد الأوراق الكاملة بعد موعد إعلان القرار",
+    "fullPaperSubmissionMustBeAfterAbstractResult": "يجب أن يكون موعد تقديم الأوراق الكاملة بعد نتائج مراجعة الملخصات",
+    "fullPaperSubmissionMustBeBeforeEvent": "يجب أن يكون موعد تقديم الأوراق الكاملة قبل تاريخ الفعالية",
+    "revisionMustBeAfterVerdict": "يجب أن يكون موعد التعديل بعد موعد إعلان القرار",
+    "revisionMustBeBeforeEvent": "يجب أن يكون موعد التعديل قبل تاريخ الفعالية",
     "invalidEnumValue": "يُرجى اختيار قيمة صالحة من القائمة",
     "fileTypeInvalid": "نوع الملف غير مدعوم. الأنواع المدعومة: {types}",
     "fileSizeTooLarge": "حجم الملف يتجاوز الحد المسموح به. الحد الأقصى هو {maxSize} ميغابايت.",
@@ -448,10 +805,12 @@
       "hybrid": "مختلط (حضوري وافتراضي)"
     },
     "EventStatus": {
-      "published": "منشور",
-      "active": "نشط",
-      "completed": "مكتمل",
-      "canceled": "ملغى"
+      "published": "مفتوح للمشاركة",
+      "abstract_review": "تقييم الملخصات",
+      "full_paper_submission_open": "استقبال البحوث الكاملة",
+      "full_paper_review": "تقييم البحوث الكاملة",
+      "completed": "منتهي",
+      "canceled": "ملغي"
     },
     "SubmissionStatus": {
       "received": "تم الاستلام",
@@ -1055,15 +1414,7 @@
       "verificationApproved": "تم توثيق الحساب بنجاح",
       "documentPreview": {
         "documentPathMissing": "مسار المستند مفقود",
-        "invalidDocumentPath": "تنسيق مسار المستند غير صالح",
-        "invalidDocumentStructure": "بنية مسار المستند غير صالحة",
-        "failedToGenerateUrl": "فشل إنشاء عنوان URL للمستند",
-        "unknownError": "خطأ غير معروف",
-        "verificationDocument": "مستند التوثيق",
-        "refreshDocument": "تحديث المستند"
-      },
-      "approveRejectActions": {
-        "reasonTooShort": "سبب الرفض قصير جدًا. يرجى تقديم المزيد من التفاصيل.",
+       
         "approveConfirmation": "هل أنت متأكد من أنك تريد الموافقة على طلب التوثيق هذا؟ سيؤدي ذلك إلى وضع علامة على حساب المستخدم كموثق.",
         "rejectConfirmation": "يرجى تقديم سبب لرفض طلب التوثيق هذا. سيكون السبب مرئيًا للمستخدم.",
         "minimumCharactersNote": "الحد الأدنى 10 أحرف. كن محددًا بشأن سبب رفض الطلب.",

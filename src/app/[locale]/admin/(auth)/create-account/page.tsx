@@ -3,7 +3,7 @@ import { AdminCreateAccountForm, AuthCard, AuthLayout } from '@/components/admin
 import { createServerSupabaseClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 
-export default async function AdminCreateAccountPage({ params }: { params: { locale: string } }) {
+export default async function AdminCreateAccountPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations('AdminAuth.CreateAccountPage');
   

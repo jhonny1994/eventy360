@@ -2,7 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import { redirectAuthenticatedAdmin } from '@/utils/admin/auth-navigation';
 import { AuthLayout, AuthCard, AdminLoginForm } from '@/components/admin/auth';
 
-export default async function AdminLoginPage({ params }: { params: { locale: string } }) {
+export default async function AdminLoginPage({ params }: { params: Promise<{ locale: string }> }) {
   // Extract locale first
   const { locale } = await params;
   

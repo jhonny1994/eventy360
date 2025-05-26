@@ -10,7 +10,7 @@ import ProfilePageHeader from "./ui/ProfilePageHeader";
 import ProfileCard from "./ui/ProfileCard";
 
 type Props = {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 };
 
 /**

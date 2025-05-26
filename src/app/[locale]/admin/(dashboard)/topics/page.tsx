@@ -24,12 +24,12 @@ interface Topic {
 }
 
 type TopicsListProps = {
-  searchParams: {
+  searchParams: Promise<{
     search?: string;
     page?: string;
     page_size?: string;
-  };
-  params: { locale: string };
+  }>;
+  params: Promise<{ locale: string }>;
 };
 
 // Default values for pagination
@@ -47,12 +47,12 @@ export const revalidate = 0;
  */
 export default async function AdminTopicsPage({
   params,
-  searchParams = {},
+  searchParams,
 }: TopicsListProps) {
   const { locale } = await params;
   const isRtl = locale === 'ar';
   const searchParamsData = await searchParams;
-  const { search, page: pageParam, page_size: pageSizeParam } = searchParamsData;
+  const { search, page: pageParam, page_size: pageSizeParam } = searchParamsData || {};
   const t = await getTranslations("AdminTopics");
 
   // Parse pagination parameters with defaults

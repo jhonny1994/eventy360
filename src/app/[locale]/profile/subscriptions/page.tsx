@@ -6,7 +6,7 @@ import { getAppSettings } from '@/lib/appConfig';
 import ProfilePageHeader from '../ui/ProfilePageHeader';
 
 type Props = {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 };
 
 /**

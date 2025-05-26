@@ -61,7 +61,7 @@ export default async function ProfileLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
   const supabase = await createServerSupabaseClient();
@@ -119,6 +119,7 @@ export default async function ProfileLayout({
     // New navigation translations
     dashboard: navT('profileDashboard'),
     profile: navT('profile'),
+    events: navT('events'),
     verification: navT('verification'),
     subscriptions: navT('subscriptions'),
     security: navT('security'),

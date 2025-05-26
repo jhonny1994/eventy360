@@ -17,7 +17,7 @@ import { callRpcFunction } from '@/lib/hooks/useRpcFunction';
 export default async function PaymentDetailsPage({
   params
 }: {
-  params: { locale: string; id: string }
+  params: Promise<{ locale: string; id: string }>
 }) {
   const { locale, id } = await params;
   const isRtl = locale === 'ar';

@@ -5,7 +5,7 @@ import TopicSubscriptionsCard from '../ui/TopicSubscriptionsCard';
 import ProfilePageHeader from '../ui/ProfilePageHeader';
 
 type Props = {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 };
 
 /**

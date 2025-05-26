@@ -10,6 +10,7 @@ import {
   HiOutlineLockClosed,
   HiOutlineIdentification,
   HiOutlineDocumentText,
+  HiOutlineCalendar,
 } from "react-icons/hi";
 
 // Map of icon names to components
@@ -22,6 +23,7 @@ const iconComponents = {
   lock: HiOutlineLockClosed,
   id: HiOutlineIdentification,
   documentText: HiOutlineDocumentText,
+  calendar: HiOutlineCalendar,
 };
 
 interface ProfileCardProps {

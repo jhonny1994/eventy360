@@ -4,13 +4,13 @@ import { requireAdmin } from '@/utils/admin/auth';
 import { BackButton } from '@/components/admin/ui';
 
 interface RecordPaymentPageProps {
-  params: {
+  params: Promise<{
     locale: string;
-  };
+  }>;
 }
 
 export default async function RecordPaymentPage({ params }: RecordPaymentPageProps) {
-  const { locale } = params;
+  const { locale } = await params;
   const t = await getTranslations('AdminPayments');
   
   // Ensure only admins can access this page
