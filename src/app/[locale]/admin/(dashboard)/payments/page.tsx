@@ -153,7 +153,6 @@ export default async function AdminPaymentsPage({
           {pageDescription}
         </p>
       </div>
-
       {/* Filter section */}
       <div className="flex flex-col sm:flex-row justify-between mb-4 gap-4">
         <div className="flex items-center">
@@ -194,7 +193,6 @@ export default async function AdminPaymentsPage({
           </form>
         </div>
       </div>
-
       {/* Main content */}
       <Card>
         {rpcError ? (
@@ -325,4 +323,4 @@ export default async function AdminPaymentsPage({
       </Card>
     </div>
   );
-} 
+}

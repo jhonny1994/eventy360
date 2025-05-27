@@ -64,7 +64,7 @@ export default async function ProfileEventsPage({
         locale={locale}      >
         {/* Create Event Button - only show for organizers */}
         {profileData.user_type === 'organizer' && (
-          <Link href={`/${locale}/profile/events/create`}>
+          <Link href={`/${locale}/profile/events/create`} >
             <Button color="info" size="sm">
               <HiPlusCircle className={`h-4 w-4 ${isRtl ? 'ml-2' : 'mr-2'}`} />
               {tProfile('createEvent')}
@@ -72,7 +72,6 @@ export default async function ProfileEventsPage({
           </Link>
         )}
       </ProfilePageHeader>
-
       {/* Events discovery container wrapped in ProfileCard */}
       <ProfileCard locale={locale} className="p-0">
         <div className="p-6">

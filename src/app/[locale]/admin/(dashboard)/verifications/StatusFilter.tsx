@@ -44,7 +44,7 @@ export default function StatusFilter({
 
   return (
     <div className="flex flex-wrap gap-2">
-      <Link href={getFilterUrl(null)}>
+      <Link href={getFilterUrl(null)} >
         <Button 
           color={!activeFilter ? 'info' : 'light'}
           size="sm"
@@ -54,8 +54,7 @@ export default function StatusFilter({
           {translations.allRequests}
         </Button>
       </Link>
-      
-      <Link href={getFilterUrl('pending')}>
+      <Link href={getFilterUrl('pending')} >
         <Button 
           color={activeFilter === 'pending' ? 'warning' : 'light'}
           size="sm"
@@ -67,8 +66,7 @@ export default function StatusFilter({
           </Badge>
         </Button>
       </Link>
-      
-      <Link href={getFilterUrl('approved')}>
+      <Link href={getFilterUrl('approved')} >
         <Button 
           color={activeFilter === 'approved' ? 'success' : 'light'}
           size="sm"
@@ -76,8 +74,7 @@ export default function StatusFilter({
           {translations.approved}
         </Button>
       </Link>
-      
-      <Link href={getFilterUrl('rejected')}>
+      <Link href={getFilterUrl('rejected')} >
         <Button 
           color={activeFilter === 'rejected' ? 'failure' : 'light'}
           size="sm"

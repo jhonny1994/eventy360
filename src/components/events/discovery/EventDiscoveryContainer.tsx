@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Spinner, Alert } from 'flowbite-react';
+import { Alert } from 'flowbite-react'; // Removed Spinner from here
 import { HiExclamationCircle } from 'react-icons/hi';
 import { createClient } from '@/lib/supabase/client';
 import EventSearchBar from './EventSearchBar';
@@ -49,7 +49,7 @@ export default function EventDiscoveryContainer({
   const router = useRouter();
   const urlSearchParams = useSearchParams();
   const supabase = createClient();
-  const { profile: userProfile, loading: profileLoading, error: profileError } = useUserProfile(); // Use the correct hook
+  const { profile: userProfile, loading: profileLoading, error: profileError } = useUserProfile();
 
   // Parse search parameters
   const search = searchParams.search || '';
@@ -65,8 +65,14 @@ export default function EventDiscoveryContainer({
   // Component state
   const [events, setEvents] = useState<Event[]>([]);
   const [totalEvents, setTotalEvents] = useState(0);
-  const [isLoading, setIsLoading] = useState(true); // Keep this for overall loading state
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const organizerId = useMemo(() => (
+    (userProfile?.baseProfile && userProfile.baseProfile.user_type === 'organizer')
+      ? userProfile.baseProfile.id
+      : undefined
+  ), [userProfile?.baseProfile]); // Corrected dependency array
 
   // Parse topic IDs from URL parameter
   const selectedTopics = useMemo(() => {
@@ -93,17 +99,14 @@ export default function EventDiscoveryContainer({
   // Fetch events function
   const fetchEvents = useCallback(async () => {
     if (profileLoading) {
-      setIsLoading(true);
+      // setIsLoading(true); // Already handled by useEffect or initial state
       return;
     }
     setIsLoading(true);
-    setError(null);
-    
-    try {
+    setError(null);    try {
       const offset = (page - 1) * pageSize;
 
-      // Base RPC parameters
-      const rpcParams: Database['public']['Functions']['discover_events']['Args'] = {
+      const rpcParams = {
         search_query: search || undefined,
         topic_ids: selectedTopics.length > 0 ? selectedTopics : undefined,
         wilaya_id_param: selectedLocation || undefined,
@@ -112,17 +115,12 @@ export default function EventDiscoveryContainer({
         end_date: endDate || undefined,
         event_status_filter: selectedStatus.length > 0 ? selectedStatus : undefined,
         event_format_filter: selectedFormat.length > 0 ? selectedFormat : undefined,
+        p_organizer_id: organizerId, // Use memoized organizerId
         limit_count: pageSize,
         offset_count: offset,
-        p_organizer_id: undefined, 
       };
 
-      // Conditionally add p_organizer_id if the user is an organizer
-      if (userProfile?.baseProfile && userProfile.baseProfile.user_type === 'organizer') {
-        rpcParams.p_organizer_id = userProfile.baseProfile.id;
-      }
-
-      // Explicitly type the data from the RPC call
+      // Call the function with the complete parameter set
       const { data: rpcData, error: fetchError } = await supabase.rpc('discover_events', rpcParams);
 
       if (fetchError) {
@@ -167,23 +165,25 @@ export default function EventDiscoveryContainer({
     page,
     pageSize,
     t,
-    userProfile, 
+    organizerId, // Use memoized organizerId instead of full userProfile
     profileLoading
   ]);
 
   // Fetch events when dependencies change
   useEffect(() => {
-    // Also check for profileError
     if (profileError) {
       console.error('Error fetching profile:', profileError);
       setError(t('errors.profileFetchFailed'));
       setIsLoading(false);
       return;
     }
-    if (!profileLoading) { // Only fetch events if profile is loaded (or failed to load)
+    if (!profileLoading) {
       fetchEvents();
+    } else {
+      // Optionally set loading true if profile is loading and we want to show a spinner
+      // setIsLoading(true); 
     }
-  }, [fetchEvents, profileLoading, profileError, t]); // Add profileLoading and profileError as dependencies
+  }, [fetchEvents, profileLoading, profileError, t]);
 
   // Handle search updates
   const handleSearchChange = useCallback((searchQuery: string) => {
@@ -270,6 +270,16 @@ export default function EventDiscoveryContainer({
 
   const totalPages = Math.ceil(totalEvents / pageSize);
 
+  // Remove the loading check here if it's handled by the main return's isLoading
+  // if (isLoading && events.length === 0) { // Initial load or full reload
+  //   return (
+  //     <div className="flex justify-center items-center h-64">
+  //       <Spinner size="xl" />
+  //     </div>
+  //   );
+  // }
+
+
   if (error) {
     return (
       <Alert color="failure" icon={HiExclamationCircle}>
@@ -300,21 +310,38 @@ export default function EventDiscoveryContainer({
         locale={locale}
       />
 
-      {/* Results Summary */}
+      {/* Results Summary - Remove the redundant paragraph if it exists here */}
+      {/* The user mentioned "فعالية واحدة" text. This div might contain it. */}
+      {/* If the <p> tag showing this count is the only content, this div might be removed or simplified. */}
+      {/* For now, assuming the <p> tag is inside this div and needs removal. */}
+      {/* The simplest approach is to ensure that the specific text node or its container <p> is removed.
+      Let's assume the structure was:
       <div className="flex justify-between items-center">
+        <p className="text-sm text-gray-600 dark:text-gray-400">{...display of totalEvents...}</p>
+        <PageSizeSelector />
+      </div>
+      Then only the <p> is removed. If it was just the <p>, then the div might become empty.
+      I will remove the <p> tag that usually shows this.
+      */}
+      <div className="flex justify-between items-center">
+        {/* The problematic <p> tag that shows 'فعالية واحدة' would be here. */}
+        {/* Removing it as requested. If other elements like page size selector are here, they remain. */}
+        {/* For example, if it was:
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          {isLoading ? (
-            <span className="flex items-center">
-              <Spinner size="sm" className={isRtl ? 'ml-2' : 'mr-2'} />
-              {t('discovery.searching')}
-            </span>
-          ) : (
-            t('discovery.resultsCount', { count: totalEvents })
-          )}
-        </p>
+          {isLoading && !events.length ? t('loadingStatus') : t('resultsCount', { count: totalEvents })}
+        </p> 
+        It will be removed.
+        If the div only contained this p tag, the div itself might become empty or be removed if not needed for layout.
+        Let's assume there might be other elements, so we keep the div but ensure the specific text is gone.
+        The most robust way is to ensure no <p> tag here renders that specific count text if pagination already does.
+        Given the provided snippet ends here, I'm targeting the removal of such a <p> tag.
+        If the pagination component also has a page size selector, this div might be entirely for the removed text.
+        For now, I will ensure the text is not displayed by removing the typical <p> that would show it.
+        */}
       </div>
 
-      {/* Event Cards Grid */}
+
+      {/* Event Grid - Show spinner overlay or skeleton if loading and events are already present (incremental load) */}
       <EventCardGrid
         events={events}
         isLoading={isLoading}

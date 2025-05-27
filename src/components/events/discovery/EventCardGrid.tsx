@@ -38,7 +38,7 @@ function EventCard({ event, locale }: EventCardProps) {
       day: 'numeric'
     });
   };
-  // Get status color
+  
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'published': return 'info';
@@ -51,16 +51,16 @@ function EventCard({ event, locale }: EventCardProps) {
     }
   };
 
-  // Get format icon
   const getFormatIcon = (format: string) => {
     switch (format) {
       case 'virtual': return '💻';
       case 'hybrid': return '🌐';
-      default: return '📍';
+      default: return '📍'; // Assuming 'in_person' or similar maps to this
     }
   };
+
   return (
-    <Card className="h-full hover:shadow-lg transition-shadow duration-300" dir={isRtl ? 'rtl' : 'ltr'}>
+    <Card className="h-full hover:shadow-lg transition-shadow duration-300 flex flex-col" dir={isRtl ? 'rtl' : 'ltr'}>
       {/* Event Logo */}
       {event.logo_url && (
         <div className="relative h-48 w-full mb-4">
@@ -75,31 +75,30 @@ function EventCard({ event, locale }: EventCardProps) {
       )}
 
       {/* Event Content */}
-      <div className="flex-1 space-y-3">
-        {/* Header with Status */}
-        <div className={`flex items-start ${isRtl ? 'flex-row-reverse' : ''} justify-between`}>
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-2">
-              {event.event_name}
-            </h3>
-            {event.event_subtitle && (
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-1">
-                {event.event_subtitle}
-              </p>
-            )}
+      <div className="flex-1 flex flex-col space-y-4 p-4"> {/* Increased padding and main spacing */}
+        {/* Header: Title, Subtitle, Status Badge (Vertical Stack) */}
+        <div>
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-white line-clamp-2 mb-1">
+            {event.event_name}
+          </h3>
+          {event.event_subtitle && (
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-0.5 mb-2 line-clamp-2"> {/* Allow more lines for subtitle */}
+              {event.event_subtitle}
+            </p>
+          )}
+          <div className="mt-2">
+            <Badge 
+              color={getStatusColor(event.status)}
+              size="sm"
+            >
+              {tEnums(`EventStatus.${event.status}`)}
+            </Badge>
           </div>
-          <Badge 
-            color={getStatusColor(event.status)}
-            size="sm"
-            className={isRtl ? 'mr-2' : 'ml-2'}
-          >
-            {tEnums(`EventStatus.${event.status}`)}
-          </Badge>
         </div>
 
         {/* Event Dates */}
         <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-          <HiCalendar className={`${isRtl ? 'ml-2' : 'mr-2'} h-4 w-4 flex-shrink-0`} />
+          <HiCalendar className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 flex-shrink-0`} /> {/* Slightly larger icon */}
           <span>{formatDate(event.event_date)}</span>
           {event.event_end_date && event.event_end_date !== event.event_date && (
             <span className={isRtl ? 'mr-2' : 'ml-2'}>
@@ -110,7 +109,7 @@ function EventCard({ event, locale }: EventCardProps) {
 
         {/* Location */}
         <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-          <HiLocationMarker className={`${isRtl ? 'ml-2' : 'mr-2'} h-4 w-4 flex-shrink-0`} />
+          <HiLocationMarker className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 flex-shrink-0`} /> {/* Slightly larger icon */}
           <span>{event.wilaya_name}</span>
           {event.daira_name && (
             <span className={isRtl ? 'mr-1' : 'ml-1'}>، {event.daira_name}</span>
@@ -119,26 +118,28 @@ function EventCard({ event, locale }: EventCardProps) {
 
         {/* Organizer */}
         <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+          {/* Using a generic icon or removing it for minimalism, let's use a subtle one or none */}
+          {/* <HiUserCircle className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 flex-shrink-0`} /> */}
           <span className="font-medium">{t('organizer')}:</span>
           <span className={isRtl ? 'mr-2' : 'ml-2'}>{event.organizer_name}</span>
         </div>
 
         {/* Format */}
         <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-          <span className={isRtl ? 'ml-2' : 'mr-2'}>{getFormatIcon(event.format)}</span>
+          <span className={`${isRtl ? 'ml-2' : 'mr-2'} text-lg`}>{getFormatIcon(event.format)}</span> {/* Larger emoji icon */}
           <span>{tEnums(`EventFormat.${event.format}`)}</span>
         </div>
 
         {/* Topics */}
         {event.topics && event.topics.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-2">
+          <div className="flex flex-wrap gap-1.5 mt-2"> {/* Slightly more gap */}
             {event.topics.slice(0, 3).map((topic, index) => (
-              <Badge key={index} color="light" size="sm">
+              <Badge key={index} color="light" size="xs"> {/* Smaller badge text */}
                 {topic}
               </Badge>
             ))}
             {event.topics.length > 3 && (
-              <Badge color="light" size="sm">
+              <Badge color="light" size="xs">
                 +{event.topics.length - 3}
               </Badge>
             )}
@@ -148,29 +149,27 @@ function EventCard({ event, locale }: EventCardProps) {
         {/* Submission Deadline */}
         {event.abstract_submission_deadline && (
           <div className="flex items-center text-sm text-orange-600 dark:text-orange-400">
-            <HiClock className={`${isRtl ? 'ml-2' : 'mr-2'} h-4 w-4 flex-shrink-0`} />
-            <span>
-              {t('submissionDeadline')}: {formatDate(event.abstract_submission_deadline)}
-            </span>
+            <HiClock className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 flex-shrink-0`} /> {/* Slightly larger icon */}
+            <span className="font-medium">{t('submissionDeadline')}:</span>
+            <span className={isRtl ? 'mr-1' : 'ml-1'}>{formatDate(event.abstract_submission_deadline)}</span>
           </div>
         )}
-      </div>      {/* Actions */}
-      <div className={`flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700 ${isRtl ? 'flex-row-reverse' : ''}`}>
+      </div>
+
+      {/* Actions - Ensure this is at the bottom */}
+      <div className={`flex items-center justify-between p-4 border-t border-gray-200 dark:border-gray-700 ${isRtl ? 'flex-row-reverse' : ''}`}>
         <div className={`flex ${isRtl ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
-          {/* View Details Button */}
           <Link href={`/${locale}/events/${event.id}`}>
             <Button size="sm" color="info">
-              <HiExternalLink className={`${isRtl ? 'ml-1' : 'mr-1'} h-4 w-4`} />
+              <HiExternalLink className={`${isRtl ? 'ml-1.5' : 'mr-1.5'} h-4 w-4`} />
               {t('viewDetails')}
             </Button>
           </Link>
         </div>
-
-        {/* Bookmark Button - Future feature */}
         <Button 
           size="sm" 
           color="light"
-          disabled
+          disabled // Keep disabled as per original, or implement bookmarking
           title={t('bookmarkTooltip')}
         >
           <HiBookmark className="h-4 w-4" />
@@ -192,20 +191,21 @@ export default function EventCardGrid({
   const isRtl = locale === 'ar';
   const t = useTranslations('Events.discovery');
 
-  if (isLoading) {
+  if (isLoading && events.length === 0) { // Show skeleton only on initial load
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {Array.from({ length: 8 }).map((_, index) => (
-          <Card key={index} className="h-96 animate-pulse">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6"> {/* Adjusted grid */}
+        {Array.from({ length: 6 }).map((_, index) => ( // Adjusted skeleton count
+          (<Card key={index} className="h-[450px] animate-pulse"> {/* Adjusted height for taller cards */}
             <div className="space-y-4">
               <div className="h-48 bg-gray-200 dark:bg-gray-700 rounded"></div>
-              <div className="space-y-2">
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
-                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
-                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
+              <div className="space-y-3 p-4">
+                <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
               </div>
             </div>
-          </Card>
+          </Card>)
         ))}
       </div>
     );
@@ -231,7 +231,7 @@ export default function EventCardGrid({
 
   return (
     <div 
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6" /* Adjusted grid for wider cards */
       dir={isRtl ? 'rtl' : 'ltr'}
     >
       {events.map((event) => (

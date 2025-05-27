@@ -43,7 +43,7 @@ export default function StatusFilter({
 
   return (
     <div className="flex flex-wrap gap-2" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-      <Link href={getFilterUrl(null)}>
+      <Link href={getFilterUrl(null)} >
         <Button 
           color={!activeFilter ? 'info' : 'light'}
           size="sm"
@@ -53,8 +53,7 @@ export default function StatusFilter({
           {translations.allPayments}
         </Button>
       </Link>
-      
-      <Link href={getFilterUrl('pending_verification')}>
+      <Link href={getFilterUrl('pending_verification')} >
         <Button 
           color={activeFilter === 'pending_verification' ? 'warning' : 'light'}
           size="sm"
@@ -66,8 +65,7 @@ export default function StatusFilter({
           </Badge>
         </Button>
       </Link>
-      
-      <Link href={getFilterUrl('verified')}>
+      <Link href={getFilterUrl('verified')} >
         <Button 
           color={activeFilter === 'verified' ? 'success' : 'light'}
           size="sm"
@@ -75,8 +73,7 @@ export default function StatusFilter({
           {translations.verified}
         </Button>
       </Link>
-      
-      <Link href={getFilterUrl('rejected')}>
+      <Link href={getFilterUrl('rejected')} >
         <Button 
           color={activeFilter === 'rejected' ? 'failure' : 'light'}
           size="sm"

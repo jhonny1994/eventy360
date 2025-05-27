@@ -152,7 +152,6 @@ export default async function AdminVerificationsPage({
           {t("pendingRequestsCount", { count: pendingCount || 0 })}
         </p>
       </div>
-
       {/* Filter section */}
       <div className="flex flex-col sm:flex-row justify-between mb-4 gap-4">
         <div className="flex items-center">
@@ -193,7 +192,6 @@ export default async function AdminVerificationsPage({
           </form>
         </div>
       </div>
-
       {/* Main content */}
       <Card>
         {error ? (
@@ -273,7 +271,7 @@ export default async function AdminVerificationsPage({
 
                       {/* Actions column with view button */}
                       <td className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
-                        <Link href={`/${locale}/admin/verifications/${request.id}`}>
+                        <Link href={`/${locale}/admin/verifications/${request.id}`} >
                           <Button size="xs" color="info">
                             <HiEye className={`${isRtl ? 'ml-1' : 'mr-1'} h-4 w-4`} />
                             {t("actions.view")}

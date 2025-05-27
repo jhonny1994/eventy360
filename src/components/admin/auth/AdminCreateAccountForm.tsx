@@ -265,7 +265,6 @@ export default function AdminCreateAccountForm() {
           <span className="font-medium">{tForm('setupFailedAlertTitle')}</span> {formError}
         </Alert>
       )}
-
       {/* Pre-filled email field (read-only) */}
       <div>
         <div className="mb-2 block">
@@ -279,7 +278,6 @@ export default function AdminCreateAccountForm() {
           disabled
         />
       </div>
-
       {/* Pre-filled full name field (read-only) */}
       <div>
         <div className="mb-2 block">
@@ -293,7 +291,6 @@ export default function AdminCreateAccountForm() {
           disabled
         />
       </div>
-
       {/* Password field */}
       <div>
         <div className="mb-2 block">
@@ -321,7 +318,6 @@ export default function AdminCreateAccountForm() {
           <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
         )}
       </div>
-
       {/* Confirm password field */}
       <div>
         <div className="mb-2 block">
@@ -349,9 +345,7 @@ export default function AdminCreateAccountForm() {
           <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>
         )}
       </div>
-
       <p className="text-xs text-gray-500">{tForm('termsHint')}</p>
-
       <Button 
         type="submit" 
         color="primary" 
@@ -360,11 +354,13 @@ export default function AdminCreateAccountForm() {
       >
         {isSubmitting ? tForm('submittingButton') : tForm('submitButton')}
       </Button>
-
       {/* Login link */}
       <div className="text-center text-sm text-gray-500">
         {tForm('alreadyHaveAccount')}{' '}
-        <Link href={`/${locale}/admin/login`} className="text-primary hover:underline">
+        <Link
+          href={`/${locale}/admin/login`}
+          className="text-primary hover:underline"
+          >
           {tForm('loginLink')}
         </Link>
       </div>

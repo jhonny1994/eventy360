@@ -184,7 +184,6 @@ export default function ProfileSidebar({
           </h1>
         </div>
       )}
-
       {/* Sidebar - mobile (overlay) or desktop (fixed) */}
       <aside
         className={`${
@@ -217,15 +216,17 @@ export default function ProfileSidebar({
                     : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700/30'
                 } transition-colors duration-200`}
               >
-                <span className={`flex-shrink-0 ${isRtl ? 'ml-3' : 'mr-3'}`}>
-                  <item.icon className="w-5 h-5" />
-                </span>
-                <span className="flex-grow text-sm font-medium">{item.name}</span>
-                {isActive(item.href) && (
-                  <span className="flex-shrink-0">
-                    {isRtl ? <HiChevronLeft className="w-5 h-5" /> : <HiChevronRight className="w-5 h-5" />}
+                <>
+                  <span className={`flex-shrink-0 ${isRtl ? 'ml-3' : 'mr-3'}`}>
+                    <item.icon className="w-5 h-5" />
                   </span>
-                )}
+                  <span className="flex-grow text-sm font-medium">{item.name}</span>
+                  {isActive(item.href) && (
+                    <span className="flex-shrink-0">
+                      {isRtl ? <HiChevronLeft className="w-5 h-5" /> : <HiChevronRight className="w-5 h-5" />}
+                    </span>
+                  )}
+                </>
               </Link>
             ))}
           </nav>
@@ -243,7 +244,6 @@ export default function ProfileSidebar({
           </div>
         </div>
       </aside>
-
       {/* Dark overlay when mobile sidebar is open */}
       {isMobile && isMobileSidebarOpen && (
         <div
@@ -251,7 +251,6 @@ export default function ProfileSidebar({
           onClick={toggleSidebar}
         />
       )}
-
       {/* Push content down in mobile view to accommodate fixed header */}
       {isMobile && <div className="h-16 md:hidden" />}
     </>
@@ -399,4 +398,4 @@ export default function ProfileSidebar({
       </div>
     );
   }
-} 
+}

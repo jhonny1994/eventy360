@@ -41,7 +41,7 @@ export default function VerificationFilter({
 
   return (
     <div className="flex flex-wrap gap-2">
-      <Link href={getFilterUrl(null)}>
+      <Link href={getFilterUrl(null)} >
         <Button 
           color={!activeFilter ? 'info' : 'light'}
           size="sm"
@@ -51,8 +51,7 @@ export default function VerificationFilter({
           {translations.allRequests}
         </Button>
       </Link>
-      
-      <Link href={getFilterUrl('pending' as VerificationStatus)}>
+      <Link href={getFilterUrl('pending' as VerificationStatus)} >
         <Button 
           color={activeFilter === 'pending' ? 'warning' : 'light'}
           size="sm"
@@ -64,8 +63,7 @@ export default function VerificationFilter({
           </Badge>
         </Button>
       </Link>
-      
-      <Link href={getFilterUrl('approved' as VerificationStatus)}>
+      <Link href={getFilterUrl('approved' as VerificationStatus)} >
         <Button 
           color={activeFilter === 'approved' ? 'success' : 'light'}
           size="sm"
@@ -73,8 +71,7 @@ export default function VerificationFilter({
           {translations.approved}
         </Button>
       </Link>
-      
-      <Link href={getFilterUrl('rejected' as VerificationStatus)}>
+      <Link href={getFilterUrl('rejected' as VerificationStatus)} >
         <Button 
           color={activeFilter === 'rejected' ? 'failure' : 'light'}
           size="sm"

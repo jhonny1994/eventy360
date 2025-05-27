@@ -1230,32 +1230,19 @@ export type Database = {
         Returns: undefined
       }
       discover_events: {
-        Args:
-          | {
-              search_query?: string
-              topic_ids?: string[]
-              wilaya_id_param?: number
-              daira_id_param?: number
-              start_date?: string
-              end_date?: string
-              event_status_filter?: Database["public"]["Enums"]["event_status_enum"][]
-              event_format_filter?: Database["public"]["Enums"]["event_format_enum"][]
-              limit_count?: number
-              offset_count?: number
-            }
-          | {
-              search_query?: string
-              topic_ids?: string[]
-              wilaya_id_param?: number
-              daira_id_param?: number
-              start_date?: string
-              end_date?: string
-              event_status_filter?: Database["public"]["Enums"]["event_status_enum"][]
-              event_format_filter?: Database["public"]["Enums"]["event_format_enum"][]
-              p_organizer_id?: string
-              limit_count?: number
-              offset_count?: number
-            }
+        Args: {
+          search_query?: string
+          topic_ids?: string[]
+          wilaya_id_param?: number
+          daira_id_param?: number
+          start_date?: string
+          end_date?: string
+          event_status_filter?: Database["public"]["Enums"]["event_status_enum"][]
+          event_format_filter?: Database["public"]["Enums"]["event_format_enum"][]
+          p_organizer_id?: string
+          limit_count?: number
+          offset_count?: number
+        }
         Returns: {
           id: string
           event_name: string

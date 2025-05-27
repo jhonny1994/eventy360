@@ -52,16 +52,16 @@ export default function VerificationSection({
       try {
         const { data, error: apiError } = await supabase
           .from('latest_verification_requests')
-          .select('status')
+          .select('id, status') // Keep this selection
           .eq('user_id', userId)
-          .eq('status', 'pending')
-          .single();
+          .eq('status', 'pending'); // Removed .single()
           
-        if (apiError && apiError.code !== 'PGRST116') { // PGRST116 is "no rows returned" error
+        if (apiError) { // No need to check for PGRST116 specifically if not using .single()
           throw apiError;
         }
         
-        setHasPendingRequest(!!data);
+        // If data is an array, check if it's not empty
+        setHasPendingRequest(Array.isArray(data) && data.length > 0);
       } catch (err) {
         console.error('Error checking pending verification request:', err);
         setError(translations.verificationStatusError || 'Failed to check verification status');
@@ -121,7 +121,6 @@ export default function VerificationSection({
           )}
         </div>
       </div>
-
       {/* For users who are already verified, show verification status */}
       {isVerified ? (
         <div className={`bg-green-50 dark:bg-green-900/20 rounded-lg p-5 border border-green-200 dark:border-green-800`}>
@@ -131,20 +130,19 @@ export default function VerificationSection({
         </div>
       ) : (
         /* For users not verified, show uploader or pending request status */
-        <div className={`bg-gray-50 dark:bg-gray-800 rounded-lg p-5 border border-gray-200 dark:border-gray-700`}>
+        (<div className={`bg-gray-50 dark:bg-gray-800 rounded-lg p-5 border border-gray-200 dark:border-gray-700`}>
           <div className="mb-4">
             <p className="text-gray-600 dark:text-gray-400">
               {translations.verificationDescription.notVerified}
             </p>
           </div>
-          
           <VerificationDocumentUploader 
             isVerified={isVerified}
             hasPendingRequest={hasPendingRequest}
             onUploadSuccess={handleUploadSuccess}
           />
-        </div>
+        </div>)
       )}
     </div>
   );
-} 
+}

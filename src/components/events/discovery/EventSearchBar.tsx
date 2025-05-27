@@ -82,9 +82,7 @@ export default function EventSearchBar({
         >
           {isLoading ? (
             <Spinner size="sm" className={isRtl ? 'ml-1' : 'mr-1'} />
-          ) : (
-            <HiSearch className={`${isRtl ? 'ml-1' : 'mr-1'} h-4 w-4`} />
-          )}
+          ) : null}
           {t('button')}
         </Button>
       </div>
