@@ -390,6 +390,233 @@
       "fetchFailed": "فشل في جلب الفعاليات من قاعدة البيانات. يرجى المحاولة مرة أخرى."
     }
   },
+  "EventDetails": {
+    "title": "تفاصيل الفعالية",
+    "backToEvents": "العودة إلى الفعاليات",
+    "organizedBy": "ينظمها",
+    "eventDate": "تاريخ الفعالية",
+    "submissionDeadline": "موعد تقديم الملخصات",
+    "reviewDeadline": "موعد مراجعة الملخصات",
+    "notificationDate": "تاريخ الإشعار بالنتائج",
+    "maxParticipants": "الحد الأقصى للمشاركين",
+    "registrationFee": "رسوم التسجيل",
+    "topics": "المواضيع",
+    "eventType": "نوع الفعالية",
+    "timeline": {
+      "title": "الجدول الزمني",
+      "eventStarts": "بدء الفعالية",
+      "eventEnds": "انتهاء الفعالية",
+      "submissionDeadline": "آخر موعد لتقديم الملخصات",
+      "reviewDeadline": "آخر موعد للمراجعة",
+      "notificationDate": "تاريخ الإشعار بالقبول",
+      "abstractSubmissionOpens": "فتح باب تقديم الملخصات",
+      "registrationOpens": "فتح باب التسجيل",
+      "registrationCloses": "إغلاق باب التسجيل",
+      "eventDay": "يوم الفعالية",
+      "timeRemaining": {
+        "day": "يوم",
+        "days": "أيام",
+        "hour": "ساعة",
+        "hours": "ساعات",
+        "minute": "دقيقة",
+        "minutes": "دقائق",
+        "remaining": "متبقية",
+        "lessThanHour": "أقل من ساعة متبقية",
+        "today": "اليوم",
+        "until": "حتى",
+        "left": "متبقي"
+      },
+      "status": {
+        "deadlinePassed": "انتهى الموعد النهائي",
+        "completed": "مكتمل",
+        "upcoming": "قادم",
+        "active": "نشط"
+      },
+      "noInfo": "لا توجد معلومات عن الجدول الزمني لهذه الفعالية.",
+      "events": {
+        "submission": "تقديم الملخصات",
+        "review": "مراجعة الملخصات",
+        "notification": "إشعار النتائج",
+        "registration": "التسجيل",
+        "event": "الفعالية"
+      }
+    },
+    "actions": {
+      "sectionTitle": "الإجراءات",
+      "participation": "المشاركة",
+      "management": "الإدارة",
+      "editEvent": "تعديل الفعالية",
+      "manageEvent": "إدارة الفعالية",
+      "submitAbstract": "تقديم ملخص",
+      "registerEvent": "التسجيل في الفعالية",
+      "viewSubmissions": "عرض المقترحات",
+      "upgradeRequired": "يتطلب ترقية الاشتراك",
+      "register": "التسجيل",
+      "unregister": "إلغاء التسجيل",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "publish": "نشر",
+      "unpublish": "إلغاء النشر",
+      "archive": "أرشفة",
+      "duplicate": "نسخ",
+      "share": "مشاركة",
+      "export": "تصدير",
+      "download": "تحميل",
+      "print": "طباعة",
+      "status": {
+        "registrationOpen": "التسجيل مفتوح",
+        "registrationClosed": "التسجيل مغلق",
+        "submissionOpen": "تقديم الملخصات مفتوح",
+        "submissionClosed": "تقديم الملخصات مغلق",
+        "eventCompleted": "انتهت الفعالية",
+        "eventCancelled": "تم إلغاء الفعالية"
+      },
+      "messages": {
+        "registrationSuccess": "تم التسجيل بنجاح",
+        "registrationFailed": "فشل في التسجيل",
+        "submissionSuccess": "تم تقديم الملخص بنجاح",
+        "submissionFailed": "فشل في تقديم الملخص",
+        "updateSuccess": "تم التحديث بنجاح",
+        "updateFailed": "فشل في التحديث",
+        "deleteSuccess": "تم الحذف بنجاح",
+        "deleteFailed": "فشل في الحذف"
+      }
+    },
+    "status": {
+      "draft": "مسودة",
+      "published": "منشورة",
+      "archived": "مؤرشفة",
+      "cancelled": "ملغية"
+    },
+    "visibility": {
+      "public": "عامة",
+      "private": "خاصة"
+    },
+    "countdown": {
+      "daysLeft": "{days} يوم متبقي",
+      "hoursLeft": "{hours} ساعة متبقية",
+      "minutesLeft": "{minutes} دقيقة متبقية",
+      "expired": "انتهت المهلة"
+    },
+    "header": {
+      "createdDate": "تاريخ الإنشاء",
+      "eventInfo": "معلومات الفعالية",
+      "eventType": "نوع الفعالية",
+      "registrationFee": "رسوم التسجيل",
+      "free": "مجاني",
+      "maxParticipants": "الحد الأقصى",
+      "organizedBy": "ينظمها",
+      "statistics": {
+        "attendees": "الحاضرون",
+        "submissions": "المقترحات المقدمة",
+        "speakers": "المتحدثون",
+        "duration": "المدة",
+        "capacity": "السعة",
+        "remaining": "متبقي",
+        "registrations": "التسجيلات",
+        "views": "المشاهدات",
+        "visibility": "الرؤية"
+      },
+      "statusHeader": "الحالة",
+      "status": {
+        "upcoming": "قادمة",
+        "ongoing": "جارية",
+        "completed": "مكتملة",
+        "cancelled": "ملغية"
+      }
+    },
+    "location": {
+      "venue": "مكان الانعقاد",
+      "address": "العنوان",
+      "city": "المدينة",
+      "country": "البلد",
+      "copyAddress": "نسخ العنوان",
+      "directions": {
+        "getDirections": "الحصول على الاتجاهات",
+        "viewOnMap": "عرض على الخريطة"
+      },
+      "map": {
+        "placeholder": "ستتوفر الخريطة التفاعلية قريباً",
+        "viewOnGoogleMaps": "عرض على خرائط جوجل"
+      },
+      "guidelines": {
+        "title": "إرشادات الوصول",
+        "description": "يرجى الوصول قبل 15 دقيقة من موعد بدء الفعالية للسماح بوقت التسجيل والإعداد. ستتوفر معلومات المواقف وتفاصيل إمكانية الوصول قبل تاريخ الفعالية.",
+        "parking": "تتوفر مواقف سيارات مجانية",
+        "publicTransport": "يمكن الوصول بالمواصلات العامة",
+        "accessibility": "المكان مجهز لذوي الاحتياجات الخاصة"
+      },
+      "mapPlaceholder": "خريطة الموقع"
+    },
+    "description": {
+      "title": "وصف الحدث",
+      "logo": {
+        "title": "شعار الحدث",
+        "noLogo": "لا يوجد شعار متاح"
+      },
+      "qrCode": {
+        "title": "رمز الاستجابة السريعة",
+        "noQrCode": "لا يوجد رمز QR متاح"
+      },
+      "whoOrganizes": {
+        "title": "من ينظم",
+        "empty": "معلومات المنظم غير متوفرة."
+      },
+      "problemStatement": {
+        "title": "بيان المشكلة",
+        "empty": "لا يوجد بيان مشكلة متاح."
+      },
+      "objectives": {
+        "title": "الأهداف",
+        "empty": "لا توجد أهداف متاحة."
+      },
+      "eventAxes": {
+        "title": "محاور الحدث",
+        "empty": "لا توجد محاور متاحة."
+      },
+      "topics": {
+        "title": "المواضيع"
+      },
+      "submissionGuidelines": {
+        "title": "إرشادات التقديم",
+        "empty": "لا توجد إرشادات تقديم متاحة."
+      },
+      "scientificCommittee": {
+        "title": "اللجنة العلمية"
+      },
+      "location": {
+        "title": "الموقع"
+      },
+      "contact": {
+        "title": "التواصل والروابط",
+        "organizer": "المنظم",
+        "email": "البريد الإلكتروني",
+        "phone": "الهاتف",
+        "website": "الموقع الإلكتروني"
+      },
+      "about": "حول الفعالية",
+      "targetAudience": "الجمهور المستهدف",
+      "requirements": "المتطلبات",
+      "agenda": "جدول الأعمال",
+      "speakers": "المتحدثون",
+      "emptyState": {
+        "noDescription": "لا يوجد وصف متاح لهذه الفعالية.",
+        "noObjectives": "لم يتم تحديد أهداف لهذه الفعالية.",
+        "noAgenda": "لا يوجد جدول أعمال متاح.",
+        "noSpeakers": "لم يتم تحديد متحدثين بعد.",
+        "noContact": "معلومات التواصل غير متوفرة."
+      }
+    },
+    "metadata": {
+      "defaultTitle": "تفاصيل الفعالية - Eventy360",
+      "defaultDescription": "اكتشف تفاصيل الفعالية وقم بالتسجيل للمشاركة في الأحداث العلمية والأكاديمية."
+    },
+    "errors": {
+      "notFound": "الفعالية غير موجودة",
+      "accessDenied": "غير مسموح لك بعرض هذه الفعالية",
+      "loadingFailed": "فشل في تحميل تفاصيل الفعالية"
+    }
+  },
   "HomePage": {
     "title": "مرحباً بكم في منصة Eventy360"
   },
@@ -1414,7 +1641,7 @@
       "verificationApproved": "تم توثيق الحساب بنجاح",
       "documentPreview": {
         "documentPathMissing": "مسار المستند مفقود",
-       
+
         "approveConfirmation": "هل أنت متأكد من أنك تريد الموافقة على طلب التوثيق هذا؟ سيؤدي ذلك إلى وضع علامة على حساب المستخدم كموثق.",
         "rejectConfirmation": "يرجى تقديم سبب لرفض طلب التوثيق هذا. سيكون السبب مرئيًا للمستخدم.",
         "minimumCharactersNote": "الحد الأدنى 10 أحرف. كن محددًا بشأن سبب رفض الطلب.",

@@ -159,7 +159,7 @@ function EventCard({ event, locale }: EventCardProps) {
       {/* Actions - Ensure this is at the bottom */}
       <div className={`flex items-center justify-between p-4 border-t border-gray-200 dark:border-gray-700 ${isRtl ? 'flex-row-reverse' : ''}`}>
         <div className={`flex ${isRtl ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
-          <Link href={`/${locale}/events/${event.id}`}>
+          <Link href={`/${locale}/profile/events/${event.id}`}>
             <Button size="sm" color="info">
               <HiExternalLink className={`${isRtl ? 'ml-1.5' : 'mr-1.5'} h-4 w-4`} />
               {t('viewDetails')}

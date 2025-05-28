@@ -1,524 +1,281 @@
 {
   "tasks": [
     {
-      "id": "1e27b064-bf47-47cc-8409-416d13f5e6b1",
-      "name": "Extend event_status_enum with academic event lifecycle states",
-      "description": "Modify the existing event_status_enum to include all academic event lifecycle states as specified in events_plan.md (Draft, Published, Abstract submission Open, Abstract Review, Full Paper submission Open, Full Paper Review, Completed, Canceled).",
-      "notes": "The current event_status_enum has 'published', 'active', 'completed', 'canceled', 'draft' but doesn't have the academic-specific states like 'Abstract submission Open', 'Abstract Review', etc.",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2025-05-24T18:57:59.275Z",
-      "updatedAt": "2025-05-25T08:35:13.230Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/migrations/",
-          "type": "CREATE",
-          "description": "New migration script to alter event_status_enum",
-          "lineStart": 1,
-          "lineEnd": 100
-        }
-      ],
-      "implementationGuide": "Create a migration script that alters the existing event_status_enum type to add the new states. Ensure the migration handles potential existing data properly and doesn't break existing functionality. Test the enum with sample queries after modification.",
-      "verificationCriteria": "The event_status_enum type in the database includes all required states from events_plan.md. Sample queries using the new enum values work correctly.",
-      "analysisResult": "Based on the analysis of events_plan.md and the memory bank files, I've planned the implementation of the Academic Events feature for Eventy360. This feature will support the complete lifecycle of academic event management, including event creation, submission management, review processes, and participant interactions. The implementation will follow the project's Arabic-first approach, integrate with the existing subscription system, and ensure proper security through RLS policies.",
-      "summary": "Task successfully completed. Created a new migration script that extends the event_status_enum with all academic event lifecycle states as specified in events_plan.md. The migration properly handles existing data, includes safety checks to avoid duplicates, and adds detailed comments. Also updated the TypeScript type definitions to match the new enum values, ensuring full type safety throughout the application.",
-      "completedAt": "2025-05-25T08:35:13.229Z"
-    },
-    {
-      "id": "7b42c07e-4611-4080-aec2-a2a9f9884adf",
-      "name": "Update or verify submission_status_enum for academic workflow",
-      "description": "Ensure the existing submission_status_enum type includes all states required for the academic submission workflow as specified in events_plan.md (abstract_under_review, abstract_accepted, abstract_rejected, full_paper_under_review, revision_requested, revision_under_review, full_paper_accepted, full_paper_rejected).",
-      "notes": "The database dump shows submission_status_enum exists with values ('received', 'under_review', 'accepted', 'rejected', 'draft', 'changes_requested') but needs to be verified against academic workflow requirements.",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2025-05-24T18:57:59.275Z",
-      "updatedAt": "2025-05-25T13:48:40.564Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/migrations/",
-          "type": "CREATE",
-          "description": "Migration script to modify submission_status_enum if needed",
-          "lineStart": 1,
-          "lineEnd": 100
-        }
-      ],
-      "implementationGuide": "First, check if the current submission_status_enum meets the requirements. If not, create a migration script to modify it. The enum should support the complete workflow described in events_plan.md. Ensure backward compatibility with existing data.",
-      "verificationCriteria": "The submission_status_enum includes all states required for the academic submission workflow. Sample queries with the enum values work correctly.",
-      "analysisResult": "Based on the analysis of events_plan.md and the memory bank files, I've planned the implementation of the Academic Events feature for Eventy360. This feature will support the complete lifecycle of academic event management, including event creation, submission management, review processes, and participant interactions. The implementation will follow the project's Arabic-first approach, integrate with the existing subscription system, and ensure proper security through RLS policies.",
-      "summary": "The submission_status_enum has been updated correctly to match the academic workflow requirements. It now includes all necessary states: 'abstract_submitted', 'abstract_accepted', 'abstract_rejected', 'full_paper_submitted', 'full_paper_accepted', 'full_paper_rejected', 'revision_requested', and 'completed'. The trigger issue that was causing errors has been fixed by moving conditions from the WHEN clause to the function body.",
-      "completedAt": "2025-05-25T13:48:40.562Z"
-    },
-    {
-      "id": "81ce7ac8-56b2-4903-ad70-bec8092f88cc",
-      "name": "Add academic event deadline fields to events table",
-      "description": "Extend the events table with academic-specific deadline fields as specified in events_plan.md: abstract_submission_deadline, abstract_review_result_date, full_paper_submission_deadline, revision_deadline (optional).",
-      "notes": "The events table already has some deadline fields like submission_deadline, submission_verdict_deadline, full_paper_deadline, but may need additional ones specifically for the academic event workflow.",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2025-05-24T18:57:59.275Z",
-      "updatedAt": "2025-05-25T14:29:21.704Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/migrations/",
-          "type": "CREATE",
-          "description": "Migration script to add deadline fields to events table",
-          "lineStart": 1,
-          "lineEnd": 100
-        }
-      ],
-      "implementationGuide": "Create a migration script that adds the new deadline fields to the events table. All fields should be of type timestamp with time zone and can be nullable except for mandatory deadlines. Update existing constraints to ensure logical date sequence (event_date ≥ submission_verdict_deadline ≥ full_paper_submission_deadline ≥ abstract_review_result_date ≥ abstract_submission_deadline).",
-      "verificationCriteria": "The events table contains all the deadline fields needed for academic events. Constraints ensure logical date sequence. Sample inserts and updates with the new fields work correctly.",
-      "analysisResult": "Based on the analysis of events_plan.md and the memory bank files, I've planned the implementation of the Academic Events feature for Eventy360. This feature will support the complete lifecycle of academic event management, including event creation, submission management, review processes, and participant interactions. The implementation will follow the project's Arabic-first approach, integrate with the existing subscription system, and ensure proper security through RLS policies.",
-      "summary": "The task of adding academic event deadline fields to the events table was successfully completed. The migration was applied correctly, and the database schema is now updated to reflect the new fields and constraints. The TypeScript types were also regenerated to ensure consistency with the database structure.",
-      "completedAt": "2025-05-25T14:29:21.703Z"
-    },
-    {
-      "id": "ae333c9a-1539-4f6a-bb79-c249cabc7e69",
-      "name": "Create submission_versions table for version tracking",
-      "description": "Create a new table 'submission_versions' to track different versions of submissions (abstracts and full papers) as researchers revise their work, supporting the version control requirement in events_plan.md.",
-      "notes": "This table will enable the versioning system described in events_plan.md, where each abstract or paper can have multiple versions with feedback linked to specific versions.",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2025-05-24T18:57:59.275Z",
-      "updatedAt": "2025-05-25T13:50:41.914Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/migrations/",
-          "type": "CREATE",
-          "description": "Migration script to create submission_versions table",
-          "lineStart": 1,
-          "lineEnd": 100
-        }
-      ],
-      "implementationGuide": "Create a migration script that defines the submission_versions table with fields for id (uuid), submission_id (foreign key to submissions), version_number (integer), type (abstract/full_paper), file_url (text), file_metadata (jsonb), submitted_at (timestamp with time zone), feedback (text or jsonb for translations), created_at, and updated_at. Include appropriate indexes and constraints.",
-      "verificationCriteria": "The submission_versions table exists with all required fields and appropriate constraints. Sample inserts and queries work as expected.",
-      "analysisResult": "Based on the analysis of events_plan.md and the memory bank files, I've planned the implementation of the Academic Events feature for Eventy360. This feature will support the complete lifecycle of academic event management, including event creation, submission management, review processes, and participant interactions. The implementation will follow the project's Arabic-first approach, integrate with the existing subscription system, and ensure proper security through RLS policies.",
-      "summary": "The submission_versions table has been successfully implemented in migration file 20250526083423_create_submission_versions.sql. The implementation includes all required fields (id, submission_id, version_number, title_translations, abstract_translations, file URLs, metadata, etc.), proper indexes, row-level security policies, and a trigger to automatically increment version numbers. The schema meets all requirements specified in events_plan.md.",
-      "completedAt": "2025-05-25T13:50:41.913Z"
-    },
-    {
-      "id": "d3eabc6c-567c-43b3-9e94-0ccf1b9e65f4",
-      "name": "Modify submissions table for academic workflow",
-      "description": "Modify the existing submissions table to support the academic submission workflow with fields for tracking status, versions, and feedback.",
-      "notes": "The current submissions table exists but needs modifications to support the two-phase (abstract and full paper) academic workflow described in events_plan.md.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "7b42c07e-4611-4080-aec2-a2a9f9884adf"
-        },
-        {
-          "taskId": "ae333c9a-1539-4f6a-bb79-c249cabc7e69"
-        }
-      ],
-      "createdAt": "2025-05-24T18:57:59.275Z",
-      "updatedAt": "2025-05-25T14:32:51.095Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/migrations/",
-          "type": "CREATE",
-          "description": "Migration script to modify submissions table",
-          "lineStart": 1,
-          "lineEnd": 100
-        }
-      ],
-      "implementationGuide": "Create a migration script that adds or modifies fields in the submissions table to track current_abstract_version_id, current_full_paper_version_id (foreign keys to submission_versions), abstract_status, full_paper_status (submission_status_enum), feedback_history (jsonb), and any other fields needed to support the workflow. Update existing constraints and add appropriate indexes.",
-      "verificationCriteria": "The modified submissions table properly supports the academic workflow. Test cases for abstract submission, acceptance/rejection, full paper submission, and revision requests work as expected.",
-      "analysisResult": "Based on the analysis of events_plan.md and the memory bank files, I've planned the implementation of the Academic Events feature for Eventy360. This feature will support the complete lifecycle of academic event management, including event creation, submission management, review processes, and participant interactions. The implementation will follow the project's Arabic-first approach, integrate with the existing subscription system, and ensure proper security through RLS policies.",
-      "summary": "The submissions table has been successfully modified for the academic workflow. New columns (current_abstract_version_id, current_full_paper_version_id, abstract_status, full_paper_status, feedback_history) were added. Foreign key constraints to submission_versions and indexes on new columns were also implemented. The database.types.ts file has been updated to reflect these changes.",
-      "completedAt": "2025-05-25T14:32:51.094Z"
-    },
-    {
-      "id": "0894ac88-a82d-46f5-af43-db826bddc292",
-      "name": "Configure storage for submission files with proper RLS",
-      "description": "Set up the storage structure for submission files as defined in events_plan.md, with proper organization by event_id, submission_id, type (abstract/full_paper), and version. Implement RLS policies to ensure appropriate access control.",
-      "notes": "The storage structure should follow the pattern in events_plan.md: submission_files/{event_id}/{submission_id}/{abstract|full_paper}/v{n}/{filename}. Access control is critical for maintaining submission privacy and security.",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2025-05-24T18:57:59.275Z",
-      "updatedAt": "2025-05-25T14:43:24.857Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/migrations/",
-          "type": "CREATE",
-          "description": "Migration script to set up storage for submission files",
-          "lineStart": 1,
-          "lineEnd": 100
-        }
-      ],
-      "implementationGuide": "Create a migration script that sets up a new storage bucket 'submission_files' with the structure described in events_plan.md. Implement RLS policies to ensure researchers can only access their own submissions, organizers can access submissions for their events, and admins can view all submissions. Add appropriate indexes and constraints.",
-      "verificationCriteria": "The storage bucket exists with proper structure and RLS policies. Test uploads and access controls work as expected for different user roles.",
-      "analysisResult": "Based on the analysis of events_plan.md and the memory bank files, I've planned the implementation of the Academic Events feature for Eventy360. This feature will support the complete lifecycle of academic event management, including event creation, submission management, review processes, and participant interactions. The implementation will follow the project's Arabic-first approach, integrate with the existing subscription system, and ensure proper security through RLS policies.",
-      "summary": "The submission files storage bucket and RLS policies have been configured according to the specifications. The file size limit is set, and RLS policies correctly implement the new path structure. The trigger function has been updated to validate the path and check for submission ownership and event consistency.",
-      "completedAt": "2025-05-25T14:43:24.856Z"
-    },
-    {
-      "id": "a016b553-c3f6-4ef7-83c0-872adcefb73a",
-      "name": "Implement automated event status updates based on deadlines",
-      "description": "Create a PostgreSQL function and trigger/scheduled job to automatically update event status based on the current date relative to configured deadlines, as specified in events_plan.md.",
-      "notes": "The function should compare the current date with each deadline and update the event status following the progression: Published → Abstract submission Open → Abstract Review → Full Paper submission Open → Full Paper Review → Completed.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "1e27b064-bf47-47cc-8409-416d13f5e6b1"
-        },
-        {
-          "taskId": "81ce7ac8-56b2-4903-ad70-bec8092f88cc"
-        }
-      ],
-      "createdAt": "2025-05-24T18:57:59.275Z",
-      "updatedAt": "2025-05-25T14:47:13.905Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/migrations/",
-          "type": "CREATE",
-          "description": "Migration script for event status update function and trigger",
-          "lineStart": 1,
-          "lineEnd": 100
-        },
-        {
-          "path": "supabase/functions/update-event-status/",
-          "type": "CREATE",
-          "description": "Edge Function for scheduled status updates (if using Edge Functions approach)",
-          "lineStart": 1,
-          "lineEnd": 100
-        }
-      ],
-      "implementationGuide": "Create a migration script that defines a PostgreSQL function 'update_event_status_based_on_deadlines()' to check event deadlines and update status accordingly. Set up a trigger or scheduled function (via Supabase Edge Functions) to run this check periodically. The function should handle all status transitions in the academic event lifecycle.",
-      "verificationCriteria": "The automated status update function correctly transitions events through lifecycle stages based on the current date relative to deadlines. Test cases with various deadline configurations work as expected.",
-      "analysisResult": "Based on the analysis of events_plan.md and the memory bank files, I've planned the implementation of the Academic Events feature for Eventy360. This feature will support the complete lifecycle of academic event management, including event creation, submission management, review processes, and participant interactions. The implementation will follow the project's Arabic-first approach, integrate with the existing subscription system, and ensure proper security through RLS policies.",
-      "summary": "The 'update_event_status_based_on_deadlines' function has been created and a scheduling mechanism (either pg_cron or Supabase Edge Function) is assumed to be configured by the user as per instructions. This function will handle the automated transitions of event statuses based on their deadlines.",
-      "completedAt": "2025-05-25T14:47:13.904Z"
-    },
-    {
-      "id": "b4c7d12e-d612-4339-972e-1ba4d6d62dda",
-      "name": "Create functions for submission status transitions",
-      "description": "Implement database functions to handle submission status transitions according to the workflow in events_plan.md, ensuring proper validation and authorization.",
-      "notes": "These functions will enforce the submission workflow rules and ensure that transitions only happen in the allowed sequence with proper authorization. They should work with the submission_versions table to track version history.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "7b42c07e-4611-4080-aec2-a2a9f9884adf"
-        },
-        {
-          "taskId": "d3eabc6c-567c-43b3-9e94-0ccf1b9e65f4"
-        },
-        {
-          "taskId": "ae333c9a-1539-4f6a-bb79-c249cabc7e69"
-        }
-      ],
-      "createdAt": "2025-05-24T18:57:59.275Z",
-      "updatedAt": "2025-05-25T18:30:47.920Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/migrations/",
-          "type": "CREATE",
-          "description": "Migration script for submission status transition functions",
-          "lineStart": 1,
-          "lineEnd": 100
-        }
-      ],
-      "implementationGuide": "Create a migration script that defines PostgreSQL functions for transitions like submit_abstract, review_abstract, submit_full_paper, request_revision, etc. Each function should validate the current status, user role, and other constraints before making the transition. Include proper error handling and return appropriate values.",
-      "verificationCriteria": "The submission status transition functions enforce the correct workflow. Test cases for valid and invalid transitions work as expected. Error messages are appropriate and informative.",
-      "analysisResult": "Based on the analysis of events_plan.md and the memory bank files, I've planned the implementation of the Academic Events feature for Eventy360. This feature will support the complete lifecycle of academic event management, including event creation, submission management, review processes, and participant interactions. The implementation will follow the project's Arabic-first approach, integrate with the existing subscription system, and ensure proper security through RLS policies.",
-      "summary": "I've implemented comprehensive database functions for submission status transitions according to the academic workflow defined in events_plan.md. The implementation includes five key functions: submit_abstract, review_abstract, submit_full_paper, review_full_paper, and submit_revision, plus a complete_submission function to finalize the process. Each function includes proper validation of the current status, user authorization checks, deadline enforcement, and detailed tracking of submission history. The functions maintain a complete audit trail through the feedback_history field and create appropriate version records in the submission_versions table. All transitions follow the specified workflow with appropriate error messages for invalid operations.",
-      "completedAt": "2025-05-25T18:30:47.917Z"
-    },
-    {
-      "id": "581af001-fe23-4f56-b4e7-dc38157b99f2",
-      "name": "Implement soft delete system for events and submissions",
-      "description": "Create a soft delete system for events and submissions with a 7-day grace period as specified in events_plan.md.",
-      "notes": "The soft delete system allows for accidental deletion recovery while eventually cleaning up deleted data. This is especially important for academic events where data integrity is critical.",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2025-05-24T18:57:59.275Z",
-      "updatedAt": "2025-05-25T19:22:02.792Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/migrations/",
-          "type": "CREATE",
-          "description": "Migration script for soft delete system",
-          "lineStart": 1,
-          "lineEnd": 100
-        },
-        {
-          "path": "supabase/functions/purge-deleted-items/",
-          "type": "CREATE",
-          "description": "Edge Function for permanent deletion after grace period",
-          "lineStart": 1,
-          "lineEnd": 100
-        }
-      ],
-      "implementationGuide": "Create a migration script that adds deleted_at timestamp fields to events and submissions tables, and implements functions for soft delete and restore operations. Create a scheduled function to permanently delete items after the 7-day grace period. Update RLS policies and queries to exclude soft-deleted items by default.",
-      "verificationCriteria": "The soft delete system works correctly for events and submissions. Soft-deleted items are excluded from normal queries but can be restored within the grace period. After the grace period, they are permanently deleted.",
-      "analysisResult": "Based on the analysis of events_plan.md and the memory bank files, I've planned the implementation of the Academic Events feature for Eventy360. This feature will support the complete lifecycle of academic event management, including event creation, submission management, review processes, and participant interactions. The implementation will follow the project's Arabic-first approach, integrate with the existing subscription system, and ensure proper security through RLS policies.",
-      "summary": "I have successfully implemented a soft delete system for events and submissions with a 7-day grace period as specified in events_plan.md. The implementation includes:\n\n1. Database migration (20250601000000_implement_soft_delete_system.sql) that adds deleted_at timestamp fields to both tables\n2. Helper functions for soft delete and restore operations with proper authorization checks\n3. Updated RLS policies to exclude soft-deleted items from regular queries\n4. Specialized RLS policies to allow owners and admins to view their soft-deleted items\n5. A purge_expired_deletions() database function to permanently delete items after the 7-day grace period\n6. An Edge Function (purge-deleted-items) scheduled to run daily to execute the purge operation\n7. Modified existing query functions to exclude soft-deleted items\n\nThe system allows recovery of accidentally deleted content within the grace period while maintaining data integrity and security.",
-      "completedAt": "2025-05-25T19:22:02.790Z"
-    },
-    {
-      "id": "dba6f6c3-fd36-4078-a7ba-968aeafd0829",
-      "name": "Create event discovery and filtering functions",
-      "description": "Implement database functions for event discovery and filtering based on topic, date, location, and status as specified in events_plan.md.",
-      "notes": "These functions will power the event discovery features for researchers, making it easy to find relevant academic events. They should respect the Arabic-first approach with JSONB queries on translatable fields using the 'ar' key.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "1e27b064-bf47-47cc-8409-416d13f5e6b1"
-        }
-      ],
-      "createdAt": "2025-05-24T18:57:59.275Z",
-      "updatedAt": "2025-05-25T20:17:20.589Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/migrations/",
-          "type": "CREATE",
-          "description": "Migration script for event discovery functions",
-          "lineStart": 1,
-          "lineEnd": 100
-        }
-      ],
-      "implementationGuide": "Create a migration script that defines PostgreSQL functions for discovering and filtering events. Include functions for featured events, topic-based browsing, search functionality, and filtering by various criteria. Optimize with appropriate indexes and ensure proper RLS integration.",
-      "verificationCriteria": "The event discovery and filtering functions return the expected results for various search and filter criteria. Performance is acceptable even with larger datasets.",
-      "analysisResult": "Based on the analysis of events_plan.md and the memory bank files, I've planned the implementation of the Academic Events feature for Eventy360. This feature will support the complete lifecycle of academic event management, including event creation, submission management, review processes, and participant interactions. The implementation will follow the project's Arabic-first approach, integrate with the existing subscription system, and ensure proper security through RLS policies.",
-      "summary": "Task successfully completed. Created comprehensive event discovery and filtering functions including get_featured_events, search_events, filter_events_by_topic, filter_events_by_location, filter_events_by_date_range, discover_events, and get_events_by_status. All functions respect the Arabic-first approach with proper JSONB queries on translatable fields using the 'ar' key. The functions include proper indexing for performance optimization and integrate well with the existing RLS system. Additionally, the missing status column issue was resolved by adding the status column to the events table with proper event_status_enum type and default values.",
-      "completedAt": "2025-05-25T20:17:20.587Z"
-    },
-    {
-      "id": "59b183f6-6b06-41d5-b547-703979c709f8",
-      "name": "Implement event statistics generation functions",
-      "description": "Create database functions to generate statistics for events, including submission counts, acceptance rates, and other metrics for display in the event management page.",
-      "notes": "These statistics will be displayed in the event management page to give organizers insights into their events. The functions should be optimized for performance.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "d3eabc6c-567c-43b3-9e94-0ccf1b9e65f4"
-        }
-      ],
-      "createdAt": "2025-05-24T18:57:59.275Z",
-      "updatedAt": "2025-05-24T18:57:59.275Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/migrations/",
-          "type": "CREATE",
-          "description": "Migration script for event statistics functions",
-          "lineStart": 1,
-          "lineEnd": 100
-        }
-      ],
-      "implementationGuide": "Create a migration script that defines PostgreSQL functions to calculate various statistics for events based on their submissions. Include metrics like total submissions, abstract acceptance rate, full paper acceptance rate, revision request rate, and submission trends over time.",
-      "verificationCriteria": "The statistics functions generate accurate metrics for events based on their submissions. Performance is acceptable even with larger datasets.",
-      "analysisResult": "Based on the analysis of events_plan.md and the memory bank files, I've planned the implementation of the Academic Events feature for Eventy360. This feature will support the complete lifecycle of academic event management, including event creation, submission management, review processes, and participant interactions. The implementation will follow the project's Arabic-first approach, integrate with the existing subscription system, and ensure proper security through RLS policies."
-    },
-    {
-      "id": "61a1e69c-5404-491c-b21c-2a2152d9bc9d",
-      "name": "Create multi-step event creation form for organizers",
-      "description": "Develop a multi-step form for organizers to create academic events with all required fields, topic selection, and deadline configuration.",
-      "notes": "The form should follow the project's existing patterns for forms and validation. It should include comprehensive validation for dates to ensure logical sequence, and integrate with the subscription system to enforce tier-based limits.",
+      "id": "1f750cda-0bd1-487f-9820-9b5715006880",
+      "name": "Create Event Details Server Page Component",
+      "description": "Implement the main server component at src/app/[locale]/profile/events/[id]/page.tsx that fetches event data, handles user authentication and access control, and renders the complete event details page. This component serves as the entry point for individual event pages with proper user type differentiation within the profile section.",
+      "notes": "Follow the established pattern from src/app/[locale]/profile/events/page.tsx for server component structure. Use createServerSupabaseClient() and getTranslations() utilities. Implement proper access control: researchers can view all published events, organizers can only view their own events, admins can view all events. Handle invalid event IDs with 404 responses.",
       "status": "in_progress",
-      "dependencies": [
-        {
-          "taskId": "81ce7ac8-56b2-4903-ad70-bec8092f88cc"
-        },
-        {
-          "taskId": "1e27b064-bf47-47cc-8409-416d13f5e6b1"
-        }
-      ],
-      "createdAt": "2025-05-24T18:57:59.275Z",
-      "updatedAt": "2025-05-26T08:10:18.332Z",
+      "dependencies": [],
+      "createdAt": "2025-05-27T09:51:55.588Z",
+      "updatedAt": "2025-05-27T10:12:23.330Z",
       "relatedFiles": [
         {
-          "path": "src/components/events/creation/",
+          "path": "src/app/[locale]/profile/events/[id]/page.tsx",
           "type": "CREATE",
-          "description": "React components for multi-step event creation form",
-          "lineStart": 1,
-          "lineEnd": 100
+          "description": "Main server component file to be created"
         },
         {
-          "path": "src/app/[locale]/events/create/",
-          "type": "CREATE",
-          "description": "Next.js page for event creation",
-          "lineStart": 1,
-          "lineEnd": 100
-        }
-      ],
-      "implementationGuide": "Create React components for a multi-step event creation form following the project's UI patterns. Use React Hook Form with Zod for validation. Implement steps for basic information, topics selection, timeline setup, and additional details as described in events_plan.md. Ensure proper Arabic support and RTL layout.",
-      "verificationCriteria": "The event creation form works correctly with proper validation, allows saving draft events, and enforces subscription tier limits. The form respects the Arabic-first approach with RTL layout.",
-      "analysisResult": "Based on the analysis of events_plan.md and the memory bank files, I've planned the implementation of the Academic Events feature for Eventy360. This feature will support the complete lifecycle of academic event management, including event creation, submission management, review processes, and participant interactions. The implementation will follow the project's Arabic-first approach, integrate with the existing subscription system, and ensure proper security through RLS policies."
-    },
-    {
-      "id": "f7aef24f-a8ab-4b62-ab99-eccf2457a350",
-      "name": "Build event discovery and filtering UI for researchers",
-      "description": "Create UI components for researchers to discover and filter events based on topic, date, location, and status.",
-      "notes": "The UI should follow the project's existing patterns for components and styling. It should integrate with the bookmark system to allow researchers to save events for later reference.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "dba6f6c3-fd36-4078-a7ba-968aeafd0829"
-        }
-      ],
-      "createdAt": "2025-05-24T18:57:59.275Z",
-      "updatedAt": "2025-05-26T08:09:09.195Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/events/discovery/",
-          "type": "CREATE",
-          "description": "React components for event discovery and filtering",
-          "lineStart": 1,
-          "lineEnd": 100
+          "path": "src/app/[locale]/profile/events/page.tsx",
+          "type": "REFERENCE",
+          "description": "Reference for server component patterns"
         },
         {
-          "path": "src/app/[locale]/events/",
-          "type": "CREATE",
-          "description": "Next.js page for event discovery",
-          "lineStart": 1,
-          "lineEnd": 100
+          "path": "src/utils/supabase/server.ts",
+          "type": "REFERENCE",
+          "description": "Supabase server client utilities"
+        },
+        {
+          "path": "src/database.types.ts",
+          "type": "REFERENCE",
+          "description": "Database type definitions"
         }
       ],
-      "implementationGuide": "Develop React components for event discovery, including search bar, filter controls, event cards, and pagination. Implement filtering logic using the database functions created earlier. Ensure proper Arabic support and RTL layout.",
-      "verificationCriteria": "The event discovery UI works correctly with proper filtering and search functionality. The UI respects the Arabic-first approach with RTL layout.",
-      "analysisResult": "Based on the analysis of events_plan.md and the memory bank files, I've planned the implementation of the Academic Events feature for Eventy360. This feature will support the complete lifecycle of academic event management, including event creation, submission management, review processes, and participant interactions. The implementation will follow the project's Arabic-first approach, integrate with the existing subscription system, and ensure proper security through RLS policies.",
-      "summary": "All requirements for the task have been successfully completed, including fixing translation errors, enhancing RTL support, ensuring proper integration of event discovery within the profile section, and verifying the use of the Supabase singleton. The project builds successfully with no critical errors.",
-      "completedAt": "2025-05-26T08:09:09.193Z"
+      "implementationGuide": "// Server component implementation\\nconst EventDetailsPage = async ({ params }) => {\\n  // Extract locale and event ID from params\\n  // Create Supabase server client\\n  // Fetch event data with organizer info\\n  // Get current user profile and subscription status\\n  // Implement access control for organizers (only own events)\\n  // Handle not found scenarios with proper 404\\n  // Load translations for UI\\n  // Return JSX with EventDetailsLayout wrapper\\n}\\n\\n// Add proper TypeScript interfaces\\ninterface EventDetailsPageProps {\\n  params: { locale: string; id: string };\\n}\\n\\n// Implement user access control logic\\n// Follow existing server component patterns from profile/events/page.tsx",
+      "verificationCriteria": "Server component correctly fetches event data by ID, implements proper user access control (organizers only see own events), handles translation loading, implements proper error handling for invalid IDs, and renders without errors when accessing /[locale]/events/[valid-id] routes.",
+      "analysisResult": "Implementation of dynamic event details page and management dashboard for Eventy360 platform with comprehensive event information display, user-specific functionality, RTL internationalization support, and responsive design following existing architectural patterns. The implementation includes both the main event details page for viewing and a separate management dashboard for organizers."
     },
     {
-      "id": "18d706b4-4494-44be-9699-a51871394f5f",
-      "name": "Implement submission forms for researchers",
-      "description": "Create forms for researchers to submit abstracts and full papers to events, with file upload functionality and version tracking.",
-      "notes": "The forms should follow the project's existing patterns for forms and validation. They should include proper error handling and loading states. The UI should display submission status and allow viewing previous versions.",
+      "id": "13ba47f5-12d5-4e49-b283-a6218121d8cd",
+      "name": "Implement Event Details Layout Container",
+      "description": "Create a reusable layout container component that provides consistent structure for the event details page, including breadcrumb navigation, responsive grid layout, and proper spacing. This component wraps all event detail sections and ensures consistent presentation across different user types.",
+      "notes": "Reference existing layout components in profile and dashboard pages for consistent styling. Ensure RTL support is properly implemented for Arabic locale. Use Flowbite React components where appropriate. Keep layout clean and focused on content viewing.",
       "status": "pending",
       "dependencies": [
         {
-          "taskId": "d3eabc6c-567c-43b3-9e94-0ccf1b9e65f4"
-        },
-        {
-          "taskId": "0894ac88-a82d-46f5-af43-db826bddc292"
-        },
-        {
-          "taskId": "ae333c9a-1539-4f6a-bb79-c249cabc7e69"
+          "taskId": "1f750cda-0bd1-487f-9820-9b5715006880"
         }
       ],
-      "createdAt": "2025-05-24T18:57:59.275Z",
-      "updatedAt": "2025-05-24T18:57:59.275Z",
+      "createdAt": "2025-05-27T09:51:55.588Z",
+      "updatedAt": "2025-05-27T09:51:55.588Z",
       "relatedFiles": [
         {
-          "path": "src/components/submissions/",
+          "path": "src/components/events/details/EventDetailsLayout.tsx",
           "type": "CREATE",
-          "description": "React components for submission forms",
-          "lineStart": 1,
-          "lineEnd": 100
+          "description": "Layout container component"
         },
         {
-          "path": "src/app/[locale]/events/[id]/submit/",
-          "type": "CREATE",
-          "description": "Next.js page for submission",
-          "lineStart": 1,
-          "lineEnd": 100
+          "path": "src/components/common/Breadcrumb.tsx",
+          "type": "REFERENCE",
+          "description": "Existing breadcrumb patterns if available"
+        },
+        {
+          "path": "src/app/[locale]/profile/layout.tsx",
+          "type": "REFERENCE",
+          "description": "Reference for layout patterns"
         }
       ],
-      "implementationGuide": "Develop React components for abstract and full paper submission forms. Use React Hook Form with Zod for validation. Implement file upload with validation for file type (PDF, DOC, DOCX) and size (5MB limit). Integrate with the submission_versions table for version tracking.",
-      "verificationCriteria": "The submission forms work correctly with proper validation and file upload functionality. Version tracking works as expected. The forms respect the Arabic-first approach with RTL layout.",
-      "analysisResult": "Based on the analysis of events_plan.md and the memory bank files, I've planned the implementation of the Academic Events feature for Eventy360. This feature will support the complete lifecycle of academic event management, including event creation, submission management, review processes, and participant interactions. The implementation will follow the project's Arabic-first approach, integrate with the existing subscription system, and ensure proper security through RLS policies."
+      "implementationGuide": "// Create EventDetailsLayout component\\ninterface EventDetailsLayoutProps {\\n  children: React.ReactNode;\\n  eventTitle: string;\\n  locale: string;\\n  eventId: string;\\n}\\n\\n// Implement breadcrumb navigation (Home > Events > Event Name)\\n// Create responsive grid layout using Tailwind\\n// Add RTL support with rtl: classes\\n// Ensure proper spacing and container widths\\n// Follow existing layout patterns from other pages\\n// Make layout identical for researchers and organizers",
+      "verificationCriteria": "Layout component provides proper responsive structure, breadcrumb navigation works correctly, RTL layout displays properly in Arabic locale, component integrates seamlessly with the main page component, and layout is consistent across different user types.",
+      "analysisResult": "Implementation of dynamic event details page and management dashboard for Eventy360 platform with comprehensive event information display, user-specific functionality, RTL internationalization support, and responsive design following existing architectural patterns. The implementation includes both the main event details page for viewing and a separate management dashboard for organizers."
     },
     {
-      "id": "1ea996bf-6b4e-4e13-9550-ad00769defe1",
-      "name": "Create submission review interfaces for organizers",
-      "description": "Develop interfaces for organizers to review submissions, provide feedback, and update submission status.",
-      "notes": "The interfaces should follow the project's existing patterns for components and styling. They should include proper error handling and loading states. The UI should display submission history and allow downloading submission files.",
+      "id": "d93d4070-8029-4921-9aa2-c6012455a376",
+      "name": "Build Event Header Information Component",
+      "description": "Create a comprehensive event header component that displays primary event information including title, subtitle, organizer details, and user-specific action buttons. This component serves as the main focal point at the top of the event details page with role-based functionality.",
+      "notes": "Use Flowbite React components for buttons and dropdowns. Ensure proper handling of JSON translation fields from the database. Keep header clean and uncluttered. Focus on viewing experience with minimal role-specific additions.",
       "status": "pending",
       "dependencies": [
         {
-          "taskId": "b4c7d12e-d612-4339-972e-1ba4d6d62dda"
-        },
-        {
-          "taskId": "d3eabc6c-567c-43b3-9e94-0ccf1b9e65f4"
+          "taskId": "1f750cda-0bd1-487f-9820-9b5715006880"
         }
       ],
-      "createdAt": "2025-05-24T18:57:59.275Z",
-      "updatedAt": "2025-05-24T18:57:59.275Z",
+      "createdAt": "2025-05-27T09:51:55.588Z",
+      "updatedAt": "2025-05-27T09:51:55.588Z",
       "relatedFiles": [
         {
-          "path": "src/components/events/management/submissions/",
+          "path": "src/components/events/details/EventDetailsHeader.tsx",
           "type": "CREATE",
-          "description": "React components for submission review",
-          "lineStart": 1,
-          "lineEnd": 100
+          "description": "Event header component"
         },
         {
-          "path": "src/app/[locale]/events/[id]/submissions/",
-          "type": "CREATE",
-          "description": "Next.js page for submission management",
-          "lineStart": 1,
-          "lineEnd": 100
+          "path": "src/components/events/discovery/EventCard.tsx",
+          "type": "REFERENCE",
+          "description": "Reference for event display patterns"
+        },
+        {
+          "path": "src/database.types.ts",
+          "type": "REFERENCE",
+          "description": "Event type definitions"
         }
       ],
-      "implementationGuide": "Create React components for submission review, including submission list, submission detail view, feedback form, and status update controls. Implement integration with the submission status transition functions. Ensure proper Arabic support and RTL layout.",
-      "verificationCriteria": "The submission review interfaces work correctly with proper status updates and feedback functionality. The interfaces respect the Arabic-first approach with RTL layout.",
-      "analysisResult": "Based on the analysis of events_plan.md and the memory bank files, I've planned the implementation of the Academic Events feature for Eventy360. This feature will support the complete lifecycle of academic event management, including event creation, submission management, review processes, and participant interactions. The implementation will follow the project's Arabic-first approach, integrate with the existing subscription system, and ensure proper security through RLS policies."
+      "implementationGuide": "// EventDetailsHeader component\\ninterface EventDetailsHeaderProps {\\n  event: EventType;\\n  translations: any;\\n  locale: string;\\n  userProfile?: UserProfile;\\n}\\n\\n// Display event title and subtitle with proper typography\\n// Show organizer information\\n// Implement role-based action buttons:\\n// - Researchers: Bookmark + Share\\n// - Event Owner Organizers: Manage Event + Share\\n// - Admins: Edit Event + Admin Actions dropdown + Share\\n// - Anonymous: No actions or Register prompt\\n// Ensure consistent layout regardless of user type",
+      "verificationCriteria": "Header component displays all event information correctly, handles multilingual content properly, shows appropriate role-based action buttons, renders responsively on all screen sizes, and maintains consistent layout across user types.",
+      "analysisResult": "Implementation of dynamic event details page and management dashboard for Eventy360 platform with comprehensive event information display, user-specific functionality, RTL internationalization support, and responsive design following existing architectural patterns. The implementation includes both the main event details page for viewing and a separate management dashboard for organizers."
     },
     {
-      "id": "cd32f1d3-d787-4278-8347-8eabed3af104",
-      "name": "Add event statistics display to event management page",
-      "description": "Implement UI components to display event statistics in the event management page, including submission counts, acceptance rates, and other metrics.",
-      "notes": "The components should follow the project's existing patterns for components and styling. They should include proper loading states and error handling. The statistics should be visually appealing and informative.",
+      "id": "6bd9112c-d491-43a2-81b3-768af49cd9d3",
+      "name": "Develop Event Timeline and Deadlines Component",
+      "description": "Implement a timeline component that visualizes important event dates including event start/end dates, abstract submission deadlines, full paper deadlines, and notification dates. Include countdown timers for upcoming deadlines and visual progress indicators.",
+      "notes": "Use Flowbite React Timeline component for consistent styling. Implement proper date handling and formatting utilities. Consider adding real-time countdown updates with client-side JavaScript for active deadlines. Keep timeline purely informational for all user types.",
       "status": "pending",
       "dependencies": [
         {
-          "taskId": "59b183f6-6b06-41d5-b547-703979c709f8"
+          "taskId": "1f750cda-0bd1-487f-9820-9b5715006880"
         }
       ],
-      "createdAt": "2025-05-24T18:57:59.275Z",
-      "updatedAt": "2025-05-24T18:57:59.275Z",
+      "createdAt": "2025-05-27T09:51:55.588Z",
+      "updatedAt": "2025-05-27T09:51:55.588Z",
       "relatedFiles": [
         {
-          "path": "src/components/events/management/statistics/",
+          "path": "src/components/events/details/EventDetailsTimeline.tsx",
           "type": "CREATE",
-          "description": "React components for event statistics display",
-          "lineStart": 1,
-          "lineEnd": 100
+          "description": "Timeline component for dates and deadlines"
         },
         {
-          "path": "src/app/[locale]/events/[id]/statistics/",
+          "path": "src/utils/dateHelpers.ts",
           "type": "CREATE",
-          "description": "Next.js page for event statistics",
-          "lineStart": 1,
-          "lineEnd": 100
+          "description": "Date formatting and calculation utilities"
         }
       ],
-      "implementationGuide": "Create React components for displaying event statistics, including charts and data tables. Implement integration with the statistics generation functions. Ensure proper Arabic support and RTL layout.",
-      "verificationCriteria": "The statistics display works correctly with accurate metrics. The UI respects the Arabic-first approach with RTL layout.",
-      "analysisResult": "Based on the analysis of events_plan.md and the memory bank files, I've planned the implementation of the Academic Events feature for Eventy360. This feature will support the complete lifecycle of academic event management, including event creation, submission management, review processes, and participant interactions. The implementation will follow the project's Arabic-first approach, integrate with the existing subscription system, and ensure proper security through RLS policies."
+      "implementationGuide": "// EventDetailsTimeline component\\ninterface EventDetailsTimelineProps {\\n  event: EventType;\\n  translations: any;\\n}\\n\\n// Create timeline visualization using Flowbite Timeline\\n// Calculate and display countdown timers for active deadlines\\n// Show visual progress for submission phases\\n// Handle timezone considerations\\n// Implement responsive timeline layout\\n// Add conditional rendering based on deadline status\\n// Make timeline identical for all user types (viewing focused)",
+      "verificationCriteria": "Timeline displays all event dates correctly, countdown timers show accurate remaining time, visual indicators properly reflect current submission phase, component handles past/future events appropriately, responsive layout works on all devices, and timeline appears identical for all user types.",
+      "analysisResult": "Implementation of dynamic event details page and management dashboard for Eventy360 platform with comprehensive event information display, user-specific functionality, RTL internationalization support, and responsive design following existing architectural patterns. The implementation includes both the main event details page for viewing and a separate management dashboard for organizers."
     },
     {
-      "id": "5b73ce57-7658-4e70-aca6-72aa2fe200af",
-      "name": "Implement deadline extension capability for organizers",
-      "description": "Create UI and backend functionality for organizers to extend event deadlines, with validation to ensure dates don't conflict.",
-      "notes": "The functionality should allow organizers to extend deadlines for their events as long as dates don't conflict. This is critical for flexibility in academic event management.",
+      "id": "4d499333-3832-4980-a0c3-1dfc1213cbff",
+      "name": "Create Event Location and Venue Component",
+      "description": "Build a component that displays comprehensive location information including venue name, address, city, country, and provides integration points for future map functionality. Include travel and accommodation guidance section placeholder.",
+      "notes": "Design component to support future Google Maps or OpenStreetMap integration. Use location icons from Flowbite or Heroicons. Consider adding structured data for SEO benefits. Focus on information display rather than user-specific functionality.",
       "status": "pending",
       "dependencies": [
         {
-          "taskId": "81ce7ac8-56b2-4903-ad70-bec8092f88cc"
+          "taskId": "1f750cda-0bd1-487f-9820-9b5715006880"
         }
       ],
-      "createdAt": "2025-05-24T18:57:59.275Z",
-      "updatedAt": "2025-05-24T18:57:59.275Z",
+      "createdAt": "2025-05-27T09:51:55.588Z",
+      "updatedAt": "2025-05-27T09:51:55.588Z",
       "relatedFiles": [
         {
-          "path": "src/components/events/management/deadlines/",
+          "path": "src/components/events/details/EventDetailsLocation.tsx",
           "type": "CREATE",
-          "description": "React components for deadline extension",
-          "lineStart": 1,
-          "lineEnd": 100
-        },
-        {
-          "path": "supabase/migrations/",
-          "type": "CREATE",
-          "description": "Migration script for deadline extension functions",
-          "lineStart": 1,
-          "lineEnd": 100
+          "description": "Location and venue information component"
         }
       ],
-      "implementationGuide": "Develop React components for deadline extension forms. Implement validation to ensure logical date sequence is maintained. Create database functions to update deadlines with proper checks. Ensure proper Arabic support and RTL layout.",
-      "verificationCriteria": "The deadline extension functionality works correctly with proper validation. The UI respects the Arabic-first approach with RTL layout.",
-      "analysisResult": "Based on the analysis of events_plan.md and the memory bank files, I've planned the implementation of the Academic Events feature for Eventy360. This feature will support the complete lifecycle of academic event management, including event creation, submission management, review processes, and participant interactions. The implementation will follow the project's Arabic-first approach, integrate with the existing subscription system, and ensure proper security through RLS policies."
+      "implementationGuide": "// EventDetailsLocation component\\ninterface EventDetailsLocationProps {\\n  event: EventType;\\n  translations: any;\\n}\\n\\n// Display venue name and full address\\n// Show city, country with proper formatting\\n// Add location-based icons and styling\\n// Create placeholder for map integration\\n// Include travel information section\\n// Implement responsive location layout\\n// Keep component identical for all user types",
+      "verificationCriteria": "Location component displays all venue information clearly, handles missing location data gracefully, provides proper structure for future map integration, maintains consistent styling with other event detail components, and appears identical across user types.",
+      "analysisResult": "Implementation of dynamic event details page and management dashboard for Eventy360 platform with comprehensive event information display, user-specific functionality, RTL internationalization support, and responsive design following existing architectural patterns. The implementation includes both the main event details page for viewing and a separate management dashboard for organizers."
+    },
+    {
+      "id": "2c8b3a06-282d-4e61-b0f9-2dfcab893f43",
+      "name": "Implement Event Description and Topics Component",
+      "description": "Create a comprehensive component for displaying event description, research topics, submission guidelines, and conference tracks. This component handles the main content area with proper text formatting and topic categorization.",
+      "notes": "Use Flowbite React components for badges, cards, and expandable content. Ensure proper handling of HTML content in descriptions. Consider implementing rich text rendering for formatted content. Focus on content presentation rather than user-specific features.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "1f750cda-0bd1-487f-9820-9b5715006880"
+        }
+      ],
+      "createdAt": "2025-05-27T09:51:55.588Z",
+      "updatedAt": "2025-05-27T09:51:55.588Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/events/details/EventDetailsDescription.tsx",
+          "type": "CREATE",
+          "description": "Description and topics component"
+        },
+        {
+          "path": "src/components/events/discovery/EventFilters.tsx",
+          "type": "REFERENCE",
+          "description": "Reference for topic display patterns"
+        }
+      ],
+      "implementationGuide": "// EventDetailsDescription component\\ninterface EventDetailsDescriptionProps {\\n  event: EventType;\\n  translations: any;\\n}\\n\\n// Render formatted event description with proper typography\\n// Display research topics as organized badges or cards\\n// Show submission guidelines and requirements\\n// Include conference tracks if available\\n// Implement expandable sections for long content\\n// Add proper text formatting and readability\\n// Keep content display identical for all user types",
+      "verificationCriteria": "Description component renders all text content properly, topics are displayed in organized manner, expandable sections work correctly, component handles multilingual content appropriately, text formatting enhances readability, and content appears identical across user types.",
+      "analysisResult": "Implementation of dynamic event details page and management dashboard for Eventy360 platform with comprehensive event information display, user-specific functionality, RTL internationalization support, and responsive design following existing architectural patterns. The implementation includes both the main event details page for viewing and a separate management dashboard for organizers."
+    },
+    {
+      "id": "60115f9d-5fab-46f1-9f99-f08c29a5b49b",
+      "name": "Build Role-Specific Action Component",
+      "description": "Create a clean, role-specific action component that provides appropriate functionality based on user type: submission capabilities for researchers, management access for organizers, editing for admins. This component handles the main call-to-action area at the bottom of the event details page.",
+      "notes": "Design component to seamlessly integrate with upcoming submission form functionality and management dashboard. Use consistent button styling and clear call-to-action patterns. Each user type should see one primary action that makes sense for their role.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "1f750cda-0bd1-487f-9820-9b5715006880"
+        }
+      ],
+      "createdAt": "2025-05-27T09:51:55.588Z",
+      "updatedAt": "2025-05-27T09:51:55.588Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/events/details/EventDetailsActions.tsx",
+          "type": "CREATE",
+          "description": "Role-specific action component"
+        }
+      ],
+      "implementationGuide": "// EventDetailsActions component\\ninterface EventDetailsActionsProps {\\n  event: EventType;\\n  translations: any;\\n  userProfile?: UserProfile;\\n  subscriptionStatus?: SubscriptionStatus;\\n}\\n\\n// Anonymous: Register to Submit CTA\\n// Free Researchers: Upgrade to Submit button\\n// Paid Researchers: Active Submit Abstract/Paper button\\n// Event Owner Organizers: Management Dashboard link\\n// Admins: Oversight Dashboard link\\n// Implement access control and proper redirects\\n// Keep UI clean and focused on primary action",
+      "verificationCriteria": "Action component displays appropriate functionality for each user type, access control works correctly, subscription status affects researcher actions properly, component provides clear path to next steps, and UI remains clean and uncluttered.",
+      "analysisResult": "Implementation of dynamic event details page and management dashboard for Eventy360 platform with comprehensive event information display, user-specific functionality, RTL internationalization support, and responsive design following existing architectural patterns. The implementation includes both the main event details page for viewing and a separate management dashboard for organizers."
+    },
+    {
+      "id": "227a9fb7-5046-4312-8883-5008b98002ef",
+      "name": "Create Event Management Dashboard Page",
+      "description": "Implement a separate management dashboard page at src/app/[locale]/events/[id]/manage/page.tsx for event owners to manage their events, view submissions, access analytics, and handle event-related tasks. This page is only accessible to the event owner organizer and admins.",
+      "notes": "This page should only be accessible to the event owner organizer and admins. Implement proper access control and redirect unauthorized users. Use existing dashboard layout patterns from admin section for consistency.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "1f750cda-0bd1-487f-9820-9b5715006880"
+        }
+      ],
+      "createdAt": "2025-05-27T09:51:55.588Z",
+      "updatedAt": "2025-05-27T09:51:55.588Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/events/[id]/manage/page.tsx",
+          "type": "CREATE",
+          "description": "Event management dashboard page"
+        },
+        {
+          "path": "src/app/[locale]/admin/dashboard/page.tsx",
+          "type": "REFERENCE",
+          "description": "Reference for dashboard patterns"
+        },
+        {
+          "path": "src/components/admin/dashboard/DashboardLayout.tsx",
+          "type": "REFERENCE",
+          "description": "Dashboard layout patterns"
+        }
+      ],
+      "implementationGuide": "// Event Management Dashboard Server Component\\nconst EventManagePage = async ({ params }) => {\\n  // Extract locale and event ID\\n  // Verify user is event owner or admin\\n  // Fetch event data with submission counts\\n  // Load management-specific data\\n  // Implement proper access control\\n}\\n\\n// Create management dashboard layout\\n// Include sections for:\\n// - Event overview and quick stats\\n// - Submission management\\n// - Analytics and reports\\n// - Event settings and actions\\n// Follow existing dashboard patterns",
+      "verificationCriteria": "Management page is only accessible to event owners and admins, provides comprehensive event management functionality, integrates with existing dashboard patterns, handles access control properly, and offers clear navigation back to event details.",
+      "analysisResult": "Implementation of dynamic event details page and management dashboard for Eventy360 platform with comprehensive event information display, user-specific functionality, RTL internationalization support, and responsive design following existing architectural patterns. The implementation includes both the main event details page for viewing and a separate management dashboard for organizers."
+    },
+    {
+      "id": "ead7c90c-cf91-4476-9d9c-05d96fe4bf0f",
+      "name": "Update Navigation Links in Event Discovery Components",
+      "description": "Update existing EventCard components in the discovery section to properly link to the new event details pages and ensure smooth navigation flow throughout the application. Verify that all navigation patterns work correctly with the new pages.",
+      "notes": "The EventCardGrid.tsx already has Link components pointing to the correct route (line 162), but verification and testing is needed to ensure proper integration with the new details page. Also verify management page navigation works correctly.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "1f750cda-0bd1-487f-9820-9b5715006880"
+        },
+        {
+          "taskId": "227a9fb7-5046-4312-8883-5008b98002ef"
+        }
+      ],
+      "createdAt": "2025-05-27T09:51:55.588Z",
+      "updatedAt": "2025-05-27T09:51:55.588Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/events/discovery/EventCardGrid.tsx",
+          "type": "TO_MODIFY",
+          "description": "Verify and update navigation links",
+          "lineStart": 160,
+          "lineEnd": 165
+        },
+        {
+          "path": "src/components/events/discovery/EventCard.tsx",
+          "type": "REFERENCE",
+          "description": "Individual event card component"
+        }
+      ],
+      "implementationGuide": "// Update EventCard component navigation\\n// Verify existing Link components point to correct route\\n// Add proper href construction with locale\\n// Ensure accessibility attributes are correct\\n// Test navigation flow from discovery to details\\n// Update any related navigation components\\n// Verify management page links work from details page",
+      "verificationCriteria": "Navigation from event discovery page to event details works correctly, all links include proper locale parameters, accessibility attributes are present, navigation flow provides good user experience across the application, and management page links function properly.",
+      "analysisResult": "Implementation of dynamic event details page and management dashboard for Eventy360 platform with comprehensive event information display, user-specific functionality, RTL internationalization support, and responsive design following existing architectural patterns. The implementation includes both the main event details page for viewing and a separate management dashboard for organizers."
     }
   ]
 }
