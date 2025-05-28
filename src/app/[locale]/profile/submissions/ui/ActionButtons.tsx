@@ -1,0 +1,68 @@
+'use client';
+
+import Link from 'next/link';
+import { useLocale, useTranslations } from 'next-intl';
+import { ExternalLink, FileText, Edit } from 'lucide-react';
+import type { Submission } from './SubmissionsList';
+
+interface ActionButtonsProps {
+  submission: Submission;
+}
+
+export default function ActionButtons({ submission }: ActionButtonsProps) {
+  const t = useTranslations('Submissions');
+  const locale = useLocale();
+  
+  // Generate action buttons based on submission status
+  const renderActionButtons = () => {
+    const buttons = [];
+    
+    // View details button (always present)
+    buttons.push(
+      <Link 
+        key="view-details"
+        href={`/${locale}/profile/submissions/${submission.id}`}
+        className="flex items-center gap-1 text-blue-600 hover:underline dark:text-blue-500"
+      >
+        <ExternalLink className="w-4 h-4" />
+        {t('viewDetails')}
+      </Link>
+    );
+    
+    // Submit full paper button (for accepted abstracts)
+    if (submission.status === 'abstract_accepted') {
+      buttons.push(
+        <Link 
+          key="submit-paper"
+          href={`/${locale}/profile/submissions/${submission.id}/submit-paper`}
+          className="flex items-center gap-1 text-green-600 hover:underline dark:text-green-500"
+        >
+          <FileText className="w-4 h-4" />
+          {t('submitFullPaper')}
+        </Link>
+      );
+    }
+    
+    // Submit revision button (for revision requested)
+    if (submission.status === 'revision_requested') {
+      buttons.push(
+        <Link 
+          key="submit-revision"
+          href={`/${locale}/profile/submissions/${submission.id}/submit-revision`}
+          className="flex items-center gap-1 text-amber-600 hover:underline dark:text-amber-500"
+        >
+          <Edit className="w-4 h-4" />
+          {t('submitRevision')}
+        </Link>
+      );
+    }
+    
+    return buttons;
+  };
+  
+  return (
+    <div className="flex flex-col gap-2">
+      {renderActionButtons()}
+    </div>
+  );
+} 

@@ -14,45 +14,41 @@ The Algerian academic landscape suffers from:
 Eventy360 provides a centralized, trusted SaaS platform featuring:
 
 *   **Targeted Roles**: Distinct interfaces/functionality for Researchers, Organizers, and Administrators.
-*   **Arabic First & RTL (Core Requirement)**: UI designed exclusively for Arabic users in MVP. This dictates layout (RTL), text direction, number/date formatting, and component behavior. English/French UI is a future enhancement.
-*   **Event Hub**: Organizers publish detailed event information (topics, deadlines, formats, location using data from `wilayas`/`dairas` tables - ensuring `name_ar` is displayed).
-*   **Discovery Tools**: Researchers search/filter events (keywords, topics, dates, location - primarily using Arabic fields).
-*   **Streamlined Submissions (Paid Researchers)**: Direct upload of abstracts/papers (PDF/DOC/DOCX, 5MB limit) via the platform.
-*   **Review Management (Organizers)**: Tools to download submissions, update status (Accepted/Rejected), and provide mandatory rejection feedback (in Arabic).
-*   **Research Repository**: Access to accepted papers from completed events (MVP search/filter: title/abstract, topic/event - using Arabic content).
-*   **Manual MVP Workflows**: User verification (awarding a visual badge) and paid subscription activation rely on admin actions triggered by offline/email communication.
-    *   *Verification Badge Award*: User emails admin (or admin proactively checks) -> Admin reviews profile -> Admin updates user status in platform to award badge.
-    *   *Payment*: User emails admin -> Admin provides offline instructions (bank/check/cash) -> User confirms payment via email -> Admin verifies offline -> Admin records payment & activates subscription in platform.
-*   **Automated Notifications (Strictly Arabic MVP)**: Email system uses DB templates (`email_templates`) populated **only** with Arabic text in the `ar` key of JSONB fields. The Resend API integration via Edge Functions **must** use this Arabic text. System managed via queue (`notification_queue`).
-*   **Admin Control Panel**: Tools for managing users, payments, subscriptions, events, topics, email templates (Arabic only in MVP, editing `ar` key), and logs.
-*   **i18n-Ready Database (Mixed Strategy - Arabic Primary)**: Uses JSONB for most dynamic translatable fields (only `ar` key used in MVP), but standard TEXT columns (`name_ar`, `name_other`) for `wilayas`/`dairas`. All queries and display logic **must** prioritize the `ar`/`name_ar` fields for MVP.
+*   **Arabic First & RTL**: UI designed exclusively for Arabic users in MVP with proper RTL support.
+*   **Event Hub**: Organizers publish detailed event information with topics, deadlines, formats, and location data.
+*   **Discovery Tools**: Researchers search/filter events by keywords, topics, dates, and location.
+*   **Streamlined Submissions**: Direct upload of abstracts/papers via the platform for paid researchers.
+*   **Review Management**: Tools for organizers to download submissions, update status, and provide feedback.
+*   **Research Repository**: Access to accepted papers from completed events with search functionality.
+*   **Manual Workflows**: User verification and paid subscription activation rely on admin actions.
+*   **Automated Notifications**: Email system using Arabic templates for the MVP.
+*   **Admin Control Panel**: Tools for managing users, payments, events, topics, and system maintenance.
+*   **i18n-Ready Database**: Structured to support future language additions beyond Arabic.
 
 ## 3. High-Level User Experience Goals
 
 *   **Build Trust**: Through transparent verification and clear information.
 *   **Increase Efficiency**: For researchers finding events/submitting work, and organizers managing events/submissions.
 *   **Improve Accessibility**: Centralize access to event opportunities and research outputs.
-*   **Ensure Clarity**: Provide a clear, intuitive interface **specifically designed for Arabic users and RTL layout**. This includes appropriate feedback during operations (loading states, error messages).
+*   **Ensure Clarity**: Provide a clear, intuitive interface specifically designed for Arabic users and RTL layout.
 *   **Become the Central Hub**: For Algerian academic events and related research.
 
 ## 4. User Flows (High-Level)
 
-*(Refer to detailed User Flows in Eventy360_Project_Summary.md for specifics)*
-
 *   **Researcher**:
-    *   **All Tiers (Free, Trial, Paid)**: Register -> Complete Profile (Basic + Extended) -> Confirm Email -> Discover Events -> Manage Account. Profile may display a Verification Badge awarded by Admin.
-    *   **Trial Tier / Paid Tier ONLY**: Bookmark Events (add new), Submit Abstracts/Papers -> Track Submission Status -> Subscribe to Topics (modify subscriptions) -> Receive Topic-Based Email Notifications for new events.
-    *   **Free Tier Specifics**: Receives only essential system emails (password reset, email confirmation). Cannot submit papers. Topic subscriptions become read-only (no new emails based on them). Bookmarks become read-only.
+    *   **All Tiers**: Register → Complete Profile → Discover Events → Manage Account
+    *   **Trial/Paid Tier**: Bookmark Events, Submit Papers, Track Submission Status, Subscribe to Topics
+    *   **Free Tier**: Limited to essential system emails, no paper submissions, read-only topic subscriptions and bookmarks
 *   **Organizer**:
-    *   **All Tiers (Trial, Paid, Post-Trial Expired)**: Register -> Complete Profile (Basic + Extended) -> Confirm Email -> Manage Account. Profile may display a Verification Badge awarded by Admin.
-    *   **Trial Tier / Paid Tier ONLY**: Create/Manage Events (subject to active event limits per subscription) -> Full Event Management Tools -> View/Download Submissions -> Review Submissions (Accept/Reject, Provide Feedback) -> Receive all relevant notifications. Bookmarking events (add new) is also possible.
-    *   **Post-Trial Expired (Not Paid)**: Can log in. Existing events remain publicly visible; Organizer has Read-Only access to their event details and submission lists. Cannot use event creation/editing features; relevant UI elements are disabled. Subscription status card reflects expired trial. Bookmarks become read-only.
-*   **Administrator**: Manage Users (Award/Remove Verification Badge, Suspend) -> Manage Payments (Verify, Record) -> Oversee Platform Content (Events, Submissions, Topics) -> Manage Email Templates/Logs.
+    *   **All Tiers**: Register → Complete Profile → Manage Account
+    *   **Trial/Paid Tier**: Create/Manage Events, View/Download Submissions, Review Submissions
+    *   **Post-Trial Expired**: Read-only access to existing events and submissions, cannot create new events
+*   **Administrator**: Manage Users, Manage Payments, Oversee Platform Content, Manage Email Templates/Logs
 
 ## 5. Core Principles (UX Goals)
 
 *   **Trustworthiness**: Build user confidence through clear verification processes and reliable information.
 *   **Efficiency**: Streamline common tasks for all user types, reducing manual effort.
 *   **Accessibility**: Ensure easy access to event information and research outputs.
-*   **Clarity**: Provide a clear, intuitive interface **designed for Arabic/RTL**, especially given the multi-lingual nature (Arabic primary **for MVP**).
+*   **Clarity**: Provide a clear, intuitive interface designed for Arabic/RTL.
 *   **Centralization**: Serve as the go-to platform for academic events and research in Algeria. 

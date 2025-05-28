@@ -22,6 +22,7 @@ interface EventDetailsHeaderProps {
     organizer: {
       display_name: string | null
       profile_picture_url: string | null
+      is_verified: boolean
     } | null
   }
   locale: string
@@ -90,12 +91,14 @@ export function EventDetailsHeader({ event, locale, userRole }: EventDetailsHead
                     </span>
                   </div>
                 )}
-                {/* Verification badge - assuming organizer is verified for now */}
-                <div className="absolute -bottom-1 -right-1 bg-white text-blue-600 dark:bg-gray-800 dark:text-blue-400 rounded-full p-1 shadow-sm border border-blue-100 dark:border-blue-900">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                </div>
+                {/* Verification badge - only shown if organizer is verified */}
+                {event.organizer.is_verified && (
+                  <div className="absolute -bottom-1 -right-1 bg-white text-blue-600 dark:bg-gray-800 dark:text-blue-400 rounded-full p-1 shadow-sm border border-blue-100 dark:border-blue-900">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                )}
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-900">

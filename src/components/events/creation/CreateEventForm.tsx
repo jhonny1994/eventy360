@@ -17,6 +17,7 @@ import {
 import { useSubscription } from "@/hooks/useSubscription";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { withSubscriptionGuard } from "@/components/hoc/withSubscriptionGuard";
 
 import BasicInfoStep from "./steps/BasicInfoStep";
 import ContentDetailsStep from "./steps/ContentDetailsStep";
@@ -36,7 +37,7 @@ interface CreateEventFormProps {
   className?: string;
 }
 
-export default function CreateEventForm({ className }: CreateEventFormProps) {
+function CreateEventForm({ className }: CreateEventFormProps) {
   const { user } = useAuth();
   const t = useTranslations("Events.Creation");
   const tValidation = useTranslations("Events.Creation.validation");
@@ -54,7 +55,6 @@ export default function CreateEventForm({ className }: CreateEventFormProps) {
       format: "",
       wilaya_id: "",
       daira_id: "",
-      venue: "",
       email: "",
       phone: "",
       website: "",
@@ -84,16 +84,18 @@ export default function CreateEventForm({ className }: CreateEventFormProps) {
   const canCreateEvent = useCallback(() => {
     if (subscriptionLoading || !subscriptionData) return false;
     
-    // Check if user has an active subscription
+    // Check if user has an active subscription or is in trial period
+    // Free users cannot create events
     if (!subscriptionData.subscription || 
-        (subscriptionData.subscription.status !== "active" && subscriptionData.subscription.status !== "trial")) {
+        subscriptionData.subscription.tier === 'free' ||
+        (subscriptionData.subscription.status !== "active" && 
+         subscriptionData.subscription.status !== "trial")) {
       return false;
     }
-
-    // For now, allow creation since active_events_count is not in the type
-    // TODO: Add active_events_count to UserSubscriptionData type
+    
+    // If user has a valid subscription (paid or trial), they can create events
     return true;
-  }, [subscriptionData, subscriptionLoading]);  const getStepComponent = () => {
+  }, [subscriptionData, subscriptionLoading]);const getStepComponent = () => {
     switch (currentStep) {
       case "basicInfo":
         return <BasicInfoStep form={form} />;
@@ -107,11 +109,11 @@ export default function CreateEventForm({ className }: CreateEventFormProps) {
         return null;
     }
   };const validateCurrentStep = async () => {
-    const stepFields = getStepFields(currentStep);
-    const isValid = await form.trigger(stepFields); // Removed 'as string[]'
-    return isValid;
-  };
-
+  const stepFields = getStepFields(currentStep);
+  // TypeScript will now correctly understand that stepFields contains valid keys of CreateEventFormData
+  const isValid = await form.trigger(stepFields);
+  return isValid;
+};
   const getStepFields = (step: Step): (keyof CreateEventFormData)[] => {
     switch (step) {
       case "basicInfo":
@@ -123,8 +125,7 @@ export default function CreateEventForm({ className }: CreateEventFormProps) {
           "daira_id",
           "email",
           "phone",
-          "website",
-          "venue" // Added venue to basicInfo step fields
+          "website"
         ];
       case "contentDetails":
         return [
@@ -169,18 +170,17 @@ export default function CreateEventForm({ className }: CreateEventFormProps) {
       setCurrentStep(STEPS[prevIndex]);
     }
   };
-
   const handleSubmit = async (data: CreateEventFormData) => {
     if (!user) {
       setSubmitError(t("mustBeLoggedIn"));
       return;
     }
 
-    // TODO: Re-enable subscription check once active_events_count is available
-    // if (!canCreateEvent()) { 
-    //   setSubmitError(t("subscriptionLimitReached"));
-    //   return;
-    // }
+    // Check if user has reached their event limit
+    if (!canCreateEvent()) { 
+      setSubmitError(t("subscriptionLimitReached"));
+      return;
+    }
 
     setIsSubmitting(true);
     setSubmitError(null);
@@ -193,8 +193,7 @@ export default function CreateEventForm({ className }: CreateEventFormProps) {
           created_by: user.id,
           event_name_translations: { ar: data.event_name_ar },
           event_subtitle_translations: { ar: data.event_subtitle_ar },
-          event_type: data.event_type as EventType,
-          format: data.format as EventFormat,
+          event_type: data.event_type as EventType,          format: data.format as EventFormat,
           wilaya_id: parseInt(data.wilaya_id),
           daira_id: parseInt(data.daira_id),
           email: data.email,
@@ -208,13 +207,11 @@ export default function CreateEventForm({ className }: CreateEventFormProps) {
           target_audience_translations: { ar: data.target_audience_ar },
           scientific_committees_translations: { ar: data.scientific_committees_ar },
           speakers_keynotes_translations: { ar: data.speakers_keynotes_ar },
-          price: data.price,          event_date: data.event_date,
-          event_end_date: data.event_end_date,
+          price: data.price,event_date: data.event_date,          event_end_date: data.event_end_date,
           abstract_submission_deadline: data.abstract_submission_deadline,
           abstract_review_result_date: data.abstract_review_result_date,
           full_paper_submission_deadline: data.full_paper_submission_deadline || null,
           submission_verdict_deadline: data.submission_verdict_deadline,
-          // venue: data.venue || null, // Venue is not in the events table schema
         })
         .select("id")
         .single();
@@ -370,6 +367,9 @@ export default function CreateEventForm({ className }: CreateEventFormProps) {
           </div>
         </div>
       </form>
-    </div>
-  );
+    </div>  );
 }
+
+// Apply subscription guard to ensure only users with appropriate
+// subscription can create events
+export default withSubscriptionGuard(CreateEventForm);

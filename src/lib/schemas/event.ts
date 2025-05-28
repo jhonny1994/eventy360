@@ -24,8 +24,7 @@ export type EventType = z.infer<typeof EventTypeEnum>;
 export type EventFormat = z.infer<typeof EventFormatEnum>;
 
 // Step 1: Basic Information
-export const getBasicInfoSchema = (t: TFunction) =>
-  z.object({
+export const getBasicInfoSchema = (t: TFunction) =>  z.object({
     event_name_ar: z.string().min(1, { message: t("required") }),
     event_subtitle_ar: z.string().optional(),
     event_type: z.union([EventTypeEnum, z.literal("")]).refine((val) => val !== "", { message: t("required") }),
@@ -35,7 +34,6 @@ export const getBasicInfoSchema = (t: TFunction) =>
     email: z.string().email({ message: t("invalidEmail") }),
     phone: z.string().min(1, { message: t("required") }),
     website: z.string().url({ message: t("invalidUrl") }).optional().or(z.literal("")),
-    venue: z.string().optional(), // Added venue field
   });
 
 // Step 2: Content Details
@@ -256,7 +254,6 @@ export interface CreateEventFormDataStatic {
   format: EventFormat | "";
   wilaya_id: string;
   daira_id: string;
-  venue?: string;
   email: string;
   phone: string;
   website?: string;

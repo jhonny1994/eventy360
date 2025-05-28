@@ -134,6 +134,7 @@ export default async function ProfileLayout({
         profile={profile} 
         locale={locale} 
         translations={translations}
+        userType={profileData.user_type}
       />
 
       {/* Main content */}

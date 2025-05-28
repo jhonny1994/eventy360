@@ -4,91 +4,57 @@
 
 *   **Frontend Framework**: Next.js (App Router)
 *   **UI Language**: React with TypeScript
-*   **Styling**: Tailwind CSS v4 (Configured via `postcss.config.mjs` and `@theme` directive in `globals.css`)
-*   **UI Components**: Flowbite (using Tailwind plugin and potentially React components)
-*   **Theme Switching**: `next-themes` (managing light/dark mode via `class` strategy)
-*   **Internationalization (i18n)**: `next-intl` (Configured **strictly** for Arabic `ar` locale only in MVP, supporting RTL via `dir="rtl"` attribute on `<html>` or relevant container). English/French locales are **not** part of the MVP scope.
-*   **Forms**: React Hook Form
-*   **Validation**: Zod (Used with React Hook Form for client-side and potentially Edge Function input validation).
-*   **Backend Platform**: Supabase (Cloud hosted)
-    *   **Database**: PostgreSQL (Version provided by Supabase), utilizing ENUMs, Functions (PL/pgSQL), Triggers, and Row Level Security (RLS) policies.
-    *   **Authentication**: Supabase Auth (Email/Password)
+*   **Styling**: Tailwind CSS v4
+*   **UI Components**: Flowbite
+*   **Theme Switching**: `next-themes` (managing light/dark mode)
+*   **Internationalization**: `next-intl` (Arabic locale with RTL support for MVP)
+*   **Forms**: React Hook Form with Zod validation
+*   **Backend Platform**: Supabase
+    *   **Database**: PostgreSQL with ENUMs, Functions, Triggers, and RLS
+    *   **Authentication**: Supabase Auth
     *   **File Storage**: Supabase Storage
-    *   **Serverless Functions**: Supabase Edge Functions (Deno Runtime, TypeScript)
+    *   **Serverless Functions**: Supabase Edge Functions (Deno)
     *   **Scheduling**: Supabase Cron Jobs
-*   **Email Service**: Resend (API integrated via `send-email` Edge Function logic).
+*   **Email Service**: Resend API
 
 ## 2. Development Environment & Setup
 
-*   **Package Manager**: `npm` (or `yarn`, confirm project setup)
-*   **Node.js**: Specify required version range (e.g., >= 18.x).
-*   **Supabase CLI**: Required for local development (DB migrations, local function testing, environment management).
-*   **Code Repository**: Git, hosted on GitHub.
-*   **Environment Variables**: Managed via `.env.local` (ignored by Git) for local development and Vercel/Supabase UI for deployment.
+*   **Package Manager**: npm
+*   **Node.js**: >= 18.x
+*   **Supabase CLI**: Required for local development
+*   **Code Repository**: Git (GitHub)
+*   **Environment Variables**: Managed via `.env.local` for local development
     *   `NEXT_PUBLIC_SUPABASE_URL`
     *   `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-    *   `SUPABASE_SERVICE_ROLE_KEY` (Server-side/Edge Function use only)
-    *   `RESEND_API_KEY` (Server-side/Edge Function use only)
-    *   `SUPABASE_DB_PASSWORD` (For local dev via Supabase CLI)
-    *   Potentially others (e.g., JWT secret if needed beyond Supabase Auth defaults).
+    *   `SUPABASE_SERVICE_ROLE_KEY`
+    *   `RESEND_API_KEY`
+    *   `SUPABASE_DB_PASSWORD` (local dev)
 
 ## 3. Deployment & Infrastructure
 
-*   **Frontend**: Vercel (connected to GitHub repo).
-*   **Backend**: Supabase Cloud.
-*   **CI/CD**: GitHub Actions workflow:
-    *   Triggered on push/merge to main branch.
-    *   Builds Next.js application.
-    *   Deploys frontend to Vercel.
-    *   (Optional/Manual initially) Deploys Supabase migrations/functions if changes detected.
+*   **Frontend**: Vercel (connected to GitHub repo)
+*   **Backend**: Supabase Cloud
+*   **CI/CD**: GitHub Actions workflow for automated deployments
 
-## 4. Key Technical Constraints & Considerations
+## 4. Key Technical Constraints
 
-*   **Arabic Language & RTL (Core Requirement)**: Requires meticulous implementation in UI components, CSS, data handling, and `next-intl` configuration. All user-facing elements **must** be in Arabic and correctly laid out for RTL during the MVP phase.
-*   **Manual MVP Processes**: Backend logic must correctly handle state changes initiated by admin actions reflecting offline verification/payment.
-*   **RLS Complexity**: Requires thorough design and testing of policies for all user roles and data interactions.
-*   **Edge Function Environment**: Deno runtime, specific available APIs, cold starts, execution limits (time/memory).
-*   **Database Migrations**: Strict adherence to using Supabase CLI (`supabase db diff`, `supabase migration new`, apply locally/remotely) for schema evolution.
-*   **State Management (Frontend)**: Choose appropriate strategy (e.g., React Context, Zustand, Valtio) if global state beyond basic props/hooks is needed. Libraries like SWR/TanStack Query manage their own request state.
+*   **Arabic Language & RTL**: Required throughout UI, data handling, and configuration for MVP
+*   **Manual MVP Processes**: Admin-driven verification and payment workflows
+*   **RLS Complexity**: Careful design of policies for all user roles
+*   **Edge Function Limitations**: Deno runtime with execution limits
+*   **Database Migrations**: Managed via Supabase CLI
 *   **Loading State Strategy**:
-    *   **App Router (`loading.js`/`tsx`)**: Use the built-in Next.js file convention to show instant loading UI (e.g., Skeletons from Flowbite) while Server Component data loads. Define `loading.tsx` in relevant route segments.
-    *   **Client Components (Data Fetching)**: Use loading states provided by data fetching libraries (e.g., `isLoading` from SWR/TanStack Query) or manual `useState` hooks to conditionally render loading indicators (spinners, skeletons).
-    *   **Client Components (Mutations/Forms)**: Use `useState` (e.g., `isSubmitting`) to track the state of form submissions or other mutations. Disable buttons and show indicators while loading.
+    *   App Router loading files
+    *   Client-side loading states
 *   **Error Handling Strategy**:
-    *   **Frontend (App Router Boundaries)**: Implement `error.tsx` (must be Client Component) in route segments to catch errors from nested Server Components, display fallback UI (use Flowbite Alert/Toast), and provide a `reset` function. Implement `global-error.tsx` for the root layout.
-    *   **Frontend (Not Found)**: Use `notFound()` from `next/navigation` within Server Components when data fetching returns no result for a required resource (e.g., viewing a specific event by ID).
-    *   **Frontend (Client Components)**: Use `try...catch` in event handlers/async functions. Manage error state with `useState`. Display errors using Flowbite Toast or Alert components. Data fetching libraries (SWR/TanStack Query) provide `error` objects.
-    *   **Frontend (Forms)**: Use React Hook Form with Zod for client-side validation errors shown inline. Handle submission errors via state management as above.
-    *   **Backend (Edge Functions)**: Wrap logic in `try...catch`. Return standardized JSON error objects (`{ "error": "Error message" }`) with appropriate HTTP status codes (e.g., 400, 401, 403, 404, 500). Use `console.error` for logging detailed errors to Supabase logs.
-    *   **Backend (Input Validation)**: Use Zod or similar validation within Edge Functions for request bodies/params, return 400 status on failure.
-*   **Security**: Protect service role keys, manage RLS policies carefully, validate inputs (client & server), handle file uploads securely.
+    *   App Router error boundaries
+    *   Client component error handling
+    *   Edge function standardized responses
+*   **Security**: Protected keys, validated inputs, secure file handling
 
 ## 5. Data Handling Specifics
 
-*   **User Profile State**: The `public.profiles` table includes an `is_extended_profile_complete` (BOOLEAN) flag to track if a user has completed the mandatory role-specific information after initial signup and email confirmation. This flag is crucial for middleware logic and RLS policies controlling access to application features.
-*   **Translatable Content (Dynamic)**: Fields like event names/descriptions, topic names, profile bios use `JSONB` columns (e.g., `event_name_translations JSONB`).
-    *   JSONB structure designed for `{"ar": "...", "en": "...", "fr": "..."}`.
-    *   **MVP Implementation**: **Strictly** only the `ar` key is populated and queried (e.g., `{"ar": "نص عربي"}`). **Accessing or populating other keys is forbidden in MVP code.**
-    *   Application layer queries `translations_column ->> 'ar'` for MVP.
-    *   **Fallback Mechanism (Future Requirement for JSONB fields)**: When `en`/`fr` support is added, queries must implement fallback to `ar` if the requested locale is missing.
-        ```sql
-        -- Example for future use
-        SELECT COALESCE(translations_column ->> :user_locale, translations_column ->> 'ar') AS translated_text FROM ...;
-        ```
-    *   Data input forms for MVP provide fields only for Arabic content for these fields.
-*   **Location Data (`wilayas`, `dairas`)**: Static data seeded from `wilayas.json`.
-    *   Uses standard `TEXT` columns: `name_ar` and `name_other`.
-    *   Seeding script populates these columns directly from `arabic_name` and `name` fields in the JSON.
-    *   MVP Application queries **only** `name_ar` for display.
-    *   Future i18n will use the `name_other` field for French/English display.
-*   **File Uploads**: Validate file type (PDF, DOC, DOCX) and size (max 5MB) on both client and server (Edge Function). Store files in Supabase Storage under structured paths (e.g., `submissions/{event_id}/{submission_id}/abstract.pdf`). Store URL and potentially metadata (`filesize`, `mimetype`, `uploaded_at`) in the database (`submissions` table fields). 
-
-## 6. Admin Authentication Implementation
-
-The admin authentication process follows a specific invitation-based flow:
-
-*   **Admin Invitation Backend**: Implemented via a dedicated Supabase Edge Function or RPC (to be determined/implemented), which handles user creation in `auth.users`, profile creation in `public.profiles` (with `user_type = 'admin'`), token generation, and queuing the invitation email.
-*   **Invitation Email**: Uses the Resend service via the notification queue and a specific 'admin_invitation' email template stored in `email_templates`.
-*   **Admin Account Creation Page**: A dedicated Next.js page (e.g., `/admin/create-account`) handles token validation and allows the invited user to set their password and complete initial admin profile details.
-*   **Admin Login Page**: A separate Next.js login page (e.g., `/admin/login`) is provided for administrators.
-*   **Admin Authentication Check**: Middleware and/or server-side logic on admin routes verifies the authenticated user's `user_type` from the `profiles` table. 
+*   **User Profile State**: Uses `is_extended_profile_complete` flag for workflow control
+*   **Translatable Content**: JSONB columns with Arabic as primary language
+*   **Location Data**: Uses separate text columns for languages
+*   **File Uploads**: Type and size validation with structured storage paths 

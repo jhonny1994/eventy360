@@ -244,26 +244,6 @@ export default function BasicInfoStep({ form }: BasicInfoStepProps) {
         </p>
       </div>
 
-      {/* Venue */}
-      <div className="md:col-span-2">
-        <Label htmlFor="venue">
-          {t("basicInfo.fields.venue.label")}
-        </Label>
-        <TextInput
-          id="venue"
-          {...register("venue")}
-          placeholder={t("basicInfo.fields.venue.placeholder")}
-          color={errors.venue ? "failure" : "gray"}
-          dir="rtl"
-        />
-        {errors.venue && (
-          <p className="text-red-500 text-xs mt-1">{String(errors.venue.message)}</p>
-        )}
-        <p className="text-xs text-gray-500 mt-1">
-          {t("basicInfo.fields.venue.description")}
-        </p>
-      </div>
-
       {/* Contact Email */}
       <div>
         <Label htmlFor="email">

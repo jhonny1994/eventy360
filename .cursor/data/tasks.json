@@ -1,281 +1,433 @@
 {
   "tasks": [
     {
-      "id": "1f750cda-0bd1-487f-9820-9b5715006880",
-      "name": "Create Event Details Server Page Component",
-      "description": "Implement the main server component at src/app/[locale]/profile/events/[id]/page.tsx that fetches event data, handles user authentication and access control, and renders the complete event details page. This component serves as the entry point for individual event pages with proper user type differentiation within the profile section.",
-      "notes": "Follow the established pattern from src/app/[locale]/profile/events/page.tsx for server component structure. Use createServerSupabaseClient() and getTranslations() utilities. Implement proper access control: researchers can view all published events, organizers can only view their own events, admins can view all events. Handle invalid event IDs with 404 responses.",
-      "status": "in_progress",
+      "id": "64352f50-300a-4250-88ff-cdee34f6ea7b",
+      "name": "Phase 1: Complete Organizer Review Interface",
+      "description": "This phase focuses on implementing the critical missing components for organizers to review and manage submissions. This is the highest priority gap in the current system as it blocks the complete submission workflow.",
+      "notes": "This phase builds on the existing event management dashboard but adds specialized submission review capabilities.",
+      "status": "pending",
       "dependencies": [],
-      "createdAt": "2025-05-27T09:51:55.588Z",
-      "updatedAt": "2025-05-27T10:12:23.330Z",
+      "createdAt": "2025-05-28T17:37:39.295Z",
+      "updatedAt": "2025-05-28T17:37:39.295Z",
       "relatedFiles": [
         {
-          "path": "src/app/[locale]/profile/events/[id]/page.tsx",
-          "type": "CREATE",
-          "description": "Main server component file to be created"
+          "path": "src/app/[locale]/profile/events/[id]/manage/page.tsx",
+          "type": "REFERENCE",
+          "description": "Existing event management page to understand patterns and extend",
+          "lineStart": 1,
+          "lineEnd": 241
         },
         {
-          "path": "src/app/[locale]/profile/events/page.tsx",
+          "path": "src/app/[locale]/profile/submissions/actions.ts",
           "type": "REFERENCE",
-          "description": "Reference for server component patterns"
-        },
-        {
-          "path": "src/utils/supabase/server.ts",
-          "type": "REFERENCE",
-          "description": "Supabase server client utilities"
-        },
-        {
-          "path": "src/database.types.ts",
-          "type": "REFERENCE",
-          "description": "Database type definitions"
+          "description": "Existing submission actions to leverage",
+          "lineStart": 1,
+          "lineEnd": 276
         }
       ],
-      "implementationGuide": "// Server component implementation\\nconst EventDetailsPage = async ({ params }) => {\\n  // Extract locale and event ID from params\\n  // Create Supabase server client\\n  // Fetch event data with organizer info\\n  // Get current user profile and subscription status\\n  // Implement access control for organizers (only own events)\\n  // Handle not found scenarios with proper 404\\n  // Load translations for UI\\n  // Return JSX with EventDetailsLayout wrapper\\n}\\n\\n// Add proper TypeScript interfaces\\ninterface EventDetailsPageProps {\\n  params: { locale: string; id: string };\\n}\\n\\n// Implement user access control logic\\n// Follow existing server component patterns from profile/events/page.tsx",
-      "verificationCriteria": "Server component correctly fetches event data by ID, implements proper user access control (organizers only see own events), handles translation loading, implements proper error handling for invalid IDs, and renders without errors when accessing /[locale]/events/[valid-id] routes.",
-      "analysisResult": "Implementation of dynamic event details page and management dashboard for Eventy360 platform with comprehensive event information display, user-specific functionality, RTL internationalization support, and responsive design following existing architectural patterns. The implementation includes both the main event details page for viewing and a separate management dashboard for organizers."
+      "implementationGuide": "Follow existing UI patterns with ProfileCard, form components, and action buttons. Ensure all components support RTL layouts for Arabic and maintain the existing security model checking subscriptions and user roles.",
+      "verificationCriteria": "The organizer review interface should allow viewing all submissions for an event, filtering by status, viewing submission details, and providing feedback with status updates. It should maintain security by checking user roles and event ownership.",
+      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking."
     },
     {
-      "id": "13ba47f5-12d5-4e49-b283-a6218121d8cd",
-      "name": "Implement Event Details Layout Container",
-      "description": "Create a reusable layout container component that provides consistent structure for the event details page, including breadcrumb navigation, responsive grid layout, and proper spacing. This component wraps all event detail sections and ensures consistent presentation across different user types.",
-      "notes": "Reference existing layout components in profile and dashboard pages for consistent styling. Ensure RTL support is properly implemented for Arabic locale. Use Flowbite React components where appropriate. Keep layout clean and focused on content viewing.",
+      "id": "ecc1af25-e452-4865-a757-d604a08abaf2",
+      "name": "Task 1.1: Create Abstract Review UI Component",
+      "description": "Develop a reusable component for organizers to review abstract submissions. The component should display abstract content, allow for feedback entry, and enable status updates (accept/reject).",
+      "notes": "This component is the highest priority as it enables the core review workflow. It should follow the existing pattern of multilingual form inputs as seen in the SubmissionForm component.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-05-28T17:37:39.295Z",
+      "updatedAt": "2025-05-28T17:46:49.246Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/submissions/SubmissionForm.tsx",
+          "type": "REFERENCE",
+          "description": "Existing submission form to understand multilingual input patterns",
+          "lineStart": 1,
+          "lineEnd": 288
+        }
+      ],
+      "implementationGuide": "Create a React component that accepts a submission ID and retrieves submission details using Supabase client. Implement a form for feedback entry with multilingual support and buttons for accept/reject actions. Use the existing review_abstract() database function to update status.\n\nPseudocode:\n```\nfunction AbstractReviewComponent({ submissionId }) {\n  const [submission, setSubmission] = useState(null);\n  const [feedback, setFeedback] = useState({ ar: '', en: '', fr: '' });\n  const [loading, setLoading] = useState(false);\n  \n  // Load submission details\n  useEffect(() => { fetchSubmissionDetails(); }, [submissionId]);\n  \n  // Handle accept/reject\n  async function handleStatusUpdate(newStatus) {\n    // Validate inputs\n    // Call review_abstract() function\n    // Handle response\n  }\n  \n  return (\n    <ProfileCard>\n      {/* Display submission details */}\n      {/* Feedback form with language tabs */}\n      {/* Action buttons */}\n    </ProfileCard>\n  );\n}\n```",
+      "verificationCriteria": "Component should display submission details correctly, allow multilingual feedback entry, trigger the review_abstract() function when status is updated, and handle loading/error states appropriately.",
+      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking.",
+      "summary": "Created a comprehensive AbstractReviewComponent that displays submission details, enables multilingual feedback entry via language tabs, and provides accept/reject functionality using the review_abstract database function. The component properly handles loading/error states and implements proper TypeScript types for all data structures.",
+      "completedAt": "2025-05-28T17:46:49.245Z"
+    },
+    {
+      "id": "ef43e95f-3ec1-49f4-a1eb-da8654cbc1d8",
+      "name": "Task 1.2: Create Full Paper Review UI Component",
+      "description": "Develop a reusable component for organizers to review full paper submissions. The component should display paper details, allow file download, enable feedback entry, and provide status update options (accept/reject/request revision).",
+      "notes": "This component builds on the abstract review component but adds file handling and additional status options.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "ecc1af25-e452-4865-a757-d604a08abaf2"
+        }
+      ],
+      "createdAt": "2025-05-28T17:37:39.295Z",
+      "updatedAt": "2025-05-28T17:51:56.030Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/submissions/SubmissionForm.tsx",
+          "type": "REFERENCE",
+          "description": "Existing submission form to understand file handling patterns",
+          "lineStart": 1,
+          "lineEnd": 288
+        }
+      ],
+      "implementationGuide": "Create a React component similar to AbstractReviewComponent but focused on full paper review. Include a file viewer/download link and additional status options. Use the existing review_full_paper() database function.\n\nPseudocode:\n```\nfunction FullPaperReviewComponent({ submissionId }) {\n  const [submission, setSubmission] = useState(null);\n  const [feedback, setFeedback] = useState({ ar: '', en: '', fr: '' });\n  const [loading, setLoading] = useState(false);\n  \n  // Load submission details\n  useEffect(() => { fetchSubmissionDetails(); }, [submissionId]);\n  \n  // Handle status update\n  async function handleStatusUpdate(newStatus) {\n    // Validate inputs\n    // Call review_full_paper() function\n    // Handle response\n  }\n  \n  return (\n    <ProfileCard>\n      {/* Display submission details */}\n      {/* File download button */}\n      {/* Feedback form with language tabs */}\n      {/* Action buttons for all status options */}\n    </ProfileCard>\n  );\n}\n```",
+      "verificationCriteria": "Component should display submission details correctly, allow file download, enable multilingual feedback entry, trigger the review_full_paper() function when status is updated, and handle loading/error states appropriately.",
+      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking.",
+      "summary": "Created a comprehensive FullPaperReviewComponent that displays submission details, enables file download, allows multilingual feedback entry via language tabs, and provides three status update options (accept/reject/request revision) using the review_full_paper database function. The component properly handles loading/error states, properly implements TypeScript types, and includes a visual status indicator.",
+      "completedAt": "2025-05-28T17:51:56.029Z"
+    },
+    {
+      "id": "ef501963-a3fe-467d-adf4-4465b41c61e1",
+      "name": "Task 1.3: Enhance Organizer Submissions Management Interface",
+      "description": "Improve the existing event management dashboard to include a more robust section for managing submissions. This interface should allow organizers to view, filter, and take actions on submissions to their events.",
+      "notes": "This task corresponds to the existing task ID `899f8b50-0558-4935-ad8a-9e33b742c7e9` which is already pending in the task system. This implementation should maintain that task ID.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-05-28T17:37:39.295Z",
+      "updatedAt": "2025-05-28T18:09:00.496Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/events/[id]/manage/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "Existing event management page to extend with submissions tab",
+          "lineStart": 1,
+          "lineEnd": 241
+        }
+      ],
+      "implementationGuide": "Extend the existing event management page with a submissions tab that shows a filterable table of submissions. Implement sorting, filtering, and pagination. Add action buttons to view details or initiate review.\n\nPseudocode:\n```\nasync function EventSubmissionsPage() {\n  // Get event ID from route params\n  // Verify user is organizer and owns this event\n  // Fetch submissions with pagination\n  \n  return (\n    <ProfileCard>\n      {/* Filters for status, date range, etc. */}\n      <SubmissionsTable \n        submissions={submissions}\n        onViewDetails={(id) => router.push(`/submissions/${id}`)}\n        onReviewAbstract={(id) => router.push(`/submissions/${id}/review`)}\n      />\n      {/* Pagination controls */}\n    </ProfileCard>\n  );\n}\n```",
+      "verificationCriteria": "Interface should display all submissions for the event, allow filtering by status and other criteria, provide action buttons for review, and maintain security by verifying organizer ownership of the event.",
+      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking.",
+      "summary": "Completed the organizer submissions management interface enhancement with the following features:\n1. Created a dedicated page for event organizers to view all submissions for their events\n2. Implemented filters for submission status and text search capabilities\n3. Added a responsive table view with pagination for better user experience\n4. Displayed key submission details including title, researcher info, status, and update date\n5. Added action links for reviewing different submission types based on their current status\n6. Ensured proper security by verifying event ownership or admin status before access",
+      "completedAt": "2025-05-28T18:09:00.495Z"
+    },
+    {
+      "id": "6703ee32-2275-433e-a4d5-93fe09331a85",
+      "name": "Task 1.4: Create Submission Detail Page for Organizers",
+      "description": "Develop a page for event organizers to view and manage detailed information about a specific submission. This page should allow organizers to update the submission status, provide feedback, and download attached files.",
+      "notes": "This task corresponds to the existing task ID `1745d2d0-2a18-4c6a-9b15-5cf60ab4debc` which is already pending in the task system. This implementation should maintain that task ID.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "ecc1af25-e452-4865-a757-d604a08abaf2"
+        },
+        {
+          "taskId": "ef43e95f-3ec1-49f4-a1eb-da8654cbc1d8"
+        },
+        {
+          "taskId": "ef501963-a3fe-467d-adf4-4465b41c61e1"
+        }
+      ],
+      "createdAt": "2025-05-28T17:37:39.295Z",
+      "updatedAt": "2025-05-28T18:23:32.856Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/submissions/[id]/page.tsx",
+          "type": "REFERENCE",
+          "description": "Researcher's submission detail page for reference",
+          "lineStart": 1,
+          "lineEnd": 100
+        }
+      ],
+      "implementationGuide": "Create a new page at `/[locale]/profile/events/[eventId]/submissions/[submissionId]` that displays comprehensive submission details and embeds the appropriate review component based on submission status. Implement proper security checks for event ownership.\n\nPseudocode:\n```\nasync function OrganizersSubmissionDetailPage() {\n  // Get submission ID and event ID from route params\n  // Verify user is organizer and owns this event\n  // Fetch submission details\n  \n  return (\n    <div>\n      <BackLink to={`/events/${eventId}/submissions`} />\n      <h1>{submission.title}</h1>\n      <SubmissionStatusBadge status={submission.status} />\n      \n      {/* Submission details card */}\n      <ProfileCard>\n        {/* Display all submission metadata */}\n        {/* File download links */}\n      </ProfileCard>\n      \n      {/* Conditional review component based on status */}\n      {submission.status === 'abstract_submitted' && (\n        <AbstractReviewComponent submissionId={submissionId} />\n      )}\n      {['abstract_accepted', 'full_paper_submitted', 'revision_requested'].includes(submission.status) && (\n        <FullPaperReviewComponent submissionId={submissionId} />\n      )}\n    </div>\n  );\n}\n```",
+      "verificationCriteria": "Page should display comprehensive submission details, embed the appropriate review component based on status, enforce security by verifying organizer ownership, and maintain consistent navigation with breadcrumbs or back links.",
+      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking.",
+      "summary": "Successfully implemented the submission detail page for event organizers, allowing them to view and manage submission details, including:\n1. Created a detail page at `/[locale]/profile/events/[id]/submissions/[submissionId]` showing submission data\n2. Implemented proper security checks to ensure only event owners or admins can access\n3. Added a responsive UI showing submission title, abstract, keywords, and files\n4. Displayed researcher information with contact details\n5. Added conditional action buttons based on submission status\n6. Created an abstract review form for organizers to approve/reject abstracts with feedback\n7. Ensured proper RTL support for Arabic language and localization",
+      "completedAt": "2025-05-28T18:23:32.855Z"
+    },
+    {
+      "id": "eaf8c0e7-7274-415f-8ac6-65c33550cec5",
+      "name": "Phase 2: Complete Researcher Submission Experience",
+      "description": "This phase focuses on enhancing the researcher's submission experience by completing the submission detail view and improving status tracking capabilities.",
+      "notes": "This phase builds on the existing researcher submission form and listing page.",
       "status": "pending",
       "dependencies": [
         {
-          "taskId": "1f750cda-0bd1-487f-9820-9b5715006880"
+          "taskId": "64352f50-300a-4250-88ff-cdee34f6ea7b"
         }
       ],
-      "createdAt": "2025-05-27T09:51:55.588Z",
-      "updatedAt": "2025-05-27T09:51:55.588Z",
+      "createdAt": "2025-05-28T17:37:39.295Z",
+      "updatedAt": "2025-05-28T17:37:39.295Z",
       "relatedFiles": [
         {
-          "path": "src/components/events/details/EventDetailsLayout.tsx",
-          "type": "CREATE",
-          "description": "Layout container component"
-        },
-        {
-          "path": "src/components/common/Breadcrumb.tsx",
+          "path": "src/app/[locale]/profile/submissions/page.tsx",
           "type": "REFERENCE",
-          "description": "Existing breadcrumb patterns if available"
-        },
-        {
-          "path": "src/app/[locale]/profile/layout.tsx",
-          "type": "REFERENCE",
-          "description": "Reference for layout patterns"
+          "description": "Existing submissions listing page",
+          "lineStart": 1,
+          "lineEnd": 125
         }
       ],
-      "implementationGuide": "// Create EventDetailsLayout component\\ninterface EventDetailsLayoutProps {\\n  children: React.ReactNode;\\n  eventTitle: string;\\n  locale: string;\\n  eventId: string;\\n}\\n\\n// Implement breadcrumb navigation (Home > Events > Event Name)\\n// Create responsive grid layout using Tailwind\\n// Add RTL support with rtl: classes\\n// Ensure proper spacing and container widths\\n// Follow existing layout patterns from other pages\\n// Make layout identical for researchers and organizers",
-      "verificationCriteria": "Layout component provides proper responsive structure, breadcrumb navigation works correctly, RTL layout displays properly in Arabic locale, component integrates seamlessly with the main page component, and layout is consistent across different user types.",
-      "analysisResult": "Implementation of dynamic event details page and management dashboard for Eventy360 platform with comprehensive event information display, user-specific functionality, RTL internationalization support, and responsive design following existing architectural patterns. The implementation includes both the main event details page for viewing and a separate management dashboard for organizers."
+      "implementationGuide": "Follow existing UI patterns with ProfileCard, status indicators, and action buttons. Ensure all components support RTL layouts for Arabic and maintain the existing security model checking subscriptions and user roles.",
+      "verificationCriteria": "The researcher submission experience should allow viewing submission details, tracking status changes, receiving feedback, and submitting revisions when requested. It should maintain security by checking user roles and submission ownership.",
+      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking."
     },
     {
-      "id": "d93d4070-8029-4921-9aa2-c6012455a376",
-      "name": "Build Event Header Information Component",
-      "description": "Create a comprehensive event header component that displays primary event information including title, subtitle, organizer details, and user-specific action buttons. This component serves as the main focal point at the top of the event details page with role-based functionality.",
-      "notes": "Use Flowbite React components for buttons and dropdowns. Ensure proper handling of JSON translation fields from the database. Keep header clean and uncluttered. Focus on viewing experience with minimal role-specific additions.",
+      "id": "37e1abed-0c59-4a21-abb2-743e46472f03",
+      "name": "Task 2.1: Complete Researcher Submissions Listing Page",
+      "description": "Finalize the page for researchers to view and track their submitted papers/abstracts. This page should display all submissions by the researcher, their current status, and provide actions for managing existing submissions.",
+      "notes": "This task corresponds to the existing task ID `bcaf5eaa-2ce9-463d-904a-bad2f4e79a2f` which is currently in progress in the task system. This implementation should maintain that task ID and build upon existing work.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-05-28T17:37:39.295Z",
+      "updatedAt": "2025-05-28T18:32:19.121Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/submissions/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "Existing submissions listing page to enhance",
+          "lineStart": 1,
+          "lineEnd": 125
+        },
+        {
+          "path": "src/app/[locale]/profile/submissions/ui/SubmissionsList.tsx",
+          "type": "TO_MODIFY",
+          "description": "Submissions list component to enhance",
+          "lineStart": 1,
+          "lineEnd": 100
+        }
+      ],
+      "implementationGuide": "Enhance the existing submissions listing page with improved filtering, sorting, and status indicators. Add action buttons for viewing details, submitting revisions, etc.\n\nPseudocode:\n```\nasync function EnhancedResearcherSubmissionsPage() {\n  // Verify user is authenticated and is a researcher\n  // Fetch user's submissions with pagination\n  \n  return (\n    <div>\n      <h1>{t('mySubmissions')}</h1>\n      {/* Filters for status, event, date range */}\n      <SubmissionsTable \n        submissions={submissions}\n        onViewDetails={(id) => router.push(`/submissions/${id}`)}\n        renderActions={(submission) => (\n          <ActionButtons submission={submission} />\n        )}\n      />\n      {/* Pagination controls */}\n    </div>\n  );\n}\n```",
+      "verificationCriteria": "Page should display all submissions by the researcher, show accurate status indicators, provide appropriate action buttons based on submission status, and include filtering and sorting capabilities.",
+      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking.",
+      "summary": "Successfully enhanced the researcher submissions listing page with robust filtering, sorting, and improved action buttons. Implemented status-based filtering, title/event search, column sorting, and contextual actions based on submission status. Also added clear pagination with improved navigation and empty state handling.",
+      "completedAt": "2025-05-28T18:32:19.119Z"
+    },
+    {
+      "id": "2daf71a3-03b0-4e4b-8207-cd3dbda3990c",
+      "name": "Task 2.2: Create Submission Detail Page for Researchers",
+      "description": "Develop a page for researchers to view detailed information about a specific submission, including its status, reviewer feedback, and attached files. The page should also provide actions for downloading files or viewing event details.",
+      "notes": "This task corresponds to the existing task ID `ff0570c9-4501-480f-b439-c2583ed65680` which is already pending in the task system. This implementation should maintain that task ID.",
+      "status": "in_progress",
+      "dependencies": [
+        {
+          "taskId": "37e1abed-0c59-4a21-abb2-743e46472f03"
+        }
+      ],
+      "createdAt": "2025-05-28T17:37:39.295Z",
+      "updatedAt": "2025-05-28T18:33:41.341Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/submissions/SubmissionForm.tsx",
+          "type": "REFERENCE",
+          "description": "Existing submission form to understand file handling patterns",
+          "lineStart": 1,
+          "lineEnd": 288
+        }
+      ],
+      "implementationGuide": "Create a comprehensive detail page that shows submission metadata, status history, feedback from reviewers, and embedded file viewers.\n\nPseudocode:\n```\nasync function ResearcherSubmissionDetailPage() {\n  // Get submission ID from route params\n  // Verify user is authenticated and owns this submission\n  // Fetch submission details with feedback and file URLs\n  \n  return (\n    <div>\n      <BackLink to=\"/submissions\" />\n      <h1>{submission.title}</h1>\n      <SubmissionStatusBadge status={submission.status} />\n      \n      {/* Submission details card */}\n      <ProfileCard>\n        {/* Display all submission metadata */}\n        {/* File download links */}\n        {/* Event details and link */}\n      </ProfileCard>\n      \n      {/* Feedback display if available */}\n      {submission.feedback && (\n        <FeedbackCard feedback={submission.feedback} />\n      )}\n      \n      {/* Conditional action section based on status */}\n      {submission.status === 'abstract_accepted' && (\n        <FullPaperUploadSection submissionId={submissionId} />\n      )}\n      {submission.status === 'revision_requested' && (\n        <RevisionUploadSection submissionId={submissionId} />\n      )}\n    </div>\n  );\n}\n```",
+      "verificationCriteria": "Page should display comprehensive submission details, show reviewer feedback when available, provide file download links, offer appropriate action buttons based on submission status, and maintain consistent navigation with breadcrumbs or back links.",
+      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking."
+    },
+    {
+      "id": "24600453-abad-49d4-9530-3f27d6844305",
+      "name": "Task 2.3: Create Full Paper Upload Component",
+      "description": "Develop a component for researchers to upload full papers after their abstract has been accepted. This component should handle file uploads, validation, and submission to the server.",
+      "notes": "This component should follow the same patterns as the abstract submission form but focus only on file upload.",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2025-05-28T17:37:39.295Z",
+      "updatedAt": "2025-05-28T17:37:39.295Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/submissions/SubmissionForm.tsx",
+          "type": "REFERENCE",
+          "description": "Existing submission form to understand file handling patterns",
+          "lineStart": 1,
+          "lineEnd": 288
+        },
+        {
+          "path": "src/app/[locale]/profile/submissions/actions.ts",
+          "type": "REFERENCE",
+          "description": "Existing submission actions to understand submitFullPaper function",
+          "lineStart": 1,
+          "lineEnd": 276
+        }
+      ],
+      "implementationGuide": "Create a reusable component for uploading full papers with file validation, progress indicators, and error handling. Use the existing submit_full_paper() database function.\n\nPseudocode:\n```\nfunction FullPaperUploadComponent({ submissionId }) {\n  const [file, setFile] = useState(null);\n  const [uploading, setUploading] = useState(false);\n  const [error, setError] = useState(null);\n  \n  async function handleSubmit() {\n    // Validate file type and size\n    // Upload file and handle progress\n    // Call submit_full_paper() function\n    // Handle response\n  }\n  \n  return (\n    <ProfileCard>\n      <h3>{t('uploadFullPaper')}</h3>\n      <p>{t('fullPaperDescription')}</p>\n      <FileInput\n        accept=\".pdf,.doc,.docx\"\n        onChange={setFile}\n      />\n      {error && <Alert color=\"failure\">{error}</Alert>}\n      <Button\n        onClick={handleSubmit}\n        disabled={!file || uploading}\n      >\n        {uploading ? <Spinner /> : t('submitFullPaper')}\n      </Button>\n    </ProfileCard>\n  );\n}\n```",
+      "verificationCriteria": "Component should validate file type and size, show upload progress, call the appropriate server action, handle errors appropriately, and provide clear feedback to the user.",
+      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking."
+    },
+    {
+      "id": "f15ceb22-03b4-4918-add1-bd56e03e34c1",
+      "name": "Task 2.4: Create Revision Upload Component",
+      "description": "Develop a component for researchers to upload revised papers after receiving revision requests. This component should display reviewer feedback, handle file uploads, and submission to the server.",
+      "notes": "This component builds on the full paper upload component but adds feedback display.",
       "status": "pending",
       "dependencies": [
         {
-          "taskId": "1f750cda-0bd1-487f-9820-9b5715006880"
+          "taskId": "24600453-abad-49d4-9530-3f27d6844305"
         }
       ],
-      "createdAt": "2025-05-27T09:51:55.588Z",
-      "updatedAt": "2025-05-27T09:51:55.588Z",
+      "createdAt": "2025-05-28T17:37:39.295Z",
+      "updatedAt": "2025-05-28T17:37:39.295Z",
       "relatedFiles": [
         {
-          "path": "src/components/events/details/EventDetailsHeader.tsx",
-          "type": "CREATE",
-          "description": "Event header component"
-        },
-        {
-          "path": "src/components/events/discovery/EventCard.tsx",
+          "path": "src/app/[locale]/profile/submissions/actions.ts",
           "type": "REFERENCE",
-          "description": "Reference for event display patterns"
-        },
+          "description": "Existing submission actions to understand submitRevision function",
+          "lineStart": 1,
+          "lineEnd": 276
+        }
+      ],
+      "implementationGuide": "Create a reusable component similar to FullPaperUploadComponent but specifically for revisions. Show the feedback that prompted the revision request. Use the existing submit_revision() database function.\n\nPseudocode:\n```\nfunction RevisionUploadComponent({ submissionId, feedback }) {\n  const [file, setFile] = useState(null);\n  const [uploading, setUploading] = useState(false);\n  const [error, setError] = useState(null);\n  \n  async function handleSubmit() {\n    // Validate file type and size\n    // Upload file and handle progress\n    // Call submit_revision() function\n    // Handle response\n  }\n  \n  return (\n    <ProfileCard>\n      <h3>{t('uploadRevision')}</h3>\n      \n      {/* Display feedback */}\n      <FeedbackDisplay feedback={feedback} />\n      \n      <p>{t('revisionDescription')}</p>\n      <FileInput\n        accept=\".pdf,.doc,.docx\"\n        onChange={setFile}\n      />\n      {error && <Alert color=\"failure\">{error}</Alert>}\n      <Button\n        onClick={handleSubmit}\n        disabled={!file || uploading}\n      >\n        {uploading ? <Spinner /> : t('submitRevision')}\n      </Button>\n    </ProfileCard>\n  );\n}\n```",
+      "verificationCriteria": "Component should display reviewer feedback, validate file type and size, show upload progress, call the appropriate server action, handle errors appropriately, and provide clear feedback to the user.",
+      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking."
+    },
+    {
+      "id": "8c42d2a4-afbb-4609-abab-8c38a115ce41",
+      "name": "Phase 3: Enhance Event Statistics and Reporting",
+      "description": "This phase focuses on improving the event statistics dashboard and adding reporting capabilities for organizers to track submission status and progress.",
+      "notes": "This phase enhances the existing event management dashboard with more detailed statistics.",
+      "status": "pending",
+      "dependencies": [
         {
-          "path": "src/database.types.ts",
+          "taskId": "64352f50-300a-4250-88ff-cdee34f6ea7b"
+        }
+      ],
+      "createdAt": "2025-05-28T17:37:39.295Z",
+      "updatedAt": "2025-05-28T17:37:39.295Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/events/[id]/manage/page.tsx",
           "type": "REFERENCE",
-          "description": "Event type definitions"
+          "description": "Existing event management page",
+          "lineStart": 1,
+          "lineEnd": 241
         }
       ],
-      "implementationGuide": "// EventDetailsHeader component\\ninterface EventDetailsHeaderProps {\\n  event: EventType;\\n  translations: any;\\n  locale: string;\\n  userProfile?: UserProfile;\\n}\\n\\n// Display event title and subtitle with proper typography\\n// Show organizer information\\n// Implement role-based action buttons:\\n// - Researchers: Bookmark + Share\\n// - Event Owner Organizers: Manage Event + Share\\n// - Admins: Edit Event + Admin Actions dropdown + Share\\n// - Anonymous: No actions or Register prompt\\n// Ensure consistent layout regardless of user type",
-      "verificationCriteria": "Header component displays all event information correctly, handles multilingual content properly, shows appropriate role-based action buttons, renders responsively on all screen sizes, and maintains consistent layout across user types.",
-      "analysisResult": "Implementation of dynamic event details page and management dashboard for Eventy360 platform with comprehensive event information display, user-specific functionality, RTL internationalization support, and responsive design following existing architectural patterns. The implementation includes both the main event details page for viewing and a separate management dashboard for organizers."
+      "implementationGuide": "Leverage the existing get_event_submission_stats() database function to display comprehensive statistics. Create visualizations for submission trends and status distributions.",
+      "verificationCriteria": "The statistics dashboard should display comprehensive metrics about submissions, allow filtering by status and date ranges, and provide visualizations for trends.",
+      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking."
     },
     {
-      "id": "6bd9112c-d491-43a2-81b3-768af49cd9d3",
-      "name": "Develop Event Timeline and Deadlines Component",
-      "description": "Implement a timeline component that visualizes important event dates including event start/end dates, abstract submission deadlines, full paper deadlines, and notification dates. Include countdown timers for upcoming deadlines and visual progress indicators.",
-      "notes": "Use Flowbite React Timeline component for consistent styling. Implement proper date handling and formatting utilities. Consider adding real-time countdown updates with client-side JavaScript for active deadlines. Keep timeline purely informational for all user types.",
+      "id": "b118dce9-aeec-4f0d-8820-4b4011308eda",
+      "name": "Task 3.1: Enhance Event Statistics Dashboard",
+      "description": "Improve the event statistics dashboard to display more detailed metrics about submissions, including status distributions, timeline trends, and acceptance rates.",
+      "notes": "Use a charting library compatible with the existing UI framework. Ensure all charts are responsive and support RTL layouts.",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2025-05-28T17:37:39.295Z",
+      "updatedAt": "2025-05-28T17:37:39.295Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/events/[id]/manage/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "Existing event management page to extend with statistics tab",
+          "lineStart": 1,
+          "lineEnd": 241
+        }
+      ],
+      "implementationGuide": "Create a dedicated statistics tab in the event management dashboard with charts and metrics. Use the get_event_submission_stats() function to retrieve data.\n\nPseudocode:\n```\nfunction EventStatisticsTab({ eventId }) {\n  const [stats, setStats] = useState(null);\n  const [loading, setLoading] = useState(true);\n  \n  useEffect(() => {\n    async function fetchStats() {\n      // Call get_event_submission_stats() function\n      // Format data for charts\n      setStats(formattedData);\n      setLoading(false);\n    }\n    fetchStats();\n  }, [eventId]);\n  \n  return (\n    <div>\n      {loading ? (\n        <Spinner />\n      ) : (\n        <>\n          <SubmissionStatusChart data={stats} />\n          <MetricsGrid metrics={stats} />\n          <SubmissionTimelineChart data={stats} />\n        </>\n      )}\n    </div>\n  );\n}\n```",
+      "verificationCriteria": "Dashboard should display accurate submission statistics, include visualizations for status distribution and timeline trends, allow filtering by date ranges, and be responsive across device sizes.",
+      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking."
+    },
+    {
+      "id": "c4119405-fcb3-4fd3-9ff8-478f9be82c12",
+      "name": "Phase 4: Complete Internationalization and Bookmarking",
+      "description": "This phase focuses on completing the internationalization support for all submission-related components and implementing the bookmarking functionality.",
+      "notes": "This phase addresses lower priority but important features for a complete experience.",
       "status": "pending",
       "dependencies": [
         {
-          "taskId": "1f750cda-0bd1-487f-9820-9b5715006880"
-        }
-      ],
-      "createdAt": "2025-05-27T09:51:55.588Z",
-      "updatedAt": "2025-05-27T09:51:55.588Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/events/details/EventDetailsTimeline.tsx",
-          "type": "CREATE",
-          "description": "Timeline component for dates and deadlines"
+          "taskId": "64352f50-300a-4250-88ff-cdee34f6ea7b"
         },
         {
-          "path": "src/utils/dateHelpers.ts",
-          "type": "CREATE",
-          "description": "Date formatting and calculation utilities"
+          "taskId": "eaf8c0e7-7274-415f-8ac6-65c33550cec5"
         }
       ],
-      "implementationGuide": "// EventDetailsTimeline component\\ninterface EventDetailsTimelineProps {\\n  event: EventType;\\n  translations: any;\\n}\\n\\n// Create timeline visualization using Flowbite Timeline\\n// Calculate and display countdown timers for active deadlines\\n// Show visual progress for submission phases\\n// Handle timezone considerations\\n// Implement responsive timeline layout\\n// Add conditional rendering based on deadline status\\n// Make timeline identical for all user types (viewing focused)",
-      "verificationCriteria": "Timeline displays all event dates correctly, countdown timers show accurate remaining time, visual indicators properly reflect current submission phase, component handles past/future events appropriately, responsive layout works on all devices, and timeline appears identical for all user types.",
-      "analysisResult": "Implementation of dynamic event details page and management dashboard for Eventy360 platform with comprehensive event information display, user-specific functionality, RTL internationalization support, and responsive design following existing architectural patterns. The implementation includes both the main event details page for viewing and a separate management dashboard for organizers."
-    },
-    {
-      "id": "4d499333-3832-4980-a0c3-1dfc1213cbff",
-      "name": "Create Event Location and Venue Component",
-      "description": "Build a component that displays comprehensive location information including venue name, address, city, country, and provides integration points for future map functionality. Include travel and accommodation guidance section placeholder.",
-      "notes": "Design component to support future Google Maps or OpenStreetMap integration. Use location icons from Flowbite or Heroicons. Consider adding structured data for SEO benefits. Focus on information display rather than user-specific functionality.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "1f750cda-0bd1-487f-9820-9b5715006880"
-        }
-      ],
-      "createdAt": "2025-05-27T09:51:55.588Z",
-      "updatedAt": "2025-05-27T09:51:55.588Z",
+      "createdAt": "2025-05-28T17:37:39.295Z",
+      "updatedAt": "2025-05-28T17:37:39.295Z",
       "relatedFiles": [
         {
-          "path": "src/components/events/details/EventDetailsLocation.tsx",
-          "type": "CREATE",
-          "description": "Location and venue information component"
-        }
-      ],
-      "implementationGuide": "// EventDetailsLocation component\\ninterface EventDetailsLocationProps {\\n  event: EventType;\\n  translations: any;\\n}\\n\\n// Display venue name and full address\\n// Show city, country with proper formatting\\n// Add location-based icons and styling\\n// Create placeholder for map integration\\n// Include travel information section\\n// Implement responsive location layout\\n// Keep component identical for all user types",
-      "verificationCriteria": "Location component displays all venue information clearly, handles missing location data gracefully, provides proper structure for future map integration, maintains consistent styling with other event detail components, and appears identical across user types.",
-      "analysisResult": "Implementation of dynamic event details page and management dashboard for Eventy360 platform with comprehensive event information display, user-specific functionality, RTL internationalization support, and responsive design following existing architectural patterns. The implementation includes both the main event details page for viewing and a separate management dashboard for organizers."
-    },
-    {
-      "id": "2c8b3a06-282d-4e61-b0f9-2dfcab893f43",
-      "name": "Implement Event Description and Topics Component",
-      "description": "Create a comprehensive component for displaying event description, research topics, submission guidelines, and conference tracks. This component handles the main content area with proper text formatting and topic categorization.",
-      "notes": "Use Flowbite React components for badges, cards, and expandable content. Ensure proper handling of HTML content in descriptions. Consider implementing rich text rendering for formatted content. Focus on content presentation rather than user-specific features.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "1f750cda-0bd1-487f-9820-9b5715006880"
-        }
-      ],
-      "createdAt": "2025-05-27T09:51:55.588Z",
-      "updatedAt": "2025-05-27T09:51:55.588Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/events/details/EventDetailsDescription.tsx",
-          "type": "CREATE",
-          "description": "Description and topics component"
-        },
-        {
-          "path": "src/components/events/discovery/EventFilters.tsx",
+          "path": "messages/ar.json",
           "type": "REFERENCE",
-          "description": "Reference for topic display patterns"
+          "description": "Arabic translations file",
+          "lineStart": 1,
+          "lineEnd": 1500
+        },
+        {
+          "path": "messages/en.json",
+          "type": "REFERENCE",
+          "description": "English translations file",
+          "lineStart": 1,
+          "lineEnd": 1500
         }
       ],
-      "implementationGuide": "// EventDetailsDescription component\\ninterface EventDetailsDescriptionProps {\\n  event: EventType;\\n  translations: any;\\n}\\n\\n// Render formatted event description with proper typography\\n// Display research topics as organized badges or cards\\n// Show submission guidelines and requirements\\n// Include conference tracks if available\\n// Implement expandable sections for long content\\n// Add proper text formatting and readability\\n// Keep content display identical for all user types",
-      "verificationCriteria": "Description component renders all text content properly, topics are displayed in organized manner, expandable sections work correctly, component handles multilingual content appropriately, text formatting enhances readability, and content appears identical across user types.",
-      "analysisResult": "Implementation of dynamic event details page and management dashboard for Eventy360 platform with comprehensive event information display, user-specific functionality, RTL internationalization support, and responsive design following existing architectural patterns. The implementation includes both the main event details page for viewing and a separate management dashboard for organizers."
+      "implementationGuide": "Update all translation files to include keys for new components. Implement the bookmarking feature using the existing bookmarks table.",
+      "verificationCriteria": "All UI components should be fully translated in Arabic, English, and French. The bookmarking functionality should allow researchers to save and manage bookmarks for events.",
+      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking."
     },
     {
-      "id": "60115f9d-5fab-46f1-9f99-f08c29a5b49b",
-      "name": "Build Role-Specific Action Component",
-      "description": "Create a clean, role-specific action component that provides appropriate functionality based on user type: submission capabilities for researchers, management access for organizers, editing for admins. This component handles the main call-to-action area at the bottom of the event details page.",
-      "notes": "Design component to seamlessly integrate with upcoming submission form functionality and management dashboard. Use consistent button styling and clear call-to-action patterns. Each user type should see one primary action that makes sense for their role.",
+      "id": "b154190e-d988-4c39-bafb-f5179b73d21b",
+      "name": "Task 4.1: Complete Internationalization for Submission System",
+      "description": "Add comprehensive internationalization support for the submission system by updating the translation files for English, Arabic, and French. This includes all user-facing strings in the submission forms, listing pages, detail pages, and management interfaces.",
+      "notes": "This task corresponds to the existing task ID `b00129fc-228a-4e7f-bf81-6eaa97262e56` which is already pending in the task system. This implementation should maintain that task ID.",
       "status": "pending",
       "dependencies": [
         {
-          "taskId": "1f750cda-0bd1-487f-9820-9b5715006880"
+          "taskId": "64352f50-300a-4250-88ff-cdee34f6ea7b"
+        },
+        {
+          "taskId": "eaf8c0e7-7274-415f-8ac6-65c33550cec5"
+        },
+        {
+          "taskId": "8c42d2a4-afbb-4609-abab-8c38a115ce41"
         }
       ],
-      "createdAt": "2025-05-27T09:51:55.588Z",
-      "updatedAt": "2025-05-27T09:51:55.588Z",
+      "createdAt": "2025-05-28T17:37:39.295Z",
+      "updatedAt": "2025-05-28T17:37:39.295Z",
+      "relatedFiles": [
+        {
+          "path": "messages/ar.json",
+          "type": "TO_MODIFY",
+          "description": "Arabic translations file to update",
+          "lineStart": 1,
+          "lineEnd": 1500
+        },
+        {
+          "path": "messages/en.json",
+          "type": "TO_MODIFY",
+          "description": "English translations file to update",
+          "lineStart": 1,
+          "lineEnd": 1500
+        },
+        {
+          "path": "messages/fr.json",
+          "type": "TO_MODIFY",
+          "description": "French translations file to update",
+          "lineStart": 1,
+          "lineEnd": 1500
+        }
+      ],
+      "implementationGuide": "Review all new components and identify missing translation keys. Update the translation files for all three languages. Ensure consistent terminology across languages.\n\nKey areas to update:\n1. Abstract and full paper review interfaces\n2. Submission status messages and labels\n3. Feedback forms and prompts\n4. Error messages and validation text\n5. Action button labels\n6. Statistics and metrics labels",
+      "verificationCriteria": "All user-facing text in the submission system should be properly internationalized in all three languages. No hardcoded strings should appear in the UI. RTL layout should be properly maintained for Arabic.",
+      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking."
+    },
+    {
+      "id": "a1ad4bae-09d6-48c9-ac80-8cb070ff595f",
+      "name": "Task 4.2: Implement Event Bookmarking Functionality",
+      "description": "Complete the event bookmarking feature to allow researchers to save interesting events for later reference. This includes implementing the UI components and backend interactions with the bookmarks table.",
+      "notes": "Ensure the bookmarking functionality is only available to authenticated users with active subscriptions.",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2025-05-28T17:37:39.295Z",
+      "updatedAt": "2025-05-28T17:37:39.295Z",
       "relatedFiles": [
         {
           "path": "src/components/events/details/EventDetailsActions.tsx",
-          "type": "CREATE",
-          "description": "Role-specific action component"
-        }
-      ],
-      "implementationGuide": "// EventDetailsActions component\\ninterface EventDetailsActionsProps {\\n  event: EventType;\\n  translations: any;\\n  userProfile?: UserProfile;\\n  subscriptionStatus?: SubscriptionStatus;\\n}\\n\\n// Anonymous: Register to Submit CTA\\n// Free Researchers: Upgrade to Submit button\\n// Paid Researchers: Active Submit Abstract/Paper button\\n// Event Owner Organizers: Management Dashboard link\\n// Admins: Oversight Dashboard link\\n// Implement access control and proper redirects\\n// Keep UI clean and focused on primary action",
-      "verificationCriteria": "Action component displays appropriate functionality for each user type, access control works correctly, subscription status affects researcher actions properly, component provides clear path to next steps, and UI remains clean and uncluttered.",
-      "analysisResult": "Implementation of dynamic event details page and management dashboard for Eventy360 platform with comprehensive event information display, user-specific functionality, RTL internationalization support, and responsive design following existing architectural patterns. The implementation includes both the main event details page for viewing and a separate management dashboard for organizers."
-    },
-    {
-      "id": "227a9fb7-5046-4312-8883-5008b98002ef",
-      "name": "Create Event Management Dashboard Page",
-      "description": "Implement a separate management dashboard page at src/app/[locale]/events/[id]/manage/page.tsx for event owners to manage their events, view submissions, access analytics, and handle event-related tasks. This page is only accessible to the event owner organizer and admins.",
-      "notes": "This page should only be accessible to the event owner organizer and admins. Implement proper access control and redirect unauthorized users. Use existing dashboard layout patterns from admin section for consistency.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "1f750cda-0bd1-487f-9820-9b5715006880"
-        }
-      ],
-      "createdAt": "2025-05-27T09:51:55.588Z",
-      "updatedAt": "2025-05-27T09:51:55.588Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/events/[id]/manage/page.tsx",
-          "type": "CREATE",
-          "description": "Event management dashboard page"
-        },
-        {
-          "path": "src/app/[locale]/admin/dashboard/page.tsx",
-          "type": "REFERENCE",
-          "description": "Reference for dashboard patterns"
-        },
-        {
-          "path": "src/components/admin/dashboard/DashboardLayout.tsx",
-          "type": "REFERENCE",
-          "description": "Dashboard layout patterns"
-        }
-      ],
-      "implementationGuide": "// Event Management Dashboard Server Component\\nconst EventManagePage = async ({ params }) => {\\n  // Extract locale and event ID\\n  // Verify user is event owner or admin\\n  // Fetch event data with submission counts\\n  // Load management-specific data\\n  // Implement proper access control\\n}\\n\\n// Create management dashboard layout\\n// Include sections for:\\n// - Event overview and quick stats\\n// - Submission management\\n// - Analytics and reports\\n// - Event settings and actions\\n// Follow existing dashboard patterns",
-      "verificationCriteria": "Management page is only accessible to event owners and admins, provides comprehensive event management functionality, integrates with existing dashboard patterns, handles access control properly, and offers clear navigation back to event details.",
-      "analysisResult": "Implementation of dynamic event details page and management dashboard for Eventy360 platform with comprehensive event information display, user-specific functionality, RTL internationalization support, and responsive design following existing architectural patterns. The implementation includes both the main event details page for viewing and a separate management dashboard for organizers."
-    },
-    {
-      "id": "ead7c90c-cf91-4476-9d9c-05d96fe4bf0f",
-      "name": "Update Navigation Links in Event Discovery Components",
-      "description": "Update existing EventCard components in the discovery section to properly link to the new event details pages and ensure smooth navigation flow throughout the application. Verify that all navigation patterns work correctly with the new pages.",
-      "notes": "The EventCardGrid.tsx already has Link components pointing to the correct route (line 162), but verification and testing is needed to ensure proper integration with the new details page. Also verify management page navigation works correctly.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "1f750cda-0bd1-487f-9820-9b5715006880"
-        },
-        {
-          "taskId": "227a9fb7-5046-4312-8883-5008b98002ef"
-        }
-      ],
-      "createdAt": "2025-05-27T09:51:55.588Z",
-      "updatedAt": "2025-05-27T09:51:55.588Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/events/discovery/EventCardGrid.tsx",
           "type": "TO_MODIFY",
-          "description": "Verify and update navigation links",
-          "lineStart": 160,
-          "lineEnd": 165
-        },
-        {
-          "path": "src/components/events/discovery/EventCard.tsx",
-          "type": "REFERENCE",
-          "description": "Individual event card component"
+          "description": "Event details actions component to add bookmarking",
+          "lineStart": 1,
+          "lineEnd": 200
         }
       ],
-      "implementationGuide": "// Update EventCard component navigation\\n// Verify existing Link components point to correct route\\n// Add proper href construction with locale\\n// Ensure accessibility attributes are correct\\n// Test navigation flow from discovery to details\\n// Update any related navigation components\\n// Verify management page links work from details page",
-      "verificationCriteria": "Navigation from event discovery page to event details works correctly, all links include proper locale parameters, accessibility attributes are present, navigation flow provides good user experience across the application, and management page links function properly.",
-      "analysisResult": "Implementation of dynamic event details page and management dashboard for Eventy360 platform with comprehensive event information display, user-specific functionality, RTL internationalization support, and responsive design following existing architectural patterns. The implementation includes both the main event details page for viewing and a separate management dashboard for organizers."
+      "implementationGuide": "Implement the bookmark/unbookmark functionality in the event details page and create a bookmarks listing view. Use the existing bookmarks table in the database.\n\nPseudocode:\n```\n// Bookmark toggle component\nfunction BookmarkButton({ eventId }) {\n  const [isBookmarked, setIsBookmarked] = useState(false);\n  const [loading, setLoading] = useState(true);\n  \n  useEffect(() => {\n    // Check if event is bookmarked\n    checkBookmarkStatus();\n  }, [eventId]);\n  \n  async function toggleBookmark() {\n    setLoading(true);\n    try {\n      if (isBookmarked) {\n        // Remove bookmark\n        await supabase.from('bookmarks').delete().eq('event_id', eventId);\n      } else {\n        // Add bookmark\n        await supabase.from('bookmarks').insert({ event_id: eventId });\n      }\n      setIsBookmarked(!isBookmarked);\n    } catch (error) {\n      // Handle error\n    } finally {\n      setLoading(false);\n    }\n  }\n  \n  return (\n    <Button\n      onClick={toggleBookmark}\n      disabled={loading}\n    >\n      {isBookmarked ? <BookmarkFilled /> : <BookmarkOutline />}\n      {isBookmarked ? t('removeBookmark') : t('addBookmark')}\n    </Button>\n  );\n}\n\n// Bookmarks listing page\nasync function BookmarksPage() {\n  // Fetch user's bookmarked events\n  \n  return (\n    <div>\n      <h1>{t('myBookmarks')}</h1>\n      <EventCardGrid events={bookmarkedEvents} />\n    </div>\n  );\n}\n```",
+      "verificationCriteria": "Users should be able to bookmark and unbookmark events, view a list of their bookmarked events, and receive appropriate feedback when bookmarking actions succeed or fail. Bookmarking should be restricted to users with active subscriptions.",
+      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking."
     }
   ]
 }

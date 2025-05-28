@@ -20,7 +20,8 @@ import {
   HiOfficeBuilding,
   HiCalendar,
   HiIdentification,
-  HiLocationMarker
+  HiLocationMarker,
+  HiDocumentText
 } from 'react-icons/hi';
 import { createClient } from '@/lib/supabase/client';
 import { IconType } from 'react-icons';
@@ -88,6 +89,7 @@ interface TranslationStrings {
   subscriptions: string;
   security: string;
   topics?: string;
+  submissions?: string;
 }
 
 /**
@@ -115,7 +117,8 @@ interface ProfileSidebarProps {
 export default function ProfileSidebar({ 
   profile, 
   locale, 
-  translations 
+  translations,
+  userType
 }: ProfileSidebarProps) {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -153,6 +156,10 @@ export default function ProfileSidebar({
     { name: translations.dashboard, href: `/${locale}/profile`, icon: HiHome },
     { name: translations.profile, href: `/${locale}/profile/edit`, icon: HiUser },
     { name: translations.events || 'Events', href: `/${locale}/profile/events`, icon: HiCalendar },
+    // Only show submissions for researchers
+    ...(userType === 'researcher' 
+      ? [{ name: translations.submissions || 'Submissions', href: `/${locale}/profile/submissions`, icon: HiDocumentText }] 
+      : []),
     { name: translations.verification, href: `/${locale}/profile/verification`, icon: HiOutlineShieldCheck },
     { name: translations.subscriptions, href: `/${locale}/profile/subscriptions`, icon: HiCreditCard },
     { name: translations.topics || 'Topics', href: `/${locale}/profile/topics`, icon: HiAcademicCap },

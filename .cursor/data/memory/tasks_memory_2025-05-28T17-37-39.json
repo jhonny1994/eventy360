@@ -1,0 +1,80 @@
+{
+  "tasks": [
+    {
+      "id": "20443ab4-c10f-45e3-b976-1741aa780423",
+      "name": "Create Researcher Submission Form Component",
+      "description": "Develop a single-page form component for researchers to submit papers/abstracts to events. The form should include fields for title (with translations), abstract (with translations), and file upload functionality. It should leverage existing database functions like submit_abstract() and handle proper validation.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-05-28T12:38:04.237Z",
+      "updatedAt": "2025-05-28T12:51:00.740Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/submissions/SubmissionForm.tsx",
+          "type": "CREATE",
+          "description": "Main submission form component"
+        },
+        {
+          "path": "src/app/[locale]/submissions/actions.ts",
+          "type": "CREATE",
+          "description": "Server actions for submission creation and management"
+        },
+        {
+          "path": "src/components/events/creation/CreateEventForm.tsx",
+          "type": "REFERENCE",
+          "description": "Reference for form pattern (although our implementation will be simpler)"
+        },
+        {
+          "path": "messages/en.json",
+          "type": "TO_MODIFY",
+          "description": "Add English translations for submission form"
+        },
+        {
+          "path": "messages/ar.json",
+          "type": "TO_MODIFY",
+          "description": "Add Arabic translations for submission form"
+        }
+      ],
+      "implementationGuide": "1. Create a new component at src/components/submissions/SubmissionForm.tsx\n2. Implement form fields for title and abstract with support for translations\n3. Implement file upload using Supabase storage with proper error handling\n4. Add validation for all fields using react-hook-form\n5. Create server action in src/app/[locale]/submissions/actions.ts to handle form submission\n6. Use the existing database functions (submit_abstract) for form submission\n7. Ensure all text uses the useTranslations hook with proper namespacing",
+      "verificationCriteria": "1. Form successfully submits and creates a new submission record\n2. File uploads are processed and stored in Supabase\n3. All fields are properly validated\n4. All text is properly internationalized with both English and Arabic translations\n5. UI is consistent with existing components and responsive across devices\n6. Error states and loading indicators are properly implemented",
+      "analysisResult": "The submission system implementation will focus on creating a streamlined MVP solution that leverages existing database functions and triggers while maintaining UI consistency with the rest of the application. The system will include a single-page submission form for researchers, comprehensive submission tracking and management capabilities, and enhanced event management functionality for organizers. All user-facing text will be properly internationalized in both English and Arabic, following the project's established patterns.",
+      "summary": "Successfully implemented the SubmissionForm component with proper validation, form controls, and file upload functionality. The component follows project patterns by using Flowbite React components, handles multiple languages with tabs, includes error handling, and integrates with the backend action for submission. All required fields are implemented with proper validation messages and the component is fully internationalized.",
+      "completedAt": "2025-05-28T12:51:00.739Z"
+    },
+    {
+      "id": "0ba3b25d-94dd-4d72-ab71-b89eb85046b7",
+      "name": "Create Submission Creation Page",
+      "description": "Create a new page for researchers to submit papers/abstracts to events. This page should use the SubmissionForm component and handle routing, authentication, and subscription checks.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "20443ab4-c10f-45e3-b976-1741aa780423"
+        }
+      ],
+      "createdAt": "2025-05-28T12:38:04.237Z",
+      "updatedAt": "2025-05-28T13:33:42.371Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/submissions/create/page.tsx",
+          "type": "CREATE",
+          "description": "Page component for submission creation"
+        },
+        {
+          "path": "src/utils/subscriptionMiddleware.ts",
+          "type": "REFERENCE",
+          "description": "Reference for subscription check implementation"
+        },
+        {
+          "path": "src/app/[locale]/profile/events/create/page.tsx",
+          "type": "REFERENCE",
+          "description": "Reference for page structure and authentication checks"
+        }
+      ],
+      "implementationGuide": "1. Create the page component at src/app/[locale]/submissions/create/page.tsx\n2. Implement proper authentication checks to ensure only logged-in users can access\n3. Add subscription checks using useSubscriptionCheck to limit access to researchers with valid subscriptions\n4. Include metadata generation for the page title and description\n5. Pass the event ID from query parameters to the SubmissionForm component\n6. Add proper error handling for invalid event IDs or unauthorized access\n7. Ensure all text is internationalized using next-intl's getTranslations",
+      "verificationCriteria": "1. Page loads correctly and displays the SubmissionForm\n2. Authentication redirects work for non-logged-in users\n3. Subscription checks prevent non-researchers from accessing the page\n4. Event ID is correctly passed from query parameters\n5. Page metadata is correctly generated\n6. UI is consistent with existing pages\n7. All text is properly internationalized",
+      "analysisResult": "The submission system implementation will focus on creating a streamlined MVP solution that leverages existing database functions and triggers while maintaining UI consistency with the rest of the application. The system will include a single-page submission form for researchers, comprehensive submission tracking and management capabilities, and enhanced event management functionality for organizers. All user-facing text will be properly internationalized in both English and Arabic, following the project's established patterns.",
+      "summary": "Successfully created the submission creation page with all required functionality including authentication checks, user type verification, event validation, submission deadline verification, and subscription checks. The page uses a client-side component for subscription validation and properly handles error states and loading. The UI is consistent with existing pages and follows the project's styling patterns.",
+      "completedAt": "2025-05-28T13:33:42.370Z"
+    }
+  ]
+}

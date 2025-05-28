@@ -2,7 +2,6 @@ import React from "react";
 import {
   FileText,
   Calendar,
-  UserPlus,
   Share2,
   BookmarkPlus,
   ExternalLink,
@@ -30,6 +29,7 @@ interface EventDetailsActionsProps {
     plan: string;
     status: string;
   } | null;
+  hasSubmitted?: boolean;
 }
 
 export function EventDetailsActions({
@@ -38,6 +38,7 @@ export function EventDetailsActions({
   userRole,
   userProfile,
   userSubscription,
+  hasSubmitted = false,
 }: EventDetailsActionsProps) {
   const now = new Date();
   const eventDate = new Date(event.event_date);
@@ -53,6 +54,11 @@ export function EventDetailsActions({
   const hasPremiumAccess =
     userSubscription?.plan === "premium" ||
     userSubscription?.plan === "professional"; // Owner actions
+
+  // TODO: This would be replaced with an actual API call to check if the user has submitted
+  // For now, we'll use a placeholder value
+  // const hasSubmitted = false;
+
   if (userRole === "owner") {
     return (
       <div className="bg-white rounded-lg shadow-sm border p-6">        <h2 className="text-xl font-semibold text-gray-900 mb-6">
@@ -93,73 +99,38 @@ export function EventDetailsActions({
   // Participant (researcher) actions
   if (userRole === "participant" && userProfile?.user_type === "researcher") {
     return (
-      <div className="bg-white rounded-lg shadow-sm border p-6">        <h2 className="text-xl font-semibold text-gray-900 mb-6">
+      <div className="bg-white rounded-lg shadow-sm border p-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">
           {t("actions.participation")}
         </h2>
         
         <div className="space-y-4">
-          {/* Register for Event */}
-          {!isEventPast && (
-            <button className="w-full flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-              <UserPlus className="w-5 h-5 mr-2" />
-              {t("actions.register")}
-            </button>
-          )}{" "}
-          {/* Submit Paper/Proposal */}
-          {canSubmit && (
+          {/* Bookmark Event */}
+          <button className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+            <BookmarkPlus className="w-5 h-5 mr-2" />
+            {t("actions.bookmarkEvent")}
+          </button>
+
+          {/* Submit Paper/Proposal - Only show if user hasn't submitted yet */}
+          {canSubmit && !hasSubmitted && (
             <Link
-              href={`/${locale}/submissions/create?event=${event.id}`}
+              href={`/${locale}/profile/submissions/create/${event.id}`}
               className="w-full flex items-center justify-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
             >
               <FileText className="w-5 h-5 mr-2" />
-              Submit Paper
+              {t("actions.submitAbstract")}
             </Link>
           )}
+
           {/* Premium Features Indicator */}
           {hasPremiumAccess && (
             <div className="w-full flex items-center justify-center px-4 py-2 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg text-sm">
-              <span className="font-medium">Premium Features Available</span>
+              <span className="font-medium">{t("subscription.premiumFeatures")}</span>
             </div>
           )}
-          {/* Add to Calendar */}
-          <button className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-            <Calendar className="w-5 h-5 mr-2" />
-            Add to Calendar
-          </button>
-          {/* Save Event */}
-          <button className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-            <BookmarkPlus className="w-5 h-5 mr-2" />
-            Save Event
-          </button>
         </div>
 
-        {/* Submission Status */}
-        {event.submission_deadline && (
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900 mb-3">
-              Submission Information
-            </h3>
-            {isSubmissionOpen ? (
-              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                <p className="text-sm text-green-800 font-medium">
-                  Submissions are currently open
-                </p>
-                <p className="text-sm text-green-600 mt-1">
-                  Deadline:{" "}
-                  {submissionDeadline?.toLocaleDateString(
-                    locale === "ar" ? "ar-DZ" : "en-US"
-                  )}
-                </p>
-              </div>
-            ) : (
-              <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                <p className="text-sm text-gray-800 font-medium">
-                  Submission deadline has passed
-                </p>
-              </div>
-            )}
-          </div>
-        )}
+
       </div>
     );
   }

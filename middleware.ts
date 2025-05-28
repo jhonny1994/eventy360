@@ -344,8 +344,7 @@ export async function middleware(request: NextRequest) {
     
     // Apply subscription guards for premium routes
     // This should run after authentication checks but before returning the final response
-    if (user && user.email_confirmed_at) {
-      // Configure subscription-protected routes
+    if (user && user.email_confirmed_at) {      // Configure subscription-protected routes
       const subscriptionGuardsConfig = [
         // Premium features routes
         {
@@ -365,6 +364,21 @@ export async function middleware(request: NextRequest) {
         // Routes that also accept trial subscriptions
         {
           pathPattern: /^\/[a-z]{2}\/trial-features.*/,
+          restriction: SubscriptionRestriction.ACCEPT_TRIAL
+        },
+        // Event creation - requires organizer subscription (paid or trial)
+        {
+          pathPattern: /^\/[a-z]{2}\/events\/create.*/,
+          restriction: SubscriptionRestriction.ACCEPT_TRIAL
+        },
+        // Event management - requires organizer subscription (paid or trial)
+        {
+          pathPattern: /^\/[a-z]{2}\/events\/manage.*/,
+          restriction: SubscriptionRestriction.ACCEPT_TRIAL
+        },
+        // Event editing - requires organizer subscription (paid or trial)
+        {
+          pathPattern: /^\/[a-z]{2}\/events\/[a-zA-Z0-9-_]+\/edit.*/,
           restriction: SubscriptionRestriction.ACCEPT_TRIAL
         }
       ];
