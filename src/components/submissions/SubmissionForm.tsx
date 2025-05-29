@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
 import { 
   getAbstractSubmissionSchema,
   AbstractSubmissionFormDataStatic
@@ -21,6 +22,8 @@ interface SubmissionFormProps {
 export default function SubmissionForm({ eventId, onSuccess }: SubmissionFormProps) {
   const t = useTranslations('Submissions');
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeLanguage, setActiveLanguage] = useState('ar');
@@ -53,7 +56,7 @@ export default function SubmissionForm({ eventId, onSuccess }: SubmissionFormPro
         if (onSuccess) {
           onSuccess(result.submissionId);
         } else {
-          router.push(`/profile/submissions/${result.submissionId}`);
+          router.push(`/${locale}/profile/submissions/${result.submissionId}`);
         }
       } else {
         setError(result.error || t('unknownError'));

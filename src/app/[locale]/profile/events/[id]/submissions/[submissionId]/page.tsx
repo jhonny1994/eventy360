@@ -4,8 +4,9 @@ import { createServerSupabaseClient } from '@/utils/supabase/server'
 import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 import { Badge } from 'flowbite-react'
-import { HiChevronLeft, HiDownload, HiExternalLink } from 'react-icons/hi'
+import { HiChevronLeft, HiExternalLink } from 'react-icons/hi'
 import ProfileCard from '@/app/[locale]/profile/ui/ProfileCard'
+import { Json } from "@/database.types";
 
 interface EventSubmissionDetailPageProps {
   params: Promise<{ locale: string; id: string; submissionId: string }>
@@ -16,13 +17,6 @@ interface TranslationsObject {
   ar: string;
   en?: string;
   fr?: string;
-}
-
-interface FileInfo {
-  url: string;
-  name: string;
-  size: number;
-  type: string;
 }
 
 interface ResearcherProfile {
@@ -40,11 +34,15 @@ interface SubmissionData {
   event_id: string;
   abstract_status: string | null;
   full_paper_status: string | null;
+  status?: string | null;
   title_translations: TranslationsObject;
   abstract_translations: TranslationsObject;
-  keywords?: string[];
-  files?: Record<string, FileInfo>;
+  abstract_file_url?: string;
+  abstract_file_metadata?: Json;
+  full_paper_file_url?: string;
+  full_paper_file_metadata?: Json;
   submitted_by: string;
+  submission_date: string;
   researcher_profile?: ResearcherProfile;
 }
 
@@ -56,11 +54,17 @@ interface RawSubmission {
   event_id: string;
   abstract_status: string | null;
   full_paper_status: string | null;
+  status?: string | null;
   title_translations: TranslationsObject;
   abstract_translations: TranslationsObject;
-  keywords?: string[];
-  files?: Record<string, FileInfo>;
+  abstract_file_url?: string;
+  abstract_file_metadata?: Json;
+  full_paper_file_url?: string;
+  full_paper_file_metadata?: Json;
   submitted_by: string;
+  submission_date: string;
+  review_date?: string;
+  review_feedback_translations?: TranslationsObject;
 }
 
 // Interface for researcher profile from database
@@ -137,7 +141,6 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
       redirect(`/${locale}/profile/events/${eventId}`)
     }
   }
-
   // Fetch submission details
   const { data: submission, error: submissionError } = await supabase
     .from('submissions')
@@ -148,11 +151,17 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
       event_id,
       abstract_status,
       full_paper_status,
+      status,
       title_translations,
       abstract_translations,
-      keywords,
-      files,
-      submitted_by
+      abstract_file_url,
+      abstract_file_metadata,
+      full_paper_file_url,
+      full_paper_file_metadata,
+      submitted_by,
+      submission_date,
+      review_date,
+      review_feedback_translations
     `)
     .eq('id', submissionId)
     .eq('event_id', eventId)
@@ -222,11 +231,6 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
   };
 
   // Format file size
-  const formatFileSize = (bytes: number): string => {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  };
 
   // Determine the effective status of a submission
   const getEffectiveStatus = (submission: SubmissionData): string => {
@@ -237,7 +241,6 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
     // Otherwise use the abstract status
     return submission.abstract_status || 'abstract_submitted';
   };
-
   // Create the complete submission data
   const submissionData: SubmissionData = {
     id: typedSubmission.id,
@@ -246,11 +249,15 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
     event_id: typedSubmission.event_id,
     abstract_status: typedSubmission.abstract_status,
     full_paper_status: typedSubmission.full_paper_status,
+    status: typedSubmission.status,
     title_translations: typedSubmission.title_translations,
     abstract_translations: typedSubmission.abstract_translations,
-    keywords: typedSubmission.keywords,
-    files: typedSubmission.files,
+    abstract_file_url: typedSubmission.abstract_file_url,
+    abstract_file_metadata: typedSubmission.abstract_file_metadata,
+    full_paper_file_url: typedSubmission.full_paper_file_url,
+    full_paper_file_metadata: typedSubmission.full_paper_file_metadata,
     submitted_by: typedSubmission.submitted_by,
+    submission_date: typedSubmission.submission_date,
     researcher_profile: researcher
   };
 
@@ -310,64 +317,8 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
                   <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
                     {submissionData.abstract_translations && 
                      getTitle(submissionData.abstract_translations)}
-                  </p>
-                </div>
+                  </p>              </div>
               </div>
-              
-              {submissionData.keywords && submissionData.keywords.length > 0 && (
-                <div className="mt-6">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                    {tSubmissions("keywords")}
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {submissionData.keywords.map((keyword, index) => (
-                      <span 
-                        key={index}
-                        className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 rounded-full text-sm"
-                      >
-                        {keyword}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {/* Files section */}
-              {submissionData.files && Object.keys(submissionData.files).length > 0 && (
-                <div className="mt-6">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                    {tSubmissions("files")}
-                  </h3>
-                  <div className="space-y-3">
-                    {Object.entries(submissionData.files).map(([key, file]) => (
-                      <div 
-                        key={key}
-                        className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
-                      >
-                        <div className="flex items-center">
-                          <div className="ml-3">
-                            <p className="text-sm font-medium text-gray-900 dark:text-white">
-                              {file.name}
-                            </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              {formatFileSize(file.size)} • {file.type}
-                            </p>
-                          </div>
-                        </div>
-                        <a 
-                          href={file.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-2 text-blue-600 hover:text-blue-800 dark:text-blue-500"
-                          download
-                        >
-                          <HiDownload className="w-5 h-5" />
-                        </a>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
           

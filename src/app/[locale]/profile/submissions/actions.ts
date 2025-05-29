@@ -50,7 +50,6 @@ export async function submitAbstract(
         title_translations: titleTranslations,
         abstract_translations: abstractTranslations,
         abstract_status: 'abstract_submitted',
-        status: 'abstract_submitted',
         submission_date: new Date().toISOString()
       })
       .select('id')
@@ -245,7 +244,6 @@ export async function submitFullPaper(
         full_paper_file_url: publicUrl,
         full_paper_file_metadata: fileMetadata,
         full_paper_status: 'full_paper_submitted',
-        status: 'full_paper_submitted',
         updated_at: new Date().toISOString()
       })
       .eq('id', formData.submission_id);
@@ -360,7 +358,8 @@ export async function submitRevision(
     const fileExtension = formData.full_paper_file.name.split('.').pop();
     const fileName = `${nanoid()}.${fileExtension}`;
     // Format: {event_id}/{submission_id}/{file_type}/v{N}/{filename}
-    const filePath = `${submission.event_id}/${formData.submission_id}/revision/v${nextVersionNumber}/${fileName}`;
+    // Use 'full_paper' as file_type for revisions since they are updated full papers
+    const filePath = `${submission.event_id}/${formData.submission_id}/full_paper/v${nextVersionNumber}/${fileName}`;
 
     const { error: uploadError } = await supabase.storage
       .from('submission_files')
@@ -421,7 +420,6 @@ export async function submitRevision(
         full_paper_file_url: publicUrl,
         full_paper_file_metadata: fileMetadata,
         full_paper_status: 'revision_requested',
-        status: 'revision_requested',
         current_full_paper_version_id: newVersion.id,
         updated_at: new Date().toISOString()
       })
@@ -455,6 +453,6 @@ export async function submitRevision(
 /**
  * Redirects to the submission detail page
  */
-export async function redirectToSubmission(submissionId: string) {
-  redirect(`/profile/submissions/${submissionId}`);
+export async function redirectToSubmission(submissionId: string, locale: string) {
+  redirect(`/${locale}/profile/submissions/${submissionId}`);
 } 

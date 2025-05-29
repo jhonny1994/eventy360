@@ -6,6 +6,7 @@ import PageHeader from "@/components/ui/PageHeader";
 import Link from "next/link";
 import { Badge, Card } from "flowbite-react";
 import { ChevronLeft, FileText, ExternalLink, Calendar, MessageCircle, AlertCircle, CheckCircle, XCircle } from "lucide-react";
+import { Json } from "@/database.types";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Submissions");
@@ -30,28 +31,19 @@ interface TranslationsObject {
   fr?: string;
 }
 
-interface FileInfo {
-  url: string;
-  name: string;
-  size: number;
-  type: string;
-}
-
 interface EventInfo {
   id: string;
-  title_translations: TranslationsObject;
+  event_name_translations: TranslationsObject;
   event_type: string;
-  start_date: string;
-  end_date: string;
-  location_translations?: TranslationsObject;
-  abstract_deadline?: string;
-  full_paper_deadline?: string;
+  event_date: string;
+  event_end_date: string;
+  abstract_submission_deadline?: string;
+  full_paper_submission_deadline?: string;
 }
 
 interface FeedbackInfo {
-  feedback_translations?: TranslationsObject;
-  feedback_date?: string;
-  feedback_by?: string;
+  review_feedback_translations?: TranslationsObject;
+  review_date?: string;
 }
 
 interface SubmissionData {
@@ -59,16 +51,17 @@ interface SubmissionData {
   created_at: string;
   updated_at: string;
   abstract_status: string;
+  full_paper_status?: string;
+  status?: string;
   title_translations: TranslationsObject;
   abstract_translations: TranslationsObject;
-  keywords?: string[];
-  files?: Record<string, FileInfo>;
-  researcher_id: string;
+  abstract_file_url?: string;
+  abstract_file_metadata?: Json;
+  full_paper_file_url?: string;
+  full_paper_file_metadata?: Json;
+  submitted_by: string;
+  submission_date: string;
   events: EventInfo;
-  status_history?: Array<{
-    status: string;
-    changed_at: string;
-  }>;
   feedback?: FeedbackInfo;
 }
 
@@ -108,27 +101,30 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
       created_at,
       updated_at,
       abstract_status,
+      full_paper_status,
+      status,
       title_translations,
       abstract_translations,
-      keywords,
-      files,
-      researcher_id,
-      status_history,
-      feedback_translations,
-      feedback_date,
+      abstract_file_url,
+      abstract_file_metadata,
+      full_paper_file_url,
+      full_paper_file_metadata,
+      submitted_by,
+      submission_date,
+      review_date,
+      review_feedback_translations,
       events (
         id,
-        title_translations,
+        event_name_translations,
         event_type,
-        start_date,
-        end_date,
-        location_translations,
-        abstract_deadline,
-        full_paper_deadline
+        event_date,
+        event_end_date,
+        abstract_submission_deadline,
+        full_paper_submission_deadline
       )
     `)
     .eq("id", id)
-    .eq("researcher_id", user.id)
+    .eq("submitted_by", user.id)
     .single();
 
   if (submissionError) {
@@ -146,15 +142,19 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
     created_at: string;
     updated_at: string;
     abstract_status: string;
+    full_paper_status?: string;
+    status?: string;
     title_translations: TranslationsObject;
     abstract_translations: TranslationsObject;
-    keywords?: string[];
-    files?: Record<string, FileInfo>;
-    researcher_id: string;
+    abstract_file_url?: string;
+    abstract_file_metadata?: Json;
+    full_paper_file_url?: string;
+    full_paper_file_metadata?: Json;
+    submitted_by: string;
+    submission_date: string;
     events: EventInfo;
-    status_history?: Array<{ status: string; changed_at: string }>;
-    feedback_translations?: TranslationsObject;
-    feedback_date?: string;
+    review_date?: string;
+    review_feedback_translations?: TranslationsObject;
   };
 
   // Define status colors
@@ -231,31 +231,32 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
     created_at: typedSubmission.created_at,
     updated_at: typedSubmission.updated_at,
     abstract_status: typedSubmission.abstract_status,
+    full_paper_status: typedSubmission.full_paper_status,
+    status: typedSubmission.status,
     title_translations: typedSubmission.title_translations,
     abstract_translations: typedSubmission.abstract_translations,
-    keywords: typedSubmission.keywords,
-    files: typedSubmission.files,
-    researcher_id: typedSubmission.researcher_id,
+    abstract_file_url: typedSubmission.abstract_file_url,
+    abstract_file_metadata: typedSubmission.abstract_file_metadata,
+    full_paper_file_url: typedSubmission.full_paper_file_url,
+    full_paper_file_metadata: typedSubmission.full_paper_file_metadata,
+    submitted_by: typedSubmission.submitted_by,
+    submission_date: typedSubmission.submission_date,
     events: typedSubmission.events,
-    status_history: typedSubmission.status_history,
-    feedback: {
-      feedback_translations: typedSubmission.feedback_translations,
-      feedback_date: typedSubmission.feedback_date
-    }
+    feedback: typedSubmission.review_feedback_translations || typedSubmission.review_date ? {
+      review_feedback_translations: typedSubmission.review_feedback_translations,
+      review_date: typedSubmission.review_date
+    } : undefined
   };
 
   // Determine if action buttons should be shown based on status
   const showFullPaperUpload = submissionData.abstract_status === 'abstract_accepted';
   const showRevisionUpload = submissionData.abstract_status === 'revision_requested';
 
-  // Create timeline items from status history if available
-  const statusHistoryItems = submissionData.status_history 
-    ? [...submissionData.status_history].sort((a, b) => 
-        new Date(b.changed_at).getTime() - new Date(a.changed_at).getTime())
-    : [{ 
-        status: submissionData.abstract_status, 
-        changed_at: submissionData.created_at 
-      }];
+  // Create timeline items from available status information
+  const statusHistoryItems = [{ 
+    status: submissionData.abstract_status, 
+    changed_at: submissionData.created_at 
+  }];
 
   return (
     <div className="space-y-6">
@@ -301,24 +302,6 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
                   </p>
                 </div>
               </div>
-              
-              {submissionData.keywords && (
-                <div className="mt-6">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                    {t("keywords")}
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {submissionData.keywords.map((keyword, index) => (
-                      <span 
-                        key={index}
-                        className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 rounded-full text-sm"
-                      >
-                        {keyword}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               {/* Status Timeline Section */}
               <div className="mt-8">
@@ -343,21 +326,21 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
               </div>
 
               {/* Reviewer Feedback Section - Only show if available */}
-              {submissionData.feedback && submissionData.feedback.feedback_translations && (
+              {submissionData.feedback && submissionData.feedback.review_feedback_translations && (
                 <div className="mt-8">
                   <Card className="bg-blue-50 dark:bg-blue-900 border-blue-200 dark:border-blue-700">
                     <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2 flex items-center gap-2">
                       <MessageCircle className="w-5 h-5" />
                       {t("reviewerFeedback")}
                     </h3>
-                    {submissionData.feedback.feedback_date && (
+                    {submissionData.feedback.review_date && (
                       <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                        {formatDateTime(submissionData.feedback.feedback_date)}
+                        {formatDateTime(submissionData.feedback.review_date)}
                       </p>
                     )}
                     <div className="prose dark:prose-invert max-w-none">
                       <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
-                        {getTitle(submissionData.feedback.feedback_translations)}
+                        {getTitle(submissionData.feedback.review_feedback_translations)}
                       </p>
                     </div>
                   </Card>
@@ -408,7 +391,7 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
                 <div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">{t("eventName")}</p>
                   <p className="font-medium text-gray-900 dark:text-white">
-                    {getTitle(submissionData.events.title_translations)}
+                    {getTitle(submissionData.events.event_name_translations)}
                   </p>
                 </div>
                 
@@ -422,35 +405,26 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
                 <div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">{t("eventDates")}</p>
                   <p className="font-medium text-gray-900 dark:text-white">
-                    {formatDate(submissionData.events.start_date)} - {formatDate(submissionData.events.end_date)}
+                    {formatDate(submissionData.events.event_date)} - {formatDate(submissionData.events.event_end_date)}
                   </p>
                 </div>
                 
-                {submissionData.events.location_translations && (
-                  <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{t("location")}</p>
-                    <p className="font-medium text-gray-900 dark:text-white">
-                      {getTitle(submissionData.events.location_translations)}
-                    </p>
-                  </div>
-                )}
-
-                {submissionData.events.abstract_deadline && (
+                {submissionData.events.abstract_submission_deadline && (
                   <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">{t("abstractSubmissionDeadline")}</p>
                     <p className="font-medium text-gray-900 dark:text-white flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
-                      {formatDate(submissionData.events.abstract_deadline)}
+                      {formatDate(submissionData.events.abstract_submission_deadline)}
                     </p>
                   </div>
                 )}
 
-                {submissionData.events.full_paper_deadline && (
+                {submissionData.events.full_paper_submission_deadline && (
                   <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">{t("fullPaperSubmissionDeadline")}</p>
                     <p className="font-medium text-gray-900 dark:text-white flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
-                      {formatDate(submissionData.events.full_paper_deadline)}
+                      {formatDate(submissionData.events.full_paper_submission_deadline)}
                     </p>
                   </div>
                 )}
@@ -458,7 +432,7 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
               
               <div className="mt-4">
                 <Link 
-                  href={`/${locale}/events/${submissionData.events.id}`}
+                  href={`/${locale}/profile/events/${submissionData.events.id}`}
                   className="flex items-center gap-1 text-blue-600 hover:underline dark:text-blue-500 text-sm"
                 >
                   <ExternalLink className="w-4 h-4" />
@@ -466,34 +440,6 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
                 </Link>
               </div>
             </div>
-            
-            {/* Files section */}
-            {submissionData.files && (
-              <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                  {t("files")}
-                </h3>
-                
-                <ul className="space-y-3">
-                  {Object.entries(submissionData.files).map(([fileType, fileInfo]) => (
-                    <li key={fileType} className="flex items-center justify-between">
-                      <span className="text-gray-700 dark:text-gray-300">
-                        {t(`fileTypes.${fileType}`)}
-                      </span>
-                      <a 
-                        href={fileInfo.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline dark:text-blue-500 flex items-center gap-1"
-                      >
-                        <FileText className="w-4 h-4" />
-                        {t("download")}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </div>
         </div>
       </div>

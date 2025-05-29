@@ -857,6 +857,7 @@ export type Database = {
           id: string
           review_date: string | null
           review_feedback_translations: Json | null
+          status: Database["public"]["Enums"]["submission_status_enum"] | null
           submission_date: string
           submitted_by: string
           title_translations: Json
@@ -883,6 +884,7 @@ export type Database = {
           id?: string
           review_date?: string | null
           review_feedback_translations?: Json | null
+          status?: Database["public"]["Enums"]["submission_status_enum"] | null
           submission_date?: string
           submitted_by: string
           title_translations: Json
@@ -909,6 +911,7 @@ export type Database = {
           id?: string
           review_date?: string | null
           review_feedback_translations?: Json | null
+          status?: Database["public"]["Enums"]["submission_status_enum"] | null
           submission_date?: string
           submitted_by?: string
           title_translations?: Json
@@ -1213,6 +1216,10 @@ export type Database = {
         Args: { data: string }
         Returns: string
       }
+      calculate_event_statistics: {
+        Args: { p_event_id: string }
+        Returns: Json
+      }
       check_subscriptions_expiry: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -1258,6 +1265,7 @@ export type Database = {
           logo_url: string
           abstract_submission_deadline: string
           rank: number
+          total_records: number
         }[]
       }
       filter_events_by_date_range: {

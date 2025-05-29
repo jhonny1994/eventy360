@@ -314,6 +314,104 @@ COMMENT ON FUNCTION "public"."billing_period_to_interval"("period" "public"."bil
 
 
 
+CREATE OR REPLACE FUNCTION "public"."calculate_event_statistics"("p_event_id" "uuid") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+DECLARE
+    stats JSONB;
+    total_abstract_submissions BIGINT;
+    accepted_abstracts BIGINT;
+    rejected_abstracts BIGINT;
+    pending_abstract_reviews BIGINT;
+    abstract_revisions_requested BIGINT;
+    abstract_acceptance_rate FLOAT;
+
+    total_full_paper_submissions BIGINT;
+    accepted_full_papers BIGINT;
+    rejected_full_papers BIGINT;
+    pending_full_paper_reviews BIGINT;
+    full_paper_revisions_requested BIGINT;
+    full_paper_acceptance_rate FLOAT;
+BEGIN
+    -- Calculate abstract stats
+    SELECT COUNT(*) INTO total_abstract_submissions
+    FROM public.submissions
+    WHERE event_id = p_event_id AND abstract_status IS NOT NULL;
+
+    SELECT COUNT(*) INTO accepted_abstracts
+    FROM public.submissions
+    WHERE event_id = p_event_id AND abstract_status = 'abstract_accepted';
+
+    SELECT COUNT(*) INTO rejected_abstracts
+    FROM public.submissions
+    WHERE event_id = p_event_id AND abstract_status = 'abstract_rejected';
+
+    SELECT COUNT(*) INTO pending_abstract_reviews
+    FROM public.submissions
+    WHERE event_id = p_event_id AND abstract_status = 'abstract_submitted';
+
+    SELECT COUNT(*) INTO abstract_revisions_requested
+    FROM public.submissions
+    WHERE event_id = p_event_id AND abstract_status = 'revision_requested';
+
+    IF (accepted_abstracts + rejected_abstracts) > 0 THEN
+        abstract_acceptance_rate := (accepted_abstracts::FLOAT / (accepted_abstracts + rejected_abstracts)::FLOAT) * 100.0;
+    ELSE
+        abstract_acceptance_rate := 0.0;
+    END IF;
+
+    -- Calculate full paper stats
+    SELECT COUNT(*) INTO total_full_paper_submissions
+    FROM public.submissions
+    WHERE event_id = p_event_id AND full_paper_status IS NOT NULL;
+
+    SELECT COUNT(*) INTO accepted_full_papers
+    FROM public.submissions
+    WHERE event_id = p_event_id AND full_paper_status = 'full_paper_accepted';
+
+    SELECT COUNT(*) INTO rejected_full_papers
+    FROM public.submissions
+    WHERE event_id = p_event_id AND full_paper_status = 'full_paper_rejected';
+
+    SELECT COUNT(*) INTO pending_full_paper_reviews
+    FROM public.submissions
+    WHERE event_id = p_event_id AND full_paper_status = 'full_paper_submitted';
+
+    SELECT COUNT(*) INTO full_paper_revisions_requested
+    FROM public.submissions
+    WHERE event_id = p_event_id AND full_paper_status = 'revision_requested';
+
+    IF (accepted_full_papers + rejected_full_papers) > 0 THEN
+        full_paper_acceptance_rate := (accepted_full_papers::FLOAT / (accepted_full_papers + rejected_full_papers)::FLOAT) * 100.0;
+    ELSE
+        full_paper_acceptance_rate := 0.0;
+    END IF;
+
+    stats := jsonb_build_object(
+        'event_id', p_event_id,
+        'total_abstract_submissions', total_abstract_submissions,
+        'accepted_abstracts', accepted_abstracts,
+        'rejected_abstracts', rejected_abstracts,
+        'pending_abstract_reviews', pending_abstract_reviews,
+        'abstract_revisions_requested', abstract_revisions_requested,
+        'abstract_acceptance_rate', round(abstract_acceptance_rate::numeric, 2),
+
+        'total_full_paper_submissions', total_full_paper_submissions,
+        'accepted_full_papers', accepted_full_papers,
+        'rejected_full_papers', rejected_full_papers,
+        'pending_full_paper_reviews', pending_full_paper_reviews,
+        'full_paper_revisions_requested', full_paper_revisions_requested,
+        'full_paper_acceptance_rate', round(full_paper_acceptance_rate::numeric, 2)
+    );
+
+    RETURN stats;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."calculate_event_statistics"("p_event_id" "uuid") OWNER TO "postgres";
+
+
 CREATE OR REPLACE FUNCTION "public"."check_event_submission_allowed"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
@@ -715,107 +813,112 @@ $$;
 ALTER FUNCTION "public"."create_deadline_notifications"() OWNER TO "postgres";
 
 
-CREATE OR REPLACE FUNCTION "public"."discover_events"("search_query" "text" DEFAULT NULL::"text", "topic_ids" "uuid"[] DEFAULT NULL::"uuid"[], "wilaya_id_param" integer DEFAULT NULL::integer, "daira_id_param" integer DEFAULT NULL::integer, "start_date" timestamp with time zone DEFAULT NULL::timestamp with time zone, "end_date" timestamp with time zone DEFAULT NULL::timestamp with time zone, "event_status_filter" "public"."event_status_enum"[] DEFAULT NULL::"public"."event_status_enum"[], "event_format_filter" "public"."event_format_enum"[] DEFAULT NULL::"public"."event_format_enum"[], "p_organizer_id" "uuid" DEFAULT NULL::"uuid", "limit_count" integer DEFAULT 20, "offset_count" integer DEFAULT 0) RETURNS TABLE("id" "uuid", "event_name" "text", "event_subtitle" "text", "event_date" timestamp with time zone, "event_end_date" timestamp with time zone, "wilaya_name" "text", "daira_name" "text", "organizer_name" "text", "topics" "text"[], "status" "public"."event_status_enum", "format" "public"."event_format_enum", "logo_url" "text", "abstract_submission_deadline" timestamp with time zone, "rank" real)
+CREATE OR REPLACE FUNCTION "public"."discover_events"("search_query" "text" DEFAULT NULL::"text", "topic_ids" "uuid"[] DEFAULT NULL::"uuid"[], "wilaya_id_param" integer DEFAULT NULL::integer, "daira_id_param" integer DEFAULT NULL::integer, "start_date" timestamp with time zone DEFAULT NULL::timestamp with time zone, "end_date" timestamp with time zone DEFAULT NULL::timestamp with time zone, "event_status_filter" "public"."event_status_enum"[] DEFAULT NULL::"public"."event_status_enum"[], "event_format_filter" "public"."event_format_enum"[] DEFAULT NULL::"public"."event_format_enum"[], "p_organizer_id" "uuid" DEFAULT NULL::"uuid", "limit_count" integer DEFAULT 20, "offset_count" integer DEFAULT 0) RETURNS TABLE("id" "uuid", "event_name" "text", "event_subtitle" "text", "event_date" timestamp with time zone, "event_end_date" timestamp with time zone, "wilaya_name" "text", "daira_name" "text", "organizer_name" "text", "topics" "text"[], "status" "public"."event_status_enum", "format" "public"."event_format_enum", "logo_url" "text", "abstract_submission_deadline" timestamp with time zone, "rank" real, "total_records" bigint)
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
 BEGIN
     RETURN QUERY
-    SELECT 
-        e.id,
-        e.event_name_translations ->> 'ar' as event_name,
-        e.event_subtitle_translations ->> 'ar' as event_subtitle,
-        e.event_date,
-        e.event_end_date,
-        w.name_ar as wilaya_name,
-        d.name_ar as daira_name,
-        CASE 
-            WHEN p.user_type = 'organizer' THEN op.name_translations ->> 'ar'
-            ELSE 'منظم غير معروف'
-        END as organizer_name,
-        ARRAY(
-            SELECT t.name_translations ->> 'ar'
-            FROM event_topics et
-            JOIN topics t ON t.id = et.topic_id
-            WHERE et.event_id = e.id
-        ) as topics,
-        e.status,
-        e.format,
-        e.logo_url,
-        e.abstract_submission_deadline,
-        CASE 
-            WHEN search_query IS NOT NULL AND search_query != '' THEN
-                -- Add full-text search ranking when search is provided
-                ts_rank_cd(
-                    setweight(to_tsvector('arabic', COALESCE(e.event_name_translations ->> 'ar', '')), 'A') ||
-                    setweight(to_tsvector('arabic', COALESCE(e.event_subtitle_translations ->> 'ar', '')), 'B') ||
-                    setweight(to_tsvector('arabic', COALESCE(e.event_description_translations ->> 'ar', '')), 'C'),
-                    plainto_tsquery('arabic', search_query)
-                )
-            ELSE
-                -- Default ranking by date when no search is provided
-                EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - e.event_date))::REAL
-        END as rank
-    FROM events e
-    LEFT JOIN wilayas w ON e.wilaya_id = w.id
-    LEFT JOIN dairas d ON e.daira_id = d.id
-    LEFT JOIN profiles p ON e.organizer_id = p.id
-    LEFT JOIN organizer_profiles op ON p.id = op.profile_id
-    WHERE 
-        -- Always filter published events for general discovery
-        e.status = 'published'
-        
-        -- Organizer filtering: if p_organizer_id is provided, show only that organizer's events
-        AND (p_organizer_id IS NULL OR e.organizer_id = p_organizer_id)
-        
-        -- Text search across event name, subtitle and description
-        AND (
-            search_query IS NULL 
-            OR search_query = '' 
-            OR (
-                to_tsvector('arabic', COALESCE(e.event_name_translations ->> 'ar', '')) ||
-                to_tsvector('arabic', COALESCE(e.event_subtitle_translations ->> 'ar', '')) ||
-                to_tsvector('arabic', COALESCE(e.event_description_translations ->> 'ar', ''))
-            ) @@ plainto_tsquery('arabic', search_query)
-        )
-        
-        -- Topic filtering: event must have at least one matching topic
-        AND (
-            topic_ids IS NULL 
-            OR topic_ids = ARRAY[]::UUID[]
-            OR EXISTS (
-                SELECT 1 FROM event_topics et 
-                WHERE et.event_id = e.id 
-                AND et.topic_id = ANY(topic_ids)
+    WITH filtered_events AS (
+        SELECT 
+            e.id,
+            e.event_name_translations ->> 'ar' as event_name,
+            e.event_subtitle_translations ->> 'ar' as event_subtitle,
+            e.event_date,
+            e.event_end_date,
+            w.name_ar as wilaya_name,
+            d.name_ar as daira_name,
+            CASE 
+                WHEN p.user_type = 'organizer' THEN op.name_translations ->> 'ar'
+                ELSE 'منظم غير معروف'
+            END as organizer_name,
+            ARRAY(
+                SELECT t.name_translations ->> 'ar'
+                FROM event_topics et
+                JOIN topics t ON t.id = et.topic_id
+                WHERE et.event_id = e.id
+            ) as topics,
+            e.status,
+            e.format,
+            e.logo_url,
+            e.abstract_submission_deadline,
+            CASE 
+                WHEN search_query IS NOT NULL AND search_query != '' THEN
+                    -- Add full-text search ranking when search is provided
+                    ts_rank_cd(
+                        setweight(to_tsvector('arabic', COALESCE(e.event_name_translations ->> 'ar', '')), 'A') ||
+                        setweight(to_tsvector('arabic', COALESCE(e.event_subtitle_translations ->> 'ar', '')), 'B') ||
+                        setweight(to_tsvector('arabic', COALESCE(e.problem_statement_translations ->> 'ar', '')), 'C'),
+                        plainto_tsquery('arabic', search_query)
+                    )
+                ELSE
+                    -- Default ranking by date when no search is provided
+                    EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - e.event_date))::REAL
+            END as rank
+        FROM events e
+        LEFT JOIN wilayas w ON e.wilaya_id = w.id
+        LEFT JOIN dairas d ON e.daira_id = d.id
+        LEFT JOIN profiles p ON e.created_by = p.id
+        LEFT JOIN organizer_profiles op ON p.id = op.profile_id
+        WHERE 
+            -- Always filter published events for general discovery
+            e.status = 'published'
+            
+            -- Organizer filtering: if p_organizer_id is provided, show only that organizer's events
+            AND (p_organizer_id IS NULL OR e.created_by = p_organizer_id)
+            
+            -- Text search across event name, subtitle and problem statement
+            AND (
+                search_query IS NULL 
+                OR search_query = '' 
+                OR (
+                    to_tsvector('arabic', COALESCE(e.event_name_translations ->> 'ar', '')) ||
+                    to_tsvector('arabic', COALESCE(e.event_subtitle_translations ->> 'ar', '')) ||
+                    to_tsvector('arabic', COALESCE(e.problem_statement_translations ->> 'ar', ''))
+                ) @@ plainto_tsquery('arabic', search_query)
             )
-        )
-        
-        -- Location filtering
-        AND (wilaya_id_param IS NULL OR e.wilaya_id = wilaya_id_param)
-        AND (daira_id_param IS NULL OR e.daira_id = daira_id_param)
-        
-        -- Date range filtering
-        AND (start_date IS NULL OR e.event_date >= start_date)
-        AND (end_date IS NULL OR e.event_date <= end_date)
-        
-        -- Status filtering
-        AND (
-            event_status_filter IS NULL 
-            OR event_status_filter = ARRAY[]::event_status_enum[]
-            OR e.status = ANY(event_status_filter)
-        )
-        
-        -- Format filtering  
-        AND (
-            event_format_filter IS NULL 
-            OR event_format_filter = ARRAY[]::event_format_enum[]
-            OR e.format = ANY(event_format_filter)
-        )
-        
+            
+            -- Topic filtering: event must have at least one matching topic
+            AND (
+                topic_ids IS NULL 
+                OR topic_ids = ARRAY[]::UUID[]
+                OR EXISTS (
+                    SELECT 1 FROM event_topics et 
+                    WHERE et.event_id = e.id 
+                    AND et.topic_id = ANY(topic_ids)
+                )
+            )
+            
+            -- Location filtering
+            AND (wilaya_id_param IS NULL OR e.wilaya_id = wilaya_id_param)
+            AND (daira_id_param IS NULL OR e.daira_id = daira_id_param)
+            
+            -- Date range filtering
+            AND (start_date IS NULL OR e.event_date >= start_date)
+            AND (end_date IS NULL OR e.event_date <= end_date)
+            
+            -- Status filtering
+            AND (
+                event_status_filter IS NULL 
+                OR event_status_filter = ARRAY[]::event_status_enum[]
+                OR e.status = ANY(event_status_filter)
+            )
+            
+            -- Format filtering  
+            AND (
+                event_format_filter IS NULL 
+                OR event_format_filter = ARRAY[]::event_format_enum[]
+                OR e.format = ANY(event_format_filter)
+            )
+    )
+    SELECT 
+        fe.*,
+        COUNT(*) OVER() as total_records
+    FROM filtered_events fe
     ORDER BY 
         -- Order by search relevance when search is provided, otherwise by date
         CASE 
-            WHEN search_query IS NOT NULL AND search_query != '' THEN rank
-            ELSE EXTRACT(EPOCH FROM e.event_date)
+            WHEN search_query IS NOT NULL AND search_query != '' THEN fe.rank
+            ELSE EXTRACT(EPOCH FROM fe.event_date)
         END DESC
     LIMIT limit_count
     OFFSET offset_count;
@@ -3106,6 +3209,31 @@ COMMENT ON FUNCTION "public"."submit_revision"("p_submission_id" "uuid", "p_full
 
 
 
+CREATE OR REPLACE FUNCTION "public"."sync_submission_status"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+BEGIN
+    -- Always set a consistent status based on the workflow stage
+    -- For new rows or updates
+    
+    -- First handle full paper status if it exists (higher priority)
+    IF NEW.full_paper_status IS NOT NULL THEN
+        NEW.status = NEW.full_paper_status;
+    -- Then fall back to abstract status
+    ELSIF NEW.abstract_status IS NOT NULL THEN
+        NEW.status = NEW.abstract_status;
+    END IF;
+    
+    -- If somehow both are NULL, status will be NULL too
+    
+    RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."sync_submission_status"() OWNER TO "postgres";
+
+
 CREATE OR REPLACE FUNCTION "public"."track_submission_versions"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
@@ -3843,7 +3971,8 @@ CREATE TABLE IF NOT EXISTS "public"."submissions" (
     "abstract_status" "public"."submission_status_enum",
     "full_paper_status" "public"."submission_status_enum",
     "feedback_history" "jsonb",
-    "deleted_at" timestamp with time zone
+    "deleted_at" timestamp with time zone,
+    "status" "public"."submission_status_enum"
 );
 
 
@@ -3871,6 +4000,10 @@ COMMENT ON COLUMN "public"."submissions"."full_paper_status" IS 'Current status 
 
 
 COMMENT ON COLUMN "public"."submissions"."feedback_history" IS 'A JSONB array storing the history of feedback and status changes for the submission.';
+
+
+
+COMMENT ON COLUMN "public"."submissions"."status" IS 'Combined status that reflects either abstract_status or full_paper_status based on the current state of the submission.';
 
 
 
@@ -4311,6 +4444,10 @@ CREATE OR REPLACE TRIGGER "profile_verification_trigger" AFTER UPDATE OF "is_ver
 
 
 CREATE OR REPLACE TRIGGER "set_submission_version_number_trigger" BEFORE INSERT ON "public"."submission_versions" FOR EACH ROW EXECUTE FUNCTION "public"."set_submission_version_number"();
+
+
+
+CREATE OR REPLACE TRIGGER "sync_submission_status_trigger" BEFORE INSERT OR UPDATE ON "public"."submissions" FOR EACH ROW EXECUTE FUNCTION "public"."sync_submission_status"();
 
 
 
@@ -4762,6 +4899,12 @@ GRANT ALL ON FUNCTION "public"."bytea_to_text"("data" "bytea") TO "postgres";
 GRANT ALL ON FUNCTION "public"."bytea_to_text"("data" "bytea") TO "anon";
 GRANT ALL ON FUNCTION "public"."bytea_to_text"("data" "bytea") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."bytea_to_text"("data" "bytea") TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."calculate_event_statistics"("p_event_id" "uuid") TO "anon";
+GRANT ALL ON FUNCTION "public"."calculate_event_statistics"("p_event_id" "uuid") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."calculate_event_statistics"("p_event_id" "uuid") TO "service_role";
 
 
 
@@ -5304,6 +5447,12 @@ GRANT ALL ON FUNCTION "public"."submit_full_paper"("p_submission_id" "uuid", "p_
 GRANT ALL ON FUNCTION "public"."submit_revision"("p_submission_id" "uuid", "p_full_paper_file_url" "text", "p_full_paper_file_metadata" "jsonb") TO "anon";
 GRANT ALL ON FUNCTION "public"."submit_revision"("p_submission_id" "uuid", "p_full_paper_file_url" "text", "p_full_paper_file_metadata" "jsonb") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."submit_revision"("p_submission_id" "uuid", "p_full_paper_file_url" "text", "p_full_paper_file_metadata" "jsonb") TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."sync_submission_status"() TO "anon";
+GRANT ALL ON FUNCTION "public"."sync_submission_status"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."sync_submission_status"() TO "service_role";
 
 
 

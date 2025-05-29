@@ -47,10 +47,9 @@ interface Submission {
   revision_request_date?: string;
   revision_submission_date?: string;
   final_decision_date?: string;
-  reviewer_comments?: string;
-  events: {
+  reviewer_comments?: string;  events: {
     id: string;
-    title_translations: {
+    event_name_translations: {
       ar: string;
       en?: string;
       fr?: string;
@@ -373,10 +372,9 @@ export default function SubmissionDetails({ submission }: SubmissionDetailsProps
           {/* Event information */}
           <Card>
             <h3 className="text-lg font-semibold mb-4">{t('eventInformation')}</h3>
-            <div className="space-y-3">
-              <div>
+            <div className="space-y-3">              <div>
                 <div className="text-sm text-gray-500 dark:text-gray-400">{t('eventName')}</div>
-                <div className="font-medium">{getTitle(submission.events.title_translations)}</div>
+                <div className="font-medium">{getTitle(submission.events.event_name_translations)}</div>
               </div>
               
               <div>

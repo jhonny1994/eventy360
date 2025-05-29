@@ -104,7 +104,6 @@ export default async function ProfileLayout({
 
   // Prepare profile info for sidebar
   const profile = prepareProfileInfo(profileData, user.email || '', locale, t, enumsT);
-
   // Get navigation translations
   const translations = {
     // Existing translations
@@ -120,6 +119,7 @@ export default async function ProfileLayout({
     dashboard: navT('profileDashboard'),
     profile: navT('profile'),
     events: navT('events'),
+    submissions: navT('submissions'),
     verification: navT('verification'),
     subscriptions: navT('subscriptions'),
     security: navT('security'),
