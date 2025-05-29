@@ -7,6 +7,8 @@ import Link from "next/link";
 import { Badge, Card } from "flowbite-react";
 import { ChevronLeft, FileText, ExternalLink, Calendar, MessageCircle, AlertCircle, CheckCircle, XCircle } from "lucide-react";
 import { Json } from "@/database.types";
+import FullPaperUploadSection from "../ui/FullPaperUploadSection";
+import RevisionUploadSection from "../ui/RevisionUploadSection";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Submissions");
@@ -376,6 +378,16 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
                     )}
                   </div>
                 </div>
+              )}
+
+              {/* Full Paper Upload Section - Only show if abstract is accepted */}
+              {showFullPaperUpload && (
+                <FullPaperUploadSection submissionId={id} />
+              )}
+              
+              {/* Revision Upload Section - Only show if revision is requested */}
+              {showRevisionUpload && (
+                <RevisionUploadSection submissionId={id} />
               )}
             </div>
           </div>

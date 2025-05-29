@@ -296,7 +296,7 @@ export async function submitFullPaper(
  * Submits a revised paper after receiving revision requests
  */
 export async function submitRevision(
-  formData: RevisionSubmissionFormData
+  formData: RevisionSubmissionFormData & { revision_notes?: string }
 ): Promise<{ success: boolean; message: string; error?: string; submissionId?: string }> {
   const supabase = await createServerSupabaseClient();
   const t = await getTranslations('Submissions');
@@ -399,6 +399,7 @@ export async function submitRevision(
         full_paper_file_url: publicUrl,
         full_paper_file_metadata: fileMetadata,
         version_number: nextVersionNumber,
+        revision_notes: formData.revision_notes || null, // Store revision notes if provided
         submitted_at: new Date().toISOString()
       })
       .select('id')

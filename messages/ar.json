@@ -91,15 +91,10 @@
             "label": "نوع الفعالية",
             "placeholder": "اختر نوع الفعالية",
             "options": {
-              "conference": "مؤتمر",
-              "workshop": "ورشة عمل",
-              "seminar": "ندوة",
-              "symposium": "ملتقى علمي",
-              "forum": "منتدى",
-              "competition": "مسابقة",
               "scientific_event": "فعالية علمية",
               "cultural_event": "فعالية ثقافية",
-              "sports_event": "فعالية رياضية"
+              "sports_event": "فعالية رياضية",
+              "competition": "مسابقة"
             }
           },
           "eventFormat": {
@@ -1642,7 +1637,6 @@
       "verificationApproved": "تم توثيق الحساب بنجاح",
       "documentPreview": {
         "documentPathMissing": "مسار المستند مفقود",
-
         "approveConfirmation": "هل أنت متأكد من أنك تريد الموافقة على طلب التوثيق هذا؟ سيؤدي ذلك إلى وضع علامة على حساب المستخدم كموثق.",
         "rejectConfirmation": "يرجى تقديم سبب لرفض طلب التوثيق هذا. سيكون السبب مرئيًا للمستخدم.",
         "minimumCharactersNote": "الحد الأدنى 10 أحرف. كن محددًا بشأن سبب رفض الطلب.",
@@ -1794,6 +1788,8 @@
     "metrics": {
       "submissions": "المساهمات"
     },
+    "overview": "نظرة عامة",
+    "statistics": "الإحصائيات",
     "status": "الحالة",
     "statusPublished": "منشورة",
     "statusDraft": "مسودة",
@@ -1809,6 +1805,55 @@
     "completeSetup": "استكمال إعداد الفعالية",
     "completeSetupDesc": "استكمل جميع المعلومات المطلوبة لتجهيز الفعالية للمشاركين",
     "completeDetails": "استكمال تفاصيل الفعالية"
+  },
+  "EventStatistics": {
+    "title": "إحصائيات الفعالية",
+    "description": "نظرة عامة تحليلية على إحصائيات المساهمات والمشاركات في الفعالية",
+    "fetchError": "حدث خطأ أثناء جلب الإحصائيات",
+    "errorTitle": "خطأ في تحميل الإحصائيات",
+    "noSubmissionsTitle": "لا توجد إحصائيات بعد",
+    "noSubmissionsDescription": "لم يتم استلام أي مساهمات بعد. ستظهر الإحصائيات تلقائياً عند استلام المساهمات الأولى.",
+    "statusDistributionTitle": "توزيع حالات المساهمات",
+    "timelineTitle": "المخطط الزمني للمساهمات",
+    "noDataAvailable": "لا توجد بيانات متاحة",
+    "noTimelineData": "لا توجد بيانات زمنية للمساهمات",
+    "submissionCount": "عدد المساهمات",
+    "abstractAcceptanceRate": "معدل قبول الملخصات",
+    "paperAcceptanceRate": "معدل قبول الأبحاث",
+    "totalSubmissions": "إجمالي المساهمات",
+    "abstractAccepted": "ملخصات مقبولة",
+    "abstractRejected": "ملخصات مرفوضة",
+    "fullPaperSubmitted": "أبحاث كاملة مقدمة",
+    "revisionRequested": "تعديلات مطلوبة",
+    "completed": "مكتملة",
+    "statusLabel": {
+      "abstractSubmitted": "ملخصات مقدمة",
+      "abstractAccepted": "ملخصات مقبولة",
+      "abstractRejected": "ملخصات مرفوضة",
+      "fullPaperSubmitted": "أبحاث كاملة مقدمة",
+      "fullPaperAccepted": "أبحاث كاملة مقبولة",
+      "fullPaperRejected": "أبحاث كاملة مرفوضة",
+      "revisionRequested": "تعديلات مطلوبة",
+      "completed": "مكتملة",
+      "abstract_submitted": "ملخصات مقدمة",
+      "abstract_accepted": "ملخصات مقبولة",
+      "abstract_rejected": "ملخصات مرفوضة",
+      "full_paper_submitted": "أبحاث كاملة مقدمة",
+      "full_paper_accepted": "أبحاث كاملة مقبولة",
+      "full_paper_rejected": "أبحاث كاملة مرفوضة",
+      "revision_requested": "تعديلات مطلوبة"
+    },
+    "metrics": {
+      "totalSubmissions": "إجمالي المساهمات",
+      "abstractSubmitted": "ملخصات مقدمة",
+      "abstractAccepted": "ملخصات مقبولة",
+      "abstractRejected": "ملخصات مرفوضة",
+      "fullPaperSubmitted": "أبحاث كاملة مقدمة",
+      "fullPaperAccepted": "أبحاث كاملة مقبولة",
+      "fullPaperRejected": "أبحاث كاملة مرفوضة",
+      "revisionRequested": "تعديلات مطلوبة",
+      "completed": "مكتملة"
+    }
   },
   "Submissions": {
     "mySubmissions": "مساهماتي العلمية",
@@ -1900,7 +1945,7 @@
       "abstract_under_review": "الملخص قيد المراجعة",
       "abstract_accepted": "تم قبول الملخص",
       "abstract_rejected": "تم رفض الملخص",
-      "abstract_approved": "الملخص معتمد" ,
+      "abstract_approved": "الملخص معتمد",
       "full_paper_submitted": "تم تقديم البحث الكامل",
       "full_paper_under_review": "البحث الكامل قيد المراجعة",
       "full_paper_accepted": "تم قبول البحث الكامل",
@@ -1939,16 +1984,28 @@
     "submittingTo": "تقديم مساهمة إلى",
     "deadlineInfo": "الموعد النهائي للتقديم",
     "eventTypes": {
-      "conference": "مؤتمر",
-      "workshop": "ورشة عمل",
-      "seminar": "ندوة",
-      "symposium": "ملتقى علمي",
-      "forum": "منتدى",
-      "competition": "مسابقة",
       "scientific_event": "فعالية علمية",
       "cultural_event": "فعالية ثقافية",
-      "sports_event": "فعالية رياضية"
+      "sports_event": "فعالية رياضية",
+      "competition": "مسابقة"
     },
-    "abstractSubmissionDescription": "قم بتعبئة النموذج التالي لتقديم ملخص بحثي للمشاركة في الفعالية. اللغة العربية مطلوبة، واللغات الأخرى اختيارية. يرجى التأكد من اتباع إرشادات التقديم بدقة."
+    "abstractSubmissionDescription": "قم بتعبئة النموذج التالي لتقديم ملخص بحثي للمشاركة في الفعالية. اللغة العربية مطلوبة، واللغات الأخرى اختيارية. يرجى التأكد من اتباع إرشادات التقديم بدقة.",
+    "uploading": "جاري الرفع...",
+    "uploadFullPaper": "رفع البحث الكامل",
+    "uploadRevision": "رفع التعديلات",
+    "uploadError": "خطأ في الرفع",
+    "fileRequirements": "متطلبات الملف",
+    "acceptedFileFormats": "صيغ الملفات المقبولة",
+    "maxFileSize": "الحد الأقصى لحجم الملف",
+    "dragAndDropAllowed": "يمكنك سحب وإفلات الملف هنا",
+    "revisedPaperFile": "ملف البحث المعدل",
+    "revisionInstructions": "تعليمات التعديل",
+    "addressReviewerFeedback": "يرجى معالجة جميع ملاحظات المراجع في النسخة المعدلة",
+    "revisionNotes": "ملاحظات التعديل",
+    "revisionNotesPlaceholder": "اكتب ملاحظاتك حول التعديلات التي قمت بها...",
+    "revisionNotesHelp": "قم بوصف التغييرات التي أجريتها استجابة لملاحظات المراجع",
+    "reviewerFeedback": "ملاحظات المراجع",
+    "invalidSubmissionId": "معرف المساهمة غير صالح",
+    "fileDetails": "تفاصيل الملف"
   }
 }

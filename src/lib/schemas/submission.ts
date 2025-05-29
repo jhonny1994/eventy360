@@ -46,7 +46,7 @@ export const getFullPaperSubmissionSchema = (t: TFunction) =>
       })
   });
 
-// Schema for revision submission (similar to full paper but with different context)
+// Schema for revision submission (similar to full paper but with notes)
 export const getRevisionSubmissionSchema = (t: TFunction) => 
   z.object({
     submission_id: z.string().uuid({ message: t("invalidSubmissionId") }),
@@ -57,7 +57,8 @@ export const getRevisionSubmissionSchema = (t: TFunction) =>
       })
       .refine((file) => ALLOWED_FILE_TYPES.includes(file.type), {
         message: t("invalidFileType", { types: "PDF, DOC, DOCX" })
-      })
+      }),
+    revision_notes: z.string().optional()
   });
 
 // Type exports
@@ -85,4 +86,5 @@ export interface FullPaperSubmissionFormDataStatic {
 export interface RevisionSubmissionFormDataStatic {
   submission_id: string;
   full_paper_file: File;
+  revision_notes?: string;
 } 

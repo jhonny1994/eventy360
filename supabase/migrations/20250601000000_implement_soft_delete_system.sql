@@ -339,7 +339,7 @@ BEGIN
     FROM
         public.submissions
     WHERE
-        event_id = $1 AND
+        submissions.event_id = $1 AND
         deleted_at IS NULL;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER; 

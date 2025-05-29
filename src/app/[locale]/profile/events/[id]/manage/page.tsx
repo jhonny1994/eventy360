@@ -2,16 +2,18 @@ import { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/utils/supabase/server'
 import { getTranslations } from 'next-intl/server'
-import { Card, Badge } from 'flowbite-react'
+import { Card, Badge, Tabs, TabItem } from 'flowbite-react'
 import Link from 'next/link'
 import {
   HiDocumentText,
   HiPencil,
   HiClock,
   HiTag,
-  HiChevronLeft
+  HiChevronLeft,
+  HiChartPie
 } from 'react-icons/hi'
 import ProfileCard from '@/app/[locale]/profile/ui/ProfileCard'
+import EventStatisticsTab from './components/EventStatisticsTab'
 
 interface EventManagementPageProps {
   params: Promise<{ locale: string; id: string }>
@@ -171,6 +173,12 @@ export default async function EventManagementPage({ params }: EventManagementPag
 
       {/* Management content */}
       <ProfileCard locale={locale}>
+        <Tabs variant="underline">
+          <TabItem active title={t('overview')}>
+            <div className="flex items-center gap-2">
+              <HiDocumentText className="h-5 w-5" />
+              <span>{t('overview')}</span>
+            </div>
         <div className="space-y-6 p-4">
           {/* Event Status */}
           <div className="flex items-center space-x-2 mb-6">
@@ -235,6 +243,19 @@ export default async function EventManagementPage({ params }: EventManagementPag
             )}
           </div>
         </div>
+          </TabItem>
+          
+          <TabItem title={t('statistics')}>
+            <div className="flex items-center gap-2">
+              <HiChartPie className="h-5 w-5" />
+              <span>{t('statistics')}</span>
+            </div>
+            <div className="p-4">
+              {/* Statistics Tab Content */}
+              <EventStatisticsTab eventId={id} locale={locale} />
+            </div>
+          </TabItem>
+        </Tabs>
       </ProfileCard>
     </div>
   )
