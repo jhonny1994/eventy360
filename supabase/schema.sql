@@ -1773,6 +1773,81 @@ $$;
 ALTER FUNCTION "public"."handle_notification_insert"() OWNER TO "postgres";
 
 
+CREATE OR REPLACE FUNCTION "public"."handle_payment_notification"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    AS $$
+BEGIN
+  -- Proceed if status changed
+  IF OLD.status != NEW.status THEN
+    -- For verified payments - queue notification email
+    IF NEW.status = 'verified' THEN
+      -- Queue only the payment verified notification (removed subscription_activated notification)
+      INSERT INTO notification_queue (
+        template_key,
+        recipient_profile_id,
+        status,
+        attempts,
+        payload_data,
+        notification_type
+      ) VALUES (
+        'payment_verified_notification',
+        NEW.user_id,
+        'pending',
+        0,
+        jsonb_build_object(
+          'payment_id', NEW.id,
+          'reference_number', COALESCE(NEW.reference_number, NEW.id::TEXT), -- Fix: Cast UUID to TEXT
+          'amount', NEW.amount,
+          'payment_method', NEW.payment_method_reported,
+          'billing_period', NEW.billing_period,
+          'reported_date', to_char(NEW.reported_at, 'YYYY-MM-DD'),
+          'verified_date', to_char(NEW.verified_at, 'YYYY-MM-DD'),
+          -- Will be populated in following trigger
+          'subscription_tier', 'pending',
+          'start_date', 'pending',
+          'end_date', 'pending'
+        ),
+        'immediate'
+      );
+    ELSIF NEW.status = 'rejected' THEN
+      -- Queue the payment rejected notification
+      INSERT INTO notification_queue (
+        template_key,
+        recipient_profile_id,
+        status,
+        attempts,
+        payload_data,
+        notification_type
+      ) VALUES (
+        'payment_rejected_notification',
+        NEW.user_id,
+        'pending',
+        0,
+        jsonb_build_object(
+          'payment_id', NEW.id,
+          'reference_number', COALESCE(NEW.reference_number, NEW.id::TEXT), -- Fix: Cast UUID to TEXT
+          'amount', NEW.amount,
+          'reported_date', to_char(NEW.reported_at, 'YYYY-MM-DD'),
+          'rejection_reason', COALESCE(NEW.rejection_reason, 'The payment could not be verified.'),
+          'support_email', 'support@eventy360.dz'
+        ),
+        'immediate'
+      );
+    END IF;
+  END IF;
+  
+  RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."handle_payment_notification"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."handle_payment_notification"() IS 'Handles payment notification emails. Queues messages for verified and rejected payments.';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."handle_payment_reported"() RETURNS "trigger"
     LANGUAGE "plpgsql"
     AS $$
@@ -1832,7 +1907,7 @@ BEGIN
         0,
         jsonb_build_object(
           'payment_id', NEW.id,
-          'reference_number', COALESCE(NEW.reference_number, NEW.id),
+          'reference_number', COALESCE(NEW.reference_number, NEW.id::TEXT), -- Fix: Cast UUID to TEXT
           'amount', NEW.amount,
           'payment_method', NEW.payment_method_reported,
           'billing_period', NEW.billing_period,
@@ -1861,7 +1936,7 @@ BEGIN
         0,
         jsonb_build_object(
           'payment_id', NEW.id,
-          'reference_number', COALESCE(NEW.reference_number, NEW.id),
+          'reference_number', COALESCE(NEW.reference_number, NEW.id::TEXT), -- Fix: Cast UUID to TEXT
           'amount', NEW.amount,
           'reported_date', to_char(NEW.reported_at, 'YYYY-MM-DD'),
           'rejection_reason', COALESCE(NEW.rejection_reason, 'The payment could not be verified.'),
@@ -1880,7 +1955,7 @@ $$;
 ALTER FUNCTION "public"."handle_payment_verification"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."handle_payment_verification"() IS 'Handles verified payments: updates user subscription to paid tier, sets start/end dates, nullifies trial, and queues a subscription activation notification.';
+COMMENT ON FUNCTION "public"."handle_payment_verification"() IS 'Updates subscription status when a payment is verified. Called by on_payment_verified_update_subscription trigger.';
 
 
 
@@ -3834,7 +3909,7 @@ COMMENT ON TABLE "public"."notification_queue" IS 'Stores email and notification
 
 
 
-COMMENT ON COLUMN "public"."notification_queue"."template_key" IS 'Template key for the email. Critical templates (payment_received_pending_verification, subscription_activated, admin_invitation) have immediate retry in Edge Function.';
+COMMENT ON COLUMN "public"."notification_queue"."template_key" IS 'Template key for the email. Critical templates (payment_received_pending_verification, payment_verified_notification, payment_rejected_notification, admin_invitation) have immediate retry in Edge Function.';
 
 
 
@@ -4426,6 +4501,10 @@ COMMENT ON TRIGGER "on_payment_verified" ON "public"."payments" IS 'Calls handle
 
 
 CREATE OR REPLACE TRIGGER "on_payment_verified_update_subscription" AFTER UPDATE OF "status" ON "public"."payments" FOR EACH ROW EXECUTE FUNCTION "public"."handle_payment_verification"();
+
+
+
+CREATE OR REPLACE TRIGGER "payment_notification_trigger" AFTER UPDATE OF "status" ON "public"."payments" FOR EACH ROW EXECUTE FUNCTION "public"."handle_payment_notification"();
 
 
 
@@ -5126,6 +5205,12 @@ GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "service_role";
 GRANT ALL ON FUNCTION "public"."handle_notification_insert"() TO "anon";
 GRANT ALL ON FUNCTION "public"."handle_notification_insert"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."handle_notification_insert"() TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."handle_payment_notification"() TO "anon";
+GRANT ALL ON FUNCTION "public"."handle_payment_notification"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."handle_payment_notification"() TO "service_role";
 
 
 

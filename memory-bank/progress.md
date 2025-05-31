@@ -28,6 +28,12 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 - TypeScript errors in Next.js App Router files related to page props
 - Email templates need testing with various device sizes
 
+## Recently Fixed Issues
+- Payment verification error with type mismatch between UUID and TEXT in notification trigger
+- Missing email templates for payment verification and rejection notifications
+- Function name conflict causing subscription not to update when payment is verified (two different functions named handle_payment_verification)
+- Subscription status not updating when payment is verified due to original function being overwritten
+
 ## ✅ Completed Features
 
 ### Core Infrastructure

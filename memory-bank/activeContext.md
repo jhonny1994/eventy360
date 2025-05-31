@@ -3,6 +3,16 @@
 ## Current Focus
 **Phase 2 & 3 Implementation:** Focus is on implementing the topic management system, event creation interface, and researcher submission system simultaneously.
 
+We are currently working on the payment verification process. The main issues were:
+
+1. A type casting issue in the notification function
+2. Missing email templates for payment verification notifications
+3. A function name conflict causing the subscription status not to update when a payment is verified
+
+We've added two new migration files to fix these issues:
+- `20250601120290_fix_duplicate_payment_verification_function.sql` - Renames the notification function to avoid conflicts
+- `20250602120100_restore_subscription_update_function.sql` - Restores the original subscription update function
+
 ## ✅ Recently Completed Features
 
 ### Profile Submissions Feature Setup
@@ -66,6 +76,17 @@
 - Email templates need testing with various device sizes
 - TypeScript errors in Next.js App Router files related to page props types
 
+### Recently Fixed Issues
+1. Fixed the duplicate function name conflict by creating separate functions for:
+   - `handle_payment_notification()` - Handles sending notification emails
+   - `handle_payment_verification()` - Updates subscription status to paid
+
+2. Added detailed logging to help debug payment verification issues with:
+   - `payment_verification_debug_trigger` - Logs payment status changes
+   - `subscription_update_debug_trigger` - Logs subscription updates
+
+3. Reinstated the original subscription update function that was accidentally overwritten.
+
 ## Implementation Priorities
 1. **Topic Management System** (Phase 2)
 2. **Event Creation Interface** (Phase 2)
@@ -74,4 +95,10 @@
 ## Future Phases
 - Phase 4: Comprehensive Notification System & Email Management
 - Phase 5: Value-Added MVP Features & Admin Panel Consolidation
-- Phase 6: Testing, Deployment Preparation & Launch 
+- Phase 6: Testing, Deployment Preparation & Launch
+
+## Next Steps
+
+1. Test the payment verification process end-to-end with both email notifications and subscription status updates
+2. Review logs for any remaining issues with payment verification
+3. Consider adding more robust error handling for edge cases 
