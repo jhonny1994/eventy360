@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import {
   Table,
   TableBody,
@@ -23,6 +23,8 @@ interface PaymentHistoryDisplayProps {
 
 export default function PaymentHistoryDisplay({ userId }: PaymentHistoryDisplayProps) {
   const t = useTranslations('ProfilePage.PaymentHistory'); // Namespace for translations
+  const locale = useLocale();
+  const isRtl = locale === 'ar';
   const supabase = createClientComponentClient<Database>();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -77,27 +79,29 @@ export default function PaymentHistoryDisplay({ userId }: PaymentHistoryDisplayP
             <p className="text-center text-gray-500 dark:text-gray-400">{t('noPayments')}</p>
           ) : (
             <div className="overflow-x-auto">
-              <Table hoverable>
+              <Table hoverable dir={isRtl ? 'rtl' : 'ltr'}>
                 <TableHead>
-                  <TableHeadCell>{t('headerDate')}</TableHeadCell>
-                  <TableHeadCell>{t('headerAmount')}</TableHeadCell>
-                  <TableHeadCell>{t('headerPeriod')}</TableHeadCell>
-                  <TableHeadCell>{t('headerStatus')}</TableHeadCell>
-                  <TableHeadCell>{t('headerReference')}</TableHeadCell>
+                  <TableRow className={isRtl ? 'text-right' : 'text-left'}>
+                    <TableHeadCell style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{t('headerDate')}</TableHeadCell>
+                    <TableHeadCell style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{t('headerAmount')}</TableHeadCell>
+                    <TableHeadCell style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{t('headerPeriod')}</TableHeadCell>
+                    <TableHeadCell style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{t('headerStatus')}</TableHeadCell>
+                    <TableHeadCell style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{t('headerReference')}</TableHeadCell>
+                  </TableRow>
                 </TableHead>
                 <TableBody className="divide-y">
                   {payments.map((payment) => (
                     <TableRow 
                       key={payment.id} 
-                      className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                      className={`bg-white dark:border-gray-700 dark:bg-gray-800 ${isRtl ? 'text-right' : 'text-left'}`}
                     >
-                      <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                        {new Date(payment.created_at).toLocaleDateString()}
+                      <TableCell style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}} className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                        {new Date(payment.created_at).toLocaleDateString(locale === 'ar' ? 'ar-DZ' : 'en-US')}
                       </TableCell>
-                      <TableCell>{/* TODO: Format currency */}{payment.amount}</TableCell>
-                      <TableCell>{payment.billing_period}</TableCell>
-                      <TableCell>{/* TODO: Translate status */}{payment.status}</TableCell>
-                      <TableCell>{payment.id}</TableCell>
+                      <TableCell style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{/* TODO: Format currency */}{payment.amount}</TableCell>
+                      <TableCell style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{payment.billing_period}</TableCell>
+                      <TableCell style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{/* TODO: Translate status */}{payment.status}</TableCell>
+                      <TableCell style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{payment.id}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

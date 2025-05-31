@@ -7,6 +7,7 @@ import { Card, Button, Label, Alert, Textarea, Spinner } from 'flowbite-react';
 import { HiInformationCircle, HiExclamationCircle, HiDownload } from 'react-icons/hi';
 import { Database } from '@/database.types';
 import { Json } from '@/database.types';
+import { useRouter, usePathname } from 'next/navigation';
 
 interface FullPaperReviewComponentProps {
   submissionId: string;
@@ -20,7 +21,7 @@ interface TranslationObject {
 
 // Type for file metadata
 interface FileMetadata {
-  filename?: string;
+  originalName?: string;
   size?: number;
   contentType?: string;
   [key: string]: unknown;
@@ -44,13 +45,13 @@ interface SubmissionWithDetails {
   created_at: string;
   profiles?: {
     id: string;
-    full_name: string;
-    email: string;
+    researcher_profiles?: {
+      name: string;
+    } | null;
   };
   events?: {
     id: string;
-    title_translations: TranslationObject;
-    event_code?: string;
+    event_name_translations: TranslationObject;
   };
 }
 
@@ -63,6 +64,8 @@ export default function FullPaperReviewComponent({
 }: FullPaperReviewComponentProps) {
   const t = useTranslations('Submissions');
   const supabase = createClientComponentClient<Database>();
+  const router = useRouter();
+  const pathname = usePathname();
   
   const [submission, setSubmission] = useState<SubmissionWithDetails | null>(null);
   const [loading, setLoading] = useState(true);
@@ -99,8 +102,8 @@ export default function FullPaperReviewComponent({
             submitted_by,
             event_id,
             created_at,
-            profiles(id, full_name, email),
-            events(id, title_translations, event_code)
+            profiles:submitted_by(id, researcher_profiles(name)),
+            events:event_id(id, event_name_translations)
           `)
           .eq('id', submissionId)
           .single();
@@ -112,7 +115,6 @@ export default function FullPaperReviewComponent({
           setSubmission(data as unknown as SubmissionWithDetails);
         }
       } catch (err) {
-        console.error('Error fetching submission details:', err);
         setError(err instanceof Error ? err.message : t('unknownError'));
       } finally {
         setLoading(false);
@@ -150,39 +152,18 @@ export default function FullPaperReviewComponent({
         if (onReviewComplete) {
           onReviewComplete();
         } else {
-          // Refresh the submission data
-          const { data: updatedSubmission, error: fetchError } = await supabase
-            .from('submissions')
-            .select(`
-              id,
-              title_translations,
-              abstract_translations,
-              abstract_file_url,
-              abstract_file_metadata,
-              abstract_status,
-              full_paper_file_url,
-              full_paper_file_metadata,
-              full_paper_status,
-              current_abstract_version_id,
-              current_full_paper_version_id,
-              submitted_by,
-              event_id,
-              created_at,
-              profiles(id, full_name, email),
-              events(id, title_translations, event_code)
-            `)
-            .eq('id', submissionId)
-            .single();
+          // Get event_id directly from the submission
+          if (submission?.event_id) {
+            // Extract locale from the pathname
+            const pathSegments = pathname?.split('/') || [];
+            const locale = pathSegments.length > 1 ? pathSegments[1] : 'ar';
             
-          if (fetchError) throw fetchError;
-          
-          if (updatedSubmission) {
-            setSubmission(updatedSubmission as unknown as SubmissionWithDetails);
+            // Redirect to submission details page
+            router.push(`/${locale}/profile/events/${submission.event_id}/submissions/${submissionId}`);
           }
         }
       }
     } catch (err) {
-      console.error('Error updating submission status:', err);
       setError(err instanceof Error ? err.message : t('unknownError'));
     } finally {
       setSubmitting(false);
@@ -236,16 +217,22 @@ export default function FullPaperReviewComponent({
   // Extract submission details from the fetched data
   const title = submission.title_translations[activeLanguage] || submission.title_translations.ar || '';
   const abstract = submission.abstract_translations[activeLanguage] || submission.abstract_translations.ar || '';
-  const eventTitle = submission.events?.title_translations[activeLanguage] || submission.events?.title_translations.ar || '';
-  const submitterName = submission.profiles?.full_name || '';
-  const submitterEmail = submission.profiles?.email || '';
+  const eventTitle = submission.events?.event_name_translations[activeLanguage] || submission.events?.event_name_translations.ar || '';
+  const submitterName = submission.profiles?.researcher_profiles?.name || t('unknownUser');
   
   // Get file metadata as human-readable info
+  let paperFileName = t('unknownFile');
+  let paperFileSize = t('unknownSize');
+
+  try {
   const paperFileMetadata = submission.full_paper_file_metadata as unknown as FileMetadata;
-  const paperFileName = paperFileMetadata?.filename || t('unknownFile');
-  const paperFileSize = paperFileMetadata?.size 
+    paperFileName = paperFileMetadata?.originalName || t('unknownFile');
+    paperFileSize = paperFileMetadata?.size && !isNaN(paperFileMetadata.size)
     ? Math.round(paperFileMetadata.size / 1024) + ' KB' 
     : t('unknownSize');
+  } catch  {
+    // Keep default values if there's an error
+  }
   
   // Determine if full paper can be reviewed
   // Only when status is 'full_paper_submitted' or if it's a revision under review
@@ -267,7 +254,7 @@ export default function FullPaperReviewComponent({
       {!canReview && (
         <Alert color="warning" icon={HiInformationCircle} className="mb-4">
           <span className="font-medium">{t('cannotReview')}</span> 
-          {t('fullPaperStatus')}: {t(submission.full_paper_status || 'unknown')}
+          {t('fullPaperStatus')}: {t(`status.${submission.full_paper_status}` || 'unknown')}
         </Alert>
       )}
       
@@ -281,7 +268,6 @@ export default function FullPaperReviewComponent({
           <div>
             <h6 className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('submittedBy')}</h6>
             <p className="text-lg font-semibold">{submitterName}</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">{submitterEmail}</p>
           </div>
         </div>
         
@@ -399,7 +385,7 @@ export default function FullPaperReviewComponent({
             submission.full_paper_status === 'revision_requested' ? 'bg-yellow-500' :
             'bg-blue-500'
           }`}></div>
-          <span>{t(submission.full_paper_status || 'unknown')}</span>
+          <span>{t(`status.${submission.full_paper_status}` || 'unknown')}</span>
         </div>
       </div>
     </Card>

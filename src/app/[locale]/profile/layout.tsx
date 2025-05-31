@@ -271,7 +271,7 @@ function prepareProfileInfo(
 
   return {
     name,
-    email,
+    email: '',  // Don't expose email in the UI
     userType: enumsT(`user_type_enum.${profileData.user_type}`),
     isVerified: profileData.is_verified,
     profilePictureUrl,

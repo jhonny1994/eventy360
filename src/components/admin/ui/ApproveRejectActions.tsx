@@ -77,7 +77,6 @@ export default function ApproveRejectActions({
   // Function to clear subscription cache for the affected user
   const clearUserSubscriptionCache = async () => {
     if (!userId) {
-      console.log('No userId provided for cache clearing');
       return;
     }
 
@@ -86,9 +85,7 @@ export default function ApproveRejectActions({
       const cacheKey = `eventy360_subscription_${userId}`;
       try {
         localStorage.removeItem(cacheKey);
-        console.log(`Cleared subscription cache for user ${userId}`);
-      } catch (error) {
-        console.error('Error clearing subscription cache:', error);
+      } catch  {
       }
     }
 
@@ -133,7 +130,6 @@ export default function ApproveRejectActions({
       setIsApproveModalOpen(false);
       router.refresh();
     } catch (err) {
-      console.error('Error approving request:', err);
       const errorMessage = err instanceof Error ? err.message : translations.actionError;
       setErrorMessage(errorMessage);
       toast.error(translations.actionError);
@@ -193,7 +189,6 @@ export default function ApproveRejectActions({
       setIsRejectModalOpen(false);
       router.refresh();
     } catch (err) {
-      console.error('Error rejecting request:', err);
       const errorMessage = err instanceof Error ? err.message : translations.actionError;
       setErrorMessage(errorMessage);
       toast.error(translations.actionError);

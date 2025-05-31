@@ -85,8 +85,7 @@ export default function AdminLoginForm({ redirectPath }: AdminLoginFormProps) {
         : `/${locale}${defaultPath}`;
       
       router.push(redirectUrl);
-    } catch (err) {
-      console.error("Login error:", err);
+    } catch  {
       setAuthError(tLogin("unexpectedError"));
       setIsSubmitting(false);
     }

@@ -1,19 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useParams, useRouter } from 'next/navigation';
-import { Button, Label, Alert, Spinner, FileInput, Textarea } from 'flowbite-react';
+import { Button, Label, Alert, Spinner, Textarea } from 'flowbite-react';
 import { HiInformationCircle, HiExclamationCircle } from 'react-icons/hi';
 import { FileText, Upload, MessageCircle } from 'lucide-react';
 import { submitRevision } from '@/app/[locale]/profile/submissions/actions';
 import { 
   getRevisionSubmissionSchema, 
-  RevisionSubmissionFormDataStatic,
-  MAX_FILE_SIZE,
-  ALLOWED_FILE_TYPES
+  MAX_FILE_SIZE
 } from '@/lib/schemas/submission';
 
 interface RevisionUploadSectionProps {
@@ -26,6 +24,12 @@ interface RevisionUploadSectionProps {
     };
     review_date?: string;
   };
+}
+
+interface RevisionSubmissionForm {
+  submission_id: string;
+  full_paper_file?: File;
+  revision_notes?: string;
 }
 
 export default function RevisionUploadSection({ submissionId, feedback }: RevisionUploadSectionProps) {
@@ -41,9 +45,10 @@ export default function RevisionUploadSection({ submissionId, feedback }: Revisi
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    control,
+    formState: { errors },
     watch
-  } = useForm<RevisionSubmissionFormDataStatic>({
+  } = useForm<RevisionSubmissionForm>({
     resolver: zodResolver(schema),
     mode: 'onChange',
     defaultValues: {
@@ -53,7 +58,7 @@ export default function RevisionUploadSection({ submissionId, feedback }: Revisi
 
   const selectedFile = watch('full_paper_file');
 
-  const onSubmit = async (data: RevisionSubmissionFormDataStatic) => {
+  const onSubmit = async (data: RevisionSubmissionForm) => {
     setIsSubmitting(true);
     setError(null);
     
@@ -61,8 +66,8 @@ export default function RevisionUploadSection({ submissionId, feedback }: Revisi
       const result = await submitRevision(data);
       
       if (result.success) {
-        // Refresh the page to show updated status
-        router.refresh();
+        // Instead of just refreshing, navigate to the submission page with a timestamp to force reload
+        router.push(`/${params.locale}/profile/submissions/${submissionId}?t=${Date.now()}`);
       } else {
         setError(result.error || t('revisionSubmissionError'));
       }
@@ -159,43 +164,56 @@ export default function RevisionUploadSection({ submissionId, feedback }: Revisi
             <Label htmlFor="full_paper_file">{t('revisedPaperFile')}</Label>
           </div>
           
-          <div className="flex items-center justify-center w-full">
-            <label
-              htmlFor="full_paper_file"
-              className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-            >
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                {selectedFile ? (
-                  <>
-                    <FileText className="w-8 h-8 mb-2 text-gray-500 dark:text-gray-400" />
-                    <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                      {selectedFile.name} ({formatBytes(selectedFile.size)})
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <Upload className="w-8 h-8 mb-2 text-gray-500 dark:text-gray-400" />
-                    <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                      {t('dragDropFile')}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {t('acceptedFileTypes')}
-                    </p>
-                  </>
-                )}
+          <Controller
+            name="full_paper_file"
+            control={control}
+            render={({ field: { value, onChange, ...field } }) => (
+              <div className="flex items-center justify-center w-full">
+                <label
+                  htmlFor="full_paper_file_input"
+                  className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500"
+                >
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    {value ? (
+                      <>
+                        <FileText className="w-8 h-8 mb-2 text-gray-500 dark:text-gray-400" />
+                        <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                          {value.name} {value.size ? `(${formatBytes(value.size)})` : ''}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-8 h-8 mb-2 text-gray-500 dark:text-gray-400" />
+                        <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                          {t('dragDropFile')}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {t('acceptedFileTypes')}
+                        </p>
+                      </>
+                    )}
+                  </div>
+                  <input
+                    id="full_paper_file_input"
+                    type="file"
+                    className="hidden"
+                    accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        onChange(file);
+                      }
+                    }}
+                    {...field}
+                  />
+                </label>
               </div>
-              <FileInput
-                id="full_paper_file"
-                {...register('full_paper_file')}
-                className="hidden"
-                accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-              />
-            </label>
-          </div>
+            )}
+          />
           
           {errors.full_paper_file && (
             <p className="mt-2 text-sm text-red-600 dark:text-red-500">
-              {errors.full_paper_file.message}
+              {errors.full_paper_file.message as string}
             </p>
           )}
         </div>
@@ -217,7 +235,7 @@ export default function RevisionUploadSection({ submissionId, feedback }: Revisi
           />
           {errors.revision_notes && (
             <p className="mt-2 text-sm text-red-600 dark:text-red-500">
-              {errors.revision_notes.message}
+              {errors.revision_notes.message as string}
             </p>
           )}
         </div>

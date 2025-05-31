@@ -43,7 +43,6 @@ export default function EventStatisticsTab({ eventId, locale }: EventStatisticsT
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const isRtl = locale === 'ar';
 
   useEffect(() => {
     async function fetchStats() {

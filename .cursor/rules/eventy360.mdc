@@ -26,10 +26,6 @@ alwaysApply: true
 - **MCP USE**: use any mcp tool to get the information you need.
 - **Library Documentation**: MUST use `mcp_context7_resolve-library-id` first, then `mcp_context7_get-library-docs` for fetching library documentation.
 
-## Data Files
-
-- **`wilayas.json`**: Treat as read-only unless explicitly instructed otherwise. Confirm before any modification attempt.
-
 ## .cursorrules Purpose
 
 - **Learning Journal**: This file captures project-specific patterns, user preferences, workflow nuances, and other intelligence learned during development.

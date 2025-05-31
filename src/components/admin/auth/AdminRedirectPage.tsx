@@ -33,7 +33,6 @@ export default function AdminRedirectPage() {
         // If we have UID but the session isn't loading properly, provide a manual login option
         const timeoutId = setTimeout(() => {
           if (!user && !authLoading) {
-            console.log('[AdminRedirectPage] Session not established after timeout');
             setError('Session not properly established. Please try logging in directly.');
             setIsLoading(false);
           }

@@ -134,7 +134,6 @@ export default function PaymentProofUpload({
       }
       
     } catch (err: unknown) {
-      console.error('Error uploading payment proof:', err);
       let errorMessage = t('uploadError');
       if (err instanceof Error) {
         errorMessage = err.message;

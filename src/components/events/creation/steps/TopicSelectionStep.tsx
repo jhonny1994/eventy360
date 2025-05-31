@@ -50,8 +50,7 @@ export default function TopicSelectionStep({ form }: TopicSelectionStepProps) {
 
         setTopics(topicsData);
         setFilteredTopics(topicsData);
-      } catch (error) {
-        console.error("Error loading topics:", error);
+      } catch  {
       } finally {
         setLoading(false);
       }

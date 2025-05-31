@@ -65,14 +65,12 @@ interface RawSubmission {
   submission_date: string;
   review_date?: string;
   review_feedback_translations?: TranslationsObject;
-}
-
-// Interface for researcher profile from database
-interface RawResearcherProfile {
+  profiles?: {
+    id: string;
+    researcher_profiles?: {
   name: string;
-  email: string;
-  phone?: string;
-  institution?: string;
+    } | null;
+  };
 }
 
 export async function generateMetadata({ params }: EventSubmissionDetailPageProps): Promise<Metadata> {
@@ -161,7 +159,8 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
       submitted_by,
       submission_date,
       review_date,
-      review_feedback_translations
+      review_feedback_translations,
+      profiles:submitted_by(id, researcher_profiles(name))
     `)
     .eq('id', submissionId)
     .eq('event_id', eventId)
@@ -175,30 +174,14 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
   // Cast submission to typed data for safety
   const typedSubmission = submission as unknown as RawSubmission;
 
-  // Fetch researcher profile details
-  const { data: researcherProfile } = await supabase
-    .from('researcher_profiles')
-    .select('name, email, phone, institution')
-    .eq('profile_id', typedSubmission.submitted_by)
-    .single()
-
-  // Cast researcher profile to typed data
-  const typedResearcherProfile = researcherProfile as unknown as RawResearcherProfile | null;
-
-  // Fallback if researcher profile not found
-  const researcher = typedResearcherProfile 
-    ? {
+  // Create researcher profile from the joined data
+  const researcher: ResearcherProfile = {
         id: typedSubmission.submitted_by,
-        full_name: typedResearcherProfile.name,
-        email: typedResearcherProfile.email,
-        phone: typedResearcherProfile.phone,
-        institution: typedResearcherProfile.institution
-      }
-    : {
-        id: typedSubmission.submitted_by,
-        full_name: 'Unknown Researcher',
-        email: `user-${typedSubmission.submitted_by.substring(0, 8)}@example.com`
-      }
+    full_name: typedSubmission.profiles?.researcher_profiles?.name || 'Unknown Researcher',
+    email: '',
+    phone: undefined,
+    institution: undefined
+  };
 
   // Define status colors
   const statusColors: Record<string, string> = {
@@ -338,13 +321,6 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
                   </p>
                 </div>
                 
-                <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{tSubmissions("email")}</p>
-                  <p className="font-medium text-gray-900 dark:text-white">
-                    {submissionData.researcher_profile?.email}
-                  </p>
-                </div>
-                
                 {submissionData.researcher_profile?.phone && (
                   <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">{tSubmissions("phone")}</p>
@@ -402,15 +378,6 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
                     {tSubmissions('reviewRevision')}
                   </Link>
                 )}
-                
-                {/* View researcher profile */}
-                <Link 
-                  href={`/${locale}/profile/researchers/${submissionData.submitted_by}`}
-                  className="flex items-center w-full justify-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                >
-                  <HiExternalLink className={`w-4 h-4 ${isRtl ? 'ml-2' : 'mr-2'}`} />
-                  {tSubmissions('viewResearcherProfile')}
-                </Link>
               </div>
             </div>
           </div>

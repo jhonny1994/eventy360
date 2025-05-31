@@ -119,7 +119,6 @@ export default function VerificationDocumentUploader({
       }
       
     } catch (err: unknown) {
-      console.error('Error uploading verification document:', err);
       let errorMessage = t('uploadError');
       if (err instanceof Error) {
         errorMessage = err.message;

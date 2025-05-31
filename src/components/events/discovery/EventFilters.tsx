@@ -74,8 +74,7 @@ export default function EventFilters({
 
         if (error) throw error;
         setWilayas(data || []);
-      } catch (error) {
-        console.error('Error loading wilayas:', error);
+      } catch {
       }
     };
 

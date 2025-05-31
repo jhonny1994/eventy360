@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { Badge, Button, Select, TextInput, Spinner } from 'flowbite-react';
@@ -26,6 +26,7 @@ interface Submission {
 interface EventSubmissionsTableProps {
   submissions: Submission[];
   locale: string;
+  eventId: string;
 }
 
 // Define submission status colors
@@ -55,7 +56,8 @@ const statusFilterOptions = [
 
 export default function EventSubmissionsTable({ 
   submissions,
-  locale
+  locale,
+  eventId
 }: EventSubmissionsTableProps) {
   const t = useTranslations('Submissions');
   const isRtl = locale === 'ar';
@@ -68,13 +70,18 @@ export default function EventSubmissionsTable({
   const [isLoading, setIsLoading] = useState(false);
   const itemsPerPage = 10;
 
+  // Helper for consistent text alignment classes based on RTL
+  const getTextAlignClass = () => {
+    return isRtl ? 'text-right' : 'text-left';
+  };
+
   // Get title based on locale
-  const getTitle = (translations: Record<string, string>) => {
+  const getTitle = useCallback((translations: Record<string, string>) => {
     if (locale === 'ar') return translations.ar;
     if (locale === 'en' && translations.en) return translations.en;
     if (locale === 'fr' && translations.fr) return translations.fr;
     return translations.ar; // Default to Arabic if preferred locale not available
-  };
+  }, [locale]);
   
   // Format date based on locale
   const formatDate = (dateString: string) => {
@@ -105,8 +112,7 @@ export default function EventSubmissionsTable({
       const title = getTitle(submission.title_translations).toLowerCase();
       const searchMatch = searchTerm === '' || 
                           title.includes(searchTerm.toLowerCase()) ||
-                          submission.profiles.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          submission.profiles.email.toLowerCase().includes(searchTerm.toLowerCase());
+                          submission.profiles.full_name.toLowerCase().includes(searchTerm.toLowerCase());
       
       const status = getEffectiveStatus(submission);
       const statusMatch = statusFilter === 'all' || status === statusFilter;
@@ -117,7 +123,7 @@ export default function EventSubmissionsTable({
     setFilteredSubmissions(filtered);
     setCurrentPage(1); // Reset to first page when filters change
     setIsLoading(false);
-  }, [searchTerm, statusFilter, submissions]);
+  }, [searchTerm, statusFilter, submissions, getTitle]);
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredSubmissions.length / itemsPerPage);
@@ -135,11 +141,11 @@ export default function EventSubmissionsTable({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" dir={isRtl ? 'rtl' : 'ltr'}>
       {/* Filters */}
       <div className={`flex flex-col md:flex-row gap-4 ${isRtl ? 'md:flex-row-reverse' : ''}`}>
         <div className={`relative flex-grow ${isRtl ? 'md:ml-4' : 'md:mr-4'}`}>
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+          <div className={`absolute inset-y-0 ${isRtl ? 'right-0 pr-3' : 'left-0 pl-3'} flex items-center pointer-events-none`}>
             <HiSearch className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </div>
           <TextInput
@@ -147,7 +153,7 @@ export default function EventSubmissionsTable({
             placeholder={t('searchSubmissions')}
             value={searchTerm}
             onChange={handleSearchChange}
-            className="block w-full pl-10"
+            className={`block w-full ${isRtl ? 'pr-10 text-right' : 'pl-10 text-left'}`}
           />
         </div>
         
@@ -158,7 +164,7 @@ export default function EventSubmissionsTable({
           <Select
             value={statusFilter}
             onChange={handleStatusFilterChange}
-            className="min-w-[180px]"
+            className={`min-w-[180px] ${isRtl ? 'text-right' : 'text-left'}`}
           >
             {statusFilterOptions.map(option => (
               <option key={option.value} value={option.value}>
@@ -170,7 +176,7 @@ export default function EventSubmissionsTable({
       </div>
       
       {/* Results count */}
-      <div className="text-sm text-gray-500 dark:text-gray-400">
+      <div className={`text-sm text-gray-500 dark:text-gray-400 ${getTextAlignClass()}`}>
         {t('showingResults', { count: filteredSubmissions.length })}
       </div>
       
@@ -182,14 +188,14 @@ export default function EventSubmissionsTable({
         <>
           {/* Table */}
           <div className="overflow-x-auto relative shadow-md sm:rounded-lg">
-            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <table className="w-full text-sm text-gray-500 dark:text-gray-400" dir={isRtl ? 'rtl' : 'ltr'} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                  <th scope="col" className="px-6 py-3">{t('submissionTitle')}</th>
-                  <th scope="col" className="px-6 py-3">{t('researcher')}</th>
-                  <th scope="col" className="px-6 py-3">{t('submissionStatus')}</th>
-                  <th scope="col" className="px-6 py-3">{t('lastUpdated')}</th>
-                  <th scope="col" className="px-6 py-3">{t('actions')}</th>
+                <tr className={isRtl ? 'text-right' : 'text-left'}>
+                  <th scope="col" className="px-6 py-3" style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{t('submissionTitle')}</th>
+                  <th scope="col" className="px-6 py-3" style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{t('researcher')}</th>
+                  <th scope="col" className="px-6 py-3" style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{t('submissionStatus')}</th>
+                  <th scope="col" className="px-6 py-3" style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{t('lastUpdated')}</th>
+                  <th scope="col" className="px-6 py-3" style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{t('actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -197,61 +203,60 @@ export default function EventSubmissionsTable({
                   paginatedSubmissions.map((submission) => {
                     const status = getEffectiveStatus(submission);
                     return (
-                      <tr key={submission.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                        <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                      <tr key={submission.id} className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 ${isRtl ? 'text-right' : 'text-left'}`}>
+                        <td className="px-6 py-4 font-medium text-gray-900 dark:text-white" style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                           {getTitle(submission.title_translations)}
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-4" style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                           <div>
                             <div className="font-medium">{submission.profiles.full_name}</div>
-                            <div className="text-xs text-gray-500">{submission.profiles.email}</div>
                           </div>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-4" style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                           <Badge color={statusColors[status] || 'gray'}>
                             {t(`status.${status}`)}
                           </Badge>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-4" style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                           {formatDate(submission.updated_at)}
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-4" style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                           <div className="flex flex-col space-y-2">
                             <Link 
-                              href={`/${locale}/profile/submissions/${submission.id}`}
+                              href={`/${locale}/profile/events/${eventId}/submissions/${submission.id}`}
                               className="font-medium text-blue-600 hover:underline dark:text-blue-500 flex items-center gap-1"
                             >
-                              <HiExternalLink className="w-4 h-4" />
+                              <HiExternalLink className={`w-4 h-4 ${isRtl ? 'ml-1' : 'mr-1'}`} />
                               {t('viewDetails')}
                             </Link>
                             
                             {/* Display different review options based on status */}
                             {status === 'abstract_submitted' && (
                               <Link 
-                                href={`/${locale}/profile/submissions/${submission.id}/review-abstract`}
+                                href={`/${locale}/profile/events/${eventId}/submissions/${submission.id}/review-abstract`}
                                 className="font-medium text-emerald-600 hover:underline dark:text-emerald-500 flex items-center gap-1"
                               >
-                                <HiDocumentText className="w-4 h-4" />
+                                <HiDocumentText className={`w-4 h-4 ${isRtl ? 'ml-1' : 'mr-1'}`} />
                                 {t('reviewAbstract')}
                               </Link>
                             )}
                             
                             {status === 'full_paper_submitted' && (
                               <Link 
-                                href={`/${locale}/profile/submissions/${submission.id}/review-paper`}
+                                href={`/${locale}/profile/events/${eventId}/submissions/${submission.id}/review-paper`}
                                 className="font-medium text-emerald-600 hover:underline dark:text-emerald-500 flex items-center gap-1"
                               >
-                                <HiDocumentText className="w-4 h-4" />
+                                <HiDocumentText className={`w-4 h-4 ${isRtl ? 'ml-1' : 'mr-1'}`} />
                                 {t('reviewPaper')}
                               </Link>
                             )}
                             
                             {status === 'revision_submitted' && (
                               <Link 
-                                href={`/${locale}/profile/submissions/${submission.id}/review-revision`}
+                                href={`/${locale}/profile/events/${eventId}/submissions/${submission.id}/review-paper`}
                                 className="font-medium text-emerald-600 hover:underline dark:text-emerald-500 flex items-center gap-1"
                               >
-                                <HiDocumentText className="w-4 h-4" />
+                                <HiDocumentText className={`w-4 h-4 ${isRtl ? 'ml-1' : 'mr-1'}`} />
                                 {t('reviewRevision')}
                               </Link>
                             )}
@@ -262,8 +267,8 @@ export default function EventSubmissionsTable({
                   })
                 ) : (
                   <tr>
-                    <td colSpan={5} className="px-6 py-8 text-center">
-                      <p className="text-gray-500 dark:text-gray-400">{t('noMatchingSubmissions')}</p>
+                    <td colSpan={5} className="px-6 py-4 text-center">
+                      {t('noSubmissions')}
                     </td>
                   </tr>
                 )}
@@ -273,42 +278,25 @@ export default function EventSubmissionsTable({
           
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center mt-4 gap-2">
+            <div className={`flex ${isRtl ? 'flex-row-reverse' : 'flex-row'} justify-between items-center mt-4`}>
               <Button
-                size="sm"
                 color="light"
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
               >
-                {t('previous')}
+                {t('pagination.previous')}
               </Button>
               
-              <div className="flex items-center gap-1">
-                {Array.from({ length: Math.min(5, totalPages) }).map((_, i) => {
-                  const pageNumber = i + 1 + Math.max(0, currentPage - 3);
-                  if (pageNumber > totalPages) return null;
-                  
-                  return (
-                    <Button
-                      key={pageNumber}
-                      size="sm"
-                      color={pageNumber === currentPage ? 'blue' : 'light'}
-                      onClick={() => setCurrentPage(pageNumber)}
-                      className="w-8"
-                    >
-                      {pageNumber}
-                    </Button>
-                  );
-                })}
-              </div>
+              <span className="text-sm text-gray-700 dark:text-gray-400">
+                {t('pagination.showing')} {startIndex + 1} - {Math.min(startIndex + itemsPerPage, filteredSubmissions.length)} {t('pagination.of')} {filteredSubmissions.length}
+              </span>
               
               <Button
-                size="sm"
                 color="light"
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
               >
-                {t('next')}
+                {t('pagination.next')}
               </Button>
             </div>
           )}

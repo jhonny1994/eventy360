@@ -98,8 +98,7 @@ export default function TopicSelector({
         }));
         
         setTopics(typedTopics);
-      } catch (err) {
-        console.error('Error fetching topics:', err);
+      } catch {
         setLoadError(t('fetchError') || 'Failed to load topics');
       } finally {
         setIsLoading(false);

@@ -47,8 +47,7 @@ export default function BasicInfoStep({ form }: BasicInfoStepProps) {
 
         if (error) throw error;
         setWilayas(data || []);
-      } catch (error) {
-        console.error("Error loading wilayas:", error);
+      } catch  {
       } finally {
         setLoadingWilayas(false);
       }
@@ -79,8 +78,7 @@ export default function BasicInfoStep({ form }: BasicInfoStepProps) {
         
         // Reset daira selection when wilaya changes
         setValue("daira_id", "");
-      } catch (error) {
-        console.error("Error loading dairas:", error);
+      } catch  {
       } finally {
         setLoadingDairas(false);
       }

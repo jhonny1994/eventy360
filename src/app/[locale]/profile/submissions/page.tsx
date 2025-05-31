@@ -13,6 +13,8 @@ interface Submission {
   created_at: string;
   updated_at: string;
   status: string;
+  full_paper_status?: string;
+  full_paper_file_url?: string;
   title_translations: {
     ar: string;
     en?: string;
@@ -38,7 +40,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function ProfileSubmissionsPage() {
+export default async function ProfileSubmissionsPage({ params }: { params: { locale: string } }) {
+  const { locale } = await params;
   const supabase = await createServerSupabaseClient();
   const t = await getTranslations("Submissions");
 
@@ -46,7 +49,7 @@ export default async function ProfileSubmissionsPage() {
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   
   if (authError || !user) {
-    redirect("/auth/signin");
+    redirect(`/${locale}/auth/signin`);
   }
 
   // Get user profile to verify they are a researcher
@@ -57,12 +60,12 @@ export default async function ProfileSubmissionsPage() {
     .single();
 
   if (profileError || !profile) {
-    redirect("/profile/complete");
+    redirect(`/${locale}/profile/complete`);
   }
 
   // Only researchers can view submissions
   if (profile.user_type !== "researcher") {
-    redirect("/profile");
+    redirect(`/${locale}/profile`);
   }
 
   // Fetch user's submissions
@@ -73,6 +76,8 @@ export default async function ProfileSubmissionsPage() {
       created_at,
       updated_at,
       abstract_status,
+      full_paper_status,
+      full_paper_file_url,
       title_translations,
       events (
         id,
@@ -93,6 +98,8 @@ export default async function ProfileSubmissionsPage() {
     created_at: item.created_at,
     updated_at: item.updated_at,
     status: item.abstract_status || 'abstract_submitted',
+    full_paper_status: item.full_paper_status || undefined,
+    full_paper_file_url: item.full_paper_file_url || undefined,
     title_translations: item.title_translations as {
       ar: string;
       en?: string;
@@ -112,7 +119,7 @@ export default async function ProfileSubmissionsPage() {
   // Create a button to navigate to the events page to create a new submission
   const SubmissionActions = (
     <Link 
-      href={`/profile/events`}
+      href={`/${locale}/profile/events`}
       className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-700"
     >
       <Plus className="w-4 h-4 mr-1" />

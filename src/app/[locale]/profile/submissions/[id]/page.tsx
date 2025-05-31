@@ -76,7 +76,7 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   
   if (authError || !user) {
-    redirect("/auth/signin");
+    redirect(`/${locale}/auth/signin`);
   }
 
   // Get user profile to verify they are a researcher
@@ -87,12 +87,12 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
     .single();
 
   if (profileError || !profile) {
-    redirect("/profile/complete");
+    redirect(`/${locale}/profile/complete`);
   }
 
   // Only researchers can view submissions
   if (profile.user_type !== "researcher") {
-    redirect("/profile");
+    redirect(`/${locale}/profile`);
   }
 
   // Fetch the specific submission with detailed information
@@ -131,11 +131,11 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
 
   if (submissionError) {
     console.error("Error fetching submission:", submissionError);
-    redirect("/profile/submissions");
+    redirect(`/${locale}/profile/submissions`);
   }
 
   if (!submission) {
-    redirect("/profile/submissions");
+    redirect(`/${locale}/profile/submissions`);
   }
 
   // Ensure we're working with the expected submission type
@@ -251,14 +251,43 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
   };
 
   // Determine if action buttons should be shown based on status
-  const showFullPaperUpload = submissionData.abstract_status === 'abstract_accepted';
-  const showRevisionUpload = submissionData.abstract_status === 'revision_requested';
+  const showFullPaperUpload = submissionData.abstract_status === 'abstract_accepted' && 
+                             !submissionData.full_paper_file_url && 
+                             (!submissionData.full_paper_status || submissionData.full_paper_status === '');
+  const showRevisionUpload = submissionData.full_paper_status === 'revision_requested';
 
-  // Create timeline items from available status information
+  // Add full paper status to timeline if it exists
   const statusHistoryItems = [{ 
     status: submissionData.abstract_status, 
     changed_at: submissionData.created_at 
   }];
+
+  if (submissionData.full_paper_status) {
+    statusHistoryItems.push({
+      status: submissionData.full_paper_status,
+      changed_at: submissionData.updated_at
+    });
+  }
+
+  // Get file metadata as human-readable info
+  let paperFileName = t('unknownFile');
+  let paperFileSize = t('unknownSize');
+
+  if (submissionData.full_paper_file_metadata) {
+    try {
+      const metadata = submissionData.full_paper_file_metadata as { originalName?: string; size?: number };
+      paperFileName = metadata?.originalName || t('unknownFile');
+      
+      // More robust size calculation to prevent NaN
+      if (metadata?.size !== undefined && metadata?.size !== null && !isNaN(Number(metadata.size))) {
+        const sizeInKB = Math.round(Number(metadata.size) / 1024);
+        paperFileSize = `${sizeInKB} KB`;
+      }
+    } catch (error) {
+      console.error("Error parsing file metadata:", error);
+      // Keep default values if there's an error
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -288,6 +317,11 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
                 <Badge color={statusColors[submissionData.abstract_status] || 'gray'}>
                   {t(`status.${submissionData.abstract_status}`)}
                 </Badge>
+                {submissionData.full_paper_status && (
+                  <Badge color={statusColors[submissionData.full_paper_status] || 'gray'}>
+                    {t(`status.${submissionData.full_paper_status}`)}
+                  </Badge>
+                )}
                 <span className="text-gray-500 dark:text-gray-400 text-sm">
                   {t("lastUpdated")}: {formatDate(submissionData.updated_at)}
                 </span>
@@ -304,6 +338,30 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
                   </p>
                 </div>
               </div>
+              
+              {/* Full Paper File Display - Add if full paper file exists */}
+              {submissionData.full_paper_file_url && submissionData.full_paper_status && (
+                <div className="mt-6">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                    {t("fullPaperFile")}
+                  </h3>
+                  <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center">
+                    <div>
+                      <p className="font-medium">{paperFileName}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{paperFileSize}</p>
+                    </div>
+                    <a 
+                      href={submissionData.full_paper_file_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="mt-3 md:mt-0 inline-flex items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800"
+                    >
+                      <FileText className="mr-2 h-5 w-5" />
+                      {t("downloadPaper")}
+                    </a>
+                  </div>
+                </div>
+              )}
 
               {/* Status Timeline Section */}
               <div className="mt-8">

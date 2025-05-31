@@ -131,8 +131,7 @@ export default function AdminCreateAccountForm() {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         processAuthState(user as SupabaseUser | null);
-      } catch (error) {
-        console.error("Error checking invite:", error);
+      } catch  {
         setIsInviteValid(false);
         setIsCheckingInvite(false);
       }
@@ -215,8 +214,7 @@ export default function AdminCreateAccountForm() {
         router.push(`/${locale}/admin/login`);
       }, 2000);
       
-    } catch (err) {
-      console.error('Create account error:', err);
+    } catch  {
       setFormError(tForm('unexpectedError'));
       setIsSubmitting(false);
     }

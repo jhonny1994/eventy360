@@ -146,7 +146,7 @@ export default async function EventSubmissionsPage({ params }: EventSubmissionsP
       submitted_by: item.submitted_by,
       profiles: {
         id: item.submitted_by,
-        full_name: researcherNamesMap.get(item.submitted_by) || 'Unknown Researcher',
+        full_name: researcherNamesMap.get(item.submitted_by),
         email: `user-${item.submitted_by.substring(0, 8)}@example.com` // Placeholder email
       }
     }));
@@ -180,6 +180,7 @@ export default async function EventSubmissionsPage({ params }: EventSubmissionsP
             <EventSubmissionsTable 
               submissions={submissions} 
               locale={locale}
+              eventId={id}
             />
           ) : (
             <div className="text-center py-8">

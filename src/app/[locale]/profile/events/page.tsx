@@ -1,5 +1,5 @@
-import { createServerSupabaseClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
+import { createServerSupabaseClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { Button, Spinner } from "flowbite-react";
@@ -35,7 +35,10 @@ export default async function ProfileEventsPage({
 }: EventsPageProps) {
   const { locale } = await params;
   const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();  const isRtl = locale === 'ar';
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const isRtl = locale === "ar";
   const t = await getTranslations("Events");
   const tProfile = await getTranslations("ProfilePage");
   const searchParamsData = await searchParams;
@@ -45,9 +48,9 @@ export default async function ProfileEventsPage({
   }
   // Get profile data to ensure user exists and check user type
   const { data: profileData } = await supabase
-    .from('profiles')
-    .select('user_type')
-    .eq('id', user.id)
+    .from("profiles")
+    .select("user_type")
+    .eq("id", user.id)
     .single();
 
   if (!profileData) {
@@ -55,19 +58,22 @@ export default async function ProfileEventsPage({
   }
 
   return (
-    <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>      {/* Page header with consistent styling */}
-      <ProfilePageHeader 
-        title={t('discovery.title')}
+    <div className="space-y-6" dir={isRtl ? "rtl" : "ltr"}>
+      {" "}
+      {/* Page header with consistent styling */}
+      <ProfilePageHeader
+        title={t("discovery.title")}
         iconName="calendar"
         iconBgColor="bg-blue-100 dark:bg-blue-900"
         iconTextColor="text-blue-600 dark:text-blue-300"
-        locale={locale}      >
+        locale={locale}
+      >
         {/* Create Event Button - only show for organizers */}
-        {profileData.user_type === 'organizer' && (
-          <Link href={`/${locale}/profile/events/create`} >
+        {profileData.user_type === "organizer" && (
+          <Link href={`/${locale}/profile/events/create`}>
             <Button color="info" size="sm">
-              <HiPlusCircle className={`h-4 w-4 ${isRtl ? 'ml-2' : 'mr-2'}`} />
-              {tProfile('createEvent')}
+              <HiPlusCircle className={`h-4 w-4 ${isRtl ? "ml-2" : "mr-2"}`} />
+              {tProfile("createEvent")}
             </Button>
           </Link>
         )}
@@ -76,20 +82,26 @@ export default async function ProfileEventsPage({
       <ProfileCard locale={locale} className="p-0">
         <div className="p-6">
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            {t('discovery.description')}
+            {t("discovery.description")}
           </p>
 
           {/* Event discovery container with loading fallback */}
-          <Suspense 
+          <Suspense
             fallback={
               <div className="flex justify-center items-center h-64">
                 <Spinner size="lg" />
-                <span className={`${isRtl ? 'mr-2' : 'ml-2'} text-gray-500 dark:text-gray-400`}>
-                  {t('loading')}
+                <span
+                  className={`${
+                    isRtl ? "mr-2" : "ml-2"
+                  } text-gray-500 dark:text-gray-400`}
+                >
+                  {t("loading")}
                 </span>
               </div>
             }
-          >            <EventDiscoveryContainer 
+          >
+            {" "}
+            <EventDiscoveryContainer
               searchParams={searchParamsData}
               locale={locale}
             />
@@ -101,4 +113,4 @@ export default async function ProfileEventsPage({
 }
 
 // Enable dynamic rendering for real-time search results
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";

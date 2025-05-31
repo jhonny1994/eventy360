@@ -33,7 +33,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(session?.user ?? null);
           setLoading(false);
         } catch (error) {
-          console.error('Error in auth state change handler:', error);
           // If there's an error with the session, clear it
           if (error instanceof Error && 
               (error.message.includes('Refresh Token') || 
@@ -55,7 +54,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setLoading(false);
       })
       .catch((error) => {
-        console.error('Error getting session:', error);
         // Handle refresh token errors specifically
         if (error instanceof Error && 
             (error.message.includes('Refresh Token') || 
@@ -64,7 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setSession(null);
           setUser(null);
           // Attempt a clean sign out without throwing more errors
-          supabase.auth.signOut().catch(e => console.error('Error signing out after token error:', e));
+          supabase.auth.signOut();
         }
         setLoading(false);
       });
@@ -83,8 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       toast.success(t('logoutSuccess'));
       router.push('/login');
-    } catch (error) {
-      console.error('Error signing out:', error);
+    } catch {
       toast.error(t('logoutError'));
       // Even if there's an error, clear the local session state
       setSession(null);

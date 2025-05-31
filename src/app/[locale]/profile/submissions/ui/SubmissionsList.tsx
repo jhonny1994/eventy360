@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Badge } from 'flowbite-react';
 import { Calendar, ArrowDown, ArrowUp } from 'lucide-react';
@@ -14,6 +14,8 @@ export interface Submission {
   created_at: string;
   updated_at: string;
   status: string;
+  full_paper_status?: string;
+  full_paper_file_url?: string;
   title_translations: {
     ar: string;
     en?: string;
@@ -57,6 +59,7 @@ const statusColors: Record<string, string> = {
 export default function SubmissionsList({ submissions, emptyMessage }: SubmissionsListProps) {
   const t = useTranslations('Submissions');
   const locale = useLocale();
+  const isRtl = locale === 'ar';
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   
@@ -73,12 +76,12 @@ export default function SubmissionsList({ submissions, emptyMessage }: Submissio
   });
   
   // Get title based on locale
-  const getTitle = (translations: { ar: string; en?: string; fr?: string }) => {
+  const getTitle = useCallback((translations: { ar: string; en?: string; fr?: string }) => {
     if (locale === 'ar') return translations.ar;
     if (locale === 'en' && translations.en) return translations.en;
     if (locale === 'fr' && translations.fr) return translations.fr;
     return translations.ar; // Default to Arabic if preferred locale not available
-  };
+  }, [locale]);
   
   // Format date based on locale
   const formatDate = (dateString: string) => {
@@ -155,7 +158,7 @@ export default function SubmissionsList({ submissions, emptyMessage }: Submissio
     });
     
     return result;
-  }, [submissions, filters, sortConfig, locale]);
+  }, [submissions, filters, sortConfig, getTitle]);
   
   // If no submissions after filtering, show modified empty state
   if (filteredAndSortedSubmissions.length === 0) {
@@ -190,8 +193,8 @@ export default function SubmissionsList({ submissions, emptyMessage }: Submissio
     if (sortConfig.key !== key) return null;
     
     return sortConfig.direction === 'asc' 
-      ? <ArrowUp className="w-4 h-4 ml-1" /> 
-      : <ArrowDown className="w-4 h-4 ml-1" />;
+      ? <ArrowUp className={`w-4 h-4 ${isRtl ? 'mr-1' : 'ml-1'}`} /> 
+      : <ArrowDown className={`w-4 h-4 ${isRtl ? 'mr-1' : 'ml-1'}`} />;
   };
   
   return (
@@ -203,13 +206,14 @@ export default function SubmissionsList({ submissions, emptyMessage }: Submissio
       
     <div className="overflow-x-auto">
       <div className="w-full">
-        <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <table className="w-full text-sm text-gray-500 dark:text-gray-400" dir={isRtl ? 'rtl' : 'ltr'} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
+            <tr className={isRtl ? 'text-right' : 'text-left'}>
                 <th 
                   scope="col" 
                   className="px-6 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
                   onClick={() => requestSort('title')}
+                  style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}
                 >
                   <div className="flex items-center">
                     {t('submissionTitle')}
@@ -220,6 +224,7 @@ export default function SubmissionsList({ submissions, emptyMessage }: Submissio
                   scope="col" 
                   className="px-6 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
                   onClick={() => requestSort('event')}
+                  style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}
                 >
                   <div className="flex items-center">
                     {t('event')}
@@ -230,6 +235,7 @@ export default function SubmissionsList({ submissions, emptyMessage }: Submissio
                   scope="col" 
                   className="px-6 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
                   onClick={() => requestSort('status')}
+                  style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}
                 >
                   <div className="flex items-center">
                     {t('submissionStatus')}
@@ -240,36 +246,37 @@ export default function SubmissionsList({ submissions, emptyMessage }: Submissio
                   scope="col" 
                   className="px-6 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
                   onClick={() => requestSort('updated_at')}
+                  style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}
                 >
                   <div className="flex items-center">
                     {t('lastUpdated')}
                     {renderSortIndicator('updated_at')}
                   </div>
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="px-6 py-3" style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                   {t('actions')}
                 </th>
             </tr>
           </thead>
           <tbody>
             {paginatedSubmissions.map((submission) => (
-              <tr key={submission.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
+              <tr key={submission.id} className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 ${isRtl ? 'text-right' : 'text-left'}`}>
+                <td className="px-6 py-4 font-medium text-gray-900 dark:text-white" style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                   {getTitle(submission.title_translations)}
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4" style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                   {getTitle(submission.events.event_name_translations)}
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4" style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                   <Badge color={statusColors[submission.status] || 'gray'}>
                     {t(`status.${submission.status}`)}
                   </Badge>
                 </td>
-                  <td className="px-6 py-4 flex items-center gap-1">
+                  <td className="px-6 py-4 flex items-center gap-1" style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                     <Calendar className="w-4 h-4 text-gray-400" />
                   {formatDate(submission.updated_at)}
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4" style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                     <ActionButtons submission={submission} />
                 </td>
               </tr>

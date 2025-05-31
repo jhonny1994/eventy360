@@ -236,7 +236,6 @@ function CreateEventForm({ className }: CreateEventFormProps) {
       // Optionally redirect or show a success message
       // router.push(`/events/${event.id}`); 
     } catch (error: unknown) { // Changed error type from any to unknown
-      console.error("Error creating event:", error);
       if (error instanceof Error) {
         setSubmitError(error.message || t("submissionError"));
       } else {

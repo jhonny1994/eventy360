@@ -1090,8 +1090,7 @@ COMMENT ON FUNCTION "public"."filter_events_by_topic"("topic_ids" "uuid"[], "lim
 
 CREATE OR REPLACE FUNCTION "public"."get_event_submission_stats"("event_id" "uuid") RETURNS TABLE("total_submissions" integer, "abstract_submitted" integer, "abstract_accepted" integer, "abstract_rejected" integer, "full_paper_submitted" integer, "full_paper_accepted" integer, "full_paper_rejected" integer, "revision_requested" integer, "completed" integer)
     LANGUAGE "plpgsql" SECURITY DEFINER
-    AS $_$
-BEGIN
+    AS $_$BEGIN
     RETURN QUERY
     SELECT
         COUNT(*)::INTEGER AS total_submissions,
@@ -1106,10 +1105,9 @@ BEGIN
     FROM
         public.submissions
     WHERE
-        event_id = $1 AND
+        submissions.event_id = $1 AND
         deleted_at IS NULL;
-END;
-$_$;
+END;$_$;
 
 
 ALTER FUNCTION "public"."get_event_submission_stats"("event_id" "uuid") OWNER TO "postgres";

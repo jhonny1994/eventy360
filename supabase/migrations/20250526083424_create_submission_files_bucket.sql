@@ -5,11 +5,12 @@ INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_typ
 VALUES (
     'submission_files',
     'submission_files',
-    false,
+    true,
     5242880,  -- 5MB size limit (updated from 2MB)
     '{application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document}'
 )
 ON CONFLICT (id) DO UPDATE SET
+    public = EXCLUDED.public,
     file_size_limit = EXCLUDED.file_size_limit,
     allowed_mime_types = EXCLUDED.allowed_mime_types;
 

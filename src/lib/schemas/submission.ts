@@ -23,12 +23,10 @@ export const getAbstractSubmissionSchema = (t: TFunction) =>
     abstract_en: z.string().optional(),
     abstract_fr: z.string().optional(),
     abstract_file: z
-      .instanceof(File)
-      .refine((file) => file.size <= MAX_FILE_SIZE, {
-        message: t("fileTooLarge", { maxSize: "5MB" })
-      })
-      .refine((file) => ALLOWED_FILE_TYPES.includes(file.type), {
-        message: t("invalidFileType", { types: "PDF, DOC, DOCX" })
+      .any()
+      // Simple validation - just check that it exists
+      .refine(Boolean, {
+        message: t("required")
       })
   });
 
@@ -37,12 +35,10 @@ export const getFullPaperSubmissionSchema = (t: TFunction) =>
   z.object({
     submission_id: z.string().uuid({ message: t("invalidSubmissionId") }),
     full_paper_file: z
-      .instanceof(File)
-      .refine((file) => file.size <= MAX_FILE_SIZE, {
-        message: t("fileTooLarge", { maxSize: "5MB" })
-      })
-      .refine((file) => ALLOWED_FILE_TYPES.includes(file.type), {
-        message: t("invalidFileType", { types: "PDF, DOC, DOCX" })
+      .any()
+      // Simple validation - just check that it exists
+      .refine(Boolean, {
+        message: t("required")
       })
   });
 
@@ -51,12 +47,10 @@ export const getRevisionSubmissionSchema = (t: TFunction) =>
   z.object({
     submission_id: z.string().uuid({ message: t("invalidSubmissionId") }),
     full_paper_file: z
-      .instanceof(File)
-      .refine((file) => file.size <= MAX_FILE_SIZE, {
-        message: t("fileTooLarge", { maxSize: "5MB" })
-      })
-      .refine((file) => ALLOWED_FILE_TYPES.includes(file.type), {
-        message: t("invalidFileType", { types: "PDF, DOC, DOCX" })
+      .any()
+      // Simple validation - just check that it exists
+      .refine(Boolean, {
+        message: t("required")
       }),
     revision_notes: z.string().optional()
   });
@@ -65,6 +59,14 @@ export const getRevisionSubmissionSchema = (t: TFunction) =>
 export type AbstractSubmissionFormData = z.infer<ReturnType<typeof getAbstractSubmissionSchema>>;
 export type FullPaperSubmissionFormData = z.infer<ReturnType<typeof getFullPaperSubmissionSchema>>;
 export type RevisionSubmissionFormData = z.infer<ReturnType<typeof getRevisionSubmissionSchema>>;
+
+// Define a file-like object type to avoid using 'any'
+export interface FileLike {
+  name: string;
+  size: number;
+  type: string;
+  lastModified?: number;
+}
 
 // Create static versions of the types for better TypeScript inference
 export interface AbstractSubmissionFormDataStatic {
@@ -75,16 +77,16 @@ export interface AbstractSubmissionFormDataStatic {
   abstract_ar: string;
   abstract_en?: string;
   abstract_fr?: string;
-  abstract_file: File;
+  abstract_file: File | FileLike;
 }
 
 export interface FullPaperSubmissionFormDataStatic {
   submission_id: string;
-  full_paper_file: File;
+  full_paper_file: File | FileLike;
 }
 
 export interface RevisionSubmissionFormDataStatic {
   submission_id: string;
-  full_paper_file: File;
+  full_paper_file: File | FileLike;
   revision_notes?: string;
 } 

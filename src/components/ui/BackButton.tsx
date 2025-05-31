@@ -32,8 +32,7 @@ export default function BackButton({
       buttonLabel = t('defaultLabel');
     }
   } catch {
-    // If translations are not available, use the default or provided label
-    console.log('Translation not available for BackButton, using default');
+    // If translations are not available, use the default label
   }
   
   return (

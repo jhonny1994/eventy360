@@ -169,6 +169,11 @@ export async function submitFullPaper(
   }
 
   try {
+    // Check if file exists
+    if (!formData.full_paper_file) {
+      return { success: false, message: t('fileRequired'), error: 'file_required' };
+    }
+
     // 1. Get the submission and event data
     const { data: submission, error: fetchError } = await supabase
       .from('submissions')
@@ -308,6 +313,11 @@ export async function submitRevision(
   }
 
   try {
+    // Check if file exists
+    if (!formData.full_paper_file) {
+      return { success: false, message: t('fileRequired'), error: 'file_required' };
+    }
+
     // 1. Get the submission and event data
     const { data: submission, error: fetchError } = await supabase
       .from('submissions')
@@ -316,7 +326,6 @@ export async function submitRevision(
       .single();
 
     if (fetchError) {
-      console.error('Error fetching submission:', fetchError);
       return {
         success: false,
         message: t('unexpectedError'),
@@ -369,7 +378,6 @@ export async function submitRevision(
       });
 
     if (uploadError) {
-      console.error('File upload error:', uploadError);
       return { 
         success: false, 
         message: t('fileUploadError'), 
@@ -406,7 +414,6 @@ export async function submitRevision(
       .single();
 
     if (versionError) {
-      console.error('Version creation error:', versionError);
       return {
         success: false,
         message: t('revisionSubmissionError'),
@@ -420,14 +427,13 @@ export async function submitRevision(
       .update({
         full_paper_file_url: publicUrl,
         full_paper_file_metadata: fileMetadata,
-        full_paper_status: 'revision_requested',
+        full_paper_status: 'full_paper_submitted',
         current_full_paper_version_id: newVersion.id,
         updated_at: new Date().toISOString()
       })
       .eq('id', formData.submission_id);
 
     if (updateError) {
-      console.error('Update error:', updateError);
       return { 
         success: false, 
         message: t('revisionSubmissionError'), 
@@ -442,7 +448,6 @@ export async function submitRevision(
       submissionId: formData.submission_id
     };
   } catch (error) {
-    console.error('Unexpected error:', error);
     return {
       success: false,
       message: t('unexpectedError'),

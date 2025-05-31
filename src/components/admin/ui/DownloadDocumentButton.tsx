@@ -83,7 +83,6 @@ export default function DownloadDocumentButton({
       URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (err) {
-      console.error('Error downloading document:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setIsLoading(false);

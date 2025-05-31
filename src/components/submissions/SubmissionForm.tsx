@@ -7,12 +7,48 @@ import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { 
   getAbstractSubmissionSchema,
-  AbstractSubmissionFormDataStatic
+  AbstractSubmissionFormData,
 } from '@/lib/schemas/submission';
 import { Button, Label, Alert, TextInput, Textarea, Spinner } from 'flowbite-react';
 import { HiInformationCircle, HiExclamationCircle } from 'react-icons/hi';
 import { submitAbstract } from '@/app/[locale]/profile/submissions/actions';
 import { useRouter } from 'next/navigation';
+
+// Define a reusable language selector component
+interface LanguageSelectorProps {
+  activeLanguage: string;
+  onLanguageChange: (language: string) => void;
+}
+
+function LanguageSelector({ activeLanguage, onLanguageChange }: LanguageSelectorProps) {
+  const t = useTranslations('Submissions');
+  
+  return (
+    <div className="flex mb-4 border-b border-gray-200 dark:border-gray-700">
+      <button 
+        className={`py-2 px-4 ${activeLanguage === 'ar' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+        type="button"
+        onClick={() => onLanguageChange('ar')}
+      >
+        {t('languages.arabic')} <span className="text-red-500 text-xs">*</span>
+      </button>
+      <button 
+        className={`py-2 px-4 ${activeLanguage === 'en' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+        type="button"
+        onClick={() => onLanguageChange('en')}
+      >
+        {t('languages.english')} <span className="text-gray-400 text-xs">({t('languages.optional')})</span>
+      </button>
+      <button 
+        className={`py-2 px-4 ${activeLanguage === 'fr' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+        type="button"
+        onClick={() => onLanguageChange('fr')}
+      >
+        {t('languages.french')} <span className="text-gray-400 text-xs">({t('languages.optional')})</span>
+      </button>
+    </div>
+  );
+}
 
 interface SubmissionFormProps {
   eventId: string;
@@ -35,7 +71,7 @@ export default function SubmissionForm({ eventId, onSuccess }: SubmissionFormPro
     register,
     handleSubmit,
     formState: { errors, isValid }
-  } = useForm<AbstractSubmissionFormDataStatic>({
+  } = useForm<AbstractSubmissionFormData>({
     resolver: zodResolver(schema),
     mode: 'onChange',
     defaultValues: {
@@ -45,7 +81,7 @@ export default function SubmissionForm({ eventId, onSuccess }: SubmissionFormPro
     }
   });
 
-  const onSubmit = async (data: AbstractSubmissionFormDataStatic) => {
+  const onSubmit = async (data: AbstractSubmissionFormData) => {
     setIsSubmitting(true);
     setError(null);
     
@@ -68,32 +104,6 @@ export default function SubmissionForm({ eventId, onSuccess }: SubmissionFormPro
     }
   };
 
-  const renderLanguageSelector = () => (
-    <div className="flex mb-4 border-b border-gray-200 dark:border-gray-700">
-      <button 
-        className={`py-2 px-4 ${activeLanguage === 'ar' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-        type="button"
-        onClick={() => setActiveLanguage('ar')}
-      >
-        العربية <span className="text-red-500 text-xs">*</span>
-      </button>
-      <button 
-        className={`py-2 px-4 ${activeLanguage === 'en' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-        type="button"
-        onClick={() => setActiveLanguage('en')}
-      >
-        English <span className="text-gray-400 text-xs">(اختياري)</span>
-      </button>
-      <button 
-        className={`py-2 px-4 ${activeLanguage === 'fr' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-        type="button"
-        onClick={() => setActiveLanguage('fr')}
-      >
-        Français <span className="text-gray-400 text-xs">(اختياري)</span>
-      </button>
-    </div>
-  );
-
   return (
     <div className="w-full">
       <h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">
@@ -114,7 +124,7 @@ export default function SubmissionForm({ eventId, onSuccess }: SubmissionFormPro
         
         {/* Language note */}
         <Alert color="info" icon={HiInformationCircle} className="mb-2">
-          <span className="font-medium">ملاحظة:</span> اللغة العربية مطلوبة، ويمكنك إضافة اللغة الإنجليزية و/أو الفرنسية اختيارياً.
+          <span className="font-medium">{t('languageNote.title')}</span> {t('languageNote.message')}
         </Alert>
         
         {/* Title section with language tabs */}
@@ -130,7 +140,7 @@ export default function SubmissionForm({ eventId, onSuccess }: SubmissionFormPro
             </div>
           </div>
           
-          {renderLanguageSelector()}
+          <LanguageSelector activeLanguage={activeLanguage} onLanguageChange={setActiveLanguage} />
 
           {activeLanguage === 'ar' && (
             <div>
@@ -143,7 +153,7 @@ export default function SubmissionForm({ eventId, onSuccess }: SubmissionFormPro
               />
               {errors.title_ar && (
                 <p className="mt-2 text-sm text-red-600 dark:text-red-500">
-                  {errors.title_ar.message}
+                  {String(errors.title_ar.message)}
                 </p>
               )}
             </div>
@@ -181,7 +191,7 @@ export default function SubmissionForm({ eventId, onSuccess }: SubmissionFormPro
             </div>
           </div>
           
-          {renderLanguageSelector()}
+          <LanguageSelector activeLanguage={activeLanguage} onLanguageChange={setActiveLanguage} />
 
           {activeLanguage === 'ar' && (
             <div>
@@ -195,7 +205,7 @@ export default function SubmissionForm({ eventId, onSuccess }: SubmissionFormPro
               />
               {errors.abstract_ar && (
                 <p className="mt-2 text-sm text-red-600 dark:text-red-500">
-                  {errors.abstract_ar.message}
+                  {String(errors.abstract_ar.message)}
                 </p>
               )}
             </div>
@@ -270,7 +280,7 @@ export default function SubmissionForm({ eventId, onSuccess }: SubmissionFormPro
                 </div>
                 {errors.abstract_file && (
                   <p className="mt-2 text-sm text-red-600 dark:text-red-500">
-                    {errors.abstract_file.message}
+                    {String(errors.abstract_file.message)}
                   </p>
                 )}
               </div>

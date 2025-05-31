@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, TooltipItem } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 
 // Register required Chart.js components
@@ -99,9 +99,9 @@ export default function SubmissionStatusChart({ stats, locale }: SubmissionStatu
         rtl: isRtl,
         textDirection: isRtl ? 'rtl' : 'ltr',
         callbacks: {
-          label: function(context: any) {
+          label: function(context: TooltipItem<'doughnut'>) {
             const label = context.label || '';
-            const value = context.raw || 0;
+            const value = context.raw !== undefined ? Number(context.raw) : 0;
             const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
             const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
             return `${label}: ${value} (${percentage}%)`;

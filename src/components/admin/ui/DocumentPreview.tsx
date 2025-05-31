@@ -82,9 +82,7 @@ export default function DocumentPreview({
     try {
       setLoading(true);
       setError(null);
-      
-      console.log("Original document path:", documentPath);
-      
+            
       let bucketName: string;
       let filePath: string;
       
@@ -94,13 +92,11 @@ export default function DocumentPreview({
         // This is the format stored in the verification_requests table
         bucketName = 'verification_documents';
         filePath = documentPath.substring('verification_documents/'.length);
-        console.log("Path format detected: database record path");
       } else if (documentPath.includes('/')) {
         // Fallback to the old parsing logic
         const firstSlashIndex = documentPath.indexOf('/');
         bucketName = documentPath.substring(0, firstSlashIndex);
         filePath = documentPath.substring(firstSlashIndex + 1);
-        console.log("Path format detected: generic path");
       } else {
         throw new Error(translations.invalidDocumentPath || "Invalid document path format");
       }
@@ -109,7 +105,6 @@ export default function DocumentPreview({
         throw new Error(translations.invalidDocumentPath || "Invalid document path format");
       }
 
-      console.log("Using bucket:", bucketName, "and path:", filePath);
 
       // Generate a longer-lived URL (5 minutes) to avoid frequent refreshes
       const { data, error } = await supabaseRef.current!.storage
@@ -117,7 +112,6 @@ export default function DocumentPreview({
         .createSignedUrl(filePath, 300);
 
       if (error) {
-        console.error("Storage error:", error);
         
         // Check for specific error types
         if (error.message.includes("Not Found")) {
@@ -141,7 +135,6 @@ export default function DocumentPreview({
         ["jpg", "jpeg", "png", "gif", "webp"].includes(fileExtension || "")
       );
     } catch (err) {
-      console.error("Error fetching document:", err);
       setError(err instanceof Error ? err.message : (translations.unknownError || "Unknown error"));
     } finally {
       setLoading(false);

@@ -7,6 +7,7 @@ import { Card, Button, Label, Alert, Textarea, Spinner } from 'flowbite-react';
 import { HiInformationCircle, HiExclamationCircle } from 'react-icons/hi';
 import { Database } from '@/database.types';
 import { Json } from '@/database.types';
+import { useRouter, usePathname } from 'next/navigation';
 
 interface AbstractReviewComponentProps {
   submissionId: string;
@@ -32,13 +33,13 @@ interface SubmissionWithDetails {
   created_at: string;
   profiles?: {
     id: string;
-    full_name: string;
-    email: string;
+    researcher_profiles?: {
+      name: string;
+    } | null;
   };
   events?: {
     id: string;
-    title_translations: TranslationObject;
-    event_code?: string;
+    event_name_translations: TranslationObject;
   };
 }
 
@@ -48,6 +49,8 @@ export default function AbstractReviewComponent({
 }: AbstractReviewComponentProps) {
   const t = useTranslations('Submissions');
   const supabase = createClientComponentClient<Database>();
+  const router = useRouter();
+  const pathname = usePathname();
   
   const [submission, setSubmission] = useState<SubmissionWithDetails | null>(null);
   const [loading, setLoading] = useState(true);
@@ -80,8 +83,8 @@ export default function AbstractReviewComponent({
             submitted_by,
             event_id,
             created_at,
-            profiles(id, full_name, email),
-            events(id, title_translations, event_code)
+            profiles:submitted_by(id, researcher_profiles(name)),
+            events:event_id(id, event_name_translations)
           `)
           .eq('id', submissionId)
           .single();
@@ -93,7 +96,6 @@ export default function AbstractReviewComponent({
           setSubmission(data as unknown as SubmissionWithDetails);
         }
       } catch (err) {
-        console.error('Error fetching submission details:', err);
         setError(err instanceof Error ? err.message : t('unknownError'));
       } finally {
         setLoading(false);
@@ -131,35 +133,18 @@ export default function AbstractReviewComponent({
         if (onReviewComplete) {
           onReviewComplete();
         } else {
-          // Refresh the submission data
-          const { data: updatedSubmission, error: fetchError } = await supabase
-            .from('submissions')
-            .select(`
-              id,
-              title_translations,
-              abstract_translations,
-              abstract_file_url,
-              abstract_file_metadata,
-              abstract_status,
-              current_abstract_version_id,
-              submitted_by,
-              event_id,
-              created_at,
-              profiles(id, full_name, email),
-              events(id, title_translations, event_code)
-            `)
-            .eq('id', submissionId)
-            .single();
+          // Get event_id directly from the submission
+          if (submission?.event_id) {
+            // Extract locale from the pathname
+            const pathSegments = pathname?.split('/') || [];
+            const locale = pathSegments.length > 1 ? pathSegments[1] : 'ar';
             
-          if (fetchError) throw fetchError;
-          
-          if (updatedSubmission) {
-            setSubmission(updatedSubmission as unknown as SubmissionWithDetails);
+            // Redirect to submission details page
+            router.push(`/${locale}/profile/events/${submission.event_id}/submissions/${submissionId}`);
           }
         }
       }
     } catch (err) {
-      console.error('Error updating submission status:', err);
       setError(err instanceof Error ? err.message : t('unknownError'));
     } finally {
       setSubmitting(false);
@@ -213,9 +198,8 @@ export default function AbstractReviewComponent({
   // Extract submission details from the fetched data
   const title = submission.title_translations[activeLanguage] || submission.title_translations.ar || '';
   const abstract = submission.abstract_translations[activeLanguage] || submission.abstract_translations.ar || '';
-  const eventTitle = submission.events?.title_translations[activeLanguage] || submission.events?.title_translations.ar || '';
-  const submitterName = submission.profiles?.full_name || '';
-  const submitterEmail = submission.profiles?.email || '';
+  const eventTitle = submission.events?.event_name_translations[activeLanguage] || submission.events?.event_name_translations.ar || '';
+  const submitterName = submission.profiles?.researcher_profiles?.name || t('unknownUser');
   
   // Determine if abstract can be reviewed (only when status is 'abstract_submitted')
   const canReview = submission.abstract_status === 'abstract_submitted';
@@ -249,7 +233,6 @@ export default function AbstractReviewComponent({
           <div>
             <h6 className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('submittedBy')}</h6>
             <p className="text-lg font-semibold">{submitterName}</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">{submitterEmail}</p>
           </div>
         </div>
         

@@ -157,8 +157,7 @@ export default function RecordPaymentForm() {
       }
       
       setSearchResults(results);
-    } catch (error) {
-      console.error('Error searching users:', error);
+    } catch  {
       setSearchError(t('userSearchError'));
     } finally {
       setIsSearching(false);
@@ -180,9 +179,7 @@ export default function RecordPaymentForm() {
     try {
       const cacheKey = `eventy360_subscription_${userId}`;
       localStorage.removeItem(cacheKey);
-      console.log(`Cleared subscription cache for user ${userId}`);
-    } catch (error) {
-      console.error('Error clearing subscription cache:', error);
+    } catch  {
     }
   };
 
@@ -224,7 +221,6 @@ export default function RecordPaymentForm() {
         throw new Error(t('genericError'));
       }
     } catch (error) {
-      console.error('Error recording payment:', error);
       setFormError(error instanceof Error ? error.message : t('genericError'));
     } finally {
       setIsSubmitting(false);

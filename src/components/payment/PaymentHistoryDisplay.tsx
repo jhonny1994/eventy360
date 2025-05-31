@@ -62,8 +62,7 @@ export default function PaymentHistoryDisplay({
         if (dbError) throw dbError;
         
         setPayments(data || []);
-      } catch (err) {
-        console.error('Error loading payment history:', err);
+      } catch  {
         setError(t('loadError'));
       } finally {
         setLoading(false);
@@ -113,8 +112,7 @@ export default function PaymentHistoryDisplay({
         // Open the document in a new tab
         window.open(data.signedUrl, '_blank');
       }
-    } catch (err) {
-      console.error('Error viewing document:', err);
+    } catch  {
     }
   };
   

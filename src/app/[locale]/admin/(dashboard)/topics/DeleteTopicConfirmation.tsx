@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Modal, ModalHeader, ModalBody, Button, Spinner, Alert } from 'flowbite-react';
 import { useTranslations } from 'next-intl';
 import { HiExclamationCircle } from 'react-icons/hi';
@@ -33,15 +33,8 @@ export default function DeleteTopicConfirmation({
     subscriptionCount: number;
   } | null>(null);
   
-  // Load usage data when modal is shown
-  useEffect(() => {
-    if (show && topic.id) {
-      loadUsageData();
-    }
-  }, [show, topic.id]);
-  
   // Function to load topic usage data
-  const loadUsageData = async () => {
+  const loadUsageData = useCallback(async () => {
     setIsLoadingUsage(true);
     
     try {
@@ -63,7 +56,14 @@ export default function DeleteTopicConfirmation({
     } finally {
       setIsLoadingUsage(false);
     }
-  };
+  }, [topic.id]);
+  
+  // Load usage data when modal is shown
+  useEffect(() => {
+    if (show && topic.id) {
+      loadUsageData();
+    }
+  }, [show, topic.id, loadUsageData]);
   
   // Function to handle topic deletion
   const handleDelete = async () => {

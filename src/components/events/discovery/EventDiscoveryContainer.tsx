@@ -138,15 +138,10 @@ export default function EventDiscoveryContainer({
         setTotalEvents(0);
       } else {
         setTotalEvents(0); 
-        if (typedData && typedData.length > 0 && typeof typedData[0].total_records !== 'number') {
-          console.warn(`total_records is not a number or is missing on event data. Found: ${typedData[0].total_records}, Type: ${typeof typedData[0].total_records}. Defaulting totalEvents to 0.`);
-        } else if (!typedData && !fetchError) {
-          console.warn("Received null or undefined data from discover_events RPC call without an error. Defaulting totalEvents to 0.");
-        }
+      
       }
       
     } catch (err) {
-      console.error('Error fetching events:', err);
       setError(err instanceof Error ? err.message : t('errors.fetchFailed'));
       setEvents([]);
       setTotalEvents(0);
@@ -172,7 +167,6 @@ export default function EventDiscoveryContainer({
   // Fetch events when dependencies change
   useEffect(() => {
     if (profileError) {
-      console.error('Error fetching profile:', profileError);
       setError(t('errors.profileFetchFailed'));
       setIsLoading(false);
       return;

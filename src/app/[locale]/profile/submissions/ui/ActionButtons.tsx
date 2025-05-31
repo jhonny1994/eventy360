@@ -30,7 +30,9 @@ export default function ActionButtons({ submission }: ActionButtonsProps) {
     );
     
     // Submit full paper button (for accepted abstracts)
-    if (submission.status === 'abstract_accepted') {
+    if (submission.status === 'abstract_accepted' && 
+        !submission.full_paper_file_url && 
+        (!submission.full_paper_status || submission.full_paper_status === '')) {
       buttons.push(
         <Link 
           key="submit-paper"
@@ -44,7 +46,8 @@ export default function ActionButtons({ submission }: ActionButtonsProps) {
     }
     
     // Submit revision button (for revision requested)
-    if (submission.status === 'revision_requested') {
+    if (submission.status === 'revision_requested' || 
+        (submission.full_paper_status === 'revision_requested')) {
       buttons.push(
         <Link 
           key="submit-revision"
