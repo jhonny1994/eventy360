@@ -1,0 +1,83 @@
+'use client';
+
+import { Badge } from 'flowbite-react';
+import { HiCheckCircle, HiExclamation, HiClock, HiXCircle } from 'react-icons/hi';
+import { useLocale } from 'next-intl';
+
+export type StatusType = 
+  | 'active' 
+  | 'trial' 
+  | 'expired' 
+  | 'cancelled'
+  | 'verified'
+  | 'pending_verification'
+  | 'rejected'
+  | 'free';
+
+type BadgeColor = 'success' | 'warning' | 'failure' | 'info' | 'dark' | 'gray';
+
+interface StatusBadgeProps {
+  status: StatusType;
+  label?: string;
+  size?: 'xs' | 'sm' | 'md' | 'lg';
+  showIcon?: boolean;
+  className?: string;
+}
+
+/**
+ * Universal status badge component for consistent status display across the application
+ * Can be used for subscriptions, payments, verifications, etc.
+ */
+export default function StatusBadge({
+  status,
+  label,
+  size = 'md',
+  showIcon = true,
+  className = '',
+}: StatusBadgeProps) {
+  const locale = useLocale();
+  const isRtl = locale === 'ar';
+  
+  // Map status to color and icon
+  let color: BadgeColor = 'gray';
+  let icon = null;
+  
+  switch (status) {
+    case 'active':
+    case 'verified':
+      color = 'success';
+      icon = <HiCheckCircle className="h-4 w-4" />;
+      break;
+    case 'trial':
+      color = 'info';
+      icon = <HiClock className="h-4 w-4" />;
+      break;
+    case 'expired':
+    case 'pending_verification':
+      color = 'warning';
+      icon = <HiExclamation className="h-4 w-4" />;
+      break;
+    case 'cancelled':
+    case 'rejected':
+      color = 'failure';
+      icon = <HiXCircle className="h-4 w-4" />;
+      break;
+    case 'free':
+      color = 'dark';
+      break;
+    default:
+      color = 'gray';
+  }
+
+  return (
+    <Badge 
+      color={color}
+      size={size}
+      className={`flex items-center ${isRtl ? 'space-x-reverse' : ''} space-x-1 ${className}`}
+      dir={isRtl ? 'rtl' : 'ltr'}
+    >
+      {showIcon && icon && <span>{icon}</span>}
+      <span>{label || status}</span>
+    </Badge>
+  );
+} 

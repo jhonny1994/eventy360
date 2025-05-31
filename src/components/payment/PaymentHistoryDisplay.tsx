@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useState, useEffect } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import { 
   Table, 
   TableBody, 
@@ -9,13 +9,14 @@ import {
   TableHead, 
   TableHeadCell, 
   TableRow, 
-  Badge, 
   Button, 
-  Spinner 
+  Spinner
 } from 'flowbite-react';
 import { HiDocument, HiExclamationCircle } from 'react-icons/hi';
 import { createClient } from '@/lib/supabase/client';
 import type { Database } from '@/database.types';
+import StatusBadge from '@/components/ui/StatusBadge';
+import { getRtlClass } from '@/utils/ui/getRtlClass';
 
 type Payment = Database['public']['Tables']['payments']['Row'];
 
@@ -25,6 +26,16 @@ interface PaymentHistoryDisplayProps {
   onReportPayment?: () => void;
 }
 
+type StatusType = 
+  | 'active' 
+  | 'trial' 
+  | 'expired' 
+  | 'cancelled'
+  | 'verified'
+  | 'pending_verification'
+  | 'rejected'
+  | 'free';
+
 export default function PaymentHistoryDisplay({
   userId,
   locale,
@@ -32,7 +43,9 @@ export default function PaymentHistoryDisplay({
 }: PaymentHistoryDisplayProps) {
   const t = useTranslations('PaymentSection.History');
   const tCommon = useTranslations('Common');
-  const isRtl = locale === 'ar';
+  const appLocale = useLocale();
+  const isRtl = appLocale === 'ar';
+  const rtlClasses = getRtlClass(isRtl);
   
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -89,16 +102,12 @@ export default function PaymentHistoryDisplay({
   
   // Status badge mapper - consistent with existing badge styles
   const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'pending_verification':
-        return <Badge color="warning">{t('status.pending')}</Badge>;
-      case 'verified':
-        return <Badge color="success">{t('status.verified')}</Badge>;
-      case 'rejected':
-        return <Badge color="failure">{t('status.rejected')}</Badge>;
-      default:
-        return <Badge color="gray">{t('status.unknown')}</Badge>;
-    }
+    return (
+      <StatusBadge 
+        status={status as StatusType} 
+        label={t(`status.${status.replace('_', '')}`)}
+      />
+    );
   };
   
   // Handle document view/download
@@ -118,7 +127,7 @@ export default function PaymentHistoryDisplay({
   
   // Helper for consistent text alignment classes based on RTL
   const getTextAlignClass = () => {
-    return isRtl ? 'text-right' : 'text-left';
+    return rtlClasses.textAlign;
   };
   
   return (

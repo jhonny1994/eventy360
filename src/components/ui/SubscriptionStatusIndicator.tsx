@@ -1,8 +1,8 @@
 "use client";
 
-import { Badge, Tooltip } from 'flowbite-react';
+import { Tooltip } from 'flowbite-react';
 import { useTranslations } from 'next-intl';
-import { HiCheckCircle, HiExclamation, HiClock, HiXCircle } from 'react-icons/hi';
+import StatusBadge from './StatusBadge';
 
 export interface SubscriptionStatusIndicatorProps {
   status: 'active' | 'expired' | 'trial' | 'cancelled';
@@ -24,27 +24,6 @@ export default function SubscriptionStatusIndicator({
   className = '',
 }: SubscriptionStatusIndicatorProps) {
   const t = useTranslations('Subscription');
-
-  // Determine badge color based on status and tier
-  let color = 'dark'; // Default
-  let icon = null;
-  
-  if (tier === 'free') {
-    color = 'dark';
-    icon = null;
-  } else if (status === 'active') {
-    color = 'success';
-    icon = <HiCheckCircle className="h-4 w-4" />;
-  } else if (status === 'trial') {
-    color = 'info';
-    icon = <HiClock className="h-4 w-4" />;
-  } else if (status === 'expired') {
-    color = 'warning';
-    icon = <HiExclamation className="h-4 w-4" />;
-  } else if (status === 'cancelled') {
-    color = 'failure';
-    icon = <HiXCircle className="h-4 w-4" />;
-  }
 
   // Get status text
   const getStatusText = () => {
@@ -70,19 +49,15 @@ export default function SubscriptionStatusIndicator({
   // Determine if we should show tooltip
   const showTooltip = status === 'trial' || status === 'active';
 
+  // Use our consistent StatusBadge component
   const badge = (
-    <Badge 
-      color={color}
+    <StatusBadge 
+      status={tier === 'free' ? 'free' : status}
+      label={`${getStatusText()}${showDaysRemaining && daysRemainingText && status !== 'expired' ? ` (${daysRemainingText})` : ''}`}
       size={size}
-      className={`flex items-center space-x-1 rtl:space-x-reverse ${className}`}
-      data-testid="subscription-status-badge"
-    >
-      {showIcon && icon && <span>{icon}</span>}
-      <span>{getStatusText()}</span>
-      {showDaysRemaining && daysRemainingText && status !== 'expired' && (
-        <span className="ms-1 text-xs">({daysRemainingText})</span>
-      )}
-    </Badge>
+      showIcon={showIcon}
+      className={className}
+    />
   );
 
   if (showTooltip && daysRemaining > 0) {

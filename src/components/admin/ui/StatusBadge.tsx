@@ -1,8 +1,7 @@
 "use client";
 
-import { Badge } from "flowbite-react";
 import { useLocale } from "next-intl";
-import { getStatusBadgeProps, type BadgeColor } from "@/utils/admin/format";
+import UniversalStatusBadge, { StatusType } from "@/components/ui/StatusBadge";
 
 type StatusBadgeProps = {
   status: string | null;
@@ -17,8 +16,7 @@ type StatusBadgeProps = {
 
 /**
  * A consistent status badge component for admin UI
- * Supports RTL languages with proper text alignment
- * Uses the application's locale context for consistent RTL behavior
+ * Now uses the shared StatusBadge component for consistency
  *
  * @param props - Component props
  * @returns Status badge with appropriate color based on status
@@ -31,24 +29,39 @@ export default function StatusBadge({
   const appLocale = useLocale();
   const isRtl = appLocale === 'ar';
   
-  const { color, label } = getStatusBadgeProps(status, (key: string) => {
-    const keyPart = key.split(".")[1]; // Extract 'pending', 'approved', etc. from 'status.pending'
-    return (
-      translations[keyPart as keyof typeof translations] || translations.unknown
-    );
-  });
-
-  // Stronger RTL styling with inline styles
-  const rtlStyle = isRtl ? { textAlign: 'right' as const } : {};
+  // Map admin-specific status names to universal status types
+  const mapStatusToType = (adminStatus: string | null): string => {
+    switch (adminStatus?.toLowerCase()) {
+      case 'pending':
+      case 'pending_verification':
+        return 'pending_verification';
+      case 'approved':
+      case 'verified':
+        return 'verified';
+      case 'rejected':
+        return 'rejected';
+      default:
+        return 'free'; // Use as fallback/neutral status
+    }
+  };
+  
+  // Map keys to translation strings
+  const getTranslatedLabel = (key: string | null): string => {
+    const keyPart = key?.split(".")[1] || "unknown"; // Extract 'pending', 'approved', etc.
+    return translations[keyPart as keyof typeof translations] || translations.unknown;
+  };
+  
+  // Map admin status to universal status type
+  const universalStatus = mapStatusToType(status);
+  
+  // Get appropriate label
+  const label = getTranslatedLabel(status);
 
   return (
-    <Badge 
-      color={color as BadgeColor} 
-      dir={isRtl ? 'rtl' : 'ltr'} 
-      style={rtlStyle}
+    <UniversalStatusBadge 
+      status={universalStatus as StatusType}
+      label={label}
       className={isRtl ? 'text-right' : 'text-left'}
-    >
-      {label}
-    </Badge>
+    />
   );
 }
