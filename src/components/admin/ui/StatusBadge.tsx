@@ -50,7 +50,7 @@ export default function StatusBadge({
     const keyPart = key?.split(".")[1] || "unknown"; // Extract 'pending', 'approved', etc.
     return translations[keyPart as keyof typeof translations] || translations.unknown;
   };
-  
+
   // Map admin status to universal status type
   const universalStatus = mapStatusToType(status);
   

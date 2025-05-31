@@ -9,7 +9,7 @@ import { Database } from '@/database.types';
 import { Json } from '@/database.types';
 import { useRouter, usePathname } from 'next/navigation';
 
-interface FullPaperReviewComponentProps {
+interface RevisionReviewComponentProps {
   submissionId: string;
   onReviewComplete?: () => void;
 }
@@ -43,6 +43,8 @@ interface SubmissionWithDetails {
   submitted_by: string;
   event_id: string;
   created_at: string;
+  updated_at: string;
+  review_feedback_translations: TranslationObject | null;
   profiles?: {
     id: string;
     researcher_profiles?: {
@@ -56,12 +58,12 @@ interface SubmissionWithDetails {
 }
 
 // Type for the review status options
-type FullPaperReviewStatus = 'full_paper_accepted' | 'full_paper_rejected' | 'revision_requested';
+type RevisionReviewStatus = 'full_paper_accepted' | 'full_paper_rejected' | 'revision_requested';
 
-export default function FullPaperReviewComponent({ 
+export default function RevisionReviewComponent({ 
   submissionId, 
   onReviewComplete 
-}: FullPaperReviewComponentProps) {
+}: RevisionReviewComponentProps) {
   const t = useTranslations('Submissions');
   const supabase = createClientComponentClient<Database>();
   const router = useRouter();
@@ -73,6 +75,11 @@ export default function FullPaperReviewComponent({
   const [error, setError] = useState<string | null>(null);
   const [activeLanguage, setActiveLanguage] = useState('ar');
   const [feedback, setFeedback] = useState<Record<string, string>>({
+    ar: '',
+    en: '',
+    fr: ''
+  });
+  const [previousFeedback, setPreviousFeedback] = useState<Record<string, string>>({
     ar: '',
     en: '',
     fr: ''
@@ -102,6 +109,8 @@ export default function FullPaperReviewComponent({
             submitted_by,
             event_id,
             created_at,
+            updated_at,
+            review_feedback_translations,
             profiles:submitted_by(id, researcher_profiles(name)),
             events:event_id(id, event_name_translations)
           `)
@@ -112,7 +121,17 @@ export default function FullPaperReviewComponent({
         
         if (data) {
           // Cast the data to our type
-          setSubmission(data as unknown as SubmissionWithDetails);
+          const typedData = data as unknown as SubmissionWithDetails;
+          setSubmission(typedData);
+          
+          // If there's previous feedback, initialize the feedback state with it
+          if (typedData.review_feedback_translations) {
+            setPreviousFeedback({
+              ar: typedData.review_feedback_translations.ar || '',
+              en: typedData.review_feedback_translations.en || '',
+              fr: typedData.review_feedback_translations.fr || ''
+            });
+          }
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : t('unknownError'));
@@ -133,7 +152,7 @@ export default function FullPaperReviewComponent({
   };
 
   // Handle status update actions
-  const handleStatusUpdate = async (newStatus: FullPaperReviewStatus) => {
+  const handleStatusUpdate = async (newStatus: RevisionReviewStatus) => {
     setSubmitting(true);
     setError(null);
     
@@ -219,30 +238,29 @@ export default function FullPaperReviewComponent({
   const abstract = submission.abstract_translations[activeLanguage] || submission.abstract_translations.ar || '';
   const eventTitle = submission.events?.event_name_translations[activeLanguage] || submission.events?.event_name_translations.ar || '';
   const submitterName = submission.profiles?.researcher_profiles?.name || t('unknownUser');
+  const previousFeedbackText = previousFeedback[activeLanguage] || previousFeedback.ar || '';
   
   // Get file metadata as human-readable info
   let paperFileName = t('unknownFile');
   let paperFileSize = t('unknownSize');
 
   try {
-  const paperFileMetadata = submission.full_paper_file_metadata as unknown as FileMetadata;
+    const paperFileMetadata = submission.full_paper_file_metadata as unknown as FileMetadata;
     paperFileName = paperFileMetadata?.originalName || t('unknownFile');
     paperFileSize = paperFileMetadata?.size && !isNaN(paperFileMetadata.size)
-    ? Math.round(paperFileMetadata.size / 1024) + ' KB' 
-    : t('unknownSize');
-  } catch  {
+      ? Math.round(paperFileMetadata.size / 1024) + ' KB' 
+      : t('unknownSize');
+  } catch {
     // Keep default values if there's an error
   }
   
-  // Determine if full paper can be reviewed
-  // Only when status is 'full_paper_submitted' or if it's a revision under review
-  const canReview = submission.full_paper_status === 'full_paper_submitted' || 
-                   submission.full_paper_status === 'revision_requested';
+  // Determine if revision can be reviewed
+  const canReview = (submission.full_paper_status as string) === 'revision_submitted';
   
   return (
     <Card className="w-full">
       <h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white mb-4">
-        {t('fullPaperReview')}
+        {t('reviewRevision')}
       </h5>
       
       {error && (
@@ -284,6 +302,22 @@ export default function FullPaperReviewComponent({
             dir={activeLanguage === 'ar' ? 'rtl' : 'ltr'}
           >
             <p className="whitespace-pre-wrap">{abstract}</p>
+          </div>
+        </div>
+        
+        {/* Previous Feedback Section */}
+        <div className="mb-6">
+          <h6 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('reviewerFeedback')}</h6>
+          {renderLanguageSelector()}
+          <div 
+            className="p-4 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-600" 
+            dir={activeLanguage === 'ar' ? 'rtl' : 'ltr'}
+          >
+            {previousFeedbackText ? (
+              <p className="whitespace-pre-wrap">{previousFeedbackText}</p>
+            ) : (
+              <p className="text-gray-500 italic">{t('noReviewerComments')}</p>
+            )}
           </div>
         </div>
         
@@ -380,9 +414,10 @@ export default function FullPaperReviewComponent({
         <h6 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('currentStatus')}</h6>
         <div className="flex items-center">
           <div className={`h-3 w-3 rounded-full mr-2 ${
-            submission.full_paper_status === 'full_paper_accepted' ? 'bg-green-500' :
-            submission.full_paper_status === 'full_paper_rejected' ? 'bg-red-500' :
-            submission.full_paper_status === 'revision_requested' ? 'bg-yellow-500' :
+            (submission.full_paper_status as string) === 'full_paper_accepted' ? 'bg-green-500' :
+            (submission.full_paper_status as string) === 'full_paper_rejected' ? 'bg-red-500' :
+            (submission.full_paper_status as string) === 'revision_requested' ? 'bg-yellow-500' :
+            (submission.full_paper_status as string) === 'revision_submitted' ? 'bg-purple-500' :
             'bg-blue-500'
           }`}></div>
           <span>{t(`status.${submission.full_paper_status}` || 'unknown')}</span>

@@ -5,9 +5,9 @@ import { getTranslations } from 'next-intl/server';
 import ProfileCard from '@/app/[locale]/profile/ui/ProfileCard';
 import ProfilePageHeader from '@/app/[locale]/profile/ui/ProfilePageHeader';
 import BackButton from '@/components/ui/BackButton';
-import FullPaperReviewComponent from '@/components/submissions/FullPaperReviewComponent';
+import RevisionReviewComponent from '@/components/submissions/RevisionReviewComponent';
 
-interface ReviewPaperPageProps {
+interface ReviewRevisionPageProps {
   params: Promise<{ locale: string; id: string; submissionId: string }>;
 }
 
@@ -15,12 +15,12 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('Submissions');
 
   return {
-    title: t('reviewPaper'),
-    description: t('reviewPaperDescription'),
+    title: t('reviewRevision'),
+    description: t('reviewRevisionDescription'),
   };
 }
 
-export default async function ReviewPaperPage({ params }: ReviewPaperPageProps) {
+export default async function ReviewRevisionPage({ params }: ReviewRevisionPageProps) {
   const { locale, id: eventId, submissionId } = await params;
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -49,16 +49,15 @@ export default async function ReviewPaperPage({ params }: ReviewPaperPageProps) 
     .from('events')
     .select('created_by')
     .eq('id', eventId)
-    .single()
+    .single();
 
   if (eventError || !event || event.created_by !== user.id) {
     redirect(`/${locale}/profile/events/${eventId}/manage`);
   }
 
-  // Check if the submission status allows for review
-  // Using string comparison to avoid type issues
+  // Check if the submission status allows for revision review
   const status = submission.full_paper_status as string;
-  if (status !== 'full_paper_submitted' && status !== 'revision_submitted') {
+  if (status !== 'revision_submitted') {
     // If not in a reviewable state, redirect to submission details
     redirect(`/${locale}/profile/events/${eventId}/submissions/${submissionId}`);
   }
@@ -73,17 +72,17 @@ export default async function ReviewPaperPage({ params }: ReviewPaperPageProps) 
 
       {/* Standard page header */}
       <ProfilePageHeader
-        title={t('reviewPaper')}
+        title={t('reviewRevision')}
         iconName="documentText"
-        iconBgColor="bg-blue-100 dark:bg-blue-900"
-        iconTextColor="text-blue-600 dark:text-blue-300"
+        iconBgColor="bg-indigo-100 dark:bg-indigo-900"
+        iconTextColor="text-indigo-600 dark:text-indigo-300"
         locale={locale}
       />
 
       {/* Review component */}
       <ProfileCard locale={locale}>
         <div className="p-4">
-          <FullPaperReviewComponent 
+          <RevisionReviewComponent 
             submissionId={submissionId} 
           />
         </div>

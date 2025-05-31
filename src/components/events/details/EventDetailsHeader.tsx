@@ -26,10 +26,9 @@ interface EventDetailsHeaderProps {
     } | null
   }
   locale: string
-  userRole: 'owner' | 'participant' | 'visitor' | 'anonymous'
 }
 
-export function EventDetailsHeader({ event, locale, userRole }: EventDetailsHeaderProps) {
+export function EventDetailsHeader({ event, locale }: EventDetailsHeaderProps) {
   const t = useTranslations('EventDetails.header')
   const tEnums = useTranslations('Enums')
   // Get localized title
@@ -183,25 +182,7 @@ export function EventDetailsHeader({ event, locale, userRole }: EventDetailsHead
           )}
         </div>
 
-        {/* Statistics Section without title - Only for owners */}
-        {userRole === 'owner' && (
-          <div className="pt-6 border-t border-gray-200">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="text-center p-3 bg-gray-50 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600">0</div>
-                <div className="text-sm text-gray-600">{t('statistics.registrations')}</div>
-              </div>
-              <div className="text-center p-3 bg-gray-50 rounded-lg">
-                <div className="text-2xl font-bold text-green-600">0</div>
-                <div className="text-sm text-gray-600">{t('statistics.submissions')}</div>
-              </div>
-              <div className="text-center p-3 bg-gray-50 rounded-lg">
-                <div className="text-2xl font-bold text-purple-600">0</div>
-                <div className="text-sm text-gray-600">{t('statistics.views')}</div>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Statistics Section removed */}
       </div>
     </div>
   )

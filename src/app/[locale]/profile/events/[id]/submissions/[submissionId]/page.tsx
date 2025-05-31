@@ -4,8 +4,10 @@ import { createServerSupabaseClient } from '@/utils/supabase/server'
 import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 import { Badge } from 'flowbite-react'
-import { HiChevronLeft, HiExternalLink } from 'react-icons/hi'
+import { HiExternalLink } from 'react-icons/hi'
 import ProfileCard from '@/app/[locale]/profile/ui/ProfileCard'
+import ProfilePageHeader from '@/app/[locale]/profile/ui/ProfilePageHeader'
+import BackButton from '@/components/ui/BackButton'
 import { Json } from "@/database.types";
 
 interface EventSubmissionDetailPageProps {
@@ -117,9 +119,9 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
   // Fetch event data to verify ownership
   const { data: event, error: eventError } = await supabase
     .from('events')
-    .select('created_by')
+    .select('created_by, event_name_translations')
     .eq('id', eventId)
-    .single()
+    .single<{ created_by: string; event_name_translations: Record<string, string> }>()
 
   if (eventError || !event) {
     notFound()
@@ -139,6 +141,7 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
       redirect(`/${locale}/profile/events/${eventId}`)
     }
   }
+  
   // Fetch submission details
   const { data: submission, error: submissionError } = await supabase
     .from('submissions')
@@ -168,7 +171,7 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
 
   if (submissionError || !submission) {
     console.error('Error fetching submission:', submissionError)
-    redirect(`/${locale}/profile/events/${eventId}/submissions`)
+    redirect(`/${locale}/profile/events/${eventId}/manage`)
   }
 
   // Cast submission to typed data for safety
@@ -213,8 +216,6 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
     });
   };
 
-  // Format file size
-
   // Determine the effective status of a submission
   const getEffectiveStatus = (submission: SubmissionData): string => {
     // If there's a full paper status, prioritize it
@@ -224,6 +225,7 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
     // Otherwise use the abstract status
     return submission.abstract_status || 'abstract_submitted';
   };
+  
   // Create the complete submission data
   const submissionData: SubmissionData = {
     id: typedSubmission.id,
@@ -246,32 +248,30 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
 
   // Determine current status and next possible statuses
   const currentStatus = getEffectiveStatus(submissionData);
+  
+  // Get submission title
+  const submissionTitle = getTitle(submissionData.title_translations);
 
   return (
     <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
-      {/* Back button */}
-      <Link 
-        href={`/${locale}/profile/events/${eventId}/submissions`}
-        className={`flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 ${isRtl ? 'flex-row-reverse' : ''}`}
-      >
-        <HiChevronLeft className={`h-4 w-4 ${isRtl ? 'mr-1' : 'ml-1'}`} />
-        {tSubmissions('backToSubmissions')}
-      </Link>
+      {/* Back button using standard component */}
+      <BackButton 
+        href={`/${locale}/profile/events/${eventId}/manage`} 
+        label={tSubmissions('backToSubmissions')}
+      />
 
-      {/* Page header */}
-      <div className="mb-4">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">
-            {tSubmissions('submissionDetails')}
-          </h1>
-          <Badge color={statusColors[currentStatus] || 'gray'} size="lg">
-            {tSubmissions(`status.${currentStatus}`)}
-          </Badge>
-        </div>
-        <p className="text-gray-600">
-          {tSubmissions('submissionDetailsDescription')}
-        </p>
-      </div>
+      {/* Standard page header */}
+      <ProfilePageHeader
+        title={`${tSubmissions('submissionDetails')} - ${submissionTitle}`}
+        iconName="documentText"
+        iconBgColor="bg-blue-100 dark:bg-blue-900"
+        iconTextColor="text-blue-600 dark:text-blue-300"
+        locale={locale}
+      >
+        <Badge color={statusColors[currentStatus] || 'gray'} size="lg">
+          {tSubmissions(`status.${currentStatus}`)}
+        </Badge>
+      </ProfilePageHeader>
 
       {/* Submission details */}
       <ProfileCard locale={locale}>
@@ -280,7 +280,7 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
           <div className="md:col-span-2 space-y-6">
             <div>
               <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
-                {getTitle(submissionData.title_translations)}
+                {submissionTitle}
               </h2>
               
               <div className="flex items-center gap-2 mb-4">
@@ -300,7 +300,8 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
                   <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
                     {submissionData.abstract_translations && 
                      getTitle(submissionData.abstract_translations)}
-                  </p>              </div>
+                  </p>              
+                </div>
               </div>
             </div>
           </div>

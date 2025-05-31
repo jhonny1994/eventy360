@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { Button } from "flowbite-react";
 
 interface EventDetailsActionsProps {
   event: {
@@ -106,19 +107,27 @@ export function EventDetailsActions({
         
         <div className="space-y-4">
           {/* Bookmark Event */}
-          <button className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+          <Button 
+            color="light" 
+            className="w-full"
+          >
             <BookmarkPlus className="w-5 h-5 mr-2" />
             {t("actions.bookmarkEvent")}
-          </button>
+          </Button>
 
           {/* Submit Paper/Proposal - Only show if user hasn't submitted yet */}
           {canSubmit && !hasSubmitted && (
             <Link
               href={`/${locale}/profile/submissions/create/${event.id}`}
-              className="w-full flex items-center justify-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              className="w-full"
             >
-              <FileText className="w-5 h-5 mr-2" />
-              {t("actions.submitAbstract")}
+              <Button 
+                color="success" 
+                className="w-full"
+              >
+                <FileText className="w-5 h-5 mr-2" />
+                {t("actions.submitAbstract")}
+              </Button>
             </Link>
           )}
 
@@ -144,23 +153,32 @@ export function EventDetailsActions({
       <div className="space-y-3">
         {/* Add to Calendar */}
         {!isEventPast && (
-          <button className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+          <Button 
+            color="light" 
+            className="w-full"
+          >
             <Calendar className="w-5 h-5 mr-2" />
             {t("actions.addToCalendar")}
-          </button>
+          </Button>
         )}
 
         {/* Save Event */}
-        <button className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+        <Button 
+          color="light" 
+          className="w-full"
+        >
           <BookmarkPlus className="w-5 h-5 mr-2" />
           {t("actions.saveEvent")}
-        </button>
+        </Button>
 
         {/* Share Event */}
-        <button className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+        <Button 
+          color="light" 
+          className="w-full"
+        >
           <Share2 className="w-5 h-5 mr-2" />
           {t("actions.shareEvent")}
-        </button>
+        </Button>
 
         {/* View Event Website - Assuming event might have a website_url property */}
         {/* For now, let's use a placeholder condition, replace with event.website_url when available */}
@@ -169,10 +187,15 @@ export function EventDetailsActions({
             href={`/${locale}/events/${event.id}`} // Placeholder: Replace with event.website_url if it's an external link
             target="_blank" // Open in new tab if it's an external link
             rel="noopener noreferrer" // Security for opening in new tab
-            className="w-full flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="w-full"
           >
-            <ExternalLink className="w-5 h-5 mr-2" />
-            {t("actions.viewWebsite")}
+            <Button 
+              color="blue" 
+              className="w-full"
+            >
+              <ExternalLink className="w-5 h-5 mr-2" />
+              {t("actions.viewWebsite")}
+            </Button>
           </Link>
         )}
       </div>

@@ -2,18 +2,17 @@ import { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/utils/supabase/server'
 import { getTranslations } from 'next-intl/server'
-import { Card, Badge, Tabs, TabItem } from 'flowbite-react'
+import { Button } from 'flowbite-react'
 import Link from 'next/link'
 import {
   HiDocumentText,
-  HiPencil,
-  HiClock,
-  HiTag,
-  HiChevronLeft,
-  HiChartPie
+  HiPencil
 } from 'react-icons/hi'
 import ProfileCard from '@/app/[locale]/profile/ui/ProfileCard'
+import ProfilePageHeader from '@/app/[locale]/profile/ui/ProfilePageHeader'
+import BackButton from '@/components/ui/BackButton'
 import EventStatisticsTab from './components/EventStatisticsTab'
+import EventSubmissionsTable from '../submissions/EventSubmissionsTable'
 
 interface EventManagementPageProps {
   params: Promise<{ locale: string; id: string }>
@@ -28,6 +27,22 @@ interface EventData {
   event_type: string
   status: string
   // Add other fields as needed
+}
+
+// Define the submission type that matches the component's expected type
+interface SubmissionData {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  abstract_status: string | null;
+  full_paper_status: string | null;
+  title_translations: Record<string, string>;
+  submitted_by: string;
+  profiles: {
+    id: string;
+    full_name: string;
+    email: string;
+  };
 }
 
 export async function generateMetadata({ params }: EventManagementPageProps): Promise<Metadata> {
@@ -64,7 +79,7 @@ export default async function EventManagementPage({ params }: EventManagementPag
   const supabase = await createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   const t = await getTranslations('EventManagement')
-  const tEventType = await getTranslations('Enums.EventType')
+  const tSubmissions = await getTranslations('Submissions')
   const isRtl = locale === 'ar'
   
   // Redirect if user is not authenticated
@@ -107,155 +122,116 @@ export default async function EventManagementPage({ params }: EventManagementPag
                      event.event_name_translations['ar'] || 
                      'Untitled Event'
                      
-  // Get localized event type
-  let eventTypeDisplay = event.event_type
-  try {
-    // Try to get the translated event type
-    eventTypeDisplay = tEventType(event.event_type)
-  } catch {
-    // If translation fails, use the original value
-    console.error('Translation failed for event type:', event.event_type)
+  // Fetch submissions for this event
+  const { data: submissionsData, error: submissionsError } = await supabase
+    .from('submissions')
+    .select(`
+      id,
+      created_at,
+      updated_at,
+      abstract_status,
+      full_paper_status,
+      title_translations,
+      submitted_by
+    `)
+    .eq('event_id', id)
+    .order('updated_at', { ascending: false })
+
+  if (submissionsError) {
+    console.error('Error fetching submissions:', submissionsError)
   }
 
-  // Fetch submission count
-  const submissionsCount = await supabase
-    .from('submissions')
-    .select('id', { count: 'exact', head: true })
-    .eq('event_id', id)
-    .then(res => res.count || 0)
+  // Fetch researcher details for each submission
+  let submissions: SubmissionData[] = [];
+  
+  if (submissionsData && submissionsData.length > 0) {
+    // Get unique profile IDs
+    const profileIds = [...new Set(submissionsData.map(s => s.submitted_by))];
+    
+    // Fetch researcher profiles in one query
+    const { data: researcherProfiles } = await supabase
+      .from('researcher_profiles')
+      .select('profile_id, name')
+      .in('profile_id', profileIds);
+    
+    // Create a map of profile ID to researcher name
+    const researcherNamesMap = new Map();
+    if (researcherProfiles) {
+      researcherProfiles.forEach(profile => {
+        researcherNamesMap.set(profile.profile_id, profile.name);
+      });
+    }
+    
+    // Create submissions with available data
+    submissions = submissionsData.map(item => ({
+      id: item.id,
+      created_at: item.created_at,
+      updated_at: item.updated_at,
+      abstract_status: item.abstract_status,
+      full_paper_status: item.full_paper_status,
+      title_translations: item.title_translations as Record<string, string>,
+      submitted_by: item.submitted_by,
+      profiles: {
+        id: item.submitted_by,
+        full_name: researcherNamesMap.get(item.submitted_by),
+        email: `user-${item.submitted_by.substring(0, 8)}@example.com` // Placeholder email
+      }
+    }));
+  }
 
   return (
     <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
-      {/* Back button */}
-      <Link 
-        href={`/${locale}/profile/events/${id}`}
-        className={`flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 ${isRtl ? 'flex-row-reverse' : ''}`}
-      >
-        <HiChevronLeft className={`h-4 w-4 ${isRtl ? 'mr-1' : 'ml-1'}`} />
-        {t('backToEventDetails')}
-      </Link>
+      {/* Back button using standard component */}
+      <BackButton 
+        href={`/${locale}/profile/events/${id}`} 
+        label={t('backToEventDetails')}
+      />
 
-      {/* Page header */}
-      <div className="mb-4">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">
-          {t('title')} - {eventTitle}
-        </h1>
-        <div className="flex justify-between items-center">
-          <p className="text-gray-600">
-            {t('manageEventDescription')}
-          </p>
-          <Link
-            href={`/${locale}/profile/events/${id}/edit`}
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 flex items-center"
-          >
+      {/* Standard page header */}
+      <ProfilePageHeader
+        title={`${t('title')} - ${eventTitle}`}
+        iconName="calendar"
+        iconBgColor="bg-purple-100 dark:bg-purple-900"
+        iconTextColor="text-purple-600 dark:text-purple-300"
+        locale={locale}
+      >
+        <Link
+          href={`/${locale}/profile/events/${id}/edit`}
+          passHref
+        >
+          <Button color="blue" size="sm">
             <HiPencil className={`h-4 w-4 ${isRtl ? 'ml-2' : 'mr-2'}`} />
             {t('editEvent')}
-          </Link>
+          </Button>
+        </Link>
+      </ProfilePageHeader>
+
+      {/* Statistics Section */}
+      <ProfileCard locale={locale} title={t('statistics')}>
+        <div className="p-4">
+          <EventStatisticsTab eventId={id} locale={locale} />
         </div>
-      </div>
+      </ProfileCard>
 
-      {/* Dashboard stats - Only show submissions */}
-      <Card className="overflow-hidden">
-        <div className="flex justify-between items-center p-4">
-          <div>
-            <p className="text-sm font-medium text-gray-500 mb-1">
-              {t('metrics.submissions')}
-            </p>
-            <p className="text-2xl font-bold text-gray-900">
-              {submissionsCount}
-            </p>
-          </div>
-          <div className="p-3 bg-green-50 rounded-lg">
-            <HiDocumentText className="h-6 w-6 text-green-600" />
-          </div>
+      {/* Submissions Section */}
+      <ProfileCard locale={locale} title={tSubmissions('eventSubmissions')}>
+        <div className="p-4">
+          {submissions && submissions.length > 0 ? (
+            <EventSubmissionsTable 
+              submissions={submissions} 
+              locale={locale}
+              eventId={id}
+            />
+          ) : (
+            <div className="text-center py-8">
+              <div className="mx-auto w-16 h-16 mb-4 flex items-center justify-center rounded-full bg-gray-100">
+                <HiDocumentText className="h-8 w-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-1">{t('noSubmissionsYet')}</h3>
+              <p className="text-gray-500">{t('submissionsWillAppearHere')}</p>
+            </div>
+          )}
         </div>
-      </Card>
-
-      {/* Management content */}
-      <ProfileCard locale={locale}>
-        <Tabs variant="underline">
-          <TabItem active title={t('overview')}>
-            <div className="flex items-center gap-2">
-              <HiDocumentText className="h-5 w-5" />
-              <span>{t('overview')}</span>
-            </div>
-        <div className="space-y-6 p-4">
-          {/* Event Status */}
-          <div className="flex items-center space-x-2 mb-6">
-            <span className="text-gray-700 font-medium">{t('status')}:</span>
-            <Badge color={event.status === 'published' ? 'success' : 'warning'}>
-              {event.status === 'published' ? t('statusPublished') : t('statusDraft')}
-            </Badge>
-          </div>
-
-          {/* Event Info */}
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('eventInfo')}</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Created date */}
-            <div className="flex space-x-3 p-4 bg-gray-50 rounded-lg">
-              <HiClock className="h-5 w-5 text-gray-500" />
-              <div>
-                <p className="text-sm font-medium text-gray-900">{t('createdAt')}</p>
-                <p className="text-sm text-gray-600">
-                  {new Date(event.created_at).toLocaleDateString(
-                    locale === 'ar' ? 'ar-DZ' : 'en-US',
-                    { year: 'numeric', month: 'long', day: 'numeric' }
-                  )}
-                </p>
-              </div>
-            </div>
-            
-            {/* Event type */}
-            <div className="flex space-x-3 p-4 bg-gray-50 rounded-lg">
-              <HiTag className="h-5 w-5 text-gray-500" />
-              <div>
-                <p className="text-sm font-medium text-gray-900">{t('eventType')}</p>
-                <p className="text-sm text-gray-600">{eventTypeDisplay}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Submissions Section */}
-          <div className="mt-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('submissionsManagement')}</h3>
-            
-            {submissionsCount > 0 ? (
-              <div className="bg-white border border-gray-200 rounded-lg">
-                <div className="p-4 border-b">
-                  <p className="font-medium">{t('submissionsList')}</p>
-                </div>
-                <div className="p-4">
-                  <Link
-                    href={`/${locale}/profile/events/${id}/submissions`}
-                    className="text-blue-600 hover:underline flex items-center"
-                  >
-                    <HiDocumentText className={`h-4 w-4 ${isRtl ? 'ml-2' : 'mr-2'}`} />
-                    {t('viewAllSubmissions')}
-                  </Link>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
-                <HiDocumentText className="h-10 w-10 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 mb-2">{t('noSubmissionsYet')}</p>
-                <p className="text-sm text-gray-500">{t('submissionsWillAppearHere')}</p>
-              </div>
-            )}
-          </div>
-        </div>
-          </TabItem>
-          
-          <TabItem title={t('statistics')}>
-            <div className="flex items-center gap-2">
-              <HiChartPie className="h-5 w-5" />
-              <span>{t('statistics')}</span>
-            </div>
-            <div className="p-4">
-              {/* Statistics Tab Content */}
-              <EventStatisticsTab eventId={id} locale={locale} />
-            </div>
-          </TabItem>
-        </Tabs>
       </ProfileCard>
     </div>
   )

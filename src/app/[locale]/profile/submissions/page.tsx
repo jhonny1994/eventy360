@@ -4,7 +4,8 @@ import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { createServerSupabaseClient } from "@/utils/supabase/server";
-import PageHeader from "@/components/ui/PageHeader";
+import ProfilePageHeader from "../ui/ProfilePageHeader";
+import ProfileCard from "../ui/ProfileCard";
 import SubmissionsList from "./ui/SubmissionsList";
 
 // Define types that match the Submission interface in SubmissionsList
@@ -129,18 +130,22 @@ export default async function ProfileSubmissionsPage({ params }: { params: Promi
 
   return (
     <div className="space-y-6">
-      <PageHeader
+      <ProfilePageHeader
         title={t("mySubmissions")}
-        description={t("mySubmissionsDescription")}
-        actions={SubmissionActions}
-      />
+        iconName="documentText"
+        iconBgColor="bg-blue-100 dark:bg-blue-900"
+        iconTextColor="text-blue-600 dark:text-blue-300"
+        locale={locale}
+      >
+        {SubmissionActions}
+      </ProfilePageHeader>
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+      <ProfileCard locale={locale}>
         <SubmissionsList 
           submissions={submissions} 
           emptyMessage={t("noSubmissions")} 
         />
-      </div>
+      </ProfileCard>
     </div>
   );
 } 

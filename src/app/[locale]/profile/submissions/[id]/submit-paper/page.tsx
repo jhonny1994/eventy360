@@ -2,9 +2,9 @@ import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { createServerSupabaseClient } from "@/utils/supabase/server";
-import PageHeader from "@/components/ui/PageHeader";
-import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+import ProfilePageHeader from "../../../ui/ProfilePageHeader";
+import ProfileCard from "../../../ui/ProfileCard";
+import BackButton from "@/components/ui/BackButton";
 import FullPaperUploadSection from "../../ui/FullPaperUploadSection";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -82,22 +82,22 @@ export default async function SubmitPaperPage({ params }: SubmitPaperPageProps) 
 
   return (
     <div className="space-y-6">
-      <PageHeader
+      <ProfilePageHeader
         title={t("submitFullPaper")}
-        description={t("fullPaperSubmissionDescription")}
+        iconName="documentText"
+        iconBgColor="bg-green-100 dark:bg-green-900"
+        iconTextColor="text-green-600 dark:text-green-300"
+        locale={locale}
       />
 
-      <Link 
+      <BackButton 
         href={`/${locale}/profile/submissions/${id}`}
-        className="flex items-center gap-1 text-blue-600 hover:underline dark:text-blue-500 mb-4"
-      >
-        <ChevronLeft className="w-4 h-4" />
-        {t('backToSubmission')}
-      </Link>
+        label={t('backToSubmission')}
+      />
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <ProfileCard locale={locale}>
         <FullPaperUploadSection submissionId={id} />
-      </div>
+      </ProfileCard>
     </div>
   );
 } 

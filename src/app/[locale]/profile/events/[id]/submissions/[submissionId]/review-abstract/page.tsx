@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
-import { notFound, redirect } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/utils/supabase/server'
 import { getTranslations } from 'next-intl/server'
-import Link from 'next/link'
-import { HiChevronLeft } from 'react-icons/hi'
 import ProfileCard from '@/app/[locale]/profile/ui/ProfileCard'
+import ProfilePageHeader from '@/app/[locale]/profile/ui/ProfilePageHeader'
+import BackButton from '@/components/ui/BackButton'
 import AbstractReviewComponent from '@/components/submissions/AbstractReviewComponent'
 
 interface ReviewAbstractPageProps {
@@ -32,32 +32,6 @@ export default async function ReviewAbstractPage({ params }: ReviewAbstractPageP
     redirect(`/${locale}/auth/signin`)
   }
 
-  // Fetch event data to verify ownership
-  const { data: event, error: eventError } = await supabase
-    .from('events')
-    .select('created_by')
-    .eq('id', eventId)
-    .single()
-
-  if (eventError || !event) {
-    notFound()
-  }
-
-  // Check if user is the owner of this event
-  if (event.created_by !== user.id) {
-    // Check if user is an admin
-    const { data: profileData } = await supabase
-      .from('profiles')
-      .select('user_type')
-      .eq('id', user.id)
-      .single()
-    
-    if (!profileData || profileData.user_type !== 'admin') {
-      // If not owner or admin, redirect to event details
-      redirect(`/${locale}/profile/events/${eventId}`)
-    }
-  }
-
   // Fetch submission to verify it exists and belongs to this event
   const { data: submission, error: submissionError } = await supabase
     .from('submissions')
@@ -67,7 +41,19 @@ export default async function ReviewAbstractPage({ params }: ReviewAbstractPageP
     .single()
 
   if (submissionError || !submission) {
-    redirect(`/${locale}/profile/events/${eventId}/submissions`)
+    console.error('Error fetching submission:', submissionError)
+    redirect(`/${locale}/profile/events/${eventId}/manage`)
+  }
+
+  // Security check - verify user is authorized to review this submission
+  const { data: event, error: eventError } = await supabase
+    .from('events')
+    .select('created_by')
+    .eq('id', eventId)
+    .single()
+
+  if (eventError || !event || event.created_by !== user.id) {
+    redirect(`/${locale}/profile/events/${eventId}/manage`)
   }
 
   // Check if the submission status allows for review
@@ -78,24 +64,20 @@ export default async function ReviewAbstractPage({ params }: ReviewAbstractPageP
 
   return (
     <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
-      {/* Back button */}
-      <Link 
+      {/* Back button using standard component */}
+      <BackButton 
         href={`/${locale}/profile/events/${eventId}/submissions/${submissionId}`}
-        className={`flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 ${isRtl ? 'flex-row-reverse' : ''}`}
-      >
-        <HiChevronLeft className={`h-4 w-4 ${isRtl ? 'mr-1' : 'ml-1'}`} />
-        {t('backToSubmission')}
-      </Link>
+        label={t('backToSubmission')}
+      />
 
-      {/* Page header */}
-      <div className="mb-4">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">
-          {t('reviewAbstract')}
-        </h1>
-        <p className="text-gray-600">
-          {t('reviewAbstractDescription')}
-        </p>
-      </div>
+      {/* Standard page header */}
+      <ProfilePageHeader
+        title={t('reviewAbstract')}
+        iconName="documentText"
+        iconBgColor="bg-blue-100 dark:bg-blue-900"
+        iconTextColor="text-blue-600 dark:text-blue-300"
+        locale={locale}
+      />
 
       {/* Review component */}
       <ProfileCard locale={locale}>

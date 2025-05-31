@@ -221,12 +221,12 @@ export default function EventSubmissionsTable({
                           {formatDate(submission.updated_at)}
                         </td>
                         <td className="px-6 py-4" style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
-                          <div className="flex flex-col space-y-2">
-                            <Link 
+                          <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                            <Link
                               href={`/${locale}/profile/events/${eventId}/submissions/${submission.id}`}
-                              className="font-medium text-blue-600 hover:underline dark:text-blue-500 flex items-center gap-1"
+                              className="text-blue-600 hover:underline flex items-center"
                             >
-                              <HiExternalLink className={`w-4 h-4 ${isRtl ? 'ml-1' : 'mr-1'}`} />
+                              <HiExternalLink className={`h-4 w-4 ${isRtl ? 'ml-1' : 'mr-1'}`} />
                               {t('viewDetails')}
                             </Link>
                             

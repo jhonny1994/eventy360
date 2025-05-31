@@ -2,13 +2,15 @@ import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { createServerSupabaseClient } from "@/utils/supabase/server";
-import PageHeader from "@/components/ui/PageHeader";
 import Link from "next/link";
 import { Badge, Card } from "flowbite-react";
-import { ChevronLeft, FileText, ExternalLink, Calendar, MessageCircle, AlertCircle, CheckCircle, XCircle } from "lucide-react";
+import { FileText, ExternalLink, Calendar, MessageCircle, AlertCircle, CheckCircle, XCircle } from "lucide-react";
 import { Json } from "@/database.types";
 import FullPaperUploadSection from "../ui/FullPaperUploadSection";
 import RevisionUploadSection from "../ui/RevisionUploadSection";
+import ProfilePageHeader from "../../ui/ProfilePageHeader";
+import ProfileCard from "../../ui/ProfileCard";
+import BackButton from "@/components/ui/BackButton";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Submissions");
@@ -65,6 +67,16 @@ interface SubmissionData {
   submission_date: string;
   events: EventInfo;
   feedback?: FeedbackInfo;
+}
+
+// Define interface for timeline items
+interface TimelineItem {
+  status: string;
+  changed_at: string;
+  file_url?: string;
+  file_name?: string;
+  file_type?: string;
+  file_size?: string;
 }
 
 export default async function SubmissionDetailPage({ params }: SubmissionDetailProps) {
@@ -256,19 +268,6 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
                              (!submissionData.full_paper_status || submissionData.full_paper_status === '');
   const showRevisionUpload = submissionData.full_paper_status === 'revision_requested';
 
-  // Add full paper status to timeline if it exists
-  const statusHistoryItems = [{ 
-    status: submissionData.abstract_status, 
-    changed_at: submissionData.created_at 
-  }];
-
-  if (submissionData.full_paper_status) {
-    statusHistoryItems.push({
-      status: submissionData.full_paper_status,
-      changed_at: submissionData.updated_at
-    });
-  }
-
   // Get file metadata as human-readable info
   let paperFileName = t('unknownFile');
   let paperFileSize = t('unknownSize');
@@ -289,22 +288,44 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
     }
   }
 
+  // Add full paper status to timeline if it exists
+  const statusHistoryItems: TimelineItem[] = [{ 
+    status: submissionData.abstract_status, 
+    changed_at: submissionData.created_at,
+    file_url: submissionData.abstract_file_url,
+    file_name: submissionData.abstract_file_metadata ? 
+      (submissionData.abstract_file_metadata as { originalName?: string })?.originalName || t('abstractFile') : 
+      t('abstractFile'),
+    file_type: 'abstract'
+  }];
+
+  if (submissionData.full_paper_status) {
+    statusHistoryItems.push({
+      status: submissionData.full_paper_status,
+      changed_at: submissionData.updated_at,
+      file_url: submissionData.full_paper_file_url,
+      file_name: paperFileName,
+      file_type: 'full_paper',
+      file_size: paperFileSize
+    });
+  }
+
   return (
     <div className="space-y-6">
-      <PageHeader
+      <ProfilePageHeader
         title={t("submissionDetails")}
-        description={t("submissionDetailsDescription")}
+        iconName="documentText"
+        iconBgColor="bg-blue-100 dark:bg-blue-900"
+        iconTextColor="text-blue-600 dark:text-blue-300"
+        locale={locale}
       />
 
-      <Link 
+      <BackButton 
         href={`/${locale}/profile/submissions`}
-        className="flex items-center gap-1 text-blue-600 hover:underline dark:text-blue-500 mb-4"
-      >
-        <ChevronLeft className="w-4 h-4" />
-        {t('backToSubmissions')}
-      </Link>
+        label={t('backToSubmissions')}
+      />
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <ProfileCard locale={locale}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Left column - Submission info */}
           <div className="md:col-span-2 space-y-6">
@@ -339,30 +360,6 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
                 </div>
               </div>
               
-              {/* Full Paper File Display - Add if full paper file exists */}
-              {submissionData.full_paper_file_url && submissionData.full_paper_status && (
-                <div className="mt-6">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                    {t("fullPaperFile")}
-                  </h3>
-                  <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center">
-                    <div>
-                      <p className="font-medium">{paperFileName}</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">{paperFileSize}</p>
-                    </div>
-                    <a 
-                      href={submissionData.full_paper_file_url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="mt-3 md:mt-0 inline-flex items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800"
-                    >
-                      <FileText className="mr-2 h-5 w-5" />
-                      {t("downloadPaper")}
-                    </a>
-                  </div>
-                </div>
-              )}
-
               {/* Status Timeline Section */}
               <div className="mt-8">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
@@ -380,6 +377,29 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
                       <time className="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
                         {formatDateTime(item.changed_at)}
                       </time>
+                      
+                      {/* Add file download button if this item has a file */}
+                      {item.file_url && (
+                        <div className="mt-2 mb-4">
+                          <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                            <div>
+                              <p className="font-medium">{item.file_name}</p>
+                              {'file_size' in item && item.file_size && (
+                                <p className="text-sm text-gray-500 dark:text-gray-400">{item.file_size}</p>
+                              )}
+                            </div>
+                            <a 
+                              href={item.file_url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="mt-2 sm:mt-0 inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800"
+                            >
+                              <FileText className="mr-2 h-4 w-4" />
+                              {item.file_type === 'abstract' ? t("downloadAbstract") : t("downloadPaper")}
+                            </a>
+                          </div>
+                        </div>
+                      )}
                     </li>
                   ))}
                 </ol>
@@ -452,11 +472,12 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
           
           {/* Right column - Event info */}
           <div className="space-y-6">
-            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                {t("eventInformation")}
-              </h3>
-              
+            <ProfileCard
+              title={t("eventInformation")}
+              locale={locale}
+              iconName="calendar"
+              className="h-fit"
+            >
               <div className="space-y-3">
                 <div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">{t("eventName")}</p>
@@ -509,10 +530,10 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
                   {t("viewEventDetails")}
                 </Link>
               </div>
-            </div>
+            </ProfileCard>
           </div>
         </div>
-      </div>
+      </ProfileCard>
     </div>
   );
 } 

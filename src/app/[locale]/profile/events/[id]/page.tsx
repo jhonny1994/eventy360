@@ -457,7 +457,7 @@ export default async function EventDetailsPage({
               passHref
             >
               <Button outline={true} color="gray" size="sm">
-                <Edit3 className="mr-2 h-4 w-4" /> Edit Event
+                <Edit3 className="mr-2 h-4 w-4" /> {t("actions.editEvent")}
               </Button>
             </Link>
             <Link
@@ -465,7 +465,7 @@ export default async function EventDetailsPage({
               passHref
             >
               <Button color="purple" size="sm">
-                <Settings className="mr-2 h-4 w-4" /> Manage Event
+                <Settings className="mr-2 h-4 w-4" /> {t("actions.manageEvent")}
               </Button>
             </Link>
           </div>
@@ -476,7 +476,6 @@ export default async function EventDetailsPage({
         <EventDetailsHeader
           event={eventWithOrganizer}
           locale={locale}
-          userRole={userRole}
         />
       </ProfileCard>
 

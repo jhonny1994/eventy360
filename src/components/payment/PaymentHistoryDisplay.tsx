@@ -10,7 +10,7 @@ import {
   TableHeadCell, 
   TableRow, 
   Button, 
-  Spinner
+  Spinner 
 } from 'flowbite-react';
 import { HiDocument, HiExclamationCircle } from 'react-icons/hi';
 import { createClient } from '@/lib/supabase/client';

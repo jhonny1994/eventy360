@@ -50,6 +50,27 @@ export async function middleware(request: NextRequest) {
     pathWithoutLocale = "/" + pathWithoutLocale;
   }
   
+  // Custom redirect for submissions page to manage page
+  // This matches URLs like /ar/profile/events/123-456/submissions
+  const submissionsUrlPattern = new RegExp(`^/(${routing.locales.join("|")})/profile/events/([^/]+)/submissions$`);
+  const submissionsMatch = pathname.match(submissionsUrlPattern);
+  if (submissionsMatch) {
+    const locale = submissionsMatch[1];
+    const eventId = submissionsMatch[2];
+    const redirectUrl = new URL(`/${locale}/profile/events/${eventId}/manage`, request.url);
+    const redirectResponse = NextResponse.redirect(redirectUrl);
+    copyAllCookies(supabaseResponseAfterSessionUpdate, redirectResponse);
+    return redirectResponse;
+  }
+  
+  // Handle URLs like /ar/profile/events/123-456/submissions/abc-def that aren't review pages
+  const submissionDetailPattern = new RegExp(`^/(${routing.locales.join("|")})/profile/events/([^/]+)/submissions/([^/]+)$`);
+  const submissionDetailMatch = pathname.match(submissionDetailPattern);
+  if (submissionDetailMatch && !pathname.includes('/review-')) {
+    // Keep this URL as is, it will be handled by the page
+    return supabaseResponseAfterSessionUpdate;
+  }
+  
   if (AUTH_SYSTEM_PATHS.includes(pathWithoutLocale)) {
     return supabaseResponseAfterSessionUpdate;
   }
