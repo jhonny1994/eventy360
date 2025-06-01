@@ -1,0 +1,179 @@
+{
+  "tasks": [
+    {
+      "id": "46406704-bc3a-4b0d-be67-da4c3b3b5501",
+      "name": "Create Database Migration for Bookmarks RLS Policies",
+      "description": "Create a migration file to add Row Level Security (RLS) policies to the existing bookmarks table. This will ensure that only researchers with active subscriptions can create bookmarks, and users can only view and delete their own bookmarks.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-06-01T07:13:28.791Z",
+      "updatedAt": "2025-06-01T07:14:53.243Z",
+      "relatedFiles": [
+        {
+          "path": "supabase/migrations/20250509171204_create_researcher_topic_subscriptions.sql",
+          "type": "REFERENCE",
+          "description": "Reference for similar RLS policies implementation"
+        }
+      ],
+      "implementationGuide": "Create a new migration file in the supabase/migrations directory with the following policies:\n1. Enable RLS on the bookmarks table\n2. Policy for users to view their own bookmarks\n3. Policy for researchers to create bookmarks (with subscription check)\n4. Policy for users to delete their own bookmarks\n\nFollow the pattern in existing migration files like 20250509171204_create_researcher_topic_subscriptions.sql",
+      "verificationCriteria": "The migration file correctly defines all necessary RLS policies for the bookmarks table. The policies should enable researchers with active subscriptions to create and delete bookmarks, and limit users to only see their own bookmarks.",
+      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
+      "summary": "Successfully created a migration file that adds Row Level Security policies to the bookmarks table, following existing project patterns. The policies ensure that only researchers with active or trial subscriptions can create and update bookmarks, while all users can view and delete their own bookmarks.",
+      "completedAt": "2025-06-01T07:14:53.242Z"
+    },
+    {
+      "id": "431d04f4-4e63-4028-828b-a6519ddce68a",
+      "name": "Create Bookmark Server Actions",
+      "description": "Implement server actions for toggling bookmarks and retrieving bookmarked events. These actions will handle creating and removing bookmarks and include subscription checks.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "46406704-bc3a-4b0d-be67-da4c3b3b5501"
+        }
+      ],
+      "createdAt": "2025-06-01T07:13:28.791Z",
+      "updatedAt": "2025-06-01T07:18:51.909Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/submissions/actions.ts",
+          "type": "REFERENCE",
+          "description": "Reference for server action patterns"
+        },
+        {
+          "path": "src/app/[locale]/profile/bookmarks/actions.ts",
+          "type": "CREATE",
+          "description": "New server actions file for bookmarks functionality"
+        }
+      ],
+      "implementationGuide": "Create src/app/[locale]/profile/bookmarks/actions.ts with:\n1. toggleBookmark(eventId) function to add/remove a bookmark\n2. getBookmarkedEvents(locale) function to retrieve bookmarked events\n3. Subscription checks for researchers using existing patterns\n4. Proper error handling and response format\n\nFollow the pattern in src/app/[locale]/profile/submissions/actions.ts",
+      "verificationCriteria": "Server actions successfully handle bookmark operations with proper error handling, subscription checks, and security. The actions should integrate with the existing Supabase client and follow project patterns.",
+      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
+      "summary": "Successfully implemented three server actions for bookmarking functionality: toggleBookmark to add/remove bookmarks, isEventBookmarked to check bookmark status, and getBookmarkedEvents to retrieve all bookmarked events. The implementation includes proper error handling, authentication checks, and internationalization support.",
+      "completedAt": "2025-06-01T07:18:51.908Z"
+    },
+    {
+      "id": "e77ba0da-54a1-4537-ab83-9be205c1fc22",
+      "name": "Create BookmarkButton Component",
+      "description": "Create a reusable BookmarkButton component that can be used in event cards and event details pages to toggle bookmarks with visual feedback.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "431d04f4-4e63-4028-828b-a6519ddce68a"
+        }
+      ],
+      "createdAt": "2025-06-01T07:13:28.791Z",
+      "updatedAt": "2025-06-01T07:24:44.012Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/events/common/BookmarkButton.tsx",
+          "type": "CREATE",
+          "description": "New BookmarkButton component"
+        }
+      ],
+      "implementationGuide": "Create src/components/events/common/BookmarkButton.tsx:\n1. Implement states: bookmarked, unbookmarked, loading\n2. Call toggleBookmark action on click\n3. Show tooltip for different states\n4. Support RTL layout for Arabic\n5. Implement subscription check to disable for non-subscribers\n\nUse existing UI component patterns from Flowbite",
+      "verificationCriteria": "BookmarkButton component correctly shows different visual states, handles click events, and includes subscription checks. It should support RTL layout and include proper accessibility attributes.",
+      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
+      "summary": "Successfully implemented the BookmarkButton component with all required features: bookmark toggle functionality, loading/bookmarked/unbookmarked states, tooltip support, subscription check, and internationalization support. Added Arabic translations for the BookmarkButton component and navigation.",
+      "completedAt": "2025-06-01T07:24:44.011Z"
+    },
+    {
+      "id": "15df8428-995e-42ac-bad4-319527f65c3d",
+      "name": "Update EventCardGrid Component",
+      "description": "Integrate the BookmarkButton component into the EventCardGrid component to enable bookmarking functionality in event cards.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "e77ba0da-54a1-4537-ab83-9be205c1fc22"
+        }
+      ],
+      "createdAt": "2025-06-01T07:13:28.791Z",
+      "updatedAt": "2025-06-01T09:20:43.284Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/events/discovery/EventCardGrid.tsx",
+          "type": "TO_MODIFY",
+          "description": "Update to integrate BookmarkButton component"
+        }
+      ],
+      "implementationGuide": "Update src/components/events/discovery/EventCardGrid.tsx to:\n1. Import the BookmarkButton component\n2. Replace the disabled bookmark button with BookmarkButton\n3. Pass necessary props (eventId, locale)\n4. Handle isBookmarked state",
+      "verificationCriteria": "BookmarkButton is correctly integrated into the EventCardGrid component. Event cards in the discovery grid allow users to bookmark and unbookmark events.",
+      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
+      "summary": "Successfully integrated BookmarkButton into EventCardGrid component. Used useEffect to check bookmark status on mount, added state management for bookmarked status, removed the static bookmark button, and properly passed all necessary props to BookmarkButton including initialBookmarked state.",
+      "completedAt": "2025-06-01T09:20:43.283Z"
+    },
+    {
+      "id": "34806f4a-efde-4b91-bada-a574114cceb6",
+      "name": "Create Bookmarks Page",
+      "description": "Create a new page to display all bookmarked events for the logged-in researcher using the existing EventCardGrid component.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "431d04f4-4e63-4028-828b-a6519ddce68a"
+        },
+        {
+          "taskId": "15df8428-995e-42ac-bad4-319527f65c3d"
+        }
+      ],
+      "createdAt": "2025-06-01T07:13:28.791Z",
+      "updatedAt": "2025-06-01T09:23:32.330Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/bookmarks/page.tsx",
+          "type": "CREATE",
+          "description": "New bookmarks page"
+        }
+      ],
+      "implementationGuide": "Create src/app/[locale]/profile/bookmarks/page.tsx with:\n1. Use ProfilePageHeader for consistent UI\n2. Import getBookmarkedEvents from actions.ts\n3. Fetch bookmarked events with proper loading states\n4. Use EventCardGrid to display bookmarked events\n5. Add empty state for no bookmarks\n\nFollow the pattern in other profile pages",
+      "verificationCriteria": "Bookmarks page correctly displays all bookmarked events using the EventCardGrid component, with proper loading states and empty state handling.",
+      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
+      "summary": "Successfully created a Bookmarks page that displays bookmarked events using the EventCardGrid component. Added proper authentication checks, researcher role verification, and internationalization support. Used ProfilePageHeader and ProfileCard components for consistent UI. Added missing translations to support all necessary strings in the UI.",
+      "completedAt": "2025-06-01T09:23:32.329Z"
+    },
+    {
+      "id": "083da6d2-e3a8-447c-a309-a09fc332be43",
+      "name": "Update Profile Sidebar",
+      "description": "Add a new item to the profile sidebar navigation for accessing the bookmarks page. This should only be visible to researchers.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "34806f4a-efde-4b91-bada-a574114cceb6"
+        }
+      ],
+      "createdAt": "2025-06-01T07:13:28.791Z",
+      "updatedAt": "2025-06-01T09:25:15.610Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/ui/ProfileSidebar.tsx",
+          "type": "TO_MODIFY",
+          "description": "Update to add bookmarks sidebar item for researchers"
+        }
+      ],
+      "implementationGuide": "Update src/app/[locale]/profile/ui/ProfileSidebar.tsx to:\n1. Add a new navigationItem for bookmarks (only for researchers)\n2. Import and use the HiBookmark icon\n3. Add the new route to the bookmarks page\n\nFollow the pattern of other navigation items in the sidebar",
+      "verificationCriteria": "A new sidebar item for bookmarks is correctly added to the profile sidebar for researchers only. The item should navigate to the bookmarks page when clicked.",
+      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
+      "summary": "Successfully updated the ProfileSidebar component to add a new navigation item for bookmarks, which is only visible to researchers. Imported the HiBookmark icon from react-icons/hi and added a new bookmarks translation key to the TranslationStrings interface.",
+      "completedAt": "2025-06-01T09:25:15.609Z"
+    },
+    {
+      "id": "32f12010-2b6e-4ce2-9272-d9f6b5c78f00",
+      "name": "Add Internationalization Support",
+      "description": "Add translation keys for all new UI elements related to the bookmarks feature to support both Arabic and English languages.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-06-01T07:13:28.791Z",
+      "updatedAt": "2025-06-01T09:34:05.696Z",
+      "relatedFiles": [
+        {
+          "path": "src/i18n/locales/",
+          "type": "TO_MODIFY",
+          "description": "Update translation files"
+        }
+      ],
+      "implementationGuide": "Update necessary translation files to add keys for:\n1. Bookmarks sidebar menu item\n2. Bookmarks page headings and labels\n3. BookmarkButton tooltips and states\n4. Error messages for subscription-related restrictions\n\nEnsure proper RTL support for Arabic",
+      "verificationCriteria": "All new UI elements have proper translation keys for both Arabic and English languages. All text in the bookmarks feature is correctly internationalized.",
+      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
+      "summary": "Successfully added all required internationalization support for the bookmarks feature. Added translation keys for the sidebar navigation, enhanced the Bookmarks section with additional UI elements, and updated the EventDetails actions for consistency with the BookmarkButton component.",
+      "completedAt": "2025-06-01T09:34:05.695Z"
+    }
+  ]
+}

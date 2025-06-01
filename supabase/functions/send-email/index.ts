@@ -2,6 +2,13 @@
 /**
  * Edge Function for sending emails via Resend API
  * 
+ * [Notification System Cleanup Project]
+ * This file has been updated as part of the notification system cleanup project to:
+ * 1. Remove special URL handling logic that previously converted URLs into clickable links
+ * 2. Process all placeholders as plain text replacements only
+ * 3. Simplify the email template processing to avoid HTML manipulation
+ * 4. Support mustache-style placeholders ({{variable_name}}) used in the updated templates
+ * 
  * The @ts-nocheck directive is necessary for Supabase Edge Functions deployment
  * as they run in Deno's runtime where relative imports for types can be problematic.
  * The code uses type assertions to maintain type safety where possible.
@@ -237,19 +244,19 @@ async function processNotificationEmail(supabase: SupabaseClient, notificationId
     
     // 5. Process template with placeholders
     if (typedNotification.payload_data) {
-      // Fixed regex pattern - corrected escape sequence for square brackets
-      const placeholderPattern = /\[([A-Za-z0-9_.-]+)\]/g; 
+      // Regex pattern for mustache-style placeholders - {{variable_name}}
+      const placeholderPattern = /\{\{([A-Za-z0-9_.-]+)\}\}/g;
 
       // Process subject
       let match;
       while ((match = placeholderPattern.exec(subject)) !== null) {
         const placeholderKey = match[1];
-        const replacementValue = String(getNestedProperty(typedNotification.payload_data, placeholderKey) || `[${placeholderKey}]`);
-        // Fixed regex pattern in the replace method
-        subject = subject.replace(new RegExp(`\\[${placeholderKey}\\]`, 'g'), replacementValue);
+        const replacementValue = String(getNestedProperty(typedNotification.payload_data, placeholderKey) || `{{${placeholderKey}}}`);
+        // Replace the placeholder with value - escape all regex special characters
+        subject = subject.replace(new RegExp(`\\{\\{${placeholderKey}\\}\\}`, 'g'), replacementValue);
       }
       
-      // Process body
+      // Process body - handle mustache-style placeholders as plain text
       // Reset lastIndex for global regex
       placeholderPattern.lastIndex = 0; 
       let tempHtmlBody = "";
@@ -259,23 +266,10 @@ async function processNotificationEmail(supabase: SupabaseClient, notificationId
         tempHtmlBody += htmlBody.substring(lastIndex, match.index);
         const placeholderKey = match[1];
         const replacementValue = getNestedProperty(typedNotification.payload_data, placeholderKey);
-
-        if (typeof replacementValue === 'string' && (replacementValue.startsWith('http://') || replacementValue.startsWith('https://'))) {
-          // If the value is a URL, make it a clickable link
-          // The placeholder in the template itself should just be [placeholderKey]
-          // The HTML structure <a href="[placeholderKey]">Some text</a> should be in the template
-          // This logic ensures the placeholder is replaced correctly within an href or as text.
-          // For simple [placeholder_link] replacements that should become <a href="link_value">link_value</a>:
-          // This part needs careful template design. The current approach replaces [key] with value.
-          // If template is <a href="[signin_link]">Sign In</a>, it will correctly become <a href="ACTUAL_URL">Sign In</a>
-          // If template is just [signin_link], it will become ACTUAL_URL (plain text).
-          // To make a plain text URL clickable automatically if it's not already in an <a> tag is complex
-          // and error-prone. It's better to enforce that links in templates are explicitly <a> tags.
-          // The current replacement logic is fine if templates are designed correctly.
-          tempHtmlBody += String(replacementValue);
-        } else {
-          tempHtmlBody += String(replacementValue !== undefined ? replacementValue : `[${placeholderKey}]`);
-        }
+        
+        // Replace with plain text value - no special handling for URLs
+        tempHtmlBody += String(replacementValue !== undefined ? replacementValue : `{{${placeholderKey}}}`);
+        
         lastIndex = placeholderPattern.lastIndex;
       }
       tempHtmlBody += htmlBody.substring(lastIndex);

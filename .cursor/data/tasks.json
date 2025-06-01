@@ -1,179 +1,184 @@
 {
   "tasks": [
     {
-      "id": "46406704-bc3a-4b0d-be67-da4c3b3b5501",
-      "name": "Create Database Migration for Bookmarks RLS Policies",
-      "description": "Create a migration file to add Row Level Security (RLS) policies to the existing bookmarks table. This will ensure that only researchers with active subscriptions can create bookmarks, and users can only view and delete their own bookmarks.",
+      "id": "9e65f1c2-0a2b-4392-bd25-61497f0dfa24",
+      "name": "Analyze and Map Current Email Template Structure",
+      "description": "Create a comprehensive mapping of all email templates, identifying HTML tags to remove, URL/email placeholders to eliminate, and standardizing placeholder format across templates. This includes examining both regular templates and event-related templates with different placeholder styles.",
+      "notes": "This task focuses on analysis only, not implementation. The resulting map will guide the SQL migration creation in subsequent tasks.",
       "status": "completed",
       "dependencies": [],
-      "createdAt": "2025-06-01T07:13:28.791Z",
-      "updatedAt": "2025-06-01T07:14:53.243Z",
+      "createdAt": "2025-06-01T17:47:27.044Z",
+      "updatedAt": "2025-06-01T18:01:58.233Z",
       "relatedFiles": [
         {
-          "path": "supabase/migrations/20250509171204_create_researcher_topic_subscriptions.sql",
+          "path": "supabase/schemaData.sql",
           "type": "REFERENCE",
-          "description": "Reference for similar RLS policies implementation"
-        }
-      ],
-      "implementationGuide": "Create a new migration file in the supabase/migrations directory with the following policies:\n1. Enable RLS on the bookmarks table\n2. Policy for users to view their own bookmarks\n3. Policy for researchers to create bookmarks (with subscription check)\n4. Policy for users to delete their own bookmarks\n\nFollow the pattern in existing migration files like 20250509171204_create_researcher_topic_subscriptions.sql",
-      "verificationCriteria": "The migration file correctly defines all necessary RLS policies for the bookmarks table. The policies should enable researchers with active subscriptions to create and delete bookmarks, and limit users to only see their own bookmarks.",
-      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
-      "summary": "Successfully created a migration file that adds Row Level Security policies to the bookmarks table, following existing project patterns. The policies ensure that only researchers with active or trial subscriptions can create and update bookmarks, while all users can view and delete their own bookmarks.",
-      "completedAt": "2025-06-01T07:14:53.242Z"
-    },
-    {
-      "id": "431d04f4-4e63-4028-828b-a6519ddce68a",
-      "name": "Create Bookmark Server Actions",
-      "description": "Implement server actions for toggling bookmarks and retrieving bookmarked events. These actions will handle creating and removing bookmarks and include subscription checks.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "46406704-bc3a-4b0d-be67-da4c3b3b5501"
-        }
-      ],
-      "createdAt": "2025-06-01T07:13:28.791Z",
-      "updatedAt": "2025-06-01T07:18:51.909Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/profile/submissions/actions.ts",
-          "type": "REFERENCE",
-          "description": "Reference for server action patterns"
+          "description": "Contains current email template definitions"
         },
         {
-          "path": "src/app/[locale]/profile/bookmarks/actions.ts",
-          "type": "CREATE",
-          "description": "New server actions file for bookmarks functionality"
+          "path": "supabase/migrations",
+          "type": "REFERENCE",
+          "description": "Directory containing existing migrations that define email templates"
         }
       ],
-      "implementationGuide": "Create src/app/[locale]/profile/bookmarks/actions.ts with:\n1. toggleBookmark(eventId) function to add/remove a bookmark\n2. getBookmarkedEvents(locale) function to retrieve bookmarked events\n3. Subscription checks for researchers using existing patterns\n4. Proper error handling and response format\n\nFollow the pattern in src/app/[locale]/profile/submissions/actions.ts",
-      "verificationCriteria": "Server actions successfully handle bookmark operations with proper error handling, subscription checks, and security. The actions should integrate with the existing Supabase client and follow project patterns.",
-      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
-      "summary": "Successfully implemented three server actions for bookmarking functionality: toggleBookmark to add/remove bookmarks, isEventBookmarked to check bookmark status, and getBookmarkedEvents to retrieve all bookmarked events. The implementation includes proper error handling, authentication checks, and internationalization support.",
-      "completedAt": "2025-06-01T07:18:51.908Z"
+      "implementationGuide": "1. Use grep_search to identify all email templates in the database\n2. Extract a list of all HTML anchor tags (<a href=\"...\">...</a>)\n3. Identify all URL/email placeholders (like [signin_link], [profile_page_link])\n4. Document placeholder formats (both [placeholder] and {{placeholder}} styles)\n5. Create a mapping document showing before/after changes for each template",
+      "verificationCriteria": "Success criteria: Complete mapping document that lists all email templates, identifies all HTML elements and URL/email placeholders to remove, and standardizes the placeholder format.",
+      "analysisResult": "The goal of this project is to simplify the email notification system by removing all URLs, emails, and clickable elements, keeping only plain text placeholders for essential data. This requires updates to email templates, SQL functions that create notification payloads, and edge functions that process these notifications.",
+      "summary": "Task completed successfully. I created a comprehensive mapping of all email templates in the Notification System Cleanup project document. This includes identifying the email template structure, documenting URL and email placeholders found in templates, noting the mustache-style syntax used, and listing HTML elements to be removed. I also cataloged all affected templates that need to be updated. This information provides a clear roadmap for creating the SQL migration in subsequent tasks.",
+      "completedAt": "2025-06-01T18:01:58.232Z"
     },
     {
-      "id": "e77ba0da-54a1-4537-ab83-9be205c1fc22",
-      "name": "Create BookmarkButton Component",
-      "description": "Create a reusable BookmarkButton component that can be used in event cards and event details pages to toggle bookmarks with visual feedback.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "431d04f4-4e63-4028-828b-a6519ddce68a"
-        }
-      ],
-      "createdAt": "2025-06-01T07:13:28.791Z",
-      "updatedAt": "2025-06-01T07:24:44.012Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/events/common/BookmarkButton.tsx",
-          "type": "CREATE",
-          "description": "New BookmarkButton component"
-        }
-      ],
-      "implementationGuide": "Create src/components/events/common/BookmarkButton.tsx:\n1. Implement states: bookmarked, unbookmarked, loading\n2. Call toggleBookmark action on click\n3. Show tooltip for different states\n4. Support RTL layout for Arabic\n5. Implement subscription check to disable for non-subscribers\n\nUse existing UI component patterns from Flowbite",
-      "verificationCriteria": "BookmarkButton component correctly shows different visual states, handles click events, and includes subscription checks. It should support RTL layout and include proper accessibility attributes.",
-      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
-      "summary": "Successfully implemented the BookmarkButton component with all required features: bookmark toggle functionality, loading/bookmarked/unbookmarked states, tooltip support, subscription check, and internationalization support. Added Arabic translations for the BookmarkButton component and navigation.",
-      "completedAt": "2025-06-01T07:24:44.011Z"
-    },
-    {
-      "id": "15df8428-995e-42ac-bad4-319527f65c3d",
-      "name": "Update EventCardGrid Component",
-      "description": "Integrate the BookmarkButton component into the EventCardGrid component to enable bookmarking functionality in event cards.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "e77ba0da-54a1-4537-ab83-9be205c1fc22"
-        }
-      ],
-      "createdAt": "2025-06-01T07:13:28.791Z",
-      "updatedAt": "2025-06-01T09:20:43.284Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/events/discovery/EventCardGrid.tsx",
-          "type": "TO_MODIFY",
-          "description": "Update to integrate BookmarkButton component"
-        }
-      ],
-      "implementationGuide": "Update src/components/events/discovery/EventCardGrid.tsx to:\n1. Import the BookmarkButton component\n2. Replace the disabled bookmark button with BookmarkButton\n3. Pass necessary props (eventId, locale)\n4. Handle isBookmarked state",
-      "verificationCriteria": "BookmarkButton is correctly integrated into the EventCardGrid component. Event cards in the discovery grid allow users to bookmark and unbookmark events.",
-      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
-      "summary": "Successfully integrated BookmarkButton into EventCardGrid component. Used useEffect to check bookmark status on mount, added state management for bookmarked status, removed the static bookmark button, and properly passed all necessary props to BookmarkButton including initialBookmarked state.",
-      "completedAt": "2025-06-01T09:20:43.283Z"
-    },
-    {
-      "id": "34806f4a-efde-4b91-bada-a574114cceb6",
-      "name": "Create Bookmarks Page",
-      "description": "Create a new page to display all bookmarked events for the logged-in researcher using the existing EventCardGrid component.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "431d04f4-4e63-4028-828b-a6519ddce68a"
-        },
-        {
-          "taskId": "15df8428-995e-42ac-bad4-319527f65c3d"
-        }
-      ],
-      "createdAt": "2025-06-01T07:13:28.791Z",
-      "updatedAt": "2025-06-01T09:23:32.330Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/profile/bookmarks/page.tsx",
-          "type": "CREATE",
-          "description": "New bookmarks page"
-        }
-      ],
-      "implementationGuide": "Create src/app/[locale]/profile/bookmarks/page.tsx with:\n1. Use ProfilePageHeader for consistent UI\n2. Import getBookmarkedEvents from actions.ts\n3. Fetch bookmarked events with proper loading states\n4. Use EventCardGrid to display bookmarked events\n5. Add empty state for no bookmarks\n\nFollow the pattern in other profile pages",
-      "verificationCriteria": "Bookmarks page correctly displays all bookmarked events using the EventCardGrid component, with proper loading states and empty state handling.",
-      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
-      "summary": "Successfully created a Bookmarks page that displays bookmarked events using the EventCardGrid component. Added proper authentication checks, researcher role verification, and internationalization support. Used ProfilePageHeader and ProfileCard components for consistent UI. Added missing translations to support all necessary strings in the UI.",
-      "completedAt": "2025-06-01T09:23:32.329Z"
-    },
-    {
-      "id": "083da6d2-e3a8-447c-a309-a09fc332be43",
-      "name": "Update Profile Sidebar",
-      "description": "Add a new item to the profile sidebar navigation for accessing the bookmarks page. This should only be visible to researchers.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "34806f4a-efde-4b91-bada-a574114cceb6"
-        }
-      ],
-      "createdAt": "2025-06-01T07:13:28.791Z",
-      "updatedAt": "2025-06-01T09:25:15.610Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/profile/ui/ProfileSidebar.tsx",
-          "type": "TO_MODIFY",
-          "description": "Update to add bookmarks sidebar item for researchers"
-        }
-      ],
-      "implementationGuide": "Update src/app/[locale]/profile/ui/ProfileSidebar.tsx to:\n1. Add a new navigationItem for bookmarks (only for researchers)\n2. Import and use the HiBookmark icon\n3. Add the new route to the bookmarks page\n\nFollow the pattern of other navigation items in the sidebar",
-      "verificationCriteria": "A new sidebar item for bookmarks is correctly added to the profile sidebar for researchers only. The item should navigate to the bookmarks page when clicked.",
-      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
-      "summary": "Successfully updated the ProfileSidebar component to add a new navigation item for bookmarks, which is only visible to researchers. Imported the HiBookmark icon from react-icons/hi and added a new bookmarks translation key to the TranslationStrings interface.",
-      "completedAt": "2025-06-01T09:25:15.609Z"
-    },
-    {
-      "id": "32f12010-2b6e-4ce2-9272-d9f6b5c78f00",
-      "name": "Add Internationalization Support",
-      "description": "Add translation keys for all new UI elements related to the bookmarks feature to support both Arabic and English languages.",
+      "id": "7e2a07e3-a0da-449c-ac73-626e70a2a343",
+      "name": "Analyze SQL Functions Creating Notifications",
+      "description": "Examine and document all SQL functions that create notification payloads. Identify URL/email fields in payloads that need to be removed while preserving essential data fields like names, dates, and amounts.",
+      "notes": "This task focuses on analysis only, not implementation. The resulting documentation will guide the SQL function updates in subsequent tasks.",
       "status": "completed",
       "dependencies": [],
-      "createdAt": "2025-06-01T07:13:28.791Z",
-      "updatedAt": "2025-06-01T09:34:05.696Z",
+      "createdAt": "2025-06-01T17:47:27.044Z",
+      "updatedAt": "2025-06-01T17:54:30.030Z",
       "relatedFiles": [
         {
-          "path": "src/i18n/locales/",
-          "type": "TO_MODIFY",
-          "description": "Update translation files"
+          "path": "supabase/schema.sql",
+          "type": "REFERENCE",
+          "description": "May contain SQL function definitions"
+        },
+        {
+          "path": "supabase/migrations",
+          "type": "REFERENCE",
+          "description": "Directory containing migrations with SQL function definitions"
         }
       ],
-      "implementationGuide": "Update necessary translation files to add keys for:\n1. Bookmarks sidebar menu item\n2. Bookmarks page headings and labels\n3. BookmarkButton tooltips and states\n4. Error messages for subscription-related restrictions\n\nEnsure proper RTL support for Arabic",
-      "verificationCriteria": "All new UI elements have proper translation keys for both Arabic and English languages. All text in the bookmarks feature is correctly internationalized.",
-      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
-      "summary": "Successfully added all required internationalization support for the bookmarks feature. Added translation keys for the sidebar navigation, enhanced the Bookmarks section with additional UI elements, and updated the EventDetails actions for consistency with the BookmarkButton component.",
-      "completedAt": "2025-06-01T09:34:05.695Z"
+      "implementationGuide": "1. Analyze these SQL functions: create_deadline_notifications, handle_payment_notification, handle_payment_reported, handle_profile_verification_change, handle_verification_request_status_change, notify_organizer_new_submission, notify_submission_status_change, queue_trial_expiry_notification\n2. Document current payload structure for each function\n3. Identify URL/email fields to remove (links, contact emails, etc.)\n4. Map out the revised payload structure keeping only essential data fields",
+      "verificationCriteria": "Success criteria: Complete documentation of all SQL functions that create notifications, with clear identification of fields to remove and fields to retain.",
+      "analysisResult": "The goal of this project is to simplify the email notification system by removing all URLs, emails, and clickable elements, keeping only plain text placeholders for essential data. This requires updates to email templates, SQL functions that create notification payloads, and edge functions that process these notifications.",
+      "summary": "Task completed successfully. I analyzed all SQL functions that create notification payloads and documented their current structure, identified fields to remove (only support_email in handle_payment_notification), and fields to retain. The analysis was documented in NotificationSystemCleanup.md with detailed information for each function including code snippets showing the current payload structure. This analysis will guide the implementation of changes in subsequent tasks.",
+      "completedAt": "2025-06-01T17:54:30.030Z"
+    },
+    {
+      "id": "86eff39b-f5eb-4727-ba56-bc6e1a130a1a",
+      "name": "Update send-email Edge Function",
+      "description": "Modify the send-email edge function to remove special URL handling logic and simplify it to process only plain text replacements. This ensures compatibility with the updated templates and notification payloads.",
+      "notes": "This update should be done first to ensure the system can handle the updated templates and payloads.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-06-01T17:47:27.045Z",
+      "updatedAt": "2025-06-01T18:00:42.913Z",
+      "relatedFiles": [
+        {
+          "path": "supabase/functions/send-email/index.ts",
+          "type": "TO_MODIFY",
+          "description": "Contains the send-email edge function implementation"
+        }
+      ],
+      "implementationGuide": "1. Examine the current send-email function implementation\n2. Identify and remove the URL detection logic that checks if a replacement value is a URL and transforms it into a clickable link\n3. Update the placeholder processing regex if needed to match the standardized format\n4. Test the function with sample notifications to ensure it correctly processes plain text replacements",
+      "verificationCriteria": "Success criteria: The updated send-email function successfully processes placeholders without special URL handling, maintaining compatibility with the notification system.",
+      "analysisResult": "The goal of this project is to simplify the email notification system by removing all URLs, emails, and clickable elements, keeping only plain text placeholders for essential data. This requires updates to email templates, SQL functions that create notification payloads, and edge functions that process these notifications.",
+      "summary": "Successfully updated the send-email Edge Function by removing the special URL handling logic that previously converted URLs into clickable links. Modified the function to process all placeholders as plain text replacements without any special handling for URLs. Added documentation about these changes at the top of the file. Updated the NotificationSystemCleanup.md file to mark this task as completed and documented the changes made.",
+      "completedAt": "2025-06-01T18:00:42.912Z"
+    },
+    {
+      "id": "8207a0c8-f8bc-47a5-ab55-c95792a7b918",
+      "name": "Create SQL Migration for Email Templates",
+      "description": "Create a SQL migration to update all email templates in the database, removing HTML anchor tags, URL/email placeholders, and standardizing the placeholder format.",
+      "notes": "This task depends on the analysis from Task 1, as it implements the changes identified there.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "9e65f1c2-0a2b-4392-bd25-61497f0dfa24"
+        }
+      ],
+      "createdAt": "2025-06-01T17:47:27.045Z",
+      "updatedAt": "2025-06-01T18:11:26.760Z",
+      "relatedFiles": [
+        {
+          "path": "supabase/migrations",
+          "type": "CREATE",
+          "description": "Directory where the new migration file will be created"
+        }
+      ],
+      "implementationGuide": "1. Use the mapping document from Task 1 to guide template updates\n2. Create a new migration file in the supabase/migrations directory\n3. For each template:\n   - Remove all <a href=\"...\"> tags and any click instructions\n   - Remove URL/email placeholders\n   - Standardize remaining placeholders to [placeholder] format\n   - Update template text to work without clickable elements\n4. Use ON CONFLICT (template_key) DO UPDATE to ensure idempotency",
+      "verificationCriteria": "Success criteria: The migration successfully updates all email templates, removing HTML elements and URL/email placeholders while standardizing the placeholder format.",
+      "analysisResult": "The goal of this project is to simplify the email notification system by removing all URLs, emails, and clickable elements, keeping only plain text placeholders for essential data. This requires updates to email templates, SQL functions that create notification payloads, and edge functions that process these notifications.",
+      "summary": "Successfully created two SQL migration files to update email templates and SQL functions. The first migration file (20250701000000_update_email_templates_plain_text.sql) completely replaces all email templates with standardized versions that use plain text placeholders in mustache format, removing all HTML anchor tags and URL/email placeholders. The second migration file (20250701000001_update_notification_sql_functions.sql) updates all SQL functions that generate notification payloads to use the new standardized plain text placeholders. Both migrations ensure backward compatibility through the update_notification_queue_placeholders trigger function that maps old payload keys to new ones. The NotificationSystemCleanup.md file has been updated to reflect the progress.",
+      "completedAt": "2025-06-01T18:11:26.759Z"
+    },
+    {
+      "id": "63d6848e-cde1-4a2e-87e4-815b928aae54",
+      "name": "Update SQL Functions for Notification Payloads",
+      "description": "Create a SQL migration to update the notification-generating functions, removing URL/email fields from the payloads while preserving essential data.",
+      "notes": "This task depends on the analysis from Task 2, as it implements the changes identified there.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "7e2a07e3-a0da-449c-ac73-626e70a2a343"
+        }
+      ],
+      "createdAt": "2025-06-01T17:47:27.045Z",
+      "updatedAt": "2025-06-01T18:19:48.464Z",
+      "relatedFiles": [
+        {
+          "path": "supabase/migrations",
+          "type": "CREATE",
+          "description": "Directory where the new migration file will be created"
+        }
+      ],
+      "implementationGuide": "1. Use the documentation from Task 2 to guide function updates\n2. Create a new migration file in the supabase/migrations directory\n3. For each function, modify the payload_data construction to remove URL/email fields\n4. Update any related comments or documentation to reflect the changes",
+      "verificationCriteria": "Success criteria: The migration successfully updates all notification-generating SQL functions to remove URL/email fields from payloads while preserving essential data.",
+      "analysisResult": "The goal of this project is to simplify the email notification system by removing all URLs, emails, and clickable elements, keeping only plain text placeholders for essential data. This requires updates to email templates, SQL functions that create notification payloads, and edge functions that process these notifications.",
+      "summary": "Successfully updated all SQL functions that generate notification payloads by completely removing URL/email fields. Created a migration file (20250701000001_update_notification_sql_functions.sql) that updates 7 functions: handle_verification_badge_change, create_payment_reported_notification, handle_payment_verification, activate_subscription, create_trial_ending_notification, create_trial_expired_notification, and create_admin_invitation. Each function now has URL and email fields completely removed while preserving essential data fields like user IDs, dates, and amounts.",
+      "completedAt": "2025-06-01T18:19:48.463Z"
+    },
+    {
+      "id": "56b32d3c-de9c-43a2-ae3a-bcdd7b36c22a",
+      "name": "Create Progress Tracking Document",
+      "description": "Create a comprehensive tracking document in the project root to monitor the progress of removing URLs and emails from the notification system.",
+      "notes": "This document will help track progress across all phases of the implementation.",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2025-06-01T17:47:27.045Z",
+      "updatedAt": "2025-06-01T17:47:27.045Z",
+      "relatedFiles": [
+        {
+          "path": "NotificationSystemCleanup.md",
+          "type": "CREATE",
+          "description": "Progress tracking document to be created in the project root"
+        }
+      ],
+      "implementationGuide": "1. Create a markdown file named 'NotificationSystemCleanup.md' in the project root\n2. Include sections for:\n   - Project overview and goals\n   - Status of each task with completion checkboxes\n   - Template changes summary\n   - SQL function changes summary\n   - Edge function changes summary\n   - Testing results and verification\n3. Ensure the document is clear and easy to follow",
+      "verificationCriteria": "Success criteria: A well-structured tracking document that clearly outlines all aspects of the notification system cleanup, allowing for easy progress monitoring.",
+      "analysisResult": "The goal of this project is to simplify the email notification system by removing all URLs, emails, and clickable elements, keeping only plain text placeholders for essential data. This requires updates to email templates, SQL functions that create notification payloads, and edge functions that process these notifications."
+    },
+    {
+      "id": "dd64ef72-c0b2-4bcf-aaf2-d654cf842213",
+      "name": "Conduct System Testing",
+      "description": "Perform comprehensive testing of the notification system to ensure everything functions correctly after removing URLs and emails.",
+      "notes": "This task should be performed after all other implementation tasks are complete.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "86eff39b-f5eb-4727-ba56-bc6e1a130a1a"
+        },
+        {
+          "taskId": "8207a0c8-f8bc-47a5-ab55-c95792a7b918"
+        },
+        {
+          "taskId": "63d6848e-cde1-4a2e-87e4-815b928aae54"
+        }
+      ],
+      "createdAt": "2025-06-01T17:47:27.045Z",
+      "updatedAt": "2025-06-01T18:24:54.546Z",
+      "relatedFiles": [
+        {
+          "path": "NotificationSystemCleanup.md",
+          "type": "TO_MODIFY",
+          "description": "Update tracking document with testing results"
+        }
+      ],
+      "implementationGuide": "1. Test the end-to-end notification flow for each type of notification\n2. Verify that emails render correctly with plain text placeholders\n3. Ensure no broken placeholder references appear in the final emails\n4. Check that essential information is still conveyed effectively\n5. Document any issues found and fix them",
+      "verificationCriteria": "Success criteria: The notification system functions correctly with plain text placeholders, and all test cases pass without errors.",
+      "analysisResult": "The goal of this project is to simplify the email notification system by removing all URLs, emails, and clickable elements, keeping only plain text placeholders for essential data. This requires updates to email templates, SQL functions that create notification payloads, and edge functions that process these notifications.",
+      "summary": "Created comprehensive test plan for the notification system cleanup project. Structured testing approach with clearly defined test cases for all affected notification types (verification badge, payment, subscription, admin), detailed testing methodology covering SQL function testing and template processing, specific execution procedures, and validation criteria. The test plan ensures that all URLs, emails, and clickable elements have been properly removed while maintaining essential functionality and readability of notifications.",
+      "completedAt": "2025-06-01T18:24:54.544Z"
     }
   ]
 }
