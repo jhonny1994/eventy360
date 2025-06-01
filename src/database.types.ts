@@ -1208,6 +1208,10 @@ export type Database = {
       }
     }
     Functions: {
+      activate_subscription: {
+        Args: { subscription_id: string }
+        Returns: boolean
+      }
       billing_period_to_interval: {
         Args: { period: Database["public"]["Enums"]["billing_period_enum"] }
         Returns: unknown
@@ -1231,6 +1235,10 @@ export type Database = {
       complete_submission: {
         Args: { p_submission_id: string }
         Returns: boolean
+      }
+      create_admin_invitation: {
+        Args: { email: string; role_name?: string }
+        Returns: string
       }
       create_deadline_notifications: {
         Args: Record<PropertyKey, never>
@@ -1466,6 +1474,14 @@ export type Database = {
       gtrgm_out: {
         Args: { "": unknown }
         Returns: unknown
+      }
+      handle_submission_feedback: {
+        Args: {
+          submission_id: string
+          feedback_text: Json
+          decision_status: string
+        }
+        Returns: undefined
       }
       http: {
         Args: { request: Database["public"]["CompositeTypes"]["http_request"] }

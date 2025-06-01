@@ -8,6 +8,7 @@
  * 2. Process all placeholders as plain text replacements only
  * 3. Simplify the email template processing to avoid HTML manipulation
  * 4. Support mustache-style placeholders ({{variable_name}}) used in the updated templates
+ * 5. Add simplified support for conditional mustache blocks ({{#section}}...{{/section}})
  * 
  * The @ts-nocheck directive is necessary for Supabase Edge Functions deployment
  * as they run in Deno's runtime where relative imports for types can be problematic.
@@ -244,10 +245,35 @@ async function processNotificationEmail(supabase: SupabaseClient, notificationId
     
     // 5. Process template with placeholders
     if (typedNotification.payload_data) {
-      // Regex pattern for mustache-style placeholders - {{variable_name}}
+      // 5.1 First, process conditional blocks - {{#section}}...{{/section}}
+      const conditionalBlockPattern = /\{\{#([A-Za-z0-9_.-]+)\}\}([\s\S]*?)\{\{\/\1\}\}/g;
+      
+      // Process conditional blocks in the body
+      htmlBody = htmlBody.replace(conditionalBlockPattern, (match, sectionName, content) => {
+        // Check if the section value exists and is truthy
+        const sectionValue = getNestedProperty(typedNotification.payload_data, sectionName);
+        
+        // If the section value exists and is truthy, include the content, otherwise return empty string
+        if (sectionValue) {
+          // Recursively process any placeholders within the conditional block
+          let processedContent = content;
+          const nestedPlaceholderPattern = /\{\{([A-Za-z0-9_.-]+)\}\}/g;
+          
+          processedContent = processedContent.replace(nestedPlaceholderPattern, (match, placeholderKey) => {
+            const replacementValue = getNestedProperty(typedNotification.payload_data, placeholderKey);
+            return String(replacementValue !== undefined ? replacementValue : `{{${placeholderKey}}}`);
+          });
+          
+          return processedContent;
+        } else {
+          return '';
+        }
+      });
+
+      // 5.2 Now, process regular placeholders - {{variable_name}}
       const placeholderPattern = /\{\{([A-Za-z0-9_.-]+)\}\}/g;
 
-      // Process subject
+      // Process subject placeholders
       let match;
       while ((match = placeholderPattern.exec(subject)) !== null) {
         const placeholderKey = match[1];
@@ -256,7 +282,7 @@ async function processNotificationEmail(supabase: SupabaseClient, notificationId
         subject = subject.replace(new RegExp(`\\{\\{${placeholderKey}\\}\\}`, 'g'), replacementValue);
       }
       
-      // Process body - handle mustache-style placeholders as plain text
+      // Process body placeholders
       // Reset lastIndex for global regex
       placeholderPattern.lastIndex = 0; 
       let tempHtmlBody = "";

@@ -292,6 +292,67 @@ CREATE TYPE "public"."verification_request_status" AS ENUM (
 ALTER TYPE "public"."verification_request_status" OWNER TO "postgres";
 
 
+CREATE OR REPLACE FUNCTION "public"."activate_subscription"("subscription_id" "uuid") RETURNS boolean
+    LANGUAGE "plpgsql"
+    AS $$
+DECLARE
+  sub_rec RECORD;
+  user_id UUID;
+BEGIN
+  -- Get subscription details
+  SELECT 
+    s.id,
+    s.user_id,
+    s.start_date,
+    s.end_date,
+    t.name AS tier_name
+  INTO sub_rec
+  FROM subscriptions s
+  JOIN subscription_tiers t ON s.tier_id = t.id
+  WHERE s.id = subscription_id;
+  
+  IF NOT FOUND THEN
+    RETURN FALSE;
+  END IF;
+  
+  user_id := sub_rec.user_id;
+  
+  -- Mark as active
+  UPDATE subscriptions
+  SET is_active = true
+  WHERE id = subscription_id;
+  
+  -- Queue notification
+  INSERT INTO notification_queue (
+    template_key,
+    recipient_profile_id,
+    status,
+    attempts,
+    payload_data,
+    notification_type
+  ) VALUES (
+    'subscription_activated',
+    user_id,
+    'pending',
+    0,
+    jsonb_build_object(
+      'subscription_id', subscription_id,
+      'package_type', sub_rec.tier_name,
+      'start_date', to_char(sub_rec.start_date, 'YYYY-MM-DD'),
+      'end_date', to_char(sub_rec.end_date, 'YYYY-MM-DD')
+      -- Removed Subscription Management Page Link field completely
+    ),
+    'immediate'
+  );
+  
+  RETURN TRUE;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."activate_subscription"("subscription_id" "uuid") OWNER TO "postgres";
+
+
 CREATE OR REPLACE FUNCTION "public"."billing_period_to_interval"("period" "public"."billing_period_enum") RETURNS interval
     LANGUAGE "plpgsql" IMMUTABLE
     AS $$
@@ -723,6 +784,48 @@ COMMENT ON FUNCTION "public"."complete_submission"("p_submission_id" "uuid") IS 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."create_admin_invitation"("email" "text", "role_name" "text" DEFAULT 'admin'::"text") RETURNS "uuid"
+    LANGUAGE "plpgsql"
+    AS $$
+DECLARE
+  invitation_id UUID;
+  validity_hours INTEGER := 48;
+BEGIN
+  -- Create invitation record
+  INSERT INTO admin_invitations (email, role, expires_at)
+  VALUES (email, role_name, NOW() + (validity_hours * INTERVAL '1 hour'))
+  RETURNING id INTO invitation_id;
+  
+  -- Create notification
+  INSERT INTO notification_queue (
+    template_key,
+    recipient_email,
+    status,
+    attempts,
+    payload_data,
+    notification_type
+  ) VALUES (
+    'admin_invitation',
+    email,
+    'pending',
+    0,
+    jsonb_build_object(
+      'invitation_id', invitation_id,
+      'validity_period', validity_hours || ' hours',
+      'role', role_name
+      -- Removed signin_link and platform_management_email fields completely
+    ),
+    'immediate'
+  );
+  
+  RETURN invitation_id;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."create_admin_invitation"("email" "text", "role_name" "text") OWNER TO "postgres";
+
+
 CREATE OR REPLACE FUNCTION "public"."create_deadline_notifications"() RETURNS "void"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
@@ -811,6 +914,103 @@ $$;
 
 
 ALTER FUNCTION "public"."create_deadline_notifications"() OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."create_payment_reported_notification"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    AS $$
+BEGIN
+  -- Create notification for newly reported payment
+  INSERT INTO notification_queue (
+    template_key,
+    recipient_profile_id,
+    status,
+    attempts,
+    payload_data,
+    notification_type
+  ) VALUES (
+    'payment_received_pending_verification',
+    NEW.user_id,
+    'pending',
+    0,
+    jsonb_build_object(
+      'payment_id', NEW.id,
+      'reference_number', COALESCE(NEW.reference_number, NEW.id),
+      'amount', NEW.amount || ' DZD',
+      'date', to_char(NEW.reported_at, 'YYYY-MM-DD')
+      -- Removed Finance Department Email field completely
+    ),
+    'immediate'
+  );
+  
+  RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."create_payment_reported_notification"() OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."create_trial_ending_notification"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    AS $$
+BEGIN
+  -- Create notification for trial ending soon
+  INSERT INTO notification_queue (
+    template_key,
+    recipient_profile_id,
+    status,
+    attempts,
+    payload_data
+  ) VALUES (
+    'trial_ending_soon',
+    NEW.user_id,
+    'pending',
+    0,
+    jsonb_build_object(
+      'subscription_id', NEW.id,
+      'expiry_date', to_char(NEW.end_date, 'YYYY-MM-DD')
+      -- Removed Upgrade/Payment Page Link and Support Email fields completely
+    )
+  );
+  
+  RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."create_trial_ending_notification"() OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."create_trial_expired_notification"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    AS $$
+BEGIN
+  -- Create notification for trial expiry
+  INSERT INTO notification_queue (
+    template_key,
+    recipient_profile_id,
+    status,
+    attempts,
+    payload_data
+  ) VALUES (
+    'trial_expired',
+    NEW.user_id,
+    'pending',
+    0,
+    jsonb_build_object(
+      'subscription_id', NEW.id,
+      'expiry_date', to_char(NEW.end_date, 'YYYY-MM-DD')
+      -- Removed Upgrade/Payment Page Link and Support Email fields completely
+    )
+  );
+  
+  RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."create_trial_expired_notification"() OWNER TO "postgres";
 
 
 CREATE OR REPLACE FUNCTION "public"."discover_events"("search_query" "text" DEFAULT NULL::"text", "topic_ids" "uuid"[] DEFAULT NULL::"uuid"[], "wilaya_id_param" integer DEFAULT NULL::integer, "daira_id_param" integer DEFAULT NULL::integer, "start_date" timestamp with time zone DEFAULT NULL::timestamp with time zone, "end_date" timestamp with time zone DEFAULT NULL::timestamp with time zone, "event_status_filter" "public"."event_status_enum"[] DEFAULT NULL::"public"."event_status_enum"[], "event_format_filter" "public"."event_format_enum"[] DEFAULT NULL::"public"."event_format_enum"[], "p_organizer_id" "uuid" DEFAULT NULL::"uuid", "limit_count" integer DEFAULT 20, "offset_count" integer DEFAULT 0) RETURNS TABLE("id" "uuid", "event_name" "text", "event_subtitle" "text", "event_date" timestamp with time zone, "event_end_date" timestamp with time zone, "wilaya_name" "text", "daira_name" "text", "organizer_name" "text", "topics" "text"[], "status" "public"."event_status_enum", "format" "public"."event_format_enum", "logo_url" "text", "abstract_submission_deadline" timestamp with time zone, "rank" real, "total_records" bigint)
@@ -1885,100 +2085,86 @@ ALTER FUNCTION "public"."handle_payment_reported"() OWNER TO "postgres";
 
 
 CREATE OR REPLACE FUNCTION "public"."handle_payment_verification"() RETURNS "trigger"
-    LANGUAGE "plpgsql" SECURITY DEFINER
+    LANGUAGE "plpgsql"
     AS $$
 DECLARE
-  v_subscription_id UUID;
-  v_user_current_subscription RECORD;
-  v_new_end_date TIMESTAMPTZ;
-  v_calculated_interval INTERVAL;
-  v_user_type public.user_type_enum;
-  v_new_tier public.subscription_tier_enum;
+  subscription_rec RECORD;
 BEGIN
-  IF TG_OP = 'UPDATE' AND OLD.status IS DISTINCT FROM 'verified' AND NEW.status = 'verified' THEN
-    RAISE NOTICE 'Payment verified for user %: Processing subscription update', NEW.user_id;
+  -- Proceed if status changed
+  IF OLD.status != NEW.status THEN
+    -- For verified payments - queue notification email
+    IF NEW.status = 'verified' THEN
+      -- Try to get subscription details from the database
+      BEGIN
+        SELECT 
+          tier.name AS subscription_tier_name,
+          sub.start_date,
+          sub.end_date
+        INTO subscription_rec
+        FROM subscriptions sub
+        JOIN subscription_tiers tier ON sub.tier_id = tier.id
+        WHERE sub.user_id = NEW.user_id
+        ORDER BY sub.created_at DESC
+        LIMIT 1;
+      EXCEPTION WHEN OTHERS THEN
+        -- If not found, use default values
+        subscription_rec := ROW('Standard', CURRENT_DATE, (CURRENT_DATE + INTERVAL '1 year')::date);
+      END;
     
-    -- Get the user type to determine subscription tier
-    SELECT P.user_type INTO v_user_type FROM public.profiles P WHERE P.id = NEW.user_id;
-
-    IF v_user_type IS NULL THEN
-      RAISE WARNING 'No profile found for user_id: %', NEW.user_id;
-      RETURN NEW;
+      -- Queue the payment verified notification
+      INSERT INTO notification_queue (
+        template_key,
+        recipient_profile_id,
+        status,
+        attempts,
+        payload_data,
+        notification_type
+      ) VALUES (
+        'payment_verified_notification',
+        NEW.user_id,
+        'pending',
+        0,
+        jsonb_build_object(
+          'payment_id', NEW.id,
+          'reference_number', COALESCE(NEW.reference_number, NEW.id),
+          'amount', NEW.amount,
+          'payment_method', NEW.payment_method_reported,
+          'billing_period', NEW.billing_period,
+          'reported_date', to_char(NEW.reported_at, 'YYYY-MM-DD'),
+          'verified_date', to_char(NEW.verified_at, 'YYYY-MM-DD'),
+          'subscription_tier', subscription_rec.subscription_tier_name,
+          'start_date', to_char(subscription_rec.start_date, 'YYYY-MM-DD'),
+          'end_date', to_char(subscription_rec.end_date, 'YYYY-MM-DD')
+        ),
+        'immediate'
+      );
+    ELSIF NEW.status = 'rejected' THEN
+      -- Queue the payment rejected notification
+      INSERT INTO notification_queue (
+        template_key,
+        recipient_profile_id,
+        status,
+        attempts,
+        payload_data,
+        notification_type
+      ) VALUES (
+        'payment_rejected_notification',
+        NEW.user_id,
+        'pending',
+        0,
+        jsonb_build_object(
+          'payment_id', NEW.id,
+          'reference_number', COALESCE(NEW.reference_number, NEW.id),
+          'amount', NEW.amount,
+          'reported_date', to_char(NEW.reported_at, 'YYYY-MM-DD'),
+          'rejection_reason', COALESCE(NEW.rejection_reason, 'The payment could not be verified.')
+          -- Removed support_email field completely
+        ),
+        'immediate'
+      );
     END IF;
-
-    -- Set the appropriate tier based on user type
-    IF v_user_type = 'researcher' THEN
-      v_new_tier := 'paid_researcher';
-    ELSIF v_user_type = 'organizer' THEN
-      v_new_tier := 'paid_organizer';
-    ELSE
-      v_new_tier := 'free';
-    END IF;
-    
-    -- Calculate subscription period
-    v_calculated_interval := billing_period_to_interval(NEW.billing_period);
-    RAISE NOTICE 'Calculated interval for % is %', NEW.billing_period, v_calculated_interval;
-
-    -- Get current subscription if exists
-    SELECT * INTO v_user_current_subscription
-    FROM public.subscriptions
-    WHERE user_id = NEW.user_id;
-
-    -- Handle subscription creation or update
-    IF v_user_current_subscription IS NULL THEN
-      -- No existing subscription, create new one
-      v_new_end_date := COALESCE(NEW.verified_at, timezone('utc'::text, now())) + v_calculated_interval;
-      INSERT INTO public.subscriptions (user_id, tier, status, start_date, end_date, trial_ends_at)
-      VALUES (NEW.user_id, v_new_tier, 'active', COALESCE(NEW.verified_at, timezone('utc'::text, now())), v_new_end_date, NULL)
-      RETURNING id INTO v_subscription_id;
-      
-      RAISE NOTICE 'Created new subscription % for user %', v_subscription_id, NEW.user_id;
-    ELSE
-      -- Existing subscription found
-      v_subscription_id := v_user_current_subscription.id;
-      RAISE NOTICE 'Found existing subscription % for user % with status %', 
-        v_subscription_id, NEW.user_id, v_user_current_subscription.status;
-      
-      IF v_user_current_subscription.status = 'trial' OR v_user_current_subscription.status = 'expired' THEN
-        -- Update from trial/expired to active
-        v_new_end_date := COALESCE(NEW.verified_at, timezone('utc'::text, now())) + v_calculated_interval;
-        UPDATE public.subscriptions
-        SET
-          tier = v_new_tier,
-          status = 'active',
-          start_date = COALESCE(NEW.verified_at, timezone('utc'::text, now())),
-          end_date = v_new_end_date,
-          trial_ends_at = NULL,
-          updated_at = timezone('utc'::text, now())
-        WHERE id = v_subscription_id;
-        
-        RAISE NOTICE 'Updated subscription from %: new end date is %', 
-          v_user_current_subscription.status, v_new_end_date;
-      ELSIF v_user_current_subscription.status = 'active' THEN
-        -- Extend active subscription
-        v_new_end_date := v_user_current_subscription.end_date + v_calculated_interval;
-        UPDATE public.subscriptions
-        SET
-          tier = v_new_tier,
-          end_date = v_new_end_date,
-          updated_at = timezone('utc'::text, now())
-        WHERE id = v_subscription_id;
-        
-        RAISE NOTICE 'Extended active subscription to %', v_new_end_date;
-      ELSE
-        RAISE WARNING 'Payment verified for user % with unhandled subscription status: %', 
-          NEW.user_id, v_user_current_subscription.status;
-        RETURN NEW;
-      END IF;
-    END IF;
-
-    -- Link payment to subscription
-    UPDATE public.payments
-    SET subscription_id = v_subscription_id
-    WHERE id = NEW.id;
-    
-    RAISE NOTICE 'Linked payment % to subscription %', NEW.id, v_subscription_id;
   END IF;
+  
   RETURN NEW;
 END;
 $$;
@@ -2061,6 +2247,134 @@ ALTER FUNCTION "public"."handle_profile_verification_change"() OWNER TO "postgre
 
 COMMENT ON FUNCTION "public"."handle_profile_verification_change"() IS 'Handles profile verification status changes and logs admin actions. Includes duplicate notification prevention logic to prevent multiple emails when verification requests are approved.';
 
+
+
+CREATE OR REPLACE FUNCTION "public"."handle_submission_feedback"("submission_id" "uuid", "feedback_text" "jsonb", "decision_status" "text") RETURNS "void"
+    LANGUAGE "plpgsql"
+    AS $$
+DECLARE
+  submission_record RECORD;
+  researcher_id uuid;
+  event_id uuid;
+  submission_title jsonb;
+  event_name jsonb;
+  template_key text;
+  payload jsonb;
+BEGIN
+  -- Get submission details
+  SELECT s.researcher_profile_id, s.event_id, s.title, e.name
+  INTO researcher_id, event_id, submission_title, event_name
+  FROM public.submissions s
+  JOIN public.events e ON s.event_id = e.id
+  WHERE s.id = submission_id;
+  
+  -- Determine template key based on decision status
+  CASE decision_status
+    WHEN 'accepted' THEN
+      template_key := 'abstract_accepted_notification';
+    WHEN 'rejected' THEN
+      template_key := 'abstract_rejected_notification';
+    WHEN 'revisions_requested' THEN
+      template_key := 'revision_requested_notification';
+    ELSE
+      RAISE EXCEPTION 'Invalid decision status: %', decision_status;
+  END CASE;
+  
+  -- Build the payload with base fields
+  payload := jsonb_build_object(
+    'event_id', event_id,
+    'submission_id', submission_id,
+    'event_name', event_name,
+    'submission_title', submission_title
+  );
+  
+  -- Add feedback to the payload only if it exists
+  IF feedback_text IS NOT NULL AND feedback_text != '{}'::jsonb THEN
+    payload := payload || jsonb_build_object('feedback', feedback_text);
+  END IF;
+  
+  -- Create notification with conditional feedback
+  -- The send-email Edge Function will conditionally include the feedback
+  -- section if it exists in the payload
+  INSERT INTO public.notification_queue (
+    template_key,
+    recipient_profile_id,
+    notification_type,
+    payload_data,
+    status
+  ) VALUES (
+    template_key,
+    researcher_id,
+    'immediate',
+    payload,
+    'pending'
+  );
+  
+  -- Update submission status
+  UPDATE public.submissions
+  SET status = decision_status, 
+      updated_at = NOW(),
+      feedback = feedback_text
+  WHERE id = submission_id;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."handle_submission_feedback"("submission_id" "uuid", "feedback_text" "jsonb", "decision_status" "text") OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."handle_verification_badge_change"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    AS $$
+BEGIN
+  -- If verification status changed
+  IF OLD.is_verified IS DISTINCT FROM NEW.is_verified THEN
+    IF NEW.is_verified = true THEN
+      -- User gained verification badge
+      INSERT INTO notification_queue (
+        template_key,
+        recipient_profile_id,
+        status,
+        attempts,
+        payload_data
+      ) VALUES (
+        'user_verified_badge_awarded',
+        NEW.id,
+        'pending',
+        0,
+        jsonb_build_object(
+          'user_id', NEW.id,
+          'verified_date', to_char(now(), 'YYYY-MM-DD')
+          -- Removed profile_page_link field completely
+        )
+      );
+    ELSE
+      -- User lost verification badge
+      INSERT INTO notification_queue (
+        template_key,
+        recipient_profile_id,
+        status,
+        attempts,
+        payload_data
+      ) VALUES (
+        'user_verified_badge_removed',
+        NEW.id,
+        'pending',
+        0,
+        jsonb_build_object(
+          'user_id', NEW.id
+          -- Removed Profile Page Link and Support Email fields completely
+        )
+      );
+    END IF;
+  END IF;
+  
+  RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."handle_verification_badge_change"() OWNER TO "postgres";
 
 
 CREATE OR REPLACE FUNCTION "public"."handle_verification_request_processing"() RETURNS "trigger"
@@ -4998,6 +5312,12 @@ GRANT ALL ON FUNCTION "public"."gtrgm_out"("public"."gtrgm") TO "service_role";
 
 
 
+GRANT ALL ON FUNCTION "public"."activate_subscription"("subscription_id" "uuid") TO "anon";
+GRANT ALL ON FUNCTION "public"."activate_subscription"("subscription_id" "uuid") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."activate_subscription"("subscription_id" "uuid") TO "service_role";
+
+
+
 GRANT ALL ON FUNCTION "public"."billing_period_to_interval"("period" "public"."billing_period_enum") TO "anon";
 GRANT ALL ON FUNCTION "public"."billing_period_to_interval"("period" "public"."billing_period_enum") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."billing_period_to_interval"("period" "public"."billing_period_enum") TO "service_role";
@@ -5047,9 +5367,33 @@ GRANT ALL ON FUNCTION "public"."complete_submission"("p_submission_id" "uuid") T
 
 
 
+GRANT ALL ON FUNCTION "public"."create_admin_invitation"("email" "text", "role_name" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."create_admin_invitation"("email" "text", "role_name" "text") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."create_admin_invitation"("email" "text", "role_name" "text") TO "service_role";
+
+
+
 GRANT ALL ON FUNCTION "public"."create_deadline_notifications"() TO "anon";
 GRANT ALL ON FUNCTION "public"."create_deadline_notifications"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."create_deadline_notifications"() TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."create_payment_reported_notification"() TO "anon";
+GRANT ALL ON FUNCTION "public"."create_payment_reported_notification"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."create_payment_reported_notification"() TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."create_trial_ending_notification"() TO "anon";
+GRANT ALL ON FUNCTION "public"."create_trial_ending_notification"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."create_trial_ending_notification"() TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."create_trial_expired_notification"() TO "anon";
+GRANT ALL ON FUNCTION "public"."create_trial_expired_notification"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."create_trial_expired_notification"() TO "service_role";
 
 
 
@@ -5261,6 +5605,18 @@ GRANT ALL ON FUNCTION "public"."handle_payment_verification"() TO "service_role"
 GRANT ALL ON FUNCTION "public"."handle_profile_verification_change"() TO "anon";
 GRANT ALL ON FUNCTION "public"."handle_profile_verification_change"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."handle_profile_verification_change"() TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."handle_submission_feedback"("submission_id" "uuid", "feedback_text" "jsonb", "decision_status" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."handle_submission_feedback"("submission_id" "uuid", "feedback_text" "jsonb", "decision_status" "text") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."handle_submission_feedback"("submission_id" "uuid", "feedback_text" "jsonb", "decision_status" "text") TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."handle_verification_badge_change"() TO "anon";
+GRANT ALL ON FUNCTION "public"."handle_verification_badge_change"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."handle_verification_badge_change"() TO "service_role";
 
 
 

@@ -17,6 +17,22 @@ We've added two new migration files to fix these issues:
 - `20250601120290_fix_duplicate_payment_verification_function.sql` - Renames the notification function to avoid conflicts
 - `20250602120100_restore_subscription_update_function.sql` - Restores the original subscription update function
 
+**Phase 4 Implementation In Progress:** The focus is on implementing a comprehensive notification system for the platform. We have recently completed a significant cleanup of the email notification system, standardizing all templates to use mustache-style placeholders and updating the Edge Function to process these placeholders correctly.
+
+We have recently completed significant improvements to the notification system:
+
+1. Standardized all email templates to use mustache-style placeholders (`{{placeholder}}`) instead of mixed formats
+2. Updated the `send-email` Edge Function to process mustache-style placeholders with the correct regex pattern
+3. Fixed format inconsistencies in templates like `verification_request_submitted`
+4. Implemented support for conditional placeholder syntax in academic event templates
+5. Ensured SQL functions generate payloads with keys that match the template placeholders
+6. Created comprehensive documentation in NotificationSystemCleanup.md
+
+We've added three new migration files to implement these changes:
+- `20250701000000_update_email_templates_plain_text.sql` - Standardizes all email templates to use mustache-style placeholders
+- `20250701000001_update_notification_sql_functions.sql` - Updates SQL functions to align with the standardized templates
+- `20250710000000_update_email_conditional_placeholders.sql` - Documents the implementation of conditional Mustache placeholder support
+
 ## ✅ Recently Completed Features
 
 ### Event & Submission System - COMPLETE
@@ -65,6 +81,24 @@ We've added two new migration files to fix these issues:
 - Payment verification interface with manual payment recording
 - Payment history display with action logging
 
+### Notification System Cleanup - COMPLETE
+- **Email Template Standardization:** Converted all templates to use consistent mustache-style placeholders (`{{placeholder}}`)
+  - Fixed format inconsistencies in older templates like `verification_request_submitted`
+  - Documented conditional placeholder syntax in academic event templates
+  - Made some templates intentionally static (no dynamic placeholders)
+- **Edge Function Update:** Updated `send-email` Edge Function to process mustache-style placeholders
+  - Implemented correct regex pattern: `/\{\{([A-Za-z0-9_.-]+)\}\}/g`
+  - Added support for conditional blocks with pattern: `/\{\{#([A-Za-z0-9_.-]+)\}\}([\s\S]*?)\{\{\/\1\}\}/g`
+  - Improved error handling and logging
+- **SQL Function Alignment:** Updated SQL functions to generate payloads with keys matching template placeholders
+  - Ensured snake_case consistency between payload keys and template placeholders
+  - Removed obsolete URL/email fields from payloads
+  - Added example implementation of conditional feedback in `handle_submission_feedback` function
+- **Documentation:** Created comprehensive documentation in NotificationSystemCleanup.md
+  - Documented conditional mustache placeholders implementation
+  - Provided examples for using conditional sections in templates
+  - Outlined implementation progress
+
 ## 🚀 Current Implementation Focus
 
 ### Notification System for Topic-Based Events (Phase 4)
@@ -77,7 +111,9 @@ We've added two new migration files to fix these issues:
 ### Ready Components
 - **Full User Journey:** Registration → Login → Email confirmation → Profile completion → Verification → Subscription Management
 - **Admin Interface:** Authentication, dashboard layout, verification management, payment management
-- **Email Notifications:** Framework for verification status changes and payment events
+- **Email Notifications:** Standardized system with mustache-style placeholders for all notification types
+  - Support for conditional blocks in templates using `{{#section}}...{{/section}}` syntax
+  - Nested property access for multi-language content
 - **Responsive UI:** Mobile-friendly components with pagination and filtering
 - **Internationalization:** Complete Arabic translations for all implemented features
 - **Subscription System:** Full subscription management with client and server-side protection
@@ -91,11 +127,12 @@ We've added two new migration files to fix these issues:
 - Missing notification for new events in subscribed topics
 
 ### Recently Fixed Issues
-1. Fixed UI inconsistencies in review pages by standardizing all pages with ProfilePageHeader
-2. Added missing review-revision page to complete the submission lifecycle
-3. Fixed lint errors across multiple components
-4. Removed unused statistics section from event details header
-5. Improved submission details page with integrated file downloads in timeline
+1. Standardized all email templates to use mustache-style placeholders
+2. Updated Edge Function to process mustache-style placeholders correctly
+3. Fixed format inconsistencies in older templates
+4. Updated SQL functions to align with standardized templates
+5. Created comprehensive documentation of the notification system
+6. Implemented support for conditional mustache blocks in the send-email Edge Function
 
 ## Implementation Priorities
 1. **Notification System for Topic-Based Events** (Phase 4)
@@ -110,7 +147,7 @@ We've added two new migration files to fix these issues:
 ## Next Steps
 
 1. Implement notification system for new events in subscribed topics
-   - Create email template for "new_event_in_subscribed_topic"
+   - Create email template for "new_event_in_subscribed_topic" using the standardized mustache format
    - Develop database trigger for notifying topic subscribers on event creation
    - Update UI to show notifications for new events in subscribed topics
 2. Begin implementing remaining Phase 4 features (comprehensive notification system)
