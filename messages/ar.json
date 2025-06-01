@@ -46,7 +46,30 @@
     "subscriptions": "الاشتراكات والمدفوعات",
     "security": "إعدادات الأمان",
     "topics": "المواضيع",
-    "submissions": "المساهمات العلمية"
+    "submissions": "المساهمات العلمية",
+    "bookmarks": "الفعاليات المحفوظة"
+  },
+  "Bookmarks": {
+    "title": "الفعاليات المحفوظة",
+    "emptyState": "لا توجد لديك فعاليات محفوظة بعد",
+    "emptyStateDescription": "يمكنك حفظ الفعاليات التي تهمك للرجوع إليها لاحقاً",
+    "addBookmark": "حفظ الفعالية",
+    "removeBookmark": "إزالة من المحفوظات",
+    "addBookmarkTooltip": "إضافة إلى المحفوظات",
+    "removeBookmarkTooltip": "إزالة من المحفوظات",
+    "bookmarkAdded": "تمت إضافة الفعالية إلى المحفوظات",
+    "bookmarkRemoved": "تمت إزالة الفعالية من المحفوظات",
+    "errorBookmarking": "حدث خطأ أثناء محاولة حفظ الفعالية",
+    "subscriptionRequired": "يتطلب اشتراكاً فعالاً",
+    "bookmarkedCount": "الفعاليات المحفوظة: {count}",
+    "notAuthenticated": "يجب تسجيل الدخول لاستخدام هذه الميزة",
+    "fetchError": "حدث خطأ أثناء جلب المعلومات",
+    "addError": "حدث خطأ أثناء حفظ الفعالية",
+    "removeError": "حدث خطأ أثناء إزالة الفعالية من المحفوظات",
+    "addSuccess": "تمت إضافة الفعالية إلى المحفوظات",
+    "removeSuccess": "تمت إزالة الفعالية من المحفوظات",
+    "unexpectedError": "حدث خطأ غير متوقع",
+    "notAuthorized": "غير مصرح لك باستخدام هذه الميزة"
   },
   "Events": {
     "Creation": {

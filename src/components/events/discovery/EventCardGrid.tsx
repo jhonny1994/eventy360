@@ -1,11 +1,14 @@
 'use client';
 
 import { Card, Badge, Button } from 'flowbite-react';
-import { HiCalendar, HiLocationMarker, HiBookmark, HiExternalLink, HiClock } from 'react-icons/hi';
+import { HiCalendar, HiLocationMarker, HiExternalLink, HiClock } from 'react-icons/hi';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Database } from '@/database.types';
+import { BookmarkButton } from '@/components/ui/BookmarkButton';
+import { useEffect, useState } from 'react';
+import { isEventBookmarked } from '@/app/[locale]/profile/bookmarks/actions';
 
 type Event = Database['public']['Functions']['discover_events']['Returns'][0];
 
@@ -28,6 +31,24 @@ function EventCard({ event, locale }: EventCardProps) {
   const isRtl = locale === 'ar';
   const t = useTranslations('Events.card');
   const tEnums = useTranslations('Enums');
+  const [bookmarked, setBookmarked] = useState(false);
+  const [checkingBookmarkStatus, setCheckingBookmarkStatus] = useState(true);
+
+  // Check if the event is bookmarked on component mount
+  useEffect(() => {
+    async function checkBookmarkStatus() {
+      try {
+        const isBookmarked = await isEventBookmarked(event.id);
+        setBookmarked(isBookmarked);
+      } catch (error) {
+        console.error('Error checking bookmark status:', error);
+      } finally {
+        setCheckingBookmarkStatus(false);
+      }
+    }
+    
+    checkBookmarkStatus();
+  }, [event.id]);
 
   // Format dates for display
   const formatDate = (dateString: string) => {
@@ -166,14 +187,14 @@ function EventCard({ event, locale }: EventCardProps) {
             </Button>
           </Link>
         </div>
-        <Button 
-          size="sm" 
+        <BookmarkButton 
+          eventId={event.id}
+          initialBookmarked={bookmarked}
+          size="sm"
           color="light"
-          disabled // Keep disabled as per original, or implement bookmarking
-          title={t('bookmarkTooltip')}
-        >
-          <HiBookmark className="h-4 w-4" />
-        </Button>
+          iconOnly
+          disabled={checkingBookmarkStatus}
+        />
       </div>
     </Card>
   );
@@ -231,15 +252,11 @@ export default function EventCardGrid({
 
   return (
     <div 
-      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6" /* Adjusted grid for wider cards */
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6"
       dir={isRtl ? 'rtl' : 'ltr'}
     >
       {events.map((event) => (
-        <EventCard 
-          key={event.id} 
-          event={event} 
-          locale={locale}
-        />
+        <EventCard key={`${event.id}-${new Date().getTime()}`} event={event} locale={locale} />
       ))}
     </div>
   );

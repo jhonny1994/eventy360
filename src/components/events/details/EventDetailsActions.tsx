@@ -1,14 +1,79 @@
-import React from "react";
+'use client';
+
+import React, { useState, useEffect } from "react";
 import {
   FileText,
   Calendar,
   Share2,
-  BookmarkPlus,
   ExternalLink,
+  BookmarkPlus,
+  BookmarkCheck,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Button } from "flowbite-react";
+import { isEventBookmarked, toggleBookmark } from '@/app/[locale]/profile/bookmarks/actions';
+
+// BookmarkButtonWrapper component to handle bookmarking with custom UI
+function BookmarkButtonWrapper({
+  eventId, 
+  text
+}: {
+  eventId: string;
+  text: string;
+}) {
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Check bookmark status on mount
+  useEffect(() => {
+    async function checkBookmarkStatus() {
+      try {
+        const status = await isEventBookmarked(eventId);
+        setIsBookmarked(status);
+      } catch (error) {
+        console.error('Error checking bookmark status:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    
+    checkBookmarkStatus();
+  }, [eventId]);
+
+  const handleBookmark = async () => {
+    setIsLoading(true);
+    try {
+      const result = await toggleBookmark(eventId);
+      if (result.success) {
+        setIsBookmarked(result.isBookmarked);
+      }
+    } catch (error) {
+      console.error('Error toggling bookmark:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Button 
+      color="light" 
+      className="w-full"
+      onClick={handleBookmark}
+      disabled={isLoading}
+    >
+      {isLoading ? (
+        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+      ) : isBookmarked ? (
+        <BookmarkCheck className="w-5 h-5 mr-2" />
+      ) : (
+        <BookmarkPlus className="w-5 h-5 mr-2" />
+      )}
+      {text}
+    </Button>
+  );
+}
 
 interface EventDetailsActionsProps {
   event: {
@@ -107,13 +172,10 @@ export function EventDetailsActions({
         
         <div className="space-y-4">
           {/* Bookmark Event */}
-          <Button 
-            color="light" 
-            className="w-full"
-          >
-            <BookmarkPlus className="w-5 h-5 mr-2" />
-            {t("actions.bookmarkEvent")}
-          </Button>
+          <BookmarkButtonWrapper
+            eventId={event.id}
+            text={t("actions.bookmarkEvent")}
+          />
 
           {/* Submit Paper/Proposal - Only show if user hasn't submitted yet */}
           {canSubmit && !hasSubmitted && (
@@ -163,13 +225,10 @@ export function EventDetailsActions({
         )}
 
         {/* Save Event */}
-        <Button 
-          color="light" 
-          className="w-full"
-        >
-          <BookmarkPlus className="w-5 h-5 mr-2" />
-          {t("actions.saveEvent")}
-        </Button>
+        <BookmarkButtonWrapper
+          eventId={event.id}
+          text={t("actions.saveEvent")}
+        />
 
         {/* Share Event */}
         <Button 

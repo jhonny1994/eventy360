@@ -1,443 +1,179 @@
 {
   "tasks": [
     {
-      "id": "64352f50-300a-4250-88ff-cdee34f6ea7b",
-      "name": "Phase 1: Complete Organizer Review Interface",
-      "description": "This phase focuses on implementing the critical missing components for organizers to review and manage submissions. This is the highest priority gap in the current system as it blocks the complete submission workflow.",
-      "notes": "This phase builds on the existing event management dashboard but adds specialized submission review capabilities.",
+      "id": "46406704-bc3a-4b0d-be67-da4c3b3b5501",
+      "name": "Create Database Migration for Bookmarks RLS Policies",
+      "description": "Create a migration file to add Row Level Security (RLS) policies to the existing bookmarks table. This will ensure that only researchers with active subscriptions can create bookmarks, and users can only view and delete their own bookmarks.",
       "status": "completed",
       "dependencies": [],
-      "createdAt": "2025-05-28T17:37:39.295Z",
-      "updatedAt": "2025-05-31T09:19:33.659Z",
+      "createdAt": "2025-06-01T07:13:28.791Z",
+      "updatedAt": "2025-06-01T07:14:53.243Z",
       "relatedFiles": [
         {
-          "path": "src/app/[locale]/profile/events/[id]/manage/page.tsx",
+          "path": "supabase/migrations/20250509171204_create_researcher_topic_subscriptions.sql",
           "type": "REFERENCE",
-          "description": "Existing event management page to understand patterns and extend",
-          "lineStart": 1,
-          "lineEnd": 241
-        },
-        {
-          "path": "src/app/[locale]/profile/submissions/actions.ts",
-          "type": "REFERENCE",
-          "description": "Existing submission actions to leverage",
-          "lineStart": 1,
-          "lineEnd": 276
+          "description": "Reference for similar RLS policies implementation"
         }
       ],
-      "implementationGuide": "Follow existing UI patterns with ProfileCard, form components, and action buttons. Ensure all components support RTL layouts for Arabic and maintain the existing security model checking subscriptions and user roles.",
-      "verificationCriteria": "The organizer review interface should allow viewing all submissions for an event, filtering by status, viewing submission details, and providing feedback with status updates. It should maintain security by checking user roles and event ownership.",
-      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking.",
-      "summary": "Successfully implemented the organizer review interface by creating review pages for abstracts and full papers, integrating existing review components, and ensuring proper authentication and authorization. The interface allows organizers to view submission details, provide feedback, and update submission statuses.",
-      "completedAt": "2025-05-31T09:19:33.658Z"
+      "implementationGuide": "Create a new migration file in the supabase/migrations directory with the following policies:\n1. Enable RLS on the bookmarks table\n2. Policy for users to view their own bookmarks\n3. Policy for researchers to create bookmarks (with subscription check)\n4. Policy for users to delete their own bookmarks\n\nFollow the pattern in existing migration files like 20250509171204_create_researcher_topic_subscriptions.sql",
+      "verificationCriteria": "The migration file correctly defines all necessary RLS policies for the bookmarks table. The policies should enable researchers with active subscriptions to create and delete bookmarks, and limit users to only see their own bookmarks.",
+      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
+      "summary": "Successfully created a migration file that adds Row Level Security policies to the bookmarks table, following existing project patterns. The policies ensure that only researchers with active or trial subscriptions can create and update bookmarks, while all users can view and delete their own bookmarks.",
+      "completedAt": "2025-06-01T07:14:53.242Z"
     },
     {
-      "id": "ecc1af25-e452-4865-a757-d604a08abaf2",
-      "name": "Task 1.1: Create Abstract Review UI Component",
-      "description": "Develop a reusable component for organizers to review abstract submissions. The component should display abstract content, allow for feedback entry, and enable status updates (accept/reject).",
-      "notes": "This component is the highest priority as it enables the core review workflow. It should follow the existing pattern of multilingual form inputs as seen in the SubmissionForm component.",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2025-05-28T17:37:39.295Z",
-      "updatedAt": "2025-05-28T17:46:49.246Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/submissions/SubmissionForm.tsx",
-          "type": "REFERENCE",
-          "description": "Existing submission form to understand multilingual input patterns",
-          "lineStart": 1,
-          "lineEnd": 288
-        }
-      ],
-      "implementationGuide": "Create a React component that accepts a submission ID and retrieves submission details using Supabase client. Implement a form for feedback entry with multilingual support and buttons for accept/reject actions. Use the existing review_abstract() database function to update status.\n\nPseudocode:\n```\nfunction AbstractReviewComponent({ submissionId }) {\n  const [submission, setSubmission] = useState(null);\n  const [feedback, setFeedback] = useState({ ar: '', en: '', fr: '' });\n  const [loading, setLoading] = useState(false);\n  \n  // Load submission details\n  useEffect(() => { fetchSubmissionDetails(); }, [submissionId]);\n  \n  // Handle accept/reject\n  async function handleStatusUpdate(newStatus) {\n    // Validate inputs\n    // Call review_abstract() function\n    // Handle response\n  }\n  \n  return (\n    <ProfileCard>\n      {/* Display submission details */}\n      {/* Feedback form with language tabs */}\n      {/* Action buttons */}\n    </ProfileCard>\n  );\n}\n```",
-      "verificationCriteria": "Component should display submission details correctly, allow multilingual feedback entry, trigger the review_abstract() function when status is updated, and handle loading/error states appropriately.",
-      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking.",
-      "summary": "Created a comprehensive AbstractReviewComponent that displays submission details, enables multilingual feedback entry via language tabs, and provides accept/reject functionality using the review_abstract database function. The component properly handles loading/error states and implements proper TypeScript types for all data structures.",
-      "completedAt": "2025-05-28T17:46:49.245Z"
-    },
-    {
-      "id": "ef43e95f-3ec1-49f4-a1eb-da8654cbc1d8",
-      "name": "Task 1.2: Create Full Paper Review UI Component",
-      "description": "Develop a reusable component for organizers to review full paper submissions. The component should display paper details, allow file download, enable feedback entry, and provide status update options (accept/reject/request revision).",
-      "notes": "This component builds on the abstract review component but adds file handling and additional status options.",
+      "id": "431d04f4-4e63-4028-828b-a6519ddce68a",
+      "name": "Create Bookmark Server Actions",
+      "description": "Implement server actions for toggling bookmarks and retrieving bookmarked events. These actions will handle creating and removing bookmarks and include subscription checks.",
       "status": "completed",
       "dependencies": [
         {
-          "taskId": "ecc1af25-e452-4865-a757-d604a08abaf2"
+          "taskId": "46406704-bc3a-4b0d-be67-da4c3b3b5501"
         }
       ],
-      "createdAt": "2025-05-28T17:37:39.295Z",
-      "updatedAt": "2025-05-28T17:51:56.030Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/submissions/SubmissionForm.tsx",
-          "type": "REFERENCE",
-          "description": "Existing submission form to understand file handling patterns",
-          "lineStart": 1,
-          "lineEnd": 288
-        }
-      ],
-      "implementationGuide": "Create a React component similar to AbstractReviewComponent but focused on full paper review. Include a file viewer/download link and additional status options. Use the existing review_full_paper() database function.\n\nPseudocode:\n```\nfunction FullPaperReviewComponent({ submissionId }) {\n  const [submission, setSubmission] = useState(null);\n  const [feedback, setFeedback] = useState({ ar: '', en: '', fr: '' });\n  const [loading, setLoading] = useState(false);\n  \n  // Load submission details\n  useEffect(() => { fetchSubmissionDetails(); }, [submissionId]);\n  \n  // Handle status update\n  async function handleStatusUpdate(newStatus) {\n    // Validate inputs\n    // Call review_full_paper() function\n    // Handle response\n  }\n  \n  return (\n    <ProfileCard>\n      {/* Display submission details */}\n      {/* File download button */}\n      {/* Feedback form with language tabs */}\n      {/* Action buttons for all status options */}\n    </ProfileCard>\n  );\n}\n```",
-      "verificationCriteria": "Component should display submission details correctly, allow file download, enable multilingual feedback entry, trigger the review_full_paper() function when status is updated, and handle loading/error states appropriately.",
-      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking.",
-      "summary": "Created a comprehensive FullPaperReviewComponent that displays submission details, enables file download, allows multilingual feedback entry via language tabs, and provides three status update options (accept/reject/request revision) using the review_full_paper database function. The component properly handles loading/error states, properly implements TypeScript types, and includes a visual status indicator.",
-      "completedAt": "2025-05-28T17:51:56.029Z"
-    },
-    {
-      "id": "ef501963-a3fe-467d-adf4-4465b41c61e1",
-      "name": "Task 1.3: Enhance Organizer Submissions Management Interface",
-      "description": "Improve the existing event management dashboard to include a more robust section for managing submissions. This interface should allow organizers to view, filter, and take actions on submissions to their events.",
-      "notes": "This task corresponds to the existing task ID `899f8b50-0558-4935-ad8a-9e33b742c7e9` which is already pending in the task system. This implementation should maintain that task ID.",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2025-05-28T17:37:39.295Z",
-      "updatedAt": "2025-05-28T18:09:00.496Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/profile/events/[id]/manage/page.tsx",
-          "type": "TO_MODIFY",
-          "description": "Existing event management page to extend with submissions tab",
-          "lineStart": 1,
-          "lineEnd": 241
-        }
-      ],
-      "implementationGuide": "Extend the existing event management page with a submissions tab that shows a filterable table of submissions. Implement sorting, filtering, and pagination. Add action buttons to view details or initiate review.\n\nPseudocode:\n```\nasync function EventSubmissionsPage() {\n  // Get event ID from route params\n  // Verify user is organizer and owns this event\n  // Fetch submissions with pagination\n  \n  return (\n    <ProfileCard>\n      {/* Filters for status, date range, etc. */}\n      <SubmissionsTable \n        submissions={submissions}\n        onViewDetails={(id) => router.push(`/submissions/${id}`)}\n        onReviewAbstract={(id) => router.push(`/submissions/${id}/review`)}\n      />\n      {/* Pagination controls */}\n    </ProfileCard>\n  );\n}\n```",
-      "verificationCriteria": "Interface should display all submissions for the event, allow filtering by status and other criteria, provide action buttons for review, and maintain security by verifying organizer ownership of the event.",
-      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking.",
-      "summary": "Completed the organizer submissions management interface enhancement with the following features:\n1. Created a dedicated page for event organizers to view all submissions for their events\n2. Implemented filters for submission status and text search capabilities\n3. Added a responsive table view with pagination for better user experience\n4. Displayed key submission details including title, researcher info, status, and update date\n5. Added action links for reviewing different submission types based on their current status\n6. Ensured proper security by verifying event ownership or admin status before access",
-      "completedAt": "2025-05-28T18:09:00.495Z"
-    },
-    {
-      "id": "6703ee32-2275-433e-a4d5-93fe09331a85",
-      "name": "Task 1.4: Create Submission Detail Page for Organizers",
-      "description": "Develop a page for event organizers to view and manage detailed information about a specific submission. This page should allow organizers to update the submission status, provide feedback, and download attached files.",
-      "notes": "This task corresponds to the existing task ID `1745d2d0-2a18-4c6a-9b15-5cf60ab4debc` which is already pending in the task system. This implementation should maintain that task ID.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "ecc1af25-e452-4865-a757-d604a08abaf2"
-        },
-        {
-          "taskId": "ef43e95f-3ec1-49f4-a1eb-da8654cbc1d8"
-        },
-        {
-          "taskId": "ef501963-a3fe-467d-adf4-4465b41c61e1"
-        }
-      ],
-      "createdAt": "2025-05-28T17:37:39.295Z",
-      "updatedAt": "2025-05-28T18:23:32.856Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/profile/submissions/[id]/page.tsx",
-          "type": "REFERENCE",
-          "description": "Researcher's submission detail page for reference",
-          "lineStart": 1,
-          "lineEnd": 100
-        }
-      ],
-      "implementationGuide": "Create a new page at `/[locale]/profile/events/[eventId]/submissions/[submissionId]` that displays comprehensive submission details and embeds the appropriate review component based on submission status. Implement proper security checks for event ownership.\n\nPseudocode:\n```\nasync function OrganizersSubmissionDetailPage() {\n  // Get submission ID and event ID from route params\n  // Verify user is organizer and owns this event\n  // Fetch submission details\n  \n  return (\n    <div>\n      <BackLink to={`/events/${eventId}/submissions`} />\n      <h1>{submission.title}</h1>\n      <SubmissionStatusBadge status={submission.status} />\n      \n      {/* Submission details card */}\n      <ProfileCard>\n        {/* Display all submission metadata */}\n        {/* File download links */}\n      </ProfileCard>\n      \n      {/* Conditional review component based on status */}\n      {submission.status === 'abstract_submitted' && (\n        <AbstractReviewComponent submissionId={submissionId} />\n      )}\n      {['abstract_accepted', 'full_paper_submitted', 'revision_requested'].includes(submission.status) && (\n        <FullPaperReviewComponent submissionId={submissionId} />\n      )}\n    </div>\n  );\n}\n```",
-      "verificationCriteria": "Page should display comprehensive submission details, embed the appropriate review component based on status, enforce security by verifying organizer ownership, and maintain consistent navigation with breadcrumbs or back links.",
-      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking.",
-      "summary": "Successfully implemented the submission detail page for event organizers, allowing them to view and manage submission details, including:\n1. Created a detail page at `/[locale]/profile/events/[id]/submissions/[submissionId]` showing submission data\n2. Implemented proper security checks to ensure only event owners or admins can access\n3. Added a responsive UI showing submission title, abstract, keywords, and files\n4. Displayed researcher information with contact details\n5. Added conditional action buttons based on submission status\n6. Created an abstract review form for organizers to approve/reject abstracts with feedback\n7. Ensured proper RTL support for Arabic language and localization",
-      "completedAt": "2025-05-28T18:23:32.855Z"
-    },
-    {
-      "id": "eaf8c0e7-7274-415f-8ac6-65c33550cec5",
-      "name": "Phase 2: Complete Researcher Submission Experience",
-      "description": "This phase focuses on enhancing the researcher's submission experience by completing the submission detail view and improving status tracking capabilities.",
-      "notes": "This phase builds on the existing researcher submission form and listing page.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "64352f50-300a-4250-88ff-cdee34f6ea7b"
-        }
-      ],
-      "createdAt": "2025-05-28T17:37:39.295Z",
-      "updatedAt": "2025-05-31T09:32:42.357Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/profile/submissions/page.tsx",
-          "type": "REFERENCE",
-          "description": "Existing submissions listing page",
-          "lineStart": 1,
-          "lineEnd": 125
-        }
-      ],
-      "implementationGuide": "Follow existing UI patterns with ProfileCard, status indicators, and action buttons. Ensure all components support RTL layouts for Arabic and maintain the existing security model checking subscriptions and user roles.",
-      "verificationCriteria": "The researcher submission experience should allow viewing submission details, tracking status changes, receiving feedback, and submitting revisions when requested. It should maintain security by checking user roles and submission ownership.",
-      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking.",
-      "summary": "Successfully completed the researcher submission experience with comprehensive features including submission listing with filtering and sorting, detailed submission view with status tracking, full paper upload functionality, and revision submission capabilities. The implementation follows existing UI patterns, supports RTL layouts, and maintains proper security checks.",
-      "completedAt": "2025-05-31T09:32:42.356Z"
-    },
-    {
-      "id": "37e1abed-0c59-4a21-abb2-743e46472f03",
-      "name": "Task 2.1: Complete Researcher Submissions Listing Page",
-      "description": "Finalize the page for researchers to view and track their submitted papers/abstracts. This page should display all submissions by the researcher, their current status, and provide actions for managing existing submissions.",
-      "notes": "This task corresponds to the existing task ID `bcaf5eaa-2ce9-463d-904a-bad2f4e79a2f` which is currently in progress in the task system. This implementation should maintain that task ID and build upon existing work.",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2025-05-28T17:37:39.295Z",
-      "updatedAt": "2025-05-28T18:32:19.121Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/profile/submissions/page.tsx",
-          "type": "TO_MODIFY",
-          "description": "Existing submissions listing page to enhance",
-          "lineStart": 1,
-          "lineEnd": 125
-        },
-        {
-          "path": "src/app/[locale]/profile/submissions/ui/SubmissionsList.tsx",
-          "type": "TO_MODIFY",
-          "description": "Submissions list component to enhance",
-          "lineStart": 1,
-          "lineEnd": 100
-        }
-      ],
-      "implementationGuide": "Enhance the existing submissions listing page with improved filtering, sorting, and status indicators. Add action buttons for viewing details, submitting revisions, etc.\n\nPseudocode:\n```\nasync function EnhancedResearcherSubmissionsPage() {\n  // Verify user is authenticated and is a researcher\n  // Fetch user's submissions with pagination\n  \n  return (\n    <div>\n      <h1>{t('mySubmissions')}</h1>\n      {/* Filters for status, event, date range */}\n      <SubmissionsTable \n        submissions={submissions}\n        onViewDetails={(id) => router.push(`/submissions/${id}`)}\n        renderActions={(submission) => (\n          <ActionButtons submission={submission} />\n        )}\n      />\n      {/* Pagination controls */}\n    </div>\n  );\n}\n```",
-      "verificationCriteria": "Page should display all submissions by the researcher, show accurate status indicators, provide appropriate action buttons based on submission status, and include filtering and sorting capabilities.",
-      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking.",
-      "summary": "Successfully enhanced the researcher submissions listing page with robust filtering, sorting, and improved action buttons. Implemented status-based filtering, title/event search, column sorting, and contextual actions based on submission status. Also added clear pagination with improved navigation and empty state handling.",
-      "completedAt": "2025-05-28T18:32:19.119Z"
-    },
-    {
-      "id": "2daf71a3-03b0-4e4b-8207-cd3dbda3990c",
-      "name": "Task 2.2: Create Submission Detail Page for Researchers",
-      "description": "Develop a page for researchers to view detailed information about a specific submission, including its status, reviewer feedback, and attached files. The page should also provide actions for downloading files or viewing event details.",
-      "notes": "This task corresponds to the existing task ID `ff0570c9-4501-480f-b439-c2583ed65680` which is already pending in the task system. This implementation should maintain that task ID.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "37e1abed-0c59-4a21-abb2-743e46472f03"
-        }
-      ],
-      "createdAt": "2025-05-28T17:37:39.295Z",
-      "updatedAt": "2025-05-31T08:13:31.758Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/submissions/SubmissionForm.tsx",
-          "type": "REFERENCE",
-          "description": "Existing submission form to understand file handling patterns",
-          "lineStart": 1,
-          "lineEnd": 288
-        }
-      ],
-      "implementationGuide": "Create a comprehensive detail page that shows submission metadata, status history, feedback from reviewers, and embedded file viewers.\n\nPseudocode:\n```\nasync function ResearcherSubmissionDetailPage() {\n  // Get submission ID from route params\n  // Verify user is authenticated and owns this submission\n  // Fetch submission details with feedback and file URLs\n  \n  return (\n    <div>\n      <BackLink to=\"/submissions\" />\n      <h1>{submission.title}</h1>\n      <SubmissionStatusBadge status={submission.status} />\n      \n      {/* Submission details card */}\n      <ProfileCard>\n        {/* Display all submission metadata */}\n        {/* File download links */}\n        {/* Event details and link */}\n      </ProfileCard>\n      \n      {/* Feedback display if available */}\n      {submission.feedback && (\n        <FeedbackCard feedback={submission.feedback} />\n      )}\n      \n      {/* Conditional action section based on status */}\n      {submission.status === 'abstract_accepted' && (\n        <FullPaperUploadSection submissionId={submissionId} />\n      )}\n      {submission.status === 'revision_requested' && (\n        <RevisionUploadSection submissionId={submissionId} />\n      )}\n    </div>\n  );\n}\n```",
-      "verificationCriteria": "Page should display comprehensive submission details, show reviewer feedback when available, provide file download links, offer appropriate action buttons based on submission status, and maintain consistent navigation with breadcrumbs or back links.",
-      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking.",
-      "summary": "Successfully implemented the submission detail page for researchers with comprehensive features including submission information display, status tracking, reviewer feedback section, file handling, and appropriate action buttons based on submission status. The implementation includes proper internationalization support and responsive design.",
-      "completedAt": "2025-05-31T08:13:31.757Z"
-    },
-    {
-      "id": "24600453-abad-49d4-9530-3f27d6844305",
-      "name": "Task 2.3: Create Full Paper Upload Component",
-      "description": "Develop a component for researchers to upload full papers after their abstract has been accepted. This component should handle file uploads, validation, and submission to the server.",
-      "notes": "This component should follow the same patterns as the abstract submission form but focus only on file upload.",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2025-05-28T17:37:39.295Z",
-      "updatedAt": "2025-05-31T08:24:35.659Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/submissions/SubmissionForm.tsx",
-          "type": "REFERENCE",
-          "description": "Existing submission form to understand file handling patterns",
-          "lineStart": 1,
-          "lineEnd": 288
-        },
-        {
-          "path": "src/app/[locale]/profile/submissions/actions.ts",
-          "type": "REFERENCE",
-          "description": "Existing submission actions to understand submitFullPaper function",
-          "lineStart": 1,
-          "lineEnd": 276
-        }
-      ],
-      "implementationGuide": "Create a reusable component for uploading full papers with file validation, progress indicators, and error handling. Use the existing submit_full_paper() database function.\n\nPseudocode:\n```\nfunction FullPaperUploadComponent({ submissionId }) {\n  const [file, setFile] = useState(null);\n  const [uploading, setUploading] = useState(false);\n  const [error, setError] = useState(null);\n  \n  async function handleSubmit() {\n    // Validate file type and size\n    // Upload file and handle progress\n    // Call submit_full_paper() function\n    // Handle response\n  }\n  \n  return (\n    <ProfileCard>\n      <h3>{t('uploadFullPaper')}</h3>\n      <p>{t('fullPaperDescription')}</p>\n      <FileInput\n        accept=\".pdf,.doc,.docx\"\n        onChange={setFile}\n      />\n      {error && <Alert color=\"failure\">{error}</Alert>}\n      <Button\n        onClick={handleSubmit}\n        disabled={!file || uploading}\n      >\n        {uploading ? <Spinner /> : t('submitFullPaper')}\n      </Button>\n    </ProfileCard>\n  );\n}\n```",
-      "verificationCriteria": "Component should validate file type and size, show upload progress, call the appropriate server action, handle errors appropriately, and provide clear feedback to the user.",
-      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking.",
-      "summary": "Successfully implemented the FullPaperUploadSection component for researchers to upload their full papers after abstract acceptance. The component includes file validation (type and size checking), clear UI feedback during upload, and proper error handling. Also created a dedicated page for full paper submission that uses this component and includes proper authentication and authorization checks.",
-      "completedAt": "2025-05-31T08:24:35.658Z"
-    },
-    {
-      "id": "f15ceb22-03b4-4918-add1-bd56e03e34c1",
-      "name": "Task 2.4: Create Revision Upload Component",
-      "description": "Develop a component for researchers to upload revised papers after receiving revision requests. This component should display reviewer feedback, handle file uploads, and submission to the server.",
-      "notes": "This component builds on the full paper upload component but adds feedback display.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "24600453-abad-49d4-9530-3f27d6844305"
-        }
-      ],
-      "createdAt": "2025-05-28T17:37:39.295Z",
-      "updatedAt": "2025-05-31T09:00:37.787Z",
+      "createdAt": "2025-06-01T07:13:28.791Z",
+      "updatedAt": "2025-06-01T07:18:51.909Z",
       "relatedFiles": [
         {
           "path": "src/app/[locale]/profile/submissions/actions.ts",
           "type": "REFERENCE",
-          "description": "Existing submission actions to understand submitRevision function",
-          "lineStart": 1,
-          "lineEnd": 276
+          "description": "Reference for server action patterns"
+        },
+        {
+          "path": "src/app/[locale]/profile/bookmarks/actions.ts",
+          "type": "CREATE",
+          "description": "New server actions file for bookmarks functionality"
         }
       ],
-      "implementationGuide": "Create a reusable component similar to FullPaperUploadComponent but specifically for revisions. Show the feedback that prompted the revision request. Use the existing submit_revision() database function.\n\nPseudocode:\n```\nfunction RevisionUploadComponent({ submissionId, feedback }) {\n  const [file, setFile] = useState(null);\n  const [uploading, setUploading] = useState(false);\n  const [error, setError] = useState(null);\n  \n  async function handleSubmit() {\n    // Validate file type and size\n    // Upload file and handle progress\n    // Call submit_revision() function\n    // Handle response\n  }\n  \n  return (\n    <ProfileCard>\n      <h3>{t('uploadRevision')}</h3>\n      \n      {/* Display feedback */}\n      <FeedbackDisplay feedback={feedback} />\n      \n      <p>{t('revisionDescription')}</p>\n      <FileInput\n        accept=\".pdf,.doc,.docx\"\n        onChange={setFile}\n      />\n      {error && <Alert color=\"failure\">{error}</Alert>}\n      <Button\n        onClick={handleSubmit}\n        disabled={!file || uploading}\n      >\n        {uploading ? <Spinner /> : t('submitRevision')}\n      </Button>\n    </ProfileCard>\n  );\n}\n```",
-      "verificationCriteria": "Component should display reviewer feedback, validate file type and size, show upload progress, call the appropriate server action, handle errors appropriately, and provide clear feedback to the user.",
-      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking.",
-      "summary": "Successfully implemented the revision upload functionality for researchers to submit revised papers after receiving revision requests. The implementation includes:\n\n1. A comprehensive RevisionUploadSection component that displays reviewer feedback, handles file uploads with validation, and submits revisions to the server.\n2. A dedicated submit-revision page that verifies user authentication, checks submission status, and provides a user-friendly interface for researchers to submit their revisions.\n3. Integration with the existing submission actions and schemas for proper data handling.\n4. Proper display of reviewer feedback to guide the researcher in making appropriate revisions.\n5. Support for optional revision notes where researchers can explain the changes they've made.\n6. Complete error handling and validation for a smooth user experience.",
-      "completedAt": "2025-05-31T09:00:37.785Z"
+      "implementationGuide": "Create src/app/[locale]/profile/bookmarks/actions.ts with:\n1. toggleBookmark(eventId) function to add/remove a bookmark\n2. getBookmarkedEvents(locale) function to retrieve bookmarked events\n3. Subscription checks for researchers using existing patterns\n4. Proper error handling and response format\n\nFollow the pattern in src/app/[locale]/profile/submissions/actions.ts",
+      "verificationCriteria": "Server actions successfully handle bookmark operations with proper error handling, subscription checks, and security. The actions should integrate with the existing Supabase client and follow project patterns.",
+      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
+      "summary": "Successfully implemented three server actions for bookmarking functionality: toggleBookmark to add/remove bookmarks, isEventBookmarked to check bookmark status, and getBookmarkedEvents to retrieve all bookmarked events. The implementation includes proper error handling, authentication checks, and internationalization support.",
+      "completedAt": "2025-06-01T07:18:51.908Z"
     },
     {
-      "id": "8c42d2a4-afbb-4609-abab-8c38a115ce41",
-      "name": "Phase 3: Enhance Event Statistics and Reporting",
-      "description": "This phase focuses on improving the event statistics dashboard and adding reporting capabilities for organizers to track submission status and progress.",
-      "notes": "This phase enhances the existing event management dashboard with more detailed statistics.",
-      "status": "pending",
+      "id": "e77ba0da-54a1-4537-ab83-9be205c1fc22",
+      "name": "Create BookmarkButton Component",
+      "description": "Create a reusable BookmarkButton component that can be used in event cards and event details pages to toggle bookmarks with visual feedback.",
+      "status": "completed",
       "dependencies": [
         {
-          "taskId": "64352f50-300a-4250-88ff-cdee34f6ea7b"
+          "taskId": "431d04f4-4e63-4028-828b-a6519ddce68a"
         }
       ],
-      "createdAt": "2025-05-28T17:37:39.295Z",
-      "updatedAt": "2025-05-28T17:37:39.295Z",
+      "createdAt": "2025-06-01T07:13:28.791Z",
+      "updatedAt": "2025-06-01T07:24:44.012Z",
       "relatedFiles": [
         {
-          "path": "src/app/[locale]/profile/events/[id]/manage/page.tsx",
-          "type": "REFERENCE",
-          "description": "Existing event management page",
-          "lineStart": 1,
-          "lineEnd": 241
+          "path": "src/components/events/common/BookmarkButton.tsx",
+          "type": "CREATE",
+          "description": "New BookmarkButton component"
         }
       ],
-      "implementationGuide": "Leverage the existing get_event_submission_stats() database function to display comprehensive statistics. Create visualizations for submission trends and status distributions.",
-      "verificationCriteria": "The statistics dashboard should display comprehensive metrics about submissions, allow filtering by status and date ranges, and provide visualizations for trends.",
-      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking."
+      "implementationGuide": "Create src/components/events/common/BookmarkButton.tsx:\n1. Implement states: bookmarked, unbookmarked, loading\n2. Call toggleBookmark action on click\n3. Show tooltip for different states\n4. Support RTL layout for Arabic\n5. Implement subscription check to disable for non-subscribers\n\nUse existing UI component patterns from Flowbite",
+      "verificationCriteria": "BookmarkButton component correctly shows different visual states, handles click events, and includes subscription checks. It should support RTL layout and include proper accessibility attributes.",
+      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
+      "summary": "Successfully implemented the BookmarkButton component with all required features: bookmark toggle functionality, loading/bookmarked/unbookmarked states, tooltip support, subscription check, and internationalization support. Added Arabic translations for the BookmarkButton component and navigation.",
+      "completedAt": "2025-06-01T07:24:44.011Z"
     },
     {
-      "id": "b118dce9-aeec-4f0d-8820-4b4011308eda",
-      "name": "Task 3.1: Enhance Event Statistics Dashboard",
-      "description": "Improve the event statistics dashboard to display more detailed metrics about submissions, including status distributions, timeline trends, and acceptance rates.",
-      "notes": "Use a charting library compatible with the existing UI framework. Ensure all charts are responsive and support RTL layouts.",
-      "status": "in_progress",
+      "id": "15df8428-995e-42ac-bad4-319527f65c3d",
+      "name": "Update EventCardGrid Component",
+      "description": "Integrate the BookmarkButton component into the EventCardGrid component to enable bookmarking functionality in event cards.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "e77ba0da-54a1-4537-ab83-9be205c1fc22"
+        }
+      ],
+      "createdAt": "2025-06-01T07:13:28.791Z",
+      "updatedAt": "2025-06-01T09:20:43.284Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/events/discovery/EventCardGrid.tsx",
+          "type": "TO_MODIFY",
+          "description": "Update to integrate BookmarkButton component"
+        }
+      ],
+      "implementationGuide": "Update src/components/events/discovery/EventCardGrid.tsx to:\n1. Import the BookmarkButton component\n2. Replace the disabled bookmark button with BookmarkButton\n3. Pass necessary props (eventId, locale)\n4. Handle isBookmarked state",
+      "verificationCriteria": "BookmarkButton is correctly integrated into the EventCardGrid component. Event cards in the discovery grid allow users to bookmark and unbookmark events.",
+      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
+      "summary": "Successfully integrated BookmarkButton into EventCardGrid component. Used useEffect to check bookmark status on mount, added state management for bookmarked status, removed the static bookmark button, and properly passed all necessary props to BookmarkButton including initialBookmarked state.",
+      "completedAt": "2025-06-01T09:20:43.283Z"
+    },
+    {
+      "id": "34806f4a-efde-4b91-bada-a574114cceb6",
+      "name": "Create Bookmarks Page",
+      "description": "Create a new page to display all bookmarked events for the logged-in researcher using the existing EventCardGrid component.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "431d04f4-4e63-4028-828b-a6519ddce68a"
+        },
+        {
+          "taskId": "15df8428-995e-42ac-bad4-319527f65c3d"
+        }
+      ],
+      "createdAt": "2025-06-01T07:13:28.791Z",
+      "updatedAt": "2025-06-01T09:23:32.330Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/bookmarks/page.tsx",
+          "type": "CREATE",
+          "description": "New bookmarks page"
+        }
+      ],
+      "implementationGuide": "Create src/app/[locale]/profile/bookmarks/page.tsx with:\n1. Use ProfilePageHeader for consistent UI\n2. Import getBookmarkedEvents from actions.ts\n3. Fetch bookmarked events with proper loading states\n4. Use EventCardGrid to display bookmarked events\n5. Add empty state for no bookmarks\n\nFollow the pattern in other profile pages",
+      "verificationCriteria": "Bookmarks page correctly displays all bookmarked events using the EventCardGrid component, with proper loading states and empty state handling.",
+      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
+      "summary": "Successfully created a Bookmarks page that displays bookmarked events using the EventCardGrid component. Added proper authentication checks, researcher role verification, and internationalization support. Used ProfilePageHeader and ProfileCard components for consistent UI. Added missing translations to support all necessary strings in the UI.",
+      "completedAt": "2025-06-01T09:23:32.329Z"
+    },
+    {
+      "id": "083da6d2-e3a8-447c-a309-a09fc332be43",
+      "name": "Update Profile Sidebar",
+      "description": "Add a new item to the profile sidebar navigation for accessing the bookmarks page. This should only be visible to researchers.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "34806f4a-efde-4b91-bada-a574114cceb6"
+        }
+      ],
+      "createdAt": "2025-06-01T07:13:28.791Z",
+      "updatedAt": "2025-06-01T09:25:15.610Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/ui/ProfileSidebar.tsx",
+          "type": "TO_MODIFY",
+          "description": "Update to add bookmarks sidebar item for researchers"
+        }
+      ],
+      "implementationGuide": "Update src/app/[locale]/profile/ui/ProfileSidebar.tsx to:\n1. Add a new navigationItem for bookmarks (only for researchers)\n2. Import and use the HiBookmark icon\n3. Add the new route to the bookmarks page\n\nFollow the pattern of other navigation items in the sidebar",
+      "verificationCriteria": "A new sidebar item for bookmarks is correctly added to the profile sidebar for researchers only. The item should navigate to the bookmarks page when clicked.",
+      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
+      "summary": "Successfully updated the ProfileSidebar component to add a new navigation item for bookmarks, which is only visible to researchers. Imported the HiBookmark icon from react-icons/hi and added a new bookmarks translation key to the TranslationStrings interface.",
+      "completedAt": "2025-06-01T09:25:15.609Z"
+    },
+    {
+      "id": "32f12010-2b6e-4ce2-9272-d9f6b5c78f00",
+      "name": "Add Internationalization Support",
+      "description": "Add translation keys for all new UI elements related to the bookmarks feature to support both Arabic and English languages.",
+      "status": "completed",
       "dependencies": [],
-      "createdAt": "2025-05-28T17:37:39.295Z",
-      "updatedAt": "2025-05-31T09:22:11.653Z",
+      "createdAt": "2025-06-01T07:13:28.791Z",
+      "updatedAt": "2025-06-01T09:34:05.696Z",
       "relatedFiles": [
         {
-          "path": "src/app/[locale]/profile/events/[id]/manage/page.tsx",
+          "path": "src/i18n/locales/",
           "type": "TO_MODIFY",
-          "description": "Existing event management page to extend with statistics tab",
-          "lineStart": 1,
-          "lineEnd": 241
+          "description": "Update translation files"
         }
       ],
-      "implementationGuide": "Create a dedicated statistics tab in the event management dashboard with charts and metrics. Use the get_event_submission_stats() function to retrieve data.\n\nPseudocode:\n```\nfunction EventStatisticsTab({ eventId }) {\n  const [stats, setStats] = useState(null);\n  const [loading, setLoading] = useState(true);\n  \n  useEffect(() => {\n    async function fetchStats() {\n      // Call get_event_submission_stats() function\n      // Format data for charts\n      setStats(formattedData);\n      setLoading(false);\n    }\n    fetchStats();\n  }, [eventId]);\n  \n  return (\n    <div>\n      {loading ? (\n        <Spinner />\n      ) : (\n        <>\n          <SubmissionStatusChart data={stats} />\n          <MetricsGrid metrics={stats} />\n          <SubmissionTimelineChart data={stats} />\n        </>\n      )}\n    </div>\n  );\n}\n```",
-      "verificationCriteria": "Dashboard should display accurate submission statistics, include visualizations for status distribution and timeline trends, allow filtering by date ranges, and be responsive across device sizes.",
-      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking."
-    },
-    {
-      "id": "c4119405-fcb3-4fd3-9ff8-478f9be82c12",
-      "name": "Phase 4: Complete Internationalization and Bookmarking",
-      "description": "This phase focuses on completing the internationalization support for all submission-related components and implementing the bookmarking functionality.",
-      "notes": "This phase addresses lower priority but important features for a complete experience.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "64352f50-300a-4250-88ff-cdee34f6ea7b"
-        },
-        {
-          "taskId": "eaf8c0e7-7274-415f-8ac6-65c33550cec5"
-        }
-      ],
-      "createdAt": "2025-05-28T17:37:39.295Z",
-      "updatedAt": "2025-05-28T17:37:39.295Z",
-      "relatedFiles": [
-        {
-          "path": "messages/ar.json",
-          "type": "REFERENCE",
-          "description": "Arabic translations file",
-          "lineStart": 1,
-          "lineEnd": 1500
-        },
-        {
-          "path": "messages/en.json",
-          "type": "REFERENCE",
-          "description": "English translations file",
-          "lineStart": 1,
-          "lineEnd": 1500
-        }
-      ],
-      "implementationGuide": "Update all translation files to include keys for new components. Implement the bookmarking feature using the existing bookmarks table.",
-      "verificationCriteria": "All UI components should be fully translated in Arabic, English, and French. The bookmarking functionality should allow researchers to save and manage bookmarks for events.",
-      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking."
-    },
-    {
-      "id": "b154190e-d988-4c39-bafb-f5179b73d21b",
-      "name": "Task 4.1: Complete Internationalization for Submission System",
-      "description": "Add comprehensive internationalization support for the submission system by updating the translation files for English, Arabic, and French. This includes all user-facing strings in the submission forms, listing pages, detail pages, and management interfaces.",
-      "notes": "This task corresponds to the existing task ID `b00129fc-228a-4e7f-bf81-6eaa97262e56` which is already pending in the task system. This implementation should maintain that task ID.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "64352f50-300a-4250-88ff-cdee34f6ea7b"
-        },
-        {
-          "taskId": "eaf8c0e7-7274-415f-8ac6-65c33550cec5"
-        },
-        {
-          "taskId": "8c42d2a4-afbb-4609-abab-8c38a115ce41"
-        }
-      ],
-      "createdAt": "2025-05-28T17:37:39.295Z",
-      "updatedAt": "2025-05-28T17:37:39.295Z",
-      "relatedFiles": [
-        {
-          "path": "messages/ar.json",
-          "type": "TO_MODIFY",
-          "description": "Arabic translations file to update",
-          "lineStart": 1,
-          "lineEnd": 1500
-        },
-        {
-          "path": "messages/en.json",
-          "type": "TO_MODIFY",
-          "description": "English translations file to update",
-          "lineStart": 1,
-          "lineEnd": 1500
-        },
-        {
-          "path": "messages/fr.json",
-          "type": "TO_MODIFY",
-          "description": "French translations file to update",
-          "lineStart": 1,
-          "lineEnd": 1500
-        }
-      ],
-      "implementationGuide": "Review all new components and identify missing translation keys. Update the translation files for all three languages. Ensure consistent terminology across languages.\n\nKey areas to update:\n1. Abstract and full paper review interfaces\n2. Submission status messages and labels\n3. Feedback forms and prompts\n4. Error messages and validation text\n5. Action button labels\n6. Statistics and metrics labels",
-      "verificationCriteria": "All user-facing text in the submission system should be properly internationalized in all three languages. No hardcoded strings should appear in the UI. RTL layout should be properly maintained for Arabic.",
-      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking."
-    },
-    {
-      "id": "a1ad4bae-09d6-48c9-ac80-8cb070ff595f",
-      "name": "Task 4.2: Implement Event Bookmarking Functionality",
-      "description": "Complete the event bookmarking feature to allow researchers to save interesting events for later reference. This includes implementing the UI components and backend interactions with the bookmarks table.",
-      "notes": "Ensure the bookmarking functionality is only available to authenticated users with active subscriptions.",
-      "status": "in_progress",
-      "dependencies": [],
-      "createdAt": "2025-05-28T17:37:39.295Z",
-      "updatedAt": "2025-05-31T09:27:23.515Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/events/details/EventDetailsActions.tsx",
-          "type": "TO_MODIFY",
-          "description": "Event details actions component to add bookmarking",
-          "lineStart": 1,
-          "lineEnd": 200
-        }
-      ],
-      "implementationGuide": "Implement the bookmark/unbookmark functionality in the event details page and create a bookmarks listing view. Use the existing bookmarks table in the database.\n\nPseudocode:\n```\n// Bookmark toggle component\nfunction BookmarkButton({ eventId }) {\n  const [isBookmarked, setIsBookmarked] = useState(false);\n  const [loading, setLoading] = useState(true);\n  \n  useEffect(() => {\n    // Check if event is bookmarked\n    checkBookmarkStatus();\n  }, [eventId]);\n  \n  async function toggleBookmark() {\n    setLoading(true);\n    try {\n      if (isBookmarked) {\n        // Remove bookmark\n        await supabase.from('bookmarks').delete().eq('event_id', eventId);\n      } else {\n        // Add bookmark\n        await supabase.from('bookmarks').insert({ event_id: eventId });\n      }\n      setIsBookmarked(!isBookmarked);\n    } catch (error) {\n      // Handle error\n    } finally {\n      setLoading(false);\n    }\n  }\n  \n  return (\n    <Button\n      onClick={toggleBookmark}\n      disabled={loading}\n    >\n      {isBookmarked ? <BookmarkFilled /> : <BookmarkOutline />}\n      {isBookmarked ? t('removeBookmark') : t('addBookmark')}\n    </Button>\n  );\n}\n\n// Bookmarks listing page\nasync function BookmarksPage() {\n  // Fetch user's bookmarked events\n  \n  return (\n    <div>\n      <h1>{t('myBookmarks')}</h1>\n      <EventCardGrid events={bookmarkedEvents} />\n    </div>\n  );\n}\n```",
-      "verificationCriteria": "Users should be able to bookmark and unbookmark events, view a list of their bookmarked events, and receive appropriate feedback when bookmarking actions succeed or fail. Bookmarking should be restricted to users with active subscriptions.",
-      "analysisResult": "Based on the Events_and_Submissions_Flow_Tasks.md analysis, the Eventy360 platform needs a comprehensive implementation plan to complete the Events and Submissions features. The current implementation has strong backend database functions but incomplete UI components, particularly for the organizer review process. The system architecture is well-defined with server-side functions in Supabase, Next.js page components organized by locale and user role, shared UI components, strong Arabic internationalization with partial English/French support, and route-based authentication and role checking."
+      "implementationGuide": "Update necessary translation files to add keys for:\n1. Bookmarks sidebar menu item\n2. Bookmarks page headings and labels\n3. BookmarkButton tooltips and states\n4. Error messages for subscription-related restrictions\n\nEnsure proper RTL support for Arabic",
+      "verificationCriteria": "All new UI elements have proper translation keys for both Arabic and English languages. All text in the bookmarks feature is correctly internationalized.",
+      "analysisResult": "Based on the project analysis, we're implementing a bookmarking feature for Eventy360 with these key components:\n\n1. Database: Using the existing bookmarks table with new RLS policies\n2. Server Actions: For toggling bookmarks and retrieving bookmarked events\n3. UI Components: BookmarkButton component and updates to EventCardGrid\n4. Pages: New bookmarks page in the profile section\n5. Navigation: New sidebar item for bookmarks (researchers only)\n6. Security: Limiting functionality to researchers with active subscriptions\n7. Internationalization: Support for Arabic (RTL) and English\n\nThe implementation follows existing project patterns for components, server actions, security, and i18n support.",
+      "summary": "Successfully added all required internationalization support for the bookmarks feature. Added translation keys for the sidebar navigation, enhanced the Bookmarks section with additional UI elements, and updated the EventDetails actions for consistency with the BookmarkButton component.",
+      "completedAt": "2025-06-01T09:34:05.695Z"
     }
   ]
 }

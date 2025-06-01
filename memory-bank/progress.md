@@ -9,7 +9,7 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 - Topic deletion by Admins cascades to `event_topics`
 
 ## Current Focus
-**Phase 2 & 3: Event Management & Submission System** - Implementing topic management, event creation, and researcher submission features simultaneously.
+**Phase 2 & 3 Complete, Transitioning to Phase 4:** The core functionality of event management, topic management, and researcher submission systems is now complete. Focus is shifting to implementing the comprehensive notification system, starting with notifications for topic-based events.
 
 ## High-Level Status (Against 6-Phase Plan)
 
@@ -17,9 +17,9 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 | :----------------------------------------------------------------- | :---------- | :---------------------------------------------------------------------------------------------------------------------------------- |
 | **Pre-Plan Work (Auth & Profile Foundation)**                      | ✅ Complete | Core authentication, profile completion, basic profile display, i18n, styling, DB schema foundation.                               |
 | **Phase 1: Subscription Backbone & Core Admin**                    | ✅ Complete | Admin authentication, Verification system with emails, User Payment Reporting Components, Payment Management, Subscription System |
-| **Phase 2: Event Management & Topic Control**                      | 🟡 In Progress | Implementing topic management and event creation features |
-| **Phase 3: Submission System**                                     | 🟡 In Progress | Initial directory structure and base files created, Arabic translations added |
-| **Phase 4: Comprehensive Notification System & Email Management**  | ⚪ Planned   | Email notification foundations in place with Arabic language support |
+| **Phase 2: Event Management & Topic Control**                      | ✅ Complete | Event creation, management, topic associations, and researcher topic subscriptions all implemented |
+| **Phase 3: Submission System**                                     | ✅ Complete | Full submission workflow with review capabilities for all stages (abstract, full paper, revision) |
+| **Phase 4: Comprehensive Notification System & Email Management**  | 🟡 In Progress | Email notification foundations in place; implementing notifications for topic-based events |
 | **Phase 5: Value-Added MVP Features & Admin Panel Consolidation**  | ⚪ Planned   | Research repository and search/discovery enhancements |
 | **Phase 6: Testing, Deployment Preparation & Launch**              | ⚪ Planned   | Testing is also an ongoing activity throughout all phases |
 
@@ -27,14 +27,27 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 - Console warning for callback route (low priority)
 - TypeScript errors in Next.js App Router files related to page props
 - Email templates need testing with various device sizes
+- Missing notification functionality for new events in subscribed topics
 
 ## Recently Fixed Issues
-- Payment verification error with type mismatch between UUID and TEXT in notification trigger
-- Missing email templates for payment verification and rejection notifications
-- Function name conflict causing subscription not to update when payment is verified (two different functions named handle_payment_verification)
-- Subscription status not updating when payment is verified due to original function being overwritten
+- Fixed UI inconsistencies in review pages by standardizing with ProfilePageHeader
+- Added missing review-revision page to complete the submission lifecycle
+- Fixed lint errors in multiple components
+- Removed unused statistics section from event details header
+- Improved submission details page with integrated file downloads in timeline
 
 ## ✅ Completed Features
+
+### Event and Submission System
+- ✅ Event lifecycle management with automatic status transitions
+- ✅ Topic management system with topic associations for events
+- ✅ Researcher topic subscription functionality
+- ✅ Complete submission workflow (abstract → full paper → revision)
+- ✅ Review interfaces for all submission stages
+- ✅ Standardized UI components across review pages
+- ✅ File upload and download management
+- ✅ Timeline-based submission status tracking
+- ✅ Role-based access control for events and submissions
 
 ### Core Infrastructure
 - Next.js App Router project with TypeScript
@@ -81,40 +94,22 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 
 ## 🚀 In-Progress Features
 
-### A. Topic Management System (Phase 2)
-- 🔄 Admin UI for creating and managing topics
-- 🔄 Database schema for topics and topic associations
-- 🔄 Topic selection and linking for events
-- 🔄 Topic subscription mechanism for researchers
-
-### B. Event Creation Interface (Phase 2)
-- 🔄 Event creation form for organizers
-- 🔄 Backend logic for event storage
-- 🔄 Subscription-based restrictions
-- 🔄 Event lifecycle management
-
-### C. Researcher Submission System (Phase 3)
-- ✅ Directory structure created for profile submissions feature
-- ✅ Base file setup for submission management
-- ✅ Arabic translations for submissions feature
-- 🔄 Implementation of submission creation form
-- 🔄 Backend logic for submission storage
-- 🔄 Submission file uploads to Storage
-- 🔄 Submission tracking interface
+### Notification System for Topic-Based Events (Phase 4)
+- 🔄 Implementation of notification system for new events in subscribed topics
+- 🔄 Creation of email template for "new_event_in_subscribed_topic"
+- 🔄 Development of database trigger for notifying topic subscribers on event creation
+- 🔄 UI updates to show notifications for new events in subscribed topics
 
 ## 📅 Planned Features
 
-### Phase 3: Submission System (Continued)
-- Organizer Submission Management
-- Admin Submission Oversight
-- Submission-related Notifications
-
-### Phase 4: Comprehensive Notification System & Email Management
+### Phase 4: Comprehensive Notification System & Email Management (Continued)
+- Enhanced notification preferences for users
+- Admin email template management
 - Full implementation of email sending Edge Functions
 - Complete population of all Arabic email templates
-- Admin Email Management
 
 ### Phase 5: Value-Added MVP Features & Admin Panel Consolidation
+- Enhanced analytics and reporting for organizers
 - Research Repository
 - Global Search Bar & FTS optimization
 - Admin Panel Central Dashboard
@@ -127,6 +122,9 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 - Launch & Post-Launch Monitoring
 
 ## Next Immediate Tasks
-1. Implement topic management in admin panel (Phase 2)
-2. Create event creation interface for organizers (Phase 2)
-3. Complete implementation of submission creation form and backend logic (Phase 3)
+1. Implement notification system for new events in subscribed topics:
+   - Create email template for "new_event_in_subscribed_topic"
+   - Develop database trigger for notifying researchers when events are created in their subscribed topics
+   - Update UI to show notifications for new events
+2. Begin implementing remaining Phase 4 features (comprehensive notification system)
+3. Prepare for Phase 5 with enhanced analytics and reporting features
