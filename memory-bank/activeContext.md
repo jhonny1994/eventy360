@@ -1,39 +1,53 @@
 # Active Context: Eventy360
 
 ## Current Focus
-**Phase 2 & 3 Implementation Complete, Phase 4 Starting:** The core functionality of the topic management system, event creation interface, and researcher submission system is now complete. Focus is shifting to implementing notification systems for topic-based events.
+**Phase 4 Complete, Phase 5 Starting:** We have successfully completed the comprehensive notification system implementation including standardization of all email templates, implementing conditional mustache blocks, and optimizing the admin invitation system. We are now shifting focus to Phase 5 to implement value-added MVP features and consolidate the admin panel.
 
-We have recently completed significant improvements to the submission review system and events feature:
-
-1. Standardized the UI for all review pages (review-abstract, review-paper, review-revision)
-2. Created the previously missing review-revision page to complete the submission lifecycle
-3. Improved the submission details page with integrated file download capabilities
-4. Removed unused statistics section from the event details header
-5. Fixed linting errors related to unused imports and variables
-6. Verified full implementation of the topic management system including database tables and relationships
-7. Confirmed working event-topic associations and researcher topic subscriptions
-
-We've added two new migration files to fix these issues:
-- `20250601120290_fix_duplicate_payment_verification_function.sql` - Renames the notification function to avoid conflicts
-- `20250602120100_restore_subscription_update_function.sql` - Restores the original subscription update function
-
-**Phase 4 Implementation In Progress:** The focus is on implementing a comprehensive notification system for the platform. We have recently completed a significant cleanup of the email notification system, standardizing all templates to use mustache-style placeholders and updating the Edge Function to process these placeholders correctly.
-
-We have recently completed significant improvements to the notification system:
+Our recent accomplishments:
 
 1. Standardized all email templates to use mustache-style placeholders (`{{placeholder}}`) instead of mixed formats
 2. Updated the `send-email` Edge Function to process mustache-style placeholders with the correct regex pattern
-3. Fixed format inconsistencies in templates like `verification_request_submitted`
-4. Implemented support for conditional placeholder syntax in academic event templates
-5. Ensured SQL functions generate payloads with keys that match the template placeholders
-6. Created comprehensive documentation in NotificationSystemCleanup.md
+3. Implemented support for conditional placeholder syntax (`{{#section}}...{{/section}}`) in templates
+4. Optimized the admin invitation system to work with the existing notification schema without requiring new tables
+5. Implemented notifications for new events in subscribed topics
+6. Created comprehensive documentation of the notification system in NotificationSystemCleanup.md
 
-We've added three new migration files to implement these changes:
+We've added several migration files to implement these changes:
 - `20250701000000_update_email_templates_plain_text.sql` - Standardizes all email templates to use mustache-style placeholders
 - `20250701000001_update_notification_sql_functions.sql` - Updates SQL functions to align with the standardized templates
 - `20250710000000_update_email_conditional_placeholders.sql` - Documents the implementation of conditional Mustache placeholder support
+- `20250720000000_optimize_admin_invitation.sql` - Updates the admin invitation system to work with existing schema
 
 ## ✅ Recently Completed Features
+
+### Admin Invitation System Optimization - COMPLETE
+- **Simplified Approach**: Refactored to work with existing notification schema without new tables
+  - Updated `create_admin_invitation` SQL function to use `recipient_profile_id = NULL` and store email in `payload_data.recipient_email`
+  - Ensured `send-email` Edge Function can properly handle admin invitations by retrieving recipient email from payload_data
+  - Streamlined email template to focus solely on the magic link
+  - Maintained security by pre-generating the magic link in the invite-admin Edge Function
+
+### Notification System - COMPLETE
+- **Email Template Standardization:** Converted all templates to use consistent mustache-style placeholders (`{{placeholder}}`)
+  - Fixed format inconsistencies in older templates like `verification_request_submitted`
+  - Documented conditional placeholder syntax in academic event templates
+  - Made some templates intentionally static (no dynamic placeholders)
+- **Edge Function Update:** Updated `send-email` Edge Function to process mustache-style placeholders
+  - Implemented correct regex pattern: `/\{\{([A-Za-z0-9_.-]+)\}\}/g`
+  - Added support for conditional blocks with pattern: `/\{\{#([A-Za-z0-9_.-]+)\}\}([\s\S]*?)\{\{\/\1\}\}/g`
+  - Improved error handling and logging
+- **SQL Function Alignment:** Updated SQL functions to generate payloads with keys matching template placeholders
+  - Ensured snake_case consistency between payload keys and template placeholders
+  - Removed obsolete URL/email fields from payloads
+  - Added example implementation of conditional feedback in `handle_submission_feedback` function
+- **Documentation:** Created comprehensive documentation in NotificationSystemCleanup.md
+  - Documented conditional mustache placeholders implementation
+  - Provided examples for using conditional sections in templates
+  - Outlined implementation progress
+- **Topic-Based Notifications:** Implemented notification system for new events in subscribed topics
+  - Created email template for "new_event_in_subscribed_topic" using standardized mustache format
+  - Developed database trigger for notifying researchers when events are created in their subscribed topics
+  - Updated UI to show notifications for new events in subscribed topics
 
 ### Event & Submission System - COMPLETE
 - **Topic Management System:** Fully implemented with working database tables
@@ -55,14 +69,14 @@ We've added three new migration files to implement these changes:
   - Created TypeScript interfaces for timeline items
   - Removed redundant display sections
 
-### Profile Submissions Feature Setup
+### Profile Submissions Feature Setup - COMPLETE
 - **Initial Implementation:** Directory structure and base files created for submissions feature in user profile
   - Implemented main pages for submissions list, details, and creation
   - Added server actions for submission operations
   - Created UI component directories
 - **Internationalization:** Added comprehensive Arabic translations for the submissions feature (70+ keys)
 
-### Subscription System Fully Implemented
+### Subscription System - COMPLETE
 - **Server-side Protection:** Middleware for routes with subscription requirements
 - **Client-side Protection:** HOC and hooks for component-level subscription protection
 - **Performance Optimization:** LocalStorage-based caching with automatic invalidation
@@ -70,41 +84,13 @@ We've added three new migration files to implement these changes:
 - **Email Notifications:** Templates for subscription events with multi-language support
 - **Database Triggers:** Payment verification integration with subscription updates
 
-### Email Notification System Foundation
-- Complete implementation for verification and subscription-related emails
-- Added language column to profile tables with Arabic default
-- Fixed language selection logic and implemented robust fallbacks
-- Added detailed logging for diagnostics
-- Implemented DB functions and triggers for notification queueing
-
-### Admin Payment Management
-- Payment verification interface with manual payment recording
-- Payment history display with action logging
-
-### Notification System Cleanup - COMPLETE
-- **Email Template Standardization:** Converted all templates to use consistent mustache-style placeholders (`{{placeholder}}`)
-  - Fixed format inconsistencies in older templates like `verification_request_submitted`
-  - Documented conditional placeholder syntax in academic event templates
-  - Made some templates intentionally static (no dynamic placeholders)
-- **Edge Function Update:** Updated `send-email` Edge Function to process mustache-style placeholders
-  - Implemented correct regex pattern: `/\{\{([A-Za-z0-9_.-]+)\}\}/g`
-  - Added support for conditional blocks with pattern: `/\{\{#([A-Za-z0-9_.-]+)\}\}([\s\S]*?)\{\{\/\1\}\}/g`
-  - Improved error handling and logging
-- **SQL Function Alignment:** Updated SQL functions to generate payloads with keys matching template placeholders
-  - Ensured snake_case consistency between payload keys and template placeholders
-  - Removed obsolete URL/email fields from payloads
-  - Added example implementation of conditional feedback in `handle_submission_feedback` function
-- **Documentation:** Created comprehensive documentation in NotificationSystemCleanup.md
-  - Documented conditional mustache placeholders implementation
-  - Provided examples for using conditional sections in templates
-  - Outlined implementation progress
-
 ## 🚀 Current Implementation Focus
 
-### Notification System for Topic-Based Events (Phase 4)
-- Implement notification system for new events in subscribed topics
-- Create email template for "new_event_in_subscribed_topic"
-- Develop database trigger to notify researchers when new events are created in their subscribed topics
+### Phase 5: Value-Added MVP Features & Admin Panel Consolidation
+- Implement Research Repository for browsing published papers from completed events
+- Enhance analytics and reporting for organizers with visual dashboards
+- Develop Global Search Bar with FTS optimization
+- Consolidate Admin Panel with central dashboard and quick access to common tasks
 
 ## Development Status
 
@@ -114,41 +100,48 @@ We've added three new migration files to implement these changes:
 - **Email Notifications:** Standardized system with mustache-style placeholders for all notification types
   - Support for conditional blocks in templates using `{{#section}}...{{/section}}` syntax
   - Nested property access for multi-language content
+  - Optimized admin invitation system without requiring new tables
 - **Responsive UI:** Mobile-friendly components with pagination and filtering
 - **Internationalization:** Complete Arabic translations for all implemented features
 - **Subscription System:** Full subscription management with client and server-side protection
 - **Event Management:** Complete event lifecycle with status transitions and topic associations
 - **Submission System:** Full submission workflow with review capabilities for all stages
+- **Notification System:** Comprehensive system with standardized templates and conditional support
 
 ### Known Issues
 - Callback route warning in console (low priority, no functionality impact)
 - Email templates need testing with various device sizes
 - TypeScript errors in Next.js App Router files related to page props types
-- Missing notification for new events in subscribed topics
 
 ### Recently Fixed Issues
 1. Standardized all email templates to use mustache-style placeholders
 2. Updated Edge Function to process mustache-style placeholders correctly
 3. Fixed format inconsistencies in older templates
 4. Updated SQL functions to align with standardized templates
-5. Created comprehensive documentation of the notification system
-6. Implemented support for conditional mustache blocks in the send-email Edge Function
+5. Implemented support for conditional mustache blocks in the send-email Edge Function
+6. Optimized admin invitation system to work with existing notification schema
+7. Implemented notifications for new events in subscribed topics
 
 ## Implementation Priorities
-1. **Notification System for Topic-Based Events** (Phase 4)
+1. **Research Repository** (Phase 5)
 2. **Enhanced Analytics and Reporting** (Phase 5)
 3. **Admin Panel Consolidation** (Phase 5)
 
 ## Future Phases
-- Phase 4: Comprehensive Notification System & Email Management
-- Phase 5: Value-Added MVP Features & Admin Panel Consolidation
-- Phase 6: Testing, Deployment Preparation & Launch 
+- Phase 5: Value-Added MVP Features & Admin Panel Consolidation (In Progress)
+- Phase 6: Testing, Deployment Preparation & Launch (Planned)
 
 ## Next Steps
 
-1. Implement notification system for new events in subscribed topics
-   - Create email template for "new_event_in_subscribed_topic" using the standardized mustache format
-   - Develop database trigger for notifying topic subscribers on event creation
-   - Update UI to show notifications for new events in subscribed topics
-2. Begin implementing remaining Phase 4 features (comprehensive notification system)
-3. Prepare for Phase 5 with enhanced analytics and reporting features 
+1. Begin implementing Research Repository features:
+   - Create UI for browsing published papers from completed events
+   - Implement search functionality for finding papers by topic, author, or keywords
+   - Develop filtering capabilities for the repository
+2. Enhance analytics and reporting for organizers:
+   - Design dashboard metrics for event engagement
+   - Implement submission statistics visualization
+   - Create reports for organizer insights
+3. Consolidate admin panel with central dashboard:
+   - Design unified dashboard with key metrics
+   - Implement quick access to common admin tasks
+   - Create visual reports for platform activity 

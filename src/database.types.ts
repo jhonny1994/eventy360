@@ -1237,8 +1237,8 @@ export type Database = {
         Returns: boolean
       }
       create_admin_invitation: {
-        Args: { email: string; role_name?: string }
-        Returns: string
+        Args: { p_invited_user_email: string; p_magic_link: string }
+        Returns: undefined
       }
       create_deadline_notifications: {
         Args: Record<PropertyKey, never>

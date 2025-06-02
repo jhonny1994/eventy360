@@ -784,46 +784,40 @@ COMMENT ON FUNCTION "public"."complete_submission"("p_submission_id" "uuid") IS 
 
 
 
-CREATE OR REPLACE FUNCTION "public"."create_admin_invitation"("email" "text", "role_name" "text" DEFAULT 'admin'::"text") RETURNS "uuid"
+CREATE OR REPLACE FUNCTION "public"."create_admin_invitation"("p_invited_user_email" "text", "p_magic_link" "text") RETURNS "void"
     LANGUAGE "plpgsql"
     AS $$
-DECLARE
-  invitation_id UUID;
-  validity_hours INTEGER := 48;
 BEGIN
-  -- Create invitation record
-  INSERT INTO admin_invitations (email, role, expires_at)
-  VALUES (email, role_name, NOW() + (validity_hours * INTERVAL '1 hour'))
-  RETURNING id INTO invitation_id;
+  -- This function now only queues the notification with the magic link,
+  -- and stores the recipient email in the payload_data instead of recipient_email column
   
-  -- Create notification
-  INSERT INTO notification_queue (
+  INSERT INTO public.notification_queue (
     template_key,
-    recipient_email,
+    recipient_profile_id, -- Set to NULL as we don't have a profile yet
     status,
     attempts,
     payload_data,
     notification_type
   ) VALUES (
     'admin_invitation',
-    email,
+    NULL, -- No profile ID associated yet
     'pending',
     0,
     jsonb_build_object(
-      'invitation_id', invitation_id,
-      'validity_period', validity_hours || ' hours',
-      'role', role_name
-      -- Removed signin_link and platform_management_email fields completely
+      'magic_link', p_magic_link,
+      'recipient_email', p_invited_user_email -- Store email in payload_data
     ),
     'immediate'
   );
-  
-  RETURN invitation_id;
 END;
 $$;
 
 
-ALTER FUNCTION "public"."create_admin_invitation"("email" "text", "role_name" "text") OWNER TO "postgres";
+ALTER FUNCTION "public"."create_admin_invitation"("p_invited_user_email" "text", "p_magic_link" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."create_admin_invitation"("p_invited_user_email" "text", "p_magic_link" "text") IS 'Queues a simplified admin invitation email containing only a magic link. The email address is stored in payload_data instead of recipient_email.';
+
 
 
 CREATE OR REPLACE FUNCTION "public"."create_deadline_notifications"() RETURNS "void"
@@ -1953,6 +1947,8 @@ BEGIN
       NEW.notification_type := 'immediate'::public.notification_type_enum;
     WHEN 'subscription_activated' THEN
       NEW.notification_type := 'immediate'::public.notification_type_enum;
+    WHEN 'new_event_in_subscribed_topic' THEN
+      NEW.notification_type := 'scheduled'::public.notification_type_enum;
     WHEN 'user_verified_badge_awarded' THEN
       NEW.notification_type := 'scheduled'::public.notification_type_enum;
     WHEN 'user_verified_badge_removed' THEN
@@ -2622,6 +2618,87 @@ $$;
 
 
 ALTER FUNCTION "public"."notify_organizer_new_submission"() OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."notify_researchers_of_new_event_in_topic"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    AS $$
+DECLARE
+    topic_record RECORD;
+    researcher_record RECORD;
+    wilaya_record RECORD;
+    daira_record RECORD;
+    payload JSONB;
+BEGIN
+    -- Only proceed if the event is published
+    IF NEW.status != 'published' THEN
+        RETURN NEW;
+    END IF;
+    
+    -- Get wilaya and daira names for the event (both Arabic and other languages)
+    SELECT w.name_ar, w.name_other INTO wilaya_record
+    FROM wilayas w
+    WHERE w.id = NEW.wilaya_id;
+    
+    SELECT d.name_ar, d.name_other INTO daira_record
+    FROM dairas d
+    WHERE d.id = NEW.daira_id;
+    
+    -- For each topic associated with the event
+    FOR topic_record IN 
+        SELECT t.id, t.name_translations, et.topic_id
+        FROM event_topics et
+        JOIN topics t ON et.topic_id = t.id
+        WHERE et.event_id = NEW.id
+    LOOP
+        -- For each researcher subscribed to this topic
+        FOR researcher_record IN
+            SELECT rts.profile_id
+            FROM researcher_topic_subscriptions rts
+            JOIN subscriptions s ON rts.profile_id = s.user_id
+            WHERE rts.topic_id = topic_record.id
+            AND s.status IN ('active', 'trial')
+        LOOP
+            -- Prepare notification payload with localized location names
+            payload := jsonb_build_object(
+                'event_name', NEW.event_name_translations,
+                'event_id', NEW.id,
+                'event_date', to_char(NEW.event_date::date, 'YYYY-MM-DD'),
+                'wilaya_name', jsonb_build_object(
+                    'ar', wilaya_record.name_ar,
+                    'other', wilaya_record.name_other
+                ),
+                'daira_name', jsonb_build_object(
+                    'ar', daira_record.name_ar,
+                    'other', daira_record.name_other
+                ),
+                'topic_name', topic_record.name_translations,
+                'topic_id', topic_record.id
+            );
+            
+            -- Queue notification for the researcher
+            INSERT INTO notification_queue (
+                notification_type,
+                recipient_profile_id,
+                template_key,
+                payload_data,
+                status
+            ) VALUES (
+                'immediate',
+                researcher_record.profile_id,
+                'new_event_in_subscribed_topic',
+                payload,
+                'pending'
+            );
+        END LOOP;
+    END LOOP;
+    
+    RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."notify_researchers_of_new_event_in_topic"() OWNER TO "postgres";
 
 
 CREATE OR REPLACE FUNCTION "public"."notify_submission_status_change"() RETURNS "trigger"
@@ -4878,6 +4955,10 @@ CREATE OR REPLACE TRIGGER "track_submission_versions_trigger" BEFORE UPDATE ON "
 
 
 
+CREATE OR REPLACE TRIGGER "trigger_notify_researchers_of_new_event" AFTER INSERT OR UPDATE OF "status" ON "public"."events" FOR EACH ROW EXECUTE FUNCTION "public"."notify_researchers_of_new_event_in_topic"();
+
+
+
 CREATE OR REPLACE TRIGGER "verification_request_notification_trigger" BEFORE UPDATE OF "status" ON "public"."verification_requests" FOR EACH ROW EXECUTE FUNCTION "public"."handle_verification_request_status_change"();
 
 
@@ -5367,9 +5448,9 @@ GRANT ALL ON FUNCTION "public"."complete_submission"("p_submission_id" "uuid") T
 
 
 
-GRANT ALL ON FUNCTION "public"."create_admin_invitation"("email" "text", "role_name" "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."create_admin_invitation"("email" "text", "role_name" "text") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."create_admin_invitation"("email" "text", "role_name" "text") TO "service_role";
+GRANT ALL ON FUNCTION "public"."create_admin_invitation"("p_invited_user_email" "text", "p_magic_link" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."create_admin_invitation"("p_invited_user_email" "text", "p_magic_link" "text") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."create_admin_invitation"("p_invited_user_email" "text", "p_magic_link" "text") TO "service_role";
 
 
 
@@ -5745,6 +5826,12 @@ GRANT ALL ON FUNCTION "public"."is_admin"() TO "service_role";
 GRANT ALL ON FUNCTION "public"."notify_organizer_new_submission"() TO "anon";
 GRANT ALL ON FUNCTION "public"."notify_organizer_new_submission"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."notify_organizer_new_submission"() TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."notify_researchers_of_new_event_in_topic"() TO "anon";
+GRANT ALL ON FUNCTION "public"."notify_researchers_of_new_event_in_topic"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."notify_researchers_of_new_event_in_topic"() TO "service_role";
 
 
 
