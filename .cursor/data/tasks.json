@@ -1,184 +1,146 @@
 {
   "tasks": [
     {
-      "id": "9e65f1c2-0a2b-4392-bd25-61497f0dfa24",
-      "name": "Analyze and Map Current Email Template Structure",
-      "description": "Create a comprehensive mapping of all email templates, identifying HTML tags to remove, URL/email placeholders to eliminate, and standardizing placeholder format across templates. This includes examining both regular templates and event-related templates with different placeholder styles.",
-      "notes": "This task focuses on analysis only, not implementation. The resulting map will guide the SQL migration creation in subsequent tasks.",
+      "id": "dcdece78-dd3a-489d-9968-2363fe16d0af",
+      "name": "Create email template for new_event_in_subscribed_topic",
+      "description": "Create a new email template with key 'new_event_in_subscribed_topic' in the email_templates table with translations in Arabic, English, and French. The template should use mustache-style placeholders and include conditional blocks for optional event information.",
       "status": "completed",
       "dependencies": [],
-      "createdAt": "2025-06-01T17:47:27.044Z",
-      "updatedAt": "2025-06-01T18:01:58.233Z",
+      "createdAt": "2025-06-01T20:21:14.998Z",
+      "updatedAt": "2025-06-01T20:23:47.801Z",
       "relatedFiles": [
         {
-          "path": "supabase/schemaData.sql",
+          "path": "supabase/migrations/20250526083427_add_academic_event_email_templates.sql",
           "type": "REFERENCE",
-          "description": "Contains current email template definitions"
+          "description": "Reference for email template structure and format"
         },
         {
-          "path": "supabase/migrations",
+          "path": "documentation/NotificationSystem/ConditionalPlaceholders.md",
           "type": "REFERENCE",
-          "description": "Directory containing existing migrations that define email templates"
+          "description": "Documentation on conditional mustache placeholders"
         }
       ],
-      "implementationGuide": "1. Use grep_search to identify all email templates in the database\n2. Extract a list of all HTML anchor tags (<a href=\"...\">...</a>)\n3. Identify all URL/email placeholders (like [signin_link], [profile_page_link])\n4. Document placeholder formats (both [placeholder] and {{placeholder}} styles)\n5. Create a mapping document showing before/after changes for each template",
-      "verificationCriteria": "Success criteria: Complete mapping document that lists all email templates, identifies all HTML elements and URL/email placeholders to remove, and standardizes the placeholder format.",
-      "analysisResult": "The goal of this project is to simplify the email notification system by removing all URLs, emails, and clickable elements, keeping only plain text placeholders for essential data. This requires updates to email templates, SQL functions that create notification payloads, and edge functions that process these notifications.",
-      "summary": "Task completed successfully. I created a comprehensive mapping of all email templates in the Notification System Cleanup project document. This includes identifying the email template structure, documenting URL and email placeholders found in templates, noting the mustache-style syntax used, and listing HTML elements to be removed. I also cataloged all affected templates that need to be updated. This information provides a clear roadmap for creating the SQL migration in subsequent tasks.",
-      "completedAt": "2025-06-01T18:01:58.232Z"
+      "implementationGuide": "Create a SQL INSERT statement for the email_templates table with the following structure:\n\n1. template_key: 'new_event_in_subscribed_topic'\n2. subject_translations: JSON object with translations for Arabic, English, and French\n3. body_html_translations: JSON object with HTML email bodies for each language\n4. description_translations: JSON object with descriptions for each language\n5. available_placeholders: Array of strings with all supported placeholders\n\nThe email body should include:\n- Event name ({{event_name.ar}}, {{event_name.en}}, {{event_name.fr}})\n- Event date and time ({{event_date}})\n- Event location (wilaya and daira names)\n- Conditional blocks for optional information like event subtitle, speakers, etc.\n\nFollow the pattern of existing email templates like those in 20250526083427_add_academic_event_email_templates.sql.",
+      "verificationCriteria": "1. The template must use mustache-style placeholders ({{placeholder}})\n2. The template must include conditional blocks for optional information\n3. The template must have translations for Arabic, English, and French\n4. The template must include all necessary event information\n5. The SQL statement must follow the existing pattern for email templates",
+      "analysisResult": "Based on the analysis of the codebase and requirements, we need to implement a notification system for topic-based events that follows existing patterns and leverages the new conditional mustache placeholder support. The implementation will include creating an email template, a database trigger function, and a trigger on the events table.",
+      "summary": "Successfully created a new email template for 'new_event_in_subscribed_topic' with translations in Arabic, English, and French. The template uses mustache-style placeholders ({{placeholder}}) and includes conditional blocks ({{#section}}...{{/section}}) for optional event information. All necessary event details are included, and the SQL statement follows the existing pattern for email templates.",
+      "completedAt": "2025-06-01T20:23:47.800Z"
     },
     {
-      "id": "7e2a07e3-a0da-449c-ac73-626e70a2a343",
-      "name": "Analyze SQL Functions Creating Notifications",
-      "description": "Examine and document all SQL functions that create notification payloads. Identify URL/email fields in payloads that need to be removed while preserving essential data fields like names, dates, and amounts.",
-      "notes": "This task focuses on analysis only, not implementation. The resulting documentation will guide the SQL function updates in subsequent tasks.",
+      "id": "866df9e2-e254-43d8-9ebb-3d8a2d6e0891",
+      "name": "Create database trigger function for topic notifications",
+      "description": "Create a new function 'notify_topic_subscribers_new_event()' that will run after INSERT on the events table. The function will find all topics associated with the new event, find all researchers subscribed to those topics, and create notifications in the notification_queue table.",
       "status": "completed",
       "dependencies": [],
-      "createdAt": "2025-06-01T17:47:27.044Z",
-      "updatedAt": "2025-06-01T17:54:30.030Z",
+      "createdAt": "2025-06-01T20:21:14.998Z",
+      "updatedAt": "2025-06-02T09:03:48.114Z",
       "relatedFiles": [
+        {
+          "path": "supabase/migrations/20250526083426_create_submission_tracking.sql",
+          "type": "REFERENCE",
+          "description": "Reference for notification trigger function structure"
+        },
         {
           "path": "supabase/schema.sql",
           "type": "REFERENCE",
-          "description": "May contain SQL function definitions"
-        },
-        {
-          "path": "supabase/migrations",
-          "type": "REFERENCE",
-          "description": "Directory containing migrations with SQL function definitions"
+          "description": "Reference for database schema and existing functions"
         }
       ],
-      "implementationGuide": "1. Analyze these SQL functions: create_deadline_notifications, handle_payment_notification, handle_payment_reported, handle_profile_verification_change, handle_verification_request_status_change, notify_organizer_new_submission, notify_submission_status_change, queue_trial_expiry_notification\n2. Document current payload structure for each function\n3. Identify URL/email fields to remove (links, contact emails, etc.)\n4. Map out the revised payload structure keeping only essential data fields",
-      "verificationCriteria": "Success criteria: Complete documentation of all SQL functions that create notifications, with clear identification of fields to remove and fields to retain.",
-      "analysisResult": "The goal of this project is to simplify the email notification system by removing all URLs, emails, and clickable elements, keeping only plain text placeholders for essential data. This requires updates to email templates, SQL functions that create notification payloads, and edge functions that process these notifications.",
-      "summary": "Task completed successfully. I analyzed all SQL functions that create notification payloads and documented their current structure, identified fields to remove (only support_email in handle_payment_notification), and fields to retain. The analysis was documented in NotificationSystemCleanup.md with detailed information for each function including code snippets showing the current payload structure. This analysis will guide the implementation of changes in subsequent tasks.",
-      "completedAt": "2025-06-01T17:54:30.030Z"
+      "implementationGuide": "Create a PostgreSQL function with the following logic:\n\n1. Only proceed if the event status is 'published'\n2. Query the event_topics table to find topics associated with the new event\n3. For each topic, find researchers subscribed to it via researcher_topic_subscriptions\n4. Filter researchers to only include those with active subscriptions (status IN ('active', 'trial'))\n5. Create a notification in the notification_queue table for each researcher with:\n   - template_key: 'new_event_in_subscribed_topic'\n   - recipient_profile_id: researcher's profile ID\n   - status: 'pending'\n   - payload_data: JSON object with event details (id, name, date, location, etc.)\n\nFollow the pattern of existing notification trigger functions like notify_submission_status_change and notify_organizer_new_submission.",
+      "verificationCriteria": "1. The function must only process events with status 'published'\n2. The function must find all topics associated with the event\n3. The function must find all researchers subscribed to those topics\n4. The function must filter researchers to only include those with active subscriptions\n5. The function must create notifications with all necessary event details\n6. The function must follow existing patterns for notification triggers",
+      "analysisResult": "Based on the analysis of the codebase and requirements, we need to implement a notification system for topic-based events that follows existing patterns and leverages the new conditional mustache placeholder support. The implementation will include creating an email template, a database trigger function, and a trigger on the events table.",
+      "summary": "Successfully created the notify_researchers_of_new_event_in_topic function with proper localization for location names. The function retrieves both Arabic and non-Arabic names for wilayas and dairas, creates JSONB objects with both names in the payload, and filters researchers by subscription status to ensure only those with active or trial subscriptions receive notifications.",
+      "completedAt": "2025-06-02T09:03:48.112Z"
     },
     {
-      "id": "86eff39b-f5eb-4727-ba56-bc6e1a130a1a",
-      "name": "Update send-email Edge Function",
-      "description": "Modify the send-email edge function to remove special URL handling logic and simplify it to process only plain text replacements. This ensures compatibility with the updated templates and notification payloads.",
-      "notes": "This update should be done first to ensure the system can handle the updated templates and payloads.",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2025-06-01T17:47:27.045Z",
-      "updatedAt": "2025-06-01T18:00:42.913Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/functions/send-email/index.ts",
-          "type": "TO_MODIFY",
-          "description": "Contains the send-email edge function implementation"
-        }
-      ],
-      "implementationGuide": "1. Examine the current send-email function implementation\n2. Identify and remove the URL detection logic that checks if a replacement value is a URL and transforms it into a clickable link\n3. Update the placeholder processing regex if needed to match the standardized format\n4. Test the function with sample notifications to ensure it correctly processes plain text replacements",
-      "verificationCriteria": "Success criteria: The updated send-email function successfully processes placeholders without special URL handling, maintaining compatibility with the notification system.",
-      "analysisResult": "The goal of this project is to simplify the email notification system by removing all URLs, emails, and clickable elements, keeping only plain text placeholders for essential data. This requires updates to email templates, SQL functions that create notification payloads, and edge functions that process these notifications.",
-      "summary": "Successfully updated the send-email Edge Function by removing the special URL handling logic that previously converted URLs into clickable links. Modified the function to process all placeholders as plain text replacements without any special handling for URLs. Added documentation about these changes at the top of the file. Updated the NotificationSystemCleanup.md file to mark this task as completed and documented the changes made.",
-      "completedAt": "2025-06-01T18:00:42.912Z"
-    },
-    {
-      "id": "8207a0c8-f8bc-47a5-ab55-c95792a7b918",
-      "name": "Create SQL Migration for Email Templates",
-      "description": "Create a SQL migration to update all email templates in the database, removing HTML anchor tags, URL/email placeholders, and standardizing the placeholder format.",
-      "notes": "This task depends on the analysis from Task 1, as it implements the changes identified there.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "9e65f1c2-0a2b-4392-bd25-61497f0dfa24"
-        }
-      ],
-      "createdAt": "2025-06-01T17:47:27.045Z",
-      "updatedAt": "2025-06-01T18:11:26.760Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/migrations",
-          "type": "CREATE",
-          "description": "Directory where the new migration file will be created"
-        }
-      ],
-      "implementationGuide": "1. Use the mapping document from Task 1 to guide template updates\n2. Create a new migration file in the supabase/migrations directory\n3. For each template:\n   - Remove all <a href=\"...\"> tags and any click instructions\n   - Remove URL/email placeholders\n   - Standardize remaining placeholders to [placeholder] format\n   - Update template text to work without clickable elements\n4. Use ON CONFLICT (template_key) DO UPDATE to ensure idempotency",
-      "verificationCriteria": "Success criteria: The migration successfully updates all email templates, removing HTML elements and URL/email placeholders while standardizing the placeholder format.",
-      "analysisResult": "The goal of this project is to simplify the email notification system by removing all URLs, emails, and clickable elements, keeping only plain text placeholders for essential data. This requires updates to email templates, SQL functions that create notification payloads, and edge functions that process these notifications.",
-      "summary": "Successfully created two SQL migration files to update email templates and SQL functions. The first migration file (20250701000000_update_email_templates_plain_text.sql) completely replaces all email templates with standardized versions that use plain text placeholders in mustache format, removing all HTML anchor tags and URL/email placeholders. The second migration file (20250701000001_update_notification_sql_functions.sql) updates all SQL functions that generate notification payloads to use the new standardized plain text placeholders. Both migrations ensure backward compatibility through the update_notification_queue_placeholders trigger function that maps old payload keys to new ones. The NotificationSystemCleanup.md file has been updated to reflect the progress.",
-      "completedAt": "2025-06-01T18:11:26.759Z"
-    },
-    {
-      "id": "63d6848e-cde1-4a2e-87e4-815b928aae54",
-      "name": "Update SQL Functions for Notification Payloads",
-      "description": "Create a SQL migration to update the notification-generating functions, removing URL/email fields from the payloads while preserving essential data.",
-      "notes": "This task depends on the analysis from Task 2, as it implements the changes identified there.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "7e2a07e3-a0da-449c-ac73-626e70a2a343"
-        }
-      ],
-      "createdAt": "2025-06-01T17:47:27.045Z",
-      "updatedAt": "2025-06-01T18:19:48.464Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/migrations",
-          "type": "CREATE",
-          "description": "Directory where the new migration file will be created"
-        }
-      ],
-      "implementationGuide": "1. Use the documentation from Task 2 to guide function updates\n2. Create a new migration file in the supabase/migrations directory\n3. For each function, modify the payload_data construction to remove URL/email fields\n4. Update any related comments or documentation to reflect the changes",
-      "verificationCriteria": "Success criteria: The migration successfully updates all notification-generating SQL functions to remove URL/email fields from payloads while preserving essential data.",
-      "analysisResult": "The goal of this project is to simplify the email notification system by removing all URLs, emails, and clickable elements, keeping only plain text placeholders for essential data. This requires updates to email templates, SQL functions that create notification payloads, and edge functions that process these notifications.",
-      "summary": "Successfully updated all SQL functions that generate notification payloads by completely removing URL/email fields. Created a migration file (20250701000001_update_notification_sql_functions.sql) that updates 7 functions: handle_verification_badge_change, create_payment_reported_notification, handle_payment_verification, activate_subscription, create_trial_ending_notification, create_trial_expired_notification, and create_admin_invitation. Each function now has URL and email fields completely removed while preserving essential data fields like user IDs, dates, and amounts.",
-      "completedAt": "2025-06-01T18:19:48.463Z"
-    },
-    {
-      "id": "56b32d3c-de9c-43a2-ae3a-bcdd7b36c22a",
-      "name": "Create Progress Tracking Document",
-      "description": "Create a comprehensive tracking document in the project root to monitor the progress of removing URLs and emails from the notification system.",
-      "notes": "This document will help track progress across all phases of the implementation.",
+      "id": "8deb5871-c3c1-4902-ac80-1c10c10b379c",
+      "name": "Create database trigger for topic notifications",
+      "description": "Create a trigger 'notify_topic_subscribers_new_event_trigger' on the events table that will fire AFTER INSERT when a new event is created with status 'published'.",
       "status": "pending",
-      "dependencies": [],
-      "createdAt": "2025-06-01T17:47:27.045Z",
-      "updatedAt": "2025-06-01T17:47:27.045Z",
-      "relatedFiles": [
+      "dependencies": [
         {
-          "path": "NotificationSystemCleanup.md",
-          "type": "CREATE",
-          "description": "Progress tracking document to be created in the project root"
+          "taskId": "866df9e2-e254-43d8-9ebb-3d8a2d6e0891"
         }
       ],
-      "implementationGuide": "1. Create a markdown file named 'NotificationSystemCleanup.md' in the project root\n2. Include sections for:\n   - Project overview and goals\n   - Status of each task with completion checkboxes\n   - Template changes summary\n   - SQL function changes summary\n   - Edge function changes summary\n   - Testing results and verification\n3. Ensure the document is clear and easy to follow",
-      "verificationCriteria": "Success criteria: A well-structured tracking document that clearly outlines all aspects of the notification system cleanup, allowing for easy progress monitoring.",
-      "analysisResult": "The goal of this project is to simplify the email notification system by removing all URLs, emails, and clickable elements, keeping only plain text placeholders for essential data. This requires updates to email templates, SQL functions that create notification payloads, and edge functions that process these notifications."
+      "createdAt": "2025-06-01T20:21:14.998Z",
+      "updatedAt": "2025-06-01T20:21:14.998Z",
+      "relatedFiles": [
+        {
+          "path": "supabase/migrations/20250526083426_create_submission_tracking.sql",
+          "type": "REFERENCE",
+          "description": "Reference for trigger creation syntax"
+        }
+      ],
+      "implementationGuide": "Create a PostgreSQL trigger with the following specifications:\n\n1. Trigger name: notify_topic_subscribers_new_event_trigger\n2. Table: public.events\n3. Timing: AFTER INSERT\n4. For each row\n5. When condition: NEW.status = 'published'\n6. Execute function: public.notify_topic_subscribers_new_event()\n\nFollow the pattern of existing triggers like notify_submission_status_change_trigger.",
+      "verificationCriteria": "1. The trigger must be created on the events table\n2. The trigger must fire AFTER INSERT\n3. The trigger must only fire when the event status is 'published'\n4. The trigger must execute the notify_topic_subscribers_new_event function\n5. The trigger creation syntax must follow existing patterns",
+      "analysisResult": "Based on the analysis of the codebase and requirements, we need to implement a notification system for topic-based events that follows existing patterns and leverages the new conditional mustache placeholder support. The implementation will include creating an email template, a database trigger function, and a trigger on the events table."
     },
     {
-      "id": "dd64ef72-c0b2-4bcf-aaf2-d654cf842213",
-      "name": "Conduct System Testing",
-      "description": "Perform comprehensive testing of the notification system to ensure everything functions correctly after removing URLs and emails.",
-      "notes": "This task should be performed after all other implementation tasks are complete.",
+      "id": "4fc6865d-3760-41c5-a958-5749e54087a1",
+      "name": "Update handle_notification_insert function",
+      "description": "Update the handle_notification_insert function to include the new 'new_event_in_subscribed_topic' template key and categorize it as a 'scheduled' notification type.",
       "status": "completed",
       "dependencies": [
         {
-          "taskId": "86eff39b-f5eb-4727-ba56-bc6e1a130a1a"
-        },
-        {
-          "taskId": "8207a0c8-f8bc-47a5-ab55-c95792a7b918"
-        },
-        {
-          "taskId": "63d6848e-cde1-4a2e-87e4-815b928aae54"
+          "taskId": "dcdece78-dd3a-489d-9968-2363fe16d0af"
         }
       ],
-      "createdAt": "2025-06-01T17:47:27.045Z",
-      "updatedAt": "2025-06-01T18:24:54.546Z",
+      "createdAt": "2025-06-01T20:21:14.998Z",
+      "updatedAt": "2025-06-02T08:43:17.915Z",
       "relatedFiles": [
         {
-          "path": "NotificationSystemCleanup.md",
-          "type": "TO_MODIFY",
-          "description": "Update tracking document with testing results"
+          "path": "supabase/migrations/20250513150000_add_notification_type_and_processing.sql",
+          "type": "REFERENCE",
+          "description": "Reference for handle_notification_insert function"
+        },
+        {
+          "path": "supabase/schema.sql",
+          "type": "REFERENCE",
+          "description": "Reference for current function definition"
         }
       ],
-      "implementationGuide": "1. Test the end-to-end notification flow for each type of notification\n2. Verify that emails render correctly with plain text placeholders\n3. Ensure no broken placeholder references appear in the final emails\n4. Check that essential information is still conveyed effectively\n5. Document any issues found and fix them",
-      "verificationCriteria": "Success criteria: The notification system functions correctly with plain text placeholders, and all test cases pass without errors.",
-      "analysisResult": "The goal of this project is to simplify the email notification system by removing all URLs, emails, and clickable elements, keeping only plain text placeholders for essential data. This requires updates to email templates, SQL functions that create notification payloads, and edge functions that process these notifications.",
-      "summary": "Created comprehensive test plan for the notification system cleanup project. Structured testing approach with clearly defined test cases for all affected notification types (verification badge, payment, subscription, admin), detailed testing methodology covering SQL function testing and template processing, specific execution procedures, and validation criteria. The test plan ensures that all URLs, emails, and clickable elements have been properly removed while maintaining essential functionality and readability of notifications.",
-      "completedAt": "2025-06-01T18:24:54.544Z"
+      "implementationGuide": "Modify the existing handle_notification_insert function to include the new template key in the CASE statement:\n\n```sql\nCASE NEW.template_key\n  ...\n  WHEN 'new_event_in_subscribed_topic' THEN\n    NEW.notification_type := 'scheduled'::public.notification_type_enum;\n  ...\nELSE\n  NEW.notification_type := 'scheduled'::public.notification_type_enum;\nEND CASE;\n```\n\nFollow the existing pattern in the function.",
+      "verificationCriteria": "1. The function must include the new template key 'new_event_in_subscribed_topic'\n2. The function must categorize the new template as 'scheduled'\n3. The update must not affect existing template categorizations\n4. The function update must follow existing patterns",
+      "analysisResult": "Based on the analysis of the codebase and requirements, we need to implement a notification system for topic-based events that follows existing patterns and leverages the new conditional mustache placeholder support. The implementation will include creating an email template, a database trigger function, and a trigger on the events table.",
+      "summary": "Successfully updated the handle_notification_insert function to include the new template key 'new_event_in_subscribed_topic' and categorized it as a 'scheduled' notification type. The function update was added to the migration file.",
+      "completedAt": "2025-06-02T08:43:17.914Z"
+    },
+    {
+      "id": "acfa51a8-74ec-4d99-bb44-342563fb7393",
+      "name": "Create migration file for topic notification system",
+      "description": "Create a new migration file '20250720000000_add_topic_notification_system.sql' that includes all the components of the topic notification system: email template, trigger function, trigger, and handle_notification_insert update.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "dcdece78-dd3a-489d-9968-2363fe16d0af"
+        },
+        {
+          "taskId": "866df9e2-e254-43d8-9ebb-3d8a2d6e0891"
+        },
+        {
+          "taskId": "8deb5871-c3c1-4902-ac80-1c10c10b379c"
+        },
+        {
+          "taskId": "4fc6865d-3760-41c5-a958-5749e54087a1"
+        }
+      ],
+      "createdAt": "2025-06-01T20:21:14.998Z",
+      "updatedAt": "2025-06-01T20:21:14.998Z",
+      "relatedFiles": [
+        {
+          "path": "supabase/migrations/20250526083427_add_academic_event_email_templates.sql",
+          "type": "REFERENCE",
+          "description": "Reference for migration file structure"
+        },
+        {
+          "path": "supabase/migrations/20250526083426_create_submission_tracking.sql",
+          "type": "REFERENCE",
+          "description": "Reference for trigger and function creation in migrations"
+        }
+      ],
+      "implementationGuide": "Create a new migration file with the following structure:\n\n1. Comment explaining the purpose of the migration\n2. Email template insertion\n3. Trigger function creation\n4. Trigger creation\n5. Update to handle_notification_insert function\n6. Comment on migration\n\nFollow the pattern of existing migration files like 20250526083427_add_academic_event_email_templates.sql and 20250526083426_create_submission_tracking.sql.",
+      "verificationCriteria": "1. The migration file must include all components of the topic notification system\n2. The migration file must follow the naming convention with date prefix\n3. The migration file must include appropriate comments\n4. The migration file must follow existing patterns for migrations",
+      "analysisResult": "Based on the analysis of the codebase and requirements, we need to implement a notification system for topic-based events that follows existing patterns and leverages the new conditional mustache placeholder support. The implementation will include creating an email template, a database trigger function, and a trigger on the events table."
     }
   ]
 }
