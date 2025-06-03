@@ -5,9 +5,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Label, TextInput, Alert } from 'flowbite-react';
 import { HiInformationCircle, HiEye, HiEyeOff, HiOutlineUser, HiCheckCircle } from 'react-icons/hi';
-import { useTranslations } from 'next-intl';
+import useTranslations from '@/hooks/useTranslations';
 import { useRouter, useParams } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client'; 
+import { useAuth } from '@/hooks/useAuth';
 import { getAdminCreateAccountSchema } from '@/utils/admin/auth-forms';
 import { AuthError, AuthLoadingState } from '@/components/admin/auth';
 import Link from 'next/link';
@@ -50,7 +50,7 @@ export default function AdminCreateAccountForm() {
   const [userFullName, setUserFullName] = useState<string | null>(null);
   const [submissionCompletedSuccessfully, setSubmissionCompletedSuccessfully] = useState(false);
   
-  const supabase = createClient();
+  const { supabase } = useAuth();
 
   // Create a translation function with the specific signature expected by getLoginSchema
   const validationTranslator = (key: string, values?: Record<string, unknown>) => {

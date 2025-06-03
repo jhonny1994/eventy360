@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { Button, Card, Alert } from 'flowbite-react';
 import { HiExclamationCircle, HiUpload, HiDocumentText } from 'react-icons/hi';
-import { createClient } from '@/lib/supabase/client';
+import { useAuth } from '@/components/providers/AuthProvider';
 import { useTranslations, useLocale } from 'next-intl';
 
 interface VerificationDocumentUploaderProps {
@@ -19,7 +19,7 @@ export default function VerificationDocumentUploader({
   onUploadSuccess
 }: VerificationDocumentUploaderProps) {
   const t = useTranslations('ProfilePage.VerificationDocument');
-  const supabase = createClient();
+  const { supabase } = useAuth();
   const appLocale = useLocale();
   const isRtl = appLocale === 'ar';
   

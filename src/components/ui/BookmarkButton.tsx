@@ -1,7 +1,26 @@
+/**
+ * BookmarkButton
+ * 
+ * This component provides a button for users to bookmark events.
+ * It includes subscription checking, loading states, and toggle functionality.
+ * 
+ * Features:
+ * - Visual indication of bookmark status
+ * - Loading state during API requests
+ * - Subscription requirement checking
+ * - Tooltip with context-appropriate messages
+ * - Support for various sizes and colors
+ * 
+ * Standardized Patterns Used:
+ * - useTranslations: Custom hook for internationalization
+ * - useSubscription: For subscription status checks
+ * - Consistent error handling and loading states
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import useTranslations from '@/hooks/useTranslations';
 import { Button, Tooltip } from 'flowbite-react';
 import { BookmarkPlus, BookmarkCheck, Loader2 } from 'lucide-react';
 import { toggleBookmark, isEventBookmarked } from '@/app/[locale]/profile/bookmarks/actions';

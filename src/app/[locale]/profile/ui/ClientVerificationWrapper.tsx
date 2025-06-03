@@ -22,6 +22,10 @@ interface ClientVerificationWrapperProps {
  * Client component wrapper for VerificationSection
  * This component serves as a bridge between server and client components
  * allowing us to avoid passing function callbacks from server to client
+ * 
+ * Note: This component follows the standardized hook pattern by delegating
+ * hook usage to the VerificationSection component, which has been updated
+ * to use useAuth and other standardized hooks.
  */
 export default function ClientVerificationWrapper({
   isVerified,

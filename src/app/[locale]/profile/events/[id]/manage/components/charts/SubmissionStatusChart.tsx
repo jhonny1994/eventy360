@@ -1,8 +1,9 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, TooltipItem } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
+import useTranslations from '@/hooks/useTranslations';
+import useLocale from '@/hooks/useLocale';
 
 // Register required Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -22,12 +23,22 @@ type SubmissionStats = {
 
 interface SubmissionStatusChartProps {
   stats: SubmissionStats;
-  locale: string;
 }
 
-export default function SubmissionStatusChart({ stats, locale }: SubmissionStatusChartProps) {
+/**
+ * SubmissionStatusChart component for displaying submission status distribution
+ * 
+ * Note: This component follows the standardized hook patterns by using:
+ * - useTranslations - For i18n translations
+ * - useLocale - For locale-aware formatting and rendering
+ * 
+ * This component renders a doughnut chart showing the distribution of
+ * submission statuses, with proper RTL support for Arabic locale.
+ */
+export default function SubmissionStatusChart({ stats }: SubmissionStatusChartProps) {
   const t = useTranslations('EventStatistics');
-  const isRtl = locale === 'ar';
+  const currentLocale = useLocale();
+  const isRtl = currentLocale === 'ar';
   
   // Define the data for the chart
   const chartData = {

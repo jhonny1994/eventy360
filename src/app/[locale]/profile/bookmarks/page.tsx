@@ -72,7 +72,6 @@ export default async function BookmarksPage({ params }: { params: Promise<{ loca
           <EventCardGrid 
             events={events || []} 
             isLoading={false} 
-            locale={locale}
           />
         </div>
       </ProfileCard>

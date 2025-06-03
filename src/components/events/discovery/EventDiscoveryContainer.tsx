@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Alert } from 'flowbite-react'; // Removed Spinner from here
 import { HiExclamationCircle } from 'react-icons/hi';
-import { createClient } from '@/lib/supabase/client';
+import { useAuth } from '@/components/providers/AuthProvider';
 import EventSearchBar from './EventSearchBar';
 import EventFilters from './EventFilters';
 import EventCardGrid from './EventCardGrid';
@@ -48,7 +48,7 @@ export default function EventDiscoveryContainer({
   const t = useTranslations('Events');
   const router = useRouter();
   const urlSearchParams = useSearchParams();
-  const supabase = createClient();
+  const { supabase } = useAuth();
   const { profile: userProfile, loading: profileLoading, error: profileError } = useUserProfile();
 
   // Parse search parameters
@@ -339,7 +339,6 @@ export default function EventDiscoveryContainer({
       <EventCardGrid
         events={events}
         isLoading={isLoading}
-        locale={locale}
       />
 
       {/* Pagination */}

@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useLocale, useTranslations } from 'next-intl';
 import { Card, Badge, Button, Spinner } from 'flowbite-react';
 import { FileText, Clock, Calendar, Download, Upload } from 'lucide-react';
 import Link from 'next/link';
+import useTranslations from '@/hooks/useTranslations';
+import useLocale from '@/hooks/useLocale';
 
 // Define submission status colors
 const statusColors: Record<string, string> = {
@@ -64,6 +65,30 @@ interface SubmissionDetailsProps {
   submission: Submission;
 }
 
+/**
+ * SubmissionDetails Component
+ * 
+ * This component displays detailed information about a submission, including its timeline,
+ * status, content, and available actions. It provides a comprehensive view of a submission's
+ * lifecycle and enables users to take appropriate actions based on its current status.
+ * 
+ * Features:
+ * - Timeline visualization of submission history
+ * - Multi-language support for submission content
+ * - File download capabilities for abstract and full paper
+ * - Status-based action buttons (submit full paper, submit revision)
+ * - Deadline awareness and validation
+ * - Responsive design for all device sizes
+ * 
+ * Standardized Patterns Used:
+ * - useTranslations: Custom hook for internationalization
+ * - useLocale: Custom hook for locale-aware formatting and rendering
+ * - Component-based architecture with clear separation of concerns
+ * - Consistent status color coding for visual coherence
+ * - Type-safe props with TypeScript interfaces
+ * - Conditional rendering based on submission status
+ * - Localized date formatting
+ */
 export default function SubmissionDetails({ submission }: SubmissionDetailsProps) {
   const t = useTranslations('Submissions');
   const locale = useLocale();
@@ -258,7 +283,7 @@ export default function SubmissionDetails({ submission }: SubmissionDetailsProps
                   </li>
                 )}
                 {submission.abstract_translations?.fr && (
-                  <li className="mr-2">
+                  <li>
                     <button
                       onClick={() => setActiveTab('fr')}
                       className={`inline-block p-4 border-b-2 rounded-t-lg ${
@@ -273,145 +298,133 @@ export default function SubmissionDetails({ submission }: SubmissionDetailsProps
                 )}
               </ul>
             </div>
-            <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-              {activeTab === 'ar' && (
-                <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-                  {submission.abstract_translations?.ar || t('notProvided')}
+            
+            <div className="mb-4">
+              {activeTab === 'ar' && submission.abstract_translations?.ar && (
+                <p dir="rtl" className="whitespace-pre-line">
+                  {submission.abstract_translations.ar}
                 </p>
               )}
               {activeTab === 'en' && submission.abstract_translations?.en && (
-                <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                <p className="whitespace-pre-line">
                   {submission.abstract_translations.en}
                 </p>
               )}
               {activeTab === 'fr' && submission.abstract_translations?.fr && (
-                <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                <p className="whitespace-pre-line">
                   {submission.abstract_translations.fr}
                 </p>
               )}
             </div>
-          </Card>
-          
-          {/* Reviewer comments if any */}
-          {submission.reviewer_comments && (
-            <Card>
-              <h3 className="text-lg font-semibold mb-4">{t('reviewerComments')}</h3>
-              <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-                  {submission.reviewer_comments}
-                </p>
-              </div>
-            </Card>
-          )}
-        </div>
-        
-        {/* Sidebar with actions and event info */}
-        <div className="w-full md:w-80 flex-shrink-0 space-y-4">
-          {/* Actions card */}
-          <Card>
-            <h3 className="text-lg font-semibold mb-4">{t('actions')}</h3>
-            <div className="space-y-3">
-              {/* Download abstract */}
-              {submission.abstract_file_url && (
-                <Button 
+            
+            {/* Download abstract file if available */}
+            {submission.abstract_file_url && (
+              <div className="mt-4">
+                <Button
                   as="a"
                   href={submission.abstract_file_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   color="light"
-                  className="w-full flex items-center justify-center gap-2"
+                  size="sm"
                 >
-                  <Download className="w-4 h-4" />
-                  {t('downloadAbstract')}
+                  <Download className="mr-2 h-5 w-5" />
+                  {t('downloadAbstractFile')}
                 </Button>
-              )}
-              
-              {/* Download full paper */}
-              {submission.full_paper_file_url && (
-                <Button 
-                  as="a"
-                  href={submission.full_paper_file_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  color="light"
-                  className="w-full flex items-center justify-center gap-2"
-                >
-                  <Download className="w-4 h-4" />
-                  {t('downloadFullPaper')}
+              </div>
+            )}
+          </Card>
+          
+          {/* Download full paper if available */}
+          {submission.full_paper_file_url && (
+            <Card>
+              <h3 className="text-lg font-semibold mb-4">{t('fullPaper')}</h3>
+              <Button
+                as="a"
+                href={submission.full_paper_file_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                color="light"
+                className="w-auto inline-flex"
+              >
+                <Download className="mr-2 h-5 w-5" />
+                {t('downloadFullPaper')}
+              </Button>
+            </Card>
+          )}
+        </div>
+        
+        {/* Sidebar with actions and event details */}
+        <div className="md:w-1/3 space-y-6">
+          {/* Event info */}
+          <Card>
+            <h3 className="text-lg font-semibold mb-2">
+              {t('eventDetails')}
+            </h3>
+            <p className="font-medium text-gray-900 dark:text-white mb-4">
+              {getTitle(submission.events.event_name_translations)}
+            </p>
+            
+            {submission.events.abstract_submission_deadline && (
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-2">
+                <Calendar className="w-4 h-4" />
+                <span>{t('abstractDeadline')}:</span>
+                <span>{formatDate(submission.events.abstract_submission_deadline)}</span>
+              </div>
+            )}
+            
+            {submission.events.full_paper_submission_deadline && (
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <Calendar className="w-4 h-4" />
+                <span>{t('fullPaperDeadline')}:</span>
+                <span>{formatDate(submission.events.full_paper_submission_deadline)}</span>
+              </div>
+            )}
+            
+            <div className="mt-4">
+              <Link href={`/${locale}/events/${submission.events.id}`} passHref>
+                <Button color="light" size="sm" className="w-full">
+                  {t('viewEventDetails')}
                 </Button>
-              )}
-              
-              {/* Submit full paper button */}
-              {canSubmitFullPaper && (
-                <Button 
-                  as={Link}
-                  href={`/${locale}/profile/submissions/${submission.id}/submit-paper`}
-                  color="green"
-                  className="w-full flex items-center justify-center gap-2"
-                >
-                  <Upload className="w-4 h-4" />
-                  {t('submitFullPaper')}
-                </Button>
-              )}
-              
-              {/* Submit revision button */}
-              {needsRevision && (
-                <Button 
-                  as={Link}
-                  href={`/${locale}/profile/submissions/${submission.id}/submit-revision`}
-                  color="yellow"
-                  className="w-full flex items-center justify-center gap-2"
-                >
-                  <Upload className="w-4 h-4" />
-                  {t('submitRevision')}
-                </Button>
-              )}
+              </Link>
             </div>
           </Card>
           
-          {/* Event information */}
-          <Card>
-            <h3 className="text-lg font-semibold mb-4">{t('eventInformation')}</h3>
-            <div className="space-y-3">              <div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">{t('eventName')}</div>
-                <div className="font-medium">{getTitle(submission.events.event_name_translations)}</div>
-              </div>
-              
-              <div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">{t('eventType')}</div>
-                <div className="font-medium">{t(`eventTypes.${submission.events.event_type}`)}</div>
-              </div>
-              
-              {submission.events.abstract_submission_deadline && (
-                <div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">{t('abstractDeadline')}</div>
-                  <div className="font-medium flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    {formatDate(submission.events.abstract_submission_deadline)}
-                  </div>
-                </div>
-              )}
-              
-              {submission.events.full_paper_submission_deadline && (
-                <div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">{t('fullPaperDeadline')}</div>
-                  <div className="font-medium flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    {formatDate(submission.events.full_paper_submission_deadline)}
-                  </div>
-                </div>
-              )}
-              
-              <Button 
-                as={Link}
-                href={`/${locale}/profile/events/${submission.events.id}`}
-                color="light"
-                className="w-full mt-2"
-              >
-                {t('viewEvent')}
+          {/* Upload full paper button if eligible */}
+          {canSubmitFullPaper && (
+            <Card className="bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800">
+              <h3 className="text-lg font-semibold mb-2 text-blue-700 dark:text-blue-300">
+                {t('submitFullPaperTitle')}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                {t('submitFullPaperDescription')}
+              </p>
+              <Button color="blue" className="w-full">
+                <Link href={`/${locale}/profile/submissions/${submission.id}/submit-full-paper`} className="w-full flex items-center justify-center">
+                  <Upload className="mr-2 h-5 w-5" />
+                  {t('submitFullPaper')}
+                </Link>
               </Button>
-            </div>
-          </Card>
+            </Card>
+          )}
+          
+          {/* Upload revision button if needed */}
+          {needsRevision && (
+            <Card className="bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-800">
+              <h3 className="text-lg font-semibold mb-2 text-amber-700 dark:text-amber-300">
+                {t('submitRevisionTitle')}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                {t('submitRevisionDescription')}
+              </p>
+              <Button color="warning" className="w-full">
+                <Link href={`/${locale}/profile/submissions/${submission.id}/submit-revision`} className="w-full flex items-center justify-center">
+                  <Upload className="mr-2 h-5 w-5" />
+                  {t('submitRevision')}
+                </Link>
+              </Button>
+            </Card>
+          )}
         </div>
       </div>
     </div>

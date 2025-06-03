@@ -5,7 +5,7 @@ import { useForm, Controller, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useRouter } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import useTranslations from "@/hooks/useTranslations";
 import {
   Button,
   Label,
@@ -177,6 +177,17 @@ const isOrganizerError = (
   return userType === "organizer";
 };
 
+/**
+ * EditProfileForm component for handling profile editing
+ * 
+ * Note: This component follows the standardized hook pattern by using:
+ * - useAuth - For authentication and Supabase client access
+ * - useTranslations - For i18n translations
+ * 
+ * The component is complex and deals with multiple profile types, file uploads,
+ * and location data. It receives profile data from the parent component rather than
+ * fetching it directly to avoid duplicating the data fetching logic.
+ */
 function EditProfileFormComponent({
   userProfileData,
   locale,

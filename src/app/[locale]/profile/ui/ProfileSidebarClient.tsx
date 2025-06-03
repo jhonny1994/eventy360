@@ -63,6 +63,16 @@ interface ProfileSidebarClientProps {
   translations: TranslationStrings;
 }
 
+/**
+ * Client component for the profile sidebar, displaying user information and actions
+ * 
+ * Note: This component follows the standardized hook pattern by using:
+ * - useAuth - For authentication and logout functionality
+ * - Standard React hooks for UI state management
+ * 
+ * It receives profile data and translations as props rather than fetching them directly,
+ * following the data-passing pattern for client components.
+ */
 export default function ProfileSidebarClient({ profile, locale, translations }: ProfileSidebarClientProps) {
   const [expanded, setExpanded] = useState(true);
   const [isMobile, setIsMobile] = useState(false);

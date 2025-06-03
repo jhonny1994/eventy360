@@ -1,13 +1,33 @@
+/**
+ * TopicSelectionStep
+ * 
+ * This component provides the topic selection step in the event creation process,
+ * allowing organizers to associate their event with relevant academic topics.
+ * 
+ * Features:
+ * - Searchable topic selection interface
+ * - Selected topics summary with removal option
+ * - Real-time filtering of topics based on search query
+ * - Visual indicators for selected topics
+ * 
+ * Standardized Patterns Used:
+ * - useAuth: For Supabase client access instead of direct createClient
+ * - useTranslations: Custom hook for internationalization
+ * - useLocale: For locale-aware formatting and RTL support
+ * - Consistent error handling and loading states
+ */
+
 "use client";
 
 import { useState, useEffect } from "react";
 import { UseFormReturn } from "react-hook-form";
-import { useTranslations } from "next-intl";
+import useTranslations from "@/hooks/useTranslations";
+import useLocale from "@/hooks/useLocale";
 import { Label, Checkbox, TextInput } from "flowbite-react";
 import { HiMagnifyingGlass } from "react-icons/hi2";
+import { useAuth } from "@/hooks/useAuth";
 
 import { CreateEventFormDataStatic as CreateEventFormData } from "@/lib/schemas/event";
-import { createClient } from "@/lib/supabase/client";
 
 interface TopicSelectionStepProps {
   form: UseFormReturn<CreateEventFormData>;
@@ -21,6 +41,9 @@ interface Topic {
 
 export default function TopicSelectionStep({ form }: TopicSelectionStepProps) {
   const t = useTranslations("Events.Creation");
+  const locale = useLocale();
+  const { supabase } = useAuth();
+  const isRtl = locale === 'ar';
   
   const [topics, setTopics] = useState<Topic[]>([]);
   const [filteredTopics, setFilteredTopics] = useState<Topic[]>([]);
@@ -34,7 +57,6 @@ export default function TopicSelectionStep({ form }: TopicSelectionStepProps) {
   useEffect(() => {
     const loadTopics = async () => {
       try {
-        const supabase = createClient();
         const { data, error } = await supabase
           .from("topics")
           .select("id, slug, name_translations")
@@ -57,7 +79,7 @@ export default function TopicSelectionStep({ form }: TopicSelectionStepProps) {
     };
 
     loadTopics();
-  }, []);
+  }, [supabase]);
   // Filter topics based on search query
   useEffect(() => {
     if (!searchQuery.trim()) {
@@ -123,15 +145,17 @@ export default function TopicSelectionStep({ form }: TopicSelectionStepProps) {
           بحث في المواضيع
         </Label>
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+          <div className={`absolute inset-y-0 ${isRtl ? 'right-0 pr-3' : 'left-0 pl-3'} flex items-center pointer-events-none`}>
             <HiMagnifyingGlass className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-          </div>          <TextInput
+          </div>
+          <TextInput
             id="topic-search"
             type="text"
             placeholder={t("topicSelection.search.placeholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
+            className={isRtl ? 'pr-10' : 'pl-10'}
+            dir={isRtl ? "rtl" : "ltr"}
           />
         </div>
       </div>      {/* Selected Topics Count */}

@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { Button, Spinner } from 'flowbite-react';
 import { FiDownload, FiX } from 'react-icons/fi';
-import { createClient } from '@/lib/supabase/client';
+import { useAuth } from '@/components/providers/AuthProvider';
 import { useLocale } from 'next-intl';
 
 interface DownloadDocumentButtonProps {
@@ -36,6 +36,7 @@ export default function DownloadDocumentButton({
   const [error, setError] = useState<string | null>(null);
   const appLocale = useLocale();
   const isRtl = appLocale === 'ar';
+  const { supabase } = useAuth();
 
   const downloadDocument = useCallback(async () => {
     if (!documentPath) {
@@ -56,8 +57,6 @@ export default function DownloadDocumentButton({
       // The first part is the bucket name, the rest is the file path
       const bucketName = pathParts[0];
       const filePath = pathParts.slice(1).join('/');
-
-      const supabase = createClient();
       
       // Get the file data
       const { data, error: downloadError } = await supabase
@@ -87,7 +86,7 @@ export default function DownloadDocumentButton({
     } finally {
       setIsLoading(false);
     }
-  }, [documentPath]);
+  }, [documentPath, supabase.storage]);
 
   // Don't render anything if there's no document
   if (!documentPath) {

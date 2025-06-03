@@ -1,7 +1,28 @@
+/**
+ * PaymentHistoryDisplay
+ * 
+ * This component displays a user's payment history in a tabular format.
+ * It shows payment dates, amounts, periods, methods, statuses, and documents.
+ * 
+ * Features:
+ * - Payment listing in a paginated table
+ * - Status badges for payment status visualization
+ * - Document viewing functionality
+ * - Loading, error, and empty states
+ * - Full RTL support
+ * 
+ * Standardized Patterns Used:
+ * - useAuth: For Supabase client access
+ * - useTranslations: Custom hook for internationalization
+ * - useLocale: For locale-aware formatting and rendering
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations, useLocale } from 'next-intl';
+import useTranslations from '@/hooks/useTranslations';
+import useLocale from '@/hooks/useLocale';
+import { useAuth } from '@/components/providers/AuthProvider';
 import { 
   Table, 
   TableBody, 
@@ -13,7 +34,6 @@ import {
   Spinner 
 } from 'flowbite-react';
 import { HiDocument, HiExclamationCircle } from 'react-icons/hi';
-import { createClient } from '@/lib/supabase/client';
 import type { Database } from '@/database.types';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { getRtlClass } from '@/utils/ui/getRtlClass';
@@ -22,7 +42,7 @@ type Payment = Database['public']['Tables']['payments']['Row'];
 
 interface PaymentHistoryDisplayProps {
   userId: string;
-  locale: string;
+  locale?: string; // Made optional for backward compatibility
   onReportPayment?: () => void;
 }
 
@@ -38,20 +58,20 @@ type StatusType =
 
 export default function PaymentHistoryDisplay({
   userId,
-  locale,
+  locale, // Kept for backward compatibility
   onReportPayment
 }: PaymentHistoryDisplayProps) {
   const t = useTranslations('PaymentSection.History');
   const tCommon = useTranslations('Common');
-  const appLocale = useLocale();
-  const isRtl = appLocale === 'ar';
+  const actualLocale = useLocale();
+  const isRtl = actualLocale === 'ar';
   const rtlClasses = getRtlClass(isRtl);
   
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  const supabase = createClient();
+  const { supabase } = useAuth();
   
   // Load payments on component mount
   useEffect(() => {
@@ -88,8 +108,8 @@ export default function PaymentHistoryDisplay({
   // Format date function
   const formatDate = (dateString: string) => {
     try {
-      // Use the locale passed in props for proper internationalization
-      return new Date(dateString).toLocaleDateString(locale, {
+      // Use the standardized locale for proper internationalization
+      return new Date(dateString).toLocaleDateString(actualLocale || locale, {
         year: 'numeric',
         month: 'long',
         day: 'numeric'

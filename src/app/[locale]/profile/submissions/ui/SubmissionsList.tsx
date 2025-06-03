@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import { useLocale, useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 import { Badge } from 'flowbite-react';
 import { Calendar, ArrowDown, ArrowUp } from 'lucide-react';
 import NoSubmissions from "./NoSubmissions";
 import SubmissionFilters, { SubmissionFiltersState } from './SubmissionFilters';
 import ActionButtons from './ActionButtons';
+import useTranslations from '@/hooks/useTranslations';
 
 // Define the Submission type
 export interface Submission {
@@ -56,6 +57,18 @@ const statusColors: Record<string, string> = {
   published: "success"
 };
 
+/**
+ * SubmissionsList component for displaying and managing a list of user submissions
+ * 
+ * Note: This component follows the standardized hook pattern by using:
+ * - useTranslations - For i18n translations
+ * 
+ * Features:
+ * - Sorting by different columns
+ * - Filtering by status and search term
+ * - Pagination
+ * - RTL support
+ */
 export default function SubmissionsList({ submissions, emptyMessage }: SubmissionsListProps) {
   const t = useTranslations('Submissions');
   const locale = useLocale();

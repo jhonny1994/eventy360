@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { toast } from 'react-hot-toast';
-import { createClient } from '@/lib/supabase/client';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '@/database.types';
 
 /**
  * Form validation schemas for admin authentication
@@ -40,14 +41,15 @@ export const getAdminCreateAccountSchema = (t: (key: string, values?: Record<str
  * @param email Email address to login with
  * @param password Password to login with
  * @param t Translation function from useTranslations for error messages
+ * @param supabase Supabase client from useAuth hook
  * @returns Result object with success flag, user data (if successful), and error (if failed)
  */
 export async function handleAdminLogin(
   email: string,
   password: string,
-  t: (key: string) => string
+  t: (key: string) => string,
+  supabase: SupabaseClient<Database>
 ) {
-  const supabase = createClient();
   const toastId = toast.loading(t('submitting'));
   
   try {

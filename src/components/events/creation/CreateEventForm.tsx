@@ -1,10 +1,32 @@
+/**
+ * CreateEventForm
+ * 
+ * This component provides a multi-step form for creating academic events.
+ * It guides organizers through the event creation process with validation
+ * and subscription checks.
+ * 
+ * Features:
+ * - Multi-step form with progress tracking
+ * - Field validation using zod schemas
+ * - Subscription-based access control
+ * - Location selection with wilaya/daira support
+ * - Topic association for event categorization
+ * 
+ * Standardized Patterns Used:
+ * - useAuth: For Supabase client access instead of direct createClient
+ * - useTranslations: Custom hook for internationalization
+ * - useSubscription: For subscription status and tier checks
+ * - Consistent error handling and loading states
+ * - Type-safe form handling with react-hook-form
+ */
+
 "use client";
 
 import { useState, useCallback } from "react";
 // import { useRouter } from "next/navigation"; // Removed unused import
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTranslations } from "next-intl";
+import useTranslations from "@/hooks/useTranslations";
 import { Alert, Button, Progress } from "flowbite-react";
 import { HiExclamationTriangle, HiCheckCircle } from "react-icons/hi2";
 
@@ -15,8 +37,7 @@ import {
   type EventFormat
 } from "@/lib/schemas/event";
 import { useSubscription } from "@/hooks/useSubscription";
-import { createClient } from "@/lib/supabase/client";
-import { useAuth } from "@/components/providers/AuthProvider";
+import { useAuth } from "@/hooks/useAuth";
 import { withSubscriptionGuard } from "@/components/hoc/withSubscriptionGuard";
 
 import BasicInfoStep from "./steps/BasicInfoStep";
@@ -38,7 +59,7 @@ interface CreateEventFormProps {
 }
 
 function CreateEventForm({ className }: CreateEventFormProps) {
-  const { user } = useAuth();
+  const { user, supabase } = useAuth();
   const t = useTranslations("Events.Creation");
   const tValidation = useTranslations("Events.Creation.validation");
   
@@ -46,7 +67,8 @@ function CreateEventForm({ className }: CreateEventFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const { subscriptionData, loading: subscriptionLoading } = useSubscription();  const form = useForm<CreateEventFormData>({
+  const { subscriptionData, loading: subscriptionLoading } = useSubscription();
+  const form = useForm<CreateEventFormData>({
     resolver: zodResolver(getCreateEventSchema(tValidation)),
     mode: "onChange",    defaultValues: {
       event_name_ar: "",
@@ -95,7 +117,9 @@ function CreateEventForm({ className }: CreateEventFormProps) {
     
     // If user has a valid subscription (paid or trial), they can create events
     return true;
-  }, [subscriptionData, subscriptionLoading]);const getStepComponent = () => {
+  }, [subscriptionData, subscriptionLoading]);
+
+  const getStepComponent = () => {
     switch (currentStep) {
       case "basicInfo":
         return <BasicInfoStep form={form} />;
@@ -108,12 +132,15 @@ function CreateEventForm({ className }: CreateEventFormProps) {
       default:
         return null;
     }
-  };const validateCurrentStep = async () => {
-  const stepFields = getStepFields(currentStep);
-  // TypeScript will now correctly understand that stepFields contains valid keys of CreateEventFormData
-  const isValid = await form.trigger(stepFields);
-  return isValid;
-};
+  };
+
+  const validateCurrentStep = async () => {
+    const stepFields = getStepFields(currentStep);
+    // TypeScript will now correctly understand that stepFields contains valid keys of CreateEventFormData
+    const isValid = await form.trigger(stepFields);
+    return isValid;
+  };
+
   const getStepFields = (step: Step): (keyof CreateEventFormData)[] => {
     switch (step) {
       case "basicInfo":
@@ -170,6 +197,7 @@ function CreateEventForm({ className }: CreateEventFormProps) {
       setCurrentStep(STEPS[prevIndex]);
     }
   };
+
   const handleSubmit = async (data: CreateEventFormData) => {
     if (!user) {
       setSubmitError(t("mustBeLoggedIn"));
@@ -187,7 +215,7 @@ function CreateEventForm({ className }: CreateEventFormProps) {
     setSubmitSuccess(false);
 
     try {
-      const supabase = createClient();      const { data: eventData, error: insertEventError } = await supabase
+      const { data: eventData, error: insertEventError } = await supabase
         .from("events")
         .insert({
           created_by: user.id,

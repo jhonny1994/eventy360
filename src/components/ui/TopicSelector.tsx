@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Select, Label, Spinner, Alert } from 'flowbite-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { createClient } from '@/lib/supabase/client';
+import { useAuth } from '@/components/providers/AuthProvider';
 import { HiExclamationCircle } from 'react-icons/hi';
 
 export interface Topic {
@@ -72,8 +72,8 @@ export default function TopicSelector({
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   
-  // Create Supabase client
-  const supabase = createClient();
+  // Use Auth hook to get Supabase client
+  const { supabase } = useAuth();
   
   // Fetch topics from the database
   useEffect(() => {

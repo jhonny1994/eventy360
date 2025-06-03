@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { HiExclamationCircle } from 'react-icons/hi';
 import { deleteTopic, getTopicUsage } from '@/utils/admin/topics';
 import type { TopicData } from './TopicActionButtons';
+import { useAuth } from '@/components/providers/AuthProvider';
 
 interface DeleteTopicConfirmationProps {
   show: boolean;
@@ -21,6 +22,7 @@ export default function DeleteTopicConfirmation({
   topic
 }: DeleteTopicConfirmationProps) {
   const t = useTranslations('AdminTopics');
+  const { supabase } = useAuth();
   
   // State for loading and errors
   const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +40,7 @@ export default function DeleteTopicConfirmation({
     setIsLoadingUsage(true);
     
     try {
-      const result = await getTopicUsage(topic.id);
+      const result = await getTopicUsage(supabase, topic.id);
       
       if (result.success) {
         setUsageData({
@@ -56,7 +58,7 @@ export default function DeleteTopicConfirmation({
     } finally {
       setIsLoadingUsage(false);
     }
-  }, [topic.id]);
+  }, [topic.id, supabase]);
   
   // Load usage data when modal is shown
   useEffect(() => {
@@ -71,7 +73,7 @@ export default function DeleteTopicConfirmation({
     setError(null);
     
     try {
-      const result = await deleteTopic(topic.id, {
+      const result = await deleteTopic(supabase, topic.id, {
         name: topic.name_translations.ar || 'Unknown',
         slug: topic.slug
       });

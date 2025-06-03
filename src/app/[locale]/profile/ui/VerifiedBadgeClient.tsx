@@ -6,6 +6,12 @@ interface VerifiedBadgeClientProps {
   className?: string;
 }
 
+/**
+ * A simple presentational component that displays a verified badge
+ * 
+ * Note: This is a UI-only component that doesn't require hooks.
+ * It follows our standardized pattern as a pure presentational component.
+ */
 export default function VerifiedBadgeClient({ className }: VerifiedBadgeClientProps) {
   return (
     <span className={`inline-flex items-center justify-center ${className || ''}`}>

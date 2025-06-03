@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
 import { Spinner, Card, Alert } from 'flowbite-react';
 import { HiInformationCircle } from 'react-icons/hi';
-import { createClient } from '@/lib/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import useTranslations from '@/hooks/useTranslations';
 import SubmissionStatusChart from './charts/SubmissionStatusChart';
 import MetricsGrid from './charts/MetricsGrid';
 import SubmissionTimelineChart from './charts/SubmissionTimelineChart';
@@ -27,8 +27,18 @@ interface EventStatisticsTabProps {
   locale: string;
 }
 
+/**
+ * EventStatisticsTab component for displaying event statistics and metrics
+ * 
+ * Note: This component follows the standardized hook patterns by using:
+ * - useAuth - For Supabase client access
+ * - useTranslations - For i18n translations
+ * 
+ * This component fetches and displays submission statistics for an event,
+ * including metrics overview, status distribution, and submission timeline.
+ */
 export default function EventStatisticsTab({ eventId, locale }: EventStatisticsTabProps) {
-  const supabase = createClient();
+  const { supabase } = useAuth();
   const t = useTranslations('EventStatistics');
   const [stats, setStats] = useState<SubmissionStats>({
     total_submissions: 0,
@@ -125,7 +135,7 @@ export default function EventStatisticsTab({ eventId, locale }: EventStatisticsT
       ) : (
         <>
           {/* Metrics overview */}
-          <MetricsGrid stats={stats} locale={locale} />
+          <MetricsGrid stats={stats} />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Submission status distribution */}
@@ -134,7 +144,7 @@ export default function EventStatisticsTab({ eventId, locale }: EventStatisticsT
                 {t('statusDistributionTitle')}
               </h3>
               <div className="h-80">
-                <SubmissionStatusChart stats={stats} locale={locale} />
+                <SubmissionStatusChart stats={stats} />
               </div>
             </Card>
 

@@ -1,9 +1,30 @@
+/**
+ * ReportPaymentForm
+ * 
+ * This component provides a form for users to report payments.
+ * It implements a multi-step process for payment reporting and document upload.
+ * 
+ * Features:
+ * - Two-step process: form entry and document upload
+ * - Form validation with Zod
+ * - Integration with app settings
+ * - Payment method selection
+ * - Detailed payment information display
+ * - Support for different user types
+ * - Full RTL support
+ * 
+ * Standardized Patterns Used:
+ * - useTranslations: Custom hook for internationalization
+ * - useLocale: For locale-aware formatting and rendering
+ */
+
 'use client';
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useTranslations, useLocale } from 'next-intl';
+import useTranslations from '@/hooks/useTranslations';
+import useLocale from '@/hooks/useLocale';
 import { Button, Label, TextInput, Select, Textarea, Alert } from 'flowbite-react';
 import { z } from 'zod';
 import PaymentProofUpload from './PaymentProofUpload';
@@ -19,7 +40,7 @@ interface ReportPaymentFormProps {
     amount: number;
   } | null;
   onSuccess?: () => void;
-  locale?: string;
+  locale?: string; // Kept for backward compatibility
 }
 
 // Form type will be generated from Zod schema

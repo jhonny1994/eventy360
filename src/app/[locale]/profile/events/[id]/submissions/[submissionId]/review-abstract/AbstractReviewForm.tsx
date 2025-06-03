@@ -2,24 +2,50 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import useTranslations from '@/hooks/useTranslations';
+import useLocale from '@/hooks/useLocale';
+import { useAuth } from '@/hooks/useAuth';
 import { Button, Label, Textarea, Radio, Spinner } from 'flowbite-react';
-import { createBrowserClient } from '@supabase/ssr';
+
+/**
+ * AbstractReviewForm Component
+ * 
+ * This component provides a form for event organizers to review abstract submissions.
+ * It allows organizers to approve or reject abstracts and provide detailed feedback
+ * to researchers about their submission.
+ * 
+ * Features:
+ * - Decision selection (approve/reject)
+ * - Feedback text area with rich formatting
+ * - Form validation based on decision
+ * - Submission processing state
+ * - Error handling with user feedback
+ * - RTL support for Arabic locale
+ * 
+ * Standardized Patterns Used:
+ * - useTranslations: Custom hook for internationalization
+ * - useLocale: Custom hook for locale-aware formatting and rendering
+ * - useAuth: Custom hook for Supabase client access
+ * - Component-based architecture with clear separation of concerns
+ * - Form validation with inline feedback
+ * - Consistent error handling and user feedback
+ * - Responsive button layout
+ */
 
 interface AbstractReviewFormProps {
   submissionId: string;
   eventId: string;
-  locale: string;
 }
 
 type ReviewDecision = 'approve' | 'reject' | '';
 
 export default function AbstractReviewForm({ 
   submissionId, 
-  eventId, 
-  locale 
+  eventId
 }: AbstractReviewFormProps) {
   const t = useTranslations('Submissions');
+  const locale = useLocale();
+  const { supabase } = useAuth();
   const router = useRouter();
   const [decision, setDecision] = useState<ReviewDecision>('');
   const [feedback, setFeedback] = useState('');
@@ -45,12 +71,6 @@ export default function AbstractReviewForm({
     
     setIsSubmitting(true);
     setError(null);
-    
-    // Create Supabase client
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
     
     try {
       // Update the submission status

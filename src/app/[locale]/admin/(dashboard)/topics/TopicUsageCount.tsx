@@ -5,6 +5,7 @@ import { Spinner, Badge, Tooltip } from 'flowbite-react';
 import { HiInformationCircle } from 'react-icons/hi';
 import { useTranslations } from 'next-intl';
 import { getTopicUsage } from '@/utils/admin/topics';
+import { useAuth } from '@/components/providers/AuthProvider';
 
 interface TopicUsageCountProps {
   topicId: string;
@@ -12,6 +13,7 @@ interface TopicUsageCountProps {
 
 export default function TopicUsageCount({ topicId }: TopicUsageCountProps) {
   const t = useTranslations('AdminTopics');
+  const { supabase } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [usageData, setUsageData] = useState<{
@@ -24,7 +26,7 @@ export default function TopicUsageCount({ topicId }: TopicUsageCountProps) {
       setIsLoading(true);
       
       try {
-        const result = await getTopicUsage(topicId);
+        const result = await getTopicUsage(supabase, topicId);
         
         if (result.success) {
           setUsageData({
@@ -43,7 +45,7 @@ export default function TopicUsageCount({ topicId }: TopicUsageCountProps) {
     };
 
     fetchUsageData();
-  }, [topicId, t]);
+  }, [topicId, t, supabase]);
 
   if (isLoading) {
     return (

@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
 import { Spinner } from 'flowbite-react';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import { createClient } from '@/lib/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import useTranslations from '@/hooks/useTranslations';
+import useLocale from '@/hooks/useLocale';
 
 // Register required Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -21,10 +22,22 @@ type SubmissionTimelineData = {
   status: string;
 }[];
 
+/**
+ * SubmissionTimelineChart component for displaying submission trends over time
+ * 
+ * Note: This component follows the standardized hook patterns by using:
+ * - useAuth - For Supabase client access
+ * - useTranslations - For i18n translations
+ * - useLocale - For locale-aware formatting and rendering
+ * 
+ * This component fetches submission data for the past 30 days and renders
+ * a line chart showing trends over time, with proper RTL support for Arabic locale.
+ */
 export default function SubmissionTimelineChart({ eventId, locale }: SubmissionTimelineChartProps) {
-  const supabase = createClient();
+  const { supabase } = useAuth();
   const t = useTranslations('EventStatistics');
-  const isRtl = locale === 'ar';
+  const currentLocale = useLocale();
+  const isRtl = currentLocale === 'ar';
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [timelineData, setTimelineData] = useState<SubmissionTimelineData>([]);

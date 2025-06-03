@@ -1,13 +1,37 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import useTranslations from '@/hooks/useTranslations';
+import useLocale from '@/hooks/useLocale';
+import { useAuth } from '@/hooks/useAuth';
 import { Card, Button, Label, Alert, Textarea, Spinner } from 'flowbite-react';
 import { HiInformationCircle, HiExclamationCircle, HiDownload } from 'react-icons/hi';
 import { Database } from '@/database.types';
 import { Json } from '@/database.types';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+
+/**
+ * FullPaperReviewComponent
+ * 
+ * This component provides a comprehensive interface for reviewing full paper submissions.
+ * It allows reviewers to view submission details, download the paper, provide feedback
+ * in multiple languages, and make decisions (accept, reject, or request revision).
+ * 
+ * Features:
+ * - Multi-language support for viewing content and providing feedback
+ * - Secure file download for the submitted paper
+ * - File metadata display (name, size)
+ * - Comprehensive feedback system with language-specific inputs
+ * - Three-way decision process (accept/reject/revise)
+ * - Status indicators and validation
+ * 
+ * Standardized Patterns Used:
+ * - useAuth: For secure Supabase client access
+ * - useTranslations: Custom hook for internationalization
+ * - useLocale: For locale-aware formatting and RTL support
+ * - Consistent error handling and loading states
+ * - Type-safe database interactions with proper TypeScript interfaces
+ */
 
 interface FullPaperReviewComponentProps {
   submissionId: string;
@@ -63,9 +87,9 @@ export default function FullPaperReviewComponent({
   onReviewComplete 
 }: FullPaperReviewComponentProps) {
   const t = useTranslations('Submissions');
-  const supabase = createClientComponentClient<Database>();
+  const locale = useLocale();
+  const { supabase } = useAuth();
   const router = useRouter();
-  const pathname = usePathname();
   
   const [submission, setSubmission] = useState<SubmissionWithDetails | null>(null);
   const [loading, setLoading] = useState(true);
@@ -154,11 +178,7 @@ export default function FullPaperReviewComponent({
         } else {
           // Get event_id directly from the submission
           if (submission?.event_id) {
-            // Extract locale from the pathname
-            const pathSegments = pathname?.split('/') || [];
-            const locale = pathSegments.length > 1 ? pathSegments[1] : 'ar';
-            
-            // Redirect to submission details page
+            // Use locale from our standardized hook instead of pathname parsing
             router.push(`/${locale}/profile/events/${submission.event_id}/manage`);
           }
         }
@@ -238,6 +258,9 @@ export default function FullPaperReviewComponent({
   // Only when status is 'full_paper_submitted' or if it's a revision under review
   const canReview = submission.full_paper_status === 'full_paper_submitted' || 
                    submission.full_paper_status === 'revision_requested';
+
+  // Use isRtl based on the active language for content directionality
+  const isRtl = activeLanguage === 'ar';
   
   return (
     <Card className="w-full">
@@ -273,7 +296,7 @@ export default function FullPaperReviewComponent({
         
         <div className="mb-4">
           <h6 className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('title')}</h6>
-          <p className="text-lg font-semibold" dir={activeLanguage === 'ar' ? 'rtl' : 'ltr'}>{title}</p>
+          <p className="text-lg font-semibold" dir={isRtl ? 'rtl' : 'ltr'}>{title}</p>
         </div>
         
         <div className="mb-6">
@@ -281,7 +304,7 @@ export default function FullPaperReviewComponent({
           {renderLanguageSelector()}
           <div 
             className="p-4 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-600" 
-            dir={activeLanguage === 'ar' ? 'rtl' : 'ltr'}
+            dir={isRtl ? 'rtl' : 'ltr'}
           >
             <p className="whitespace-pre-wrap">{abstract}</p>
           </div>
@@ -337,7 +360,7 @@ export default function FullPaperReviewComponent({
                          activeLanguage === 'en' ? t('feedbackPlaceholderEn') : 
                          t('feedbackPlaceholderFr')}
             rows={4}
-            dir={activeLanguage === 'ar' ? 'rtl' : 'ltr'}
+            dir={isRtl ? 'rtl' : 'ltr'}
             value={feedback[activeLanguage]}
             onChange={(e) => handleFeedbackChange(e.target.value)}
             disabled={submitting}

@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { createClient } from '@/lib/supabase/client';
 import { Card, Checkbox, Spinner, Alert, Badge, Toast } from 'flowbite-react';
-import { useTranslations, useLocale } from 'next-intl';
-import { useSubscription } from '@/hooks/useSubscription';
-import { HiInformationCircle, HiCheck, HiX } from 'react-icons/hi';
+import { useLocale } from 'next-intl';
+import { useAuth } from '@/components/providers/AuthProvider';
+import useTranslations from '@/hooks/useTranslations';
+import { HiCheck, HiX } from 'react-icons/hi';
+import PremiumFeatureGuard from './PremiumFeatureGuard';
 
 interface Topic {
   id: string;
@@ -18,10 +19,19 @@ interface Topic {
 }
 
 export default function TopicSubscriptionsCard() {
+  return (
+    <PremiumFeatureGuard>
+      <TopicSubscriptionsContent />
+    </PremiumFeatureGuard>
+  );
+}
+
+// Separate the content to allow for the premium feature guard wrapper
+function TopicSubscriptionsContent() {
   const t = useTranslations('ProfilePage.topicSubscriptions');
   const locale = useLocale();
 
-  const supabase = createClient();
+  const { supabase } = useAuth();
   const [allTopics, setAllTopics] = useState<Topic[]>([]);
   const [subscribedTopicIds, setSubscribedTopicIds] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
@@ -33,13 +43,6 @@ export default function TopicSubscriptionsCard() {
     message: '',
     type: 'success'
   });
-  
-  // Get subscription status
-  const { 
-    loading: isLoadingSubscription, 
-    canAccessPremiumFeature
-  } = useSubscription();
-  const isSubscriptionActive = canAccessPremiumFeature();
 
   const fetchInitialData = useCallback(async () => {
     setIsLoading(true);
@@ -112,12 +115,6 @@ export default function TopicSubscriptionsCard() {
   const handleToggleSubscription = async (topicId: string) => {
     if (!userId) {
       setError(t('errorUserNotAuthenticated'));
-      return;
-    }
-
-    // Check if user has an active subscription
-    if (!isSubscriptionActive) {
-      setError(t('errorInactiveSubscription'));
       return;
     }
 
@@ -209,7 +206,7 @@ export default function TopicSubscriptionsCard() {
     return t('subscribedCount', { count });
   };
 
-  if (isLoading || isLoadingSubscription) {
+  if (isLoading) {
     return (
       <div className="flex justify-center my-8">
         <Spinner aria-label={t('loadingAriaLabel')} size="xl" />
@@ -245,14 +242,7 @@ export default function TopicSubscriptionsCard() {
         </Alert>
       )}
 
-        {/* Show subscription status message if not active */}
-        {!isSubscriptionActive && (
-          <Alert color="warning" icon={HiInformationCircle} className="mb-4">
-            {t('subscriptionRequired')}
-          </Alert>
-        )}
-
-      {/* Mimic the placeholder style of other cards */}
+        {/* Mimic the placeholder style of other cards */}
       {allTopics.length === 0 && !isLoading && !error && (
         <div className="border border-dashed border-gray-300 dark:border-gray-600 p-8 text-center bg-white dark:bg-gray-800 rounded-lg">
           <p className="text-gray-500 dark:text-gray-400">
@@ -268,7 +258,7 @@ export default function TopicSubscriptionsCard() {
             const isSubscribed = subscribedTopicIds.has(topic.id);
             const isPending = pendingTopicIds.has(topic.id);
                 const topicName = topic.name_translations[locale] || topic.name_translations.ar;
-                const isDisabled = !isSubscriptionActive || isPending;
+                const isDisabled = isPending;
 
             return (
                   <li 

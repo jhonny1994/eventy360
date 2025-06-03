@@ -1,13 +1,36 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import useTranslations from '@/hooks/useTranslations';
+import useLocale from '@/hooks/useLocale';
+import { useAuth } from '@/hooks/useAuth';
 import { Card, Button, Label, Alert, Textarea, Spinner } from 'flowbite-react';
 import { HiInformationCircle, HiExclamationCircle } from 'react-icons/hi';
 import { Database } from '@/database.types';
 import { Json } from '@/database.types';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+
+/**
+ * AbstractReviewComponent
+ * 
+ * This component provides an interface for reviewing abstract submissions.
+ * It displays the abstract content, allows reviewers to provide feedback
+ * in multiple languages, and make accept/reject decisions.
+ * 
+ * Features:
+ * - Multi-language support for viewing abstracts and providing feedback
+ * - Secure submission data fetching with error handling
+ * - Contextual UI that adapts based on abstract status
+ * - Feedback input with language-specific placeholders
+ * - Accept/reject workflow with submission status updates
+ * 
+ * Standardized Patterns Used:
+ * - useAuth: For Supabase client access instead of direct createClient
+ * - useTranslations: Custom hook for internationalization
+ * - useLocale: For locale-aware formatting and RTL support
+ * - Consistent error handling and loading states
+ * - Type-safe database interactions
+ */
 
 interface AbstractReviewComponentProps {
   submissionId: string;
@@ -48,9 +71,9 @@ export default function AbstractReviewComponent({
   onReviewComplete 
 }: AbstractReviewComponentProps) {
   const t = useTranslations('Submissions');
-  const supabase = createClientComponentClient<Database>();
+  const locale = useLocale();
+  const { supabase } = useAuth();
   const router = useRouter();
-  const pathname = usePathname();
   
   const [submission, setSubmission] = useState<SubmissionWithDetails | null>(null);
   const [loading, setLoading] = useState(true);
@@ -135,11 +158,7 @@ export default function AbstractReviewComponent({
         } else {
           // Get event_id directly from the submission
           if (submission?.event_id) {
-            // Extract locale from the pathname
-            const pathSegments = pathname?.split('/') || [];
-            const locale = pathSegments.length > 1 ? pathSegments[1] : 'ar';
-            
-            // Redirect to submission details page
+            // Use locale from our standardized hook
             router.push(`/${locale}/profile/events/${submission.event_id}/submissions/${submissionId}`);
           }
         }
@@ -204,6 +223,9 @@ export default function AbstractReviewComponent({
   // Determine if abstract can be reviewed (only when status is 'abstract_submitted')
   const canReview = submission.abstract_status === 'abstract_submitted';
   
+  // Use isRtl based on the active language for content directionality
+  const isRtl = activeLanguage === 'ar';
+  
   return (
     <Card className="w-full">
       <h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white mb-4">
@@ -238,7 +260,7 @@ export default function AbstractReviewComponent({
         
         <div className="mb-4">
           <h6 className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('title')}</h6>
-          <p className="text-lg font-semibold" dir={activeLanguage === 'ar' ? 'rtl' : 'ltr'}>{title}</p>
+          <p className="text-lg font-semibold" dir={isRtl ? 'rtl' : 'ltr'}>{title}</p>
         </div>
         
         <div>
@@ -246,7 +268,7 @@ export default function AbstractReviewComponent({
           {renderLanguageSelector()}
           <div 
             className="p-4 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-600" 
-            dir={activeLanguage === 'ar' ? 'rtl' : 'ltr'}
+            dir={isRtl ? 'rtl' : 'ltr'}
           >
             <p className="whitespace-pre-wrap">{abstract}</p>
           </div>
@@ -291,7 +313,7 @@ export default function AbstractReviewComponent({
                          activeLanguage === 'en' ? t('feedbackPlaceholderEn') : 
                          t('feedbackPlaceholderFr')}
             rows={4}
-            dir={activeLanguage === 'ar' ? 'rtl' : 'ltr'}
+            dir={isRtl ? 'rtl' : 'ltr'}
             value={feedback[activeLanguage]}
             onChange={(e) => handleFeedbackChange(e.target.value)}
             disabled={submitting}

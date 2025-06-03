@@ -1,8 +1,29 @@
+/**
+ * EventCardGrid
+ * 
+ * This component displays a grid of event cards with dynamic loading states
+ * and bookmark functionality.
+ * 
+ * Features:
+ * - Responsive grid layout for various screen sizes
+ * - Skeleton loading states for improved UX
+ * - Empty state handling for no events
+ * - Rich event card with formatted dates and status indicators
+ * - Bookmark functionality for event saving
+ * 
+ * Standardized Patterns Used:
+ * - useTranslations: Custom hook for internationalization
+ * - useLocale: For locale-aware formatting and RTL support
+ * - Consistent error handling and loading states
+ * - Type-safe database interactions
+ */
+
 'use client';
 
 import { Card, Badge, Button } from 'flowbite-react';
 import { HiCalendar, HiLocationMarker, HiExternalLink, HiClock } from 'react-icons/hi';
-import { useTranslations } from 'next-intl';
+import useTranslations from '@/hooks/useTranslations';
+import useLocale from '@/hooks/useLocale';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Database } from '@/database.types';
@@ -15,22 +36,21 @@ type Event = Database['public']['Functions']['discover_events']['Returns'][0];
 interface EventCardGridProps {
   events: Event[];
   isLoading: boolean;
-  locale: string;
 }
 
 interface EventCardProps {
   event: Event;
-  locale: string;
 }
 
 /**
  * Individual event card component
  * Displays event information in a clean, accessible format
  */
-function EventCard({ event, locale }: EventCardProps) {
-  const isRtl = locale === 'ar';
+function EventCard({ event }: EventCardProps) {
   const t = useTranslations('Events.card');
   const tEnums = useTranslations('Enums');
+  const actualLocale = useLocale(); // Use the standardized hook
+  const isRtl = actualLocale === 'ar';
   const [bookmarked, setBookmarked] = useState(false);
   const [checkingBookmarkStatus, setCheckingBookmarkStatus] = useState(true);
 
@@ -53,7 +73,7 @@ function EventCard({ event, locale }: EventCardProps) {
   // Format dates for display
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString(locale === 'ar' ? 'ar-DZ' : 'en-US', {
+    return date.toLocaleDateString(actualLocale === 'ar' ? 'ar-DZ' : 'en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
@@ -180,7 +200,7 @@ function EventCard({ event, locale }: EventCardProps) {
       {/* Actions - Ensure this is at the bottom */}
       <div className={`flex items-center justify-between p-4 border-t border-gray-200 dark:border-gray-700 ${isRtl ? 'flex-row-reverse' : ''}`}>
         <div className={`flex ${isRtl ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
-          <Link href={`/${locale}/profile/events/${event.id}`}>
+          <Link href={`/${actualLocale}/profile/events/${event.id}`}>
             <Button size="sm" color="info">
               <HiExternalLink className={`${isRtl ? 'ml-1.5' : 'mr-1.5'} h-4 w-4`} />
               {t('viewDetails')}
@@ -202,17 +222,25 @@ function EventCard({ event, locale }: EventCardProps) {
 
 /**
  * Grid layout for event cards
- * Includes loading states and empty states
+ * Features:
+ * - Responsive grid layout for displaying event cards
+ * - Handles loading states with skeleton UI
+ * - Provides empty state when no events are available
+ * - Supports right-to-left layout for Arabic locale
+ * 
+ * Standardized patterns:
+ * - useTranslations for internationalization
+ * - useLocale for locale-aware formatting and rendering
  */
 export default function EventCardGrid({
   events,
-  isLoading,
-  locale
+  isLoading
 }: EventCardGridProps) {
-  const isRtl = locale === 'ar';
+  const actualLocale = useLocale(); // Use the standardized hook
+  const isRtl = actualLocale === 'ar';
   const t = useTranslations('Events.discovery');
-
-  if (isLoading && events.length === 0) { // Show skeleton only on initial load
+  
+  if (isLoading && events.length === 0) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6"> {/* Adjusted grid */}
         {Array.from({ length: 6 }).map((_, index) => ( // Adjusted skeleton count
@@ -256,7 +284,7 @@ export default function EventCardGrid({
       dir={isRtl ? 'rtl' : 'ltr'}
     >
       {events.map((event) => (
-        <EventCard key={`${event.id}-${new Date().getTime()}`} event={event} locale={locale} />
+        <EventCard key={event.id} event={event} />
       ))}
     </div>
   );

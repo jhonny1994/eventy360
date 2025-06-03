@@ -14,6 +14,7 @@ import {
 import { useTranslations } from "next-intl";
 import { useRouter, useParams } from "next/navigation";
 import { getLoginSchema, handleAdminLogin } from "@/utils/admin/auth-forms";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 type LoginFormValues = {
   email: string;
@@ -34,6 +35,7 @@ export default function AdminLoginForm({ redirectPath }: AdminLoginFormProps) {
   const tCommon = useTranslations("Common");
   const tValidations = useTranslations("Validations");
   const tLogin = useTranslations("AdminAuth.LoginForm");
+  const { supabase } = useAuth();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
@@ -69,7 +71,8 @@ export default function AdminLoginForm({ redirectPath }: AdminLoginFormProps) {
       const { success, error } = await handleAdminLogin(
         data.email,
         data.password,
-        (key: string) => tCommon(key)
+        (key: string) => tCommon(key),
+        supabase
       );
 
       if (!success && error) {

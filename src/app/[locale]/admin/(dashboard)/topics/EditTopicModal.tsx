@@ -8,6 +8,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { HiExclamationCircle } from 'react-icons/hi';
 import { getTopicSchema, generateSlug, TopicFormData } from '@/lib/schemas/topicSchema';
 import { updateTopic } from '@/utils/admin/topics';
+import { useAuth } from '@/components/providers/AuthProvider';
 
 interface TopicData {
   id: string;
@@ -36,6 +37,7 @@ export default function EditTopicModal({
   const t = useTranslations('AdminTopics.edit');
   const locale = useLocale();
   const isRtl = locale === 'ar';
+  const { supabase } = useAuth();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -106,7 +108,7 @@ export default function EditTopicModal({
     
     try {
       // Use the utility function to update topic
-      const result = await updateTopic(topic.id, data, {
+      const result = await updateTopic(supabase, topic.id, data, {
         SLUG_EXISTS: t('slugExistsError'),
         UPDATE_FAILED: t('error'),
         UNEXPECTED: t('error')

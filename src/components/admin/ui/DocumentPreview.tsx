@@ -1,12 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { useState, useEffect, useCallback } from "react";
+import { useAuth } from "@/components/providers/AuthProvider";
 import { Spinner, Alert, Button } from "flowbite-react";
 import { HiExclamationCircle, HiDocumentText, HiRefresh } from "react-icons/hi";
 import Image from "next/image";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "@/database.types";
 import { useLocale } from "next-intl";
 
 type DocumentPreviewProps = {
@@ -66,11 +64,8 @@ export default function DocumentPreview({
     return 'space-x-2'; // For LTR languages
   };
 
-  // Use useRef to maintain a single instance of the Supabase client
-  const supabaseRef = useRef<SupabaseClient<Database> | null>(null);
-  if (!supabaseRef.current) {
-    supabaseRef.current = createClient();
-  }
+  // Use Auth hook to get Supabase client
+  const { supabase } = useAuth();
 
   const fetchDocument = useCallback(async () => {
     if (!documentPath) {
@@ -107,7 +102,7 @@ export default function DocumentPreview({
 
 
       // Generate a longer-lived URL (5 minutes) to avoid frequent refreshes
-      const { data, error } = await supabaseRef.current!.storage
+      const { data, error } = await supabase.storage
         .from(bucketName)
         .createSignedUrl(filePath, 300);
 

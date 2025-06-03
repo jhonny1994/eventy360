@@ -8,6 +8,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { HiExclamationCircle } from 'react-icons/hi';
 import { getTopicSchema, generateSlug, TopicFormData } from '@/lib/schemas/topicSchema';
 import { createTopic } from '@/utils/admin/topics';
+import { useAuth } from '@/components/providers/AuthProvider';
 
 interface CreateTopicModalProps {
   show: boolean;
@@ -23,6 +24,7 @@ export default function CreateTopicModal({
   const t = useTranslations('AdminTopics.create');
   const locale = useLocale();
   const isRtl = locale === 'ar';
+  const { supabase } = useAuth();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -78,7 +80,7 @@ export default function CreateTopicModal({
     
     try {
       // Use the utility function to create topic
-      const result = await createTopic(data, {
+      const result = await createTopic(supabase, data, {
         SLUG_EXISTS: t('slugExistsError'),
         CREATE_FAILED: t('error'),
         UNEXPECTED: t('error')

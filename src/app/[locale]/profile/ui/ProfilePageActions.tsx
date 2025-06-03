@@ -4,15 +4,21 @@ import { Link } from '@/i18n/navigation';
 import { Button, Tooltip } from 'flowbite-react';
 import { HiPencil, HiArrowRightOnRectangle } from 'react-icons/hi2';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { useTranslations } from 'next-intl';
+import useTranslations from '@/hooks/useTranslations';
 import { useParams } from 'next/navigation';
 
+/**
+ * Profile page actions component that provides edit and logout functionality
+ * 
+ * Note: This component follows the standardized hook pattern by using:
+ * - useAuth - For authentication and logout functionality
+ * - useTranslations - For i18n translations
+ */
 export default function ProfilePageActions() {
   const { logout } = useAuth();
   const t = useTranslations('ProfilePage');
   const params = useParams();
   const locale = params.locale as string;
-
 
   const tooltipPlacement = locale === 'ar' ? 'right' : 'left';
 

@@ -1,12 +1,37 @@
+/**
+ * BasicInfoStep
+ * 
+ * This component provides the first step in the event creation process,
+ * collecting basic information about the event including:
+ * - Event name and subtitle
+ * - Event type and format
+ * - Location (wilaya/daira)
+ * - Contact information
+ * 
+ * Features:
+ * - Dynamic location selection with cascading dropdowns
+ * - Form validation with error messages
+ * - Responsive input fields
+ * - Required field indicators
+ * 
+ * Standardized Patterns Used:
+ * - useAuth: For Supabase client access instead of direct createClient
+ * - useTranslations: Custom hook for internationalization
+ * - useLocale: For locale-aware formatting and RTL support
+ * - Consistent error handling and loading states
+ * - Type-safe form handling with react-hook-form
+ */
+
 "use client";
 
 import { useState, useEffect } from "react";
 import { UseFormReturn } from "react-hook-form";
-import { useTranslations } from "next-intl";
+import useTranslations from "@/hooks/useTranslations";
+import useLocale from "@/hooks/useLocale";
 import { Label, TextInput, Select } from "flowbite-react";
+import { useAuth } from "@/hooks/useAuth";
 
 import { CreateEventFormDataStatic as CreateEventFormData, eventTypeValues, eventFormatValues } from "@/lib/schemas/event";
-import { createClient } from "@/lib/supabase/client";
 
 interface BasicInfoStepProps {
   form: UseFormReturn<CreateEventFormData>;
@@ -27,6 +52,9 @@ interface Daira {
 
 export default function BasicInfoStep({ form }: BasicInfoStepProps) {
   const t = useTranslations("Events.Creation");
+  const locale = useLocale();
+  const { supabase } = useAuth();
+  const isRtl = locale === 'ar';
   
   const [wilayas, setWilayas] = useState<Wilaya[]>([]);
   const [dairas, setDairas] = useState<Daira[]>([]);
@@ -40,7 +68,7 @@ export default function BasicInfoStep({ form }: BasicInfoStepProps) {
   useEffect(() => {
     const loadWilayas = async () => {
       try {
-        const supabase = createClient();        const { data, error } = await supabase
+        const { data, error } = await supabase
           .from("wilayas")
           .select("id, name_ar, name_other")
           .order("id");
@@ -54,7 +82,7 @@ export default function BasicInfoStep({ form }: BasicInfoStepProps) {
     };
 
     loadWilayas();
-  }, []);
+  }, [supabase]);
 
   // Load dairas when wilaya changes
   useEffect(() => {
@@ -67,7 +95,7 @@ export default function BasicInfoStep({ form }: BasicInfoStepProps) {
 
       setLoadingDairas(true);
       try {
-        const supabase = createClient();        const { data, error } = await supabase
+        const { data, error } = await supabase
           .from("dairas")
           .select("id, wilaya_id, name_ar, name_other")
           .eq("wilaya_id", parseInt(selectedWilayaId))
@@ -85,7 +113,7 @@ export default function BasicInfoStep({ form }: BasicInfoStepProps) {
     };
 
     loadDairas();
-  }, [selectedWilayaId, setValue]);
+  }, [selectedWilayaId, setValue, supabase]);
 
   return (
     <div className="space-y-6">
@@ -106,6 +134,7 @@ export default function BasicInfoStep({ form }: BasicInfoStepProps) {
           {...register("event_name_ar")}
           placeholder={t("basicInfo.eventNameArPlaceholder")}
           color={errors.event_name_ar ? "failure" : "gray"}
+          dir={isRtl ? "rtl" : "ltr"}
         />
         {errors.event_name_ar && (
           <p className="mt-2 text-sm text-red-600 dark:text-red-500">
@@ -122,6 +151,7 @@ export default function BasicInfoStep({ form }: BasicInfoStepProps) {
           {...register("event_subtitle_ar")}
           placeholder={t("basicInfo.eventSubtitleArPlaceholder")}
           color={errors.event_subtitle_ar ? "failure" : "gray"}
+          dir={isRtl ? "rtl" : "ltr"}
         />
         {errors.event_subtitle_ar && (
           <p className="mt-2 text-sm text-red-600 dark:text-red-500">
@@ -139,7 +169,7 @@ export default function BasicInfoStep({ form }: BasicInfoStepProps) {
           {...register("event_type")}
           color={errors.event_type ? "failure" : "gray"}
           className="w-full focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500"
-          style={{ textAlign: 'right', paddingRight: '2.5rem' }}
+          style={{ textAlign: isRtl ? 'right' : 'left', paddingRight: isRtl ? '2.5rem' : undefined }}
         >
           <option value="">{t("basicInfo.fields.eventType.placeholder")}</option>
           {eventTypeValues.map((type) => (

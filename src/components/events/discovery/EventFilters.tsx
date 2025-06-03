@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Card, Select, Label, Button, Datepicker } from 'flowbite-react';
 import { HiFilter, HiX } from 'react-icons/hi';
 import { useTranslations } from 'next-intl';
-import { createClient } from '@/lib/supabase/client';
+import { useAuth } from '@/components/providers/AuthProvider';
 import TopicSelector from '@/components/ui/TopicSelector';
 import type { Database } from '@/database.types';
 
@@ -49,7 +49,7 @@ export default function EventFilters({
   const isRtl = locale === 'ar';
   const t = useTranslations('Events.filters');
   const tEnums = useTranslations('Enums');
-  const supabase = createClient();
+  const { supabase } = useAuth();
 
   // Local state for form values
   const [filters, setFilters] = useState({

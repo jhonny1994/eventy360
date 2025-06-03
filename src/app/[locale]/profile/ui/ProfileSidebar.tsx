@@ -24,7 +24,7 @@ import {
   HiDocumentText,
   HiBookmark
 } from 'react-icons/hi';
-import { createClient } from '@/lib/supabase/client';
+import { useAuth } from '@/components/providers/AuthProvider';
 import { IconType } from 'react-icons';
 import type { AppSettings } from '@/lib/appConfig';
 
@@ -125,7 +125,7 @@ export default function ProfileSidebar({
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const pathname = usePathname();
-  const supabase = createClient();
+  const { supabase } = useAuth();
   const isRtl = locale === 'ar';
 
   // Handle window resize to determine if mobile view

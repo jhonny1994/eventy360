@@ -407,7 +407,9 @@ export async function submitRevision(
         full_paper_file_url: publicUrl,
         full_paper_file_metadata: fileMetadata,
         version_number: nextVersionNumber,
-        revision_notes: formData.revision_notes || null, // Store revision notes if provided
+        feedback_translations: formData.revision_notes
+          ? { author_revision_notes: formData.revision_notes }
+          : null, // Store revision notes in feedback_translations
         submitted_at: new Date().toISOString()
       })
       .select('id')

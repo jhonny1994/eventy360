@@ -6,19 +6,7 @@ import PaymentInstructionsDisplay from "@/components/ui/PaymentInstructionsDispl
 import PricingModal from "@/components/ui/PricingModal";
 import type { AppSettings } from "@/lib/appConfig";
 import { useLocale } from "next-intl";
-
-// Match the Subscription interface from ProfilePage.tsx
-interface Subscription {
-  id: string;
-  user_id: string;
-  tier: "free" | "paid_researcher" | "paid_organizer" | "trial";
-  status: "active" | "expired" | "trial" | "cancelled";
-  start_date: string;
-  end_date: string | null;
-  trial_ends_at: string | null;
-  created_at: string;
-  updated_at: string;
-}
+import { useSubscription } from "@/hooks/useSubscription";
 
 interface SubscriptionActionsProps {
   texts: {
@@ -27,16 +15,14 @@ interface SubscriptionActionsProps {
     premiumTier: string;
     // Potentially add more texts if needed by the button or modal
   };
-  subscriptionData: Subscription | null; // Changed type to Subscription
-  appSettings: AppSettings | null; // Added appSettings prop
-  userType: "researcher" | "organizer" | null; // Added userType prop
+  appSettings: AppSettings | null;
+  userType: "researcher" | "organizer" | null;
   locale?: string; // Kept for backward compatibility
-  userId?: string; // Added userId prop
+  userId?: string;
 }
 
 export default function SubscriptionActions({
   texts,
-  subscriptionData,
   appSettings,
   userType,
   userId
@@ -49,26 +35,32 @@ export default function SubscriptionActions({
     period: "monthly" | "quarterly" | "biannual" | "annual";
     amount: number;
   } | null>(null);
+  
+  // Use the subscription hook to get subscription data
+  const { subscriptionData } = useSubscription(userId);
+  
+  // Extract subscription details from the hook data
+  const subscription = subscriptionData?.subscription;
 
   let buttonText = texts.upgradeTo + " " + texts.premiumTier;
   const showUpgradeButton = true;
 
-  if (subscriptionData) {
+  if (subscription) {
     // Ensure trial_ends_at is handled correctly for Date comparison
-    const trialEnds = subscriptionData.trial_ends_at
-      ? new Date(subscriptionData.trial_ends_at)
+    const trialEnds = subscription.trial_ends_at
+      ? new Date(subscription.trial_ends_at)
       : new Date(0);
     const now = new Date();
 
     if (
-      subscriptionData.status === "expired" ||
-      (subscriptionData.tier === "trial" && trialEnds < now)
+      subscription.status === "expired" ||
+      (subscription.tier === "trial" && trialEnds < now)
     ) {
       buttonText = texts.reactivateSubscription;
     } else if (
-      subscriptionData.status === "active" &&
-      (subscriptionData.tier === "paid_researcher" ||
-        subscriptionData.tier === "paid_organizer")
+      subscription.status === "active" &&
+      (subscription.tier === "paid_researcher" ||
+        subscription.tier === "paid_organizer")
     ) {
       // Logic for already active paid members can be refined here
       // For example, change buttonText to "Manage Subscription" or set showUpgradeButton = false
@@ -97,10 +89,10 @@ export default function SubscriptionActions({
         <Button
           onClick={() => setShowPricingModal(true)}
           className={`text-white font-medium rounded-lg py-2 px-4 transition-colors duration-200 w-full ${
-            subscriptionData?.status === "expired" ||
-            (subscriptionData?.tier === "trial" &&
-              (subscriptionData.trial_ends_at
-                ? new Date(subscriptionData.trial_ends_at)
+            subscription?.status === "expired" ||
+            (subscription?.tier === "trial" &&
+              (subscription.trial_ends_at
+                ? new Date(subscription.trial_ends_at)
                 : new Date(0)) < new Date())
               ? "bg-orange-500 hover:bg-orange-600"
               : "bg-blue-600 hover:bg-blue-700"

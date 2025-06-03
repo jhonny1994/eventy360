@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button, Modal, Textarea, Label, Spinner, Alert } from 'flowbite-react';
 import { HiCheck, HiX, HiExclamationCircle } from 'react-icons/hi';
-import { createClient } from '@/lib/supabase/client';
+import { useAuth } from '@/components/providers/AuthProvider';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { useLocale } from 'next-intl';
@@ -71,8 +71,8 @@ export default function ApproveRejectActions({
     return 'mr-1'; // For LTR languages, margin on right
   };
 
-  // Create Supabase client at component level
-  const supabase = createClient();
+  // Use Auth hook to get Supabase client
+  const { supabase } = useAuth();
 
   // Function to clear subscription cache for the affected user
   const clearUserSubscriptionCache = async () => {

@@ -219,7 +219,6 @@ export default async function EventManagementPage({ params }: EventManagementPag
           {submissions && submissions.length > 0 ? (
             <EventSubmissionsTable 
               submissions={submissions} 
-              locale={locale}
               eventId={id}
             />
           ) : (

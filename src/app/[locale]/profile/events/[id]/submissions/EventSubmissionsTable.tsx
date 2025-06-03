@@ -1,10 +1,36 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useTranslations } from 'next-intl';
+import useTranslations from '@/hooks/useTranslations';
+import useLocale from '@/hooks/useLocale';
 import Link from 'next/link';
 import { Badge, Button, Select, TextInput, Spinner } from 'flowbite-react';
 import { HiSearch, HiFilter, HiExternalLink, HiDocumentText } from 'react-icons/hi';
+
+/**
+ * EventSubmissionsTable Component
+ * 
+ * This component displays a table of submissions for a specific event, with filtering, 
+ * sorting, and pagination capabilities. It provides organizers with a comprehensive view
+ * of all submissions and tools to manage them effectively.
+ * 
+ * Features:
+ * - Search functionality for finding submissions by title or researcher name
+ * - Status filtering to view submissions at specific stages
+ * - Pagination for handling large submission sets
+ * - RTL support for Arabic locale
+ * - Contextual action buttons based on submission status
+ * - Responsive design for all device sizes
+ * 
+ * Standardized Patterns Used:
+ * - useTranslations: Custom hook for internationalization
+ * - useLocale: Custom hook for locale-aware formatting and rendering
+ * - Component-based architecture with clear separation of concerns
+ * - Consistent status color coding for visual coherence
+ * - Type-safe props with TypeScript interfaces
+ * - Conditional rendering based on submission status
+ * - Localized date formatting
+ */
 
 interface Profile {
   id: string;
@@ -25,7 +51,6 @@ interface Submission {
 
 interface EventSubmissionsTableProps {
   submissions: Submission[];
-  locale: string;
   eventId: string;
 }
 
@@ -56,10 +81,10 @@ const statusFilterOptions = [
 
 export default function EventSubmissionsTable({ 
   submissions,
-  locale,
   eventId
 }: EventSubmissionsTableProps) {
   const t = useTranslations('Submissions');
+  const locale = useLocale();
   const isRtl = locale === 'ar';
   
   // States for filtering and pagination

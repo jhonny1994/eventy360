@@ -1,7 +1,31 @@
+/**
+ * ContentDetailsStep
+ * 
+ * This component provides the content details step in the event creation process,
+ * collecting comprehensive information about the event content, including:
+ * - Problem statement and objectives
+ * - Event axes and submission guidelines
+ * - Organizer information and target audience
+ * - Scientific committees and speakers
+ * - Event pricing
+ * 
+ * Features:
+ * - Comprehensive form fields for event content
+ * - RTL text support for Arabic content
+ * - Required field validation
+ * - Helpful descriptions for each field
+ * 
+ * Standardized Patterns Used:
+ * - useTranslations: Custom hook for internationalization
+ * - useLocale: For locale-aware formatting and RTL support
+ * - Consistent error handling and form state management
+ */
+
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
-import { useTranslations } from "next-intl";
+import useTranslations from "@/hooks/useTranslations";
+import useLocale from "@/hooks/useLocale";
 import { Label, TextInput, Textarea } from "flowbite-react";
 
 import { CreateEventFormDataStatic as CreateEventFormData } from "@/lib/schemas/event";
@@ -12,6 +36,8 @@ interface ContentDetailsStepProps {
 
 export default function ContentDetailsStep({ form }: ContentDetailsStepProps) {
   const t = useTranslations("Events.Creation");
+  const locale = useLocale();
+  const isRtl = locale === 'ar';
   
   const { register, formState: { errors } } = form;
 
@@ -38,7 +64,7 @@ export default function ContentDetailsStep({ form }: ContentDetailsStepProps) {
             placeholder={t("contentDetails.fields.problemStatement.placeholder")}
             rows={4}
             color={errors.problem_statement_ar ? "failure" : "gray"}
-            dir="rtl"
+            dir={isRtl ? "rtl" : "ltr"}
           />
           {errors.problem_statement_ar && (
             <p className="text-red-500 text-xs mt-1">{String(errors.problem_statement_ar.message)}</p>
@@ -57,7 +83,7 @@ export default function ContentDetailsStep({ form }: ContentDetailsStepProps) {
             placeholder={t("contentDetails.fields.objectives.placeholder")}
             rows={4}
             color={errors.event_objectives_ar ? "failure" : "gray"}
-            dir="rtl"
+            dir={isRtl ? "rtl" : "ltr"}
           />
           {errors.event_objectives_ar && (
             <p className="text-red-500 text-xs mt-1">{String(errors.event_objectives_ar.message)}</p>
@@ -76,7 +102,7 @@ export default function ContentDetailsStep({ form }: ContentDetailsStepProps) {
             placeholder={t("contentDetails.fields.eventAxes.placeholder")}
             rows={4}
             color={errors.event_axes_ar ? "failure" : "gray"}
-            dir="rtl"
+            dir={isRtl ? "rtl" : "ltr"}
           />
           {errors.event_axes_ar && (
             <p className="text-red-500 text-xs mt-1">{String(errors.event_axes_ar.message)}</p>
@@ -97,7 +123,7 @@ export default function ContentDetailsStep({ form }: ContentDetailsStepProps) {
             placeholder={t("contentDetails.fields.submissionGuidelines.placeholder")}
             rows={4}
             color={errors.submission_guidelines_ar ? "failure" : "gray"}
-            dir="rtl"
+            dir={isRtl ? "rtl" : "ltr"}
           />
           {errors.submission_guidelines_ar && (
             <p className="text-red-500 text-xs mt-1">{String(errors.submission_guidelines_ar.message)}</p>
@@ -118,7 +144,7 @@ export default function ContentDetailsStep({ form }: ContentDetailsStepProps) {
             placeholder={t("contentDetails.fields.whoOrganizes.placeholder")}
             rows={3}
             color={errors.who_organizes_ar ? "failure" : "gray"}
-            dir="rtl"
+            dir={isRtl ? "rtl" : "ltr"}
           />
           {errors.who_organizes_ar && (
             <p className="text-red-500 text-xs mt-1">{String(errors.who_organizes_ar.message)}</p>
@@ -138,7 +164,7 @@ export default function ContentDetailsStep({ form }: ContentDetailsStepProps) {
             {...register("target_audience_ar")}
             placeholder={t("contentDetails.fields.targetAudience.placeholder")}
             rows={3}
-            dir="rtl"
+            dir={isRtl ? "rtl" : "ltr"}
           />
           <p className="text-xs text-gray-500 mt-1">
             {t("common.optional")}
@@ -155,7 +181,7 @@ export default function ContentDetailsStep({ form }: ContentDetailsStepProps) {
             {...register("scientific_committees_ar")}
             placeholder={t("contentDetails.fields.scientificCommittees.placeholder")}
             rows={4}
-            dir="rtl"
+            dir={isRtl ? "rtl" : "ltr"}
           />
           <p className="text-xs text-gray-500 mt-1">
             {t("common.optional")}
@@ -172,7 +198,7 @@ export default function ContentDetailsStep({ form }: ContentDetailsStepProps) {
             {...register("speakers_keynotes_ar")}
             placeholder={t("contentDetails.fields.speakersKeynotes.placeholder")}
             rows={4}
-            dir="rtl"
+            dir={isRtl ? "rtl" : "ltr"}
           />
           <p className="text-xs text-gray-500 mt-1">
             {t("common.optional")}

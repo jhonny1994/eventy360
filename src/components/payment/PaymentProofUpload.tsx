@@ -1,10 +1,29 @@
+/**
+ * PaymentProofUpload
+ * 
+ * This component provides functionality for uploading payment proof documents.
+ * It handles file selection, validation, and uploading to the server.
+ * 
+ * Features:
+ * - File type and size validation
+ * - Progress indication during upload
+ * - Error and success messaging
+ * - Integration with subscription cache for status updates
+ * - Full RTL support
+ * 
+ * Standardized Patterns Used:
+ * - useAuth: For Supabase client access and user information
+ * - useTranslations: Custom hook for internationalization
+ * - useLocale: For locale-aware formatting and rendering
+ */
+
 'use client';
 
 import { useState, useRef } from 'react';
 import { Button, Alert } from 'flowbite-react';
 import { HiExclamationCircle, HiUpload } from 'react-icons/hi';
-import { createClient } from '@/lib/supabase/client';
-import { useTranslations, useLocale } from 'next-intl';
+import useTranslations from '@/hooks/useTranslations';
+import useLocale from '@/hooks/useLocale';
 import { clearSubscriptionCache } from '@/hooks/useSubscription';
 import { useAuth } from '@/components/providers/AuthProvider';
 
@@ -17,20 +36,17 @@ interface PaymentProofUploadProps {
     payer_notes?: string;
   };
   onUploadSuccess?: (paymentId: string) => void;
-  locale?: string;
+  locale?: string; // Kept for backward compatibility but no longer used
 }
 
 export default function PaymentProofUpload({
   paymentData,
-  onUploadSuccess,
-  locale
+  onUploadSuccess
 }: PaymentProofUploadProps) {
   const t = useTranslations('PaymentSection.PaymentProof');
-  const supabase = createClient();
-  const defaultLocale = useLocale();
-  const currentLocale = locale || defaultLocale;
-  const isRtl = currentLocale === 'ar';
-  const { user } = useAuth();
+  const actualLocale = useLocale();
+  const isRtl = actualLocale === 'ar';
+  const { supabase, user } = useAuth();
   
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);

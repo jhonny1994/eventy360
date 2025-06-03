@@ -1,6 +1,5 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
 import { Card } from 'flowbite-react';
 import { 
   ClipboardList, 
@@ -10,6 +9,8 @@ import {
   AlertCircle, 
   CheckCheck
 } from 'lucide-react';
+import useTranslations from '@/hooks/useTranslations';
+import useLocale from '@/hooks/useLocale';
 
 // Type for the stats
 type SubmissionStats = {
@@ -26,12 +27,22 @@ type SubmissionStats = {
 
 interface MetricsGridProps {
   stats: SubmissionStats;
-  locale: string;
 }
 
-export default function MetricsGrid({ stats, locale }: MetricsGridProps) {
+/**
+ * MetricsGrid component for displaying event statistics in a grid layout
+ * 
+ * Note: This component follows the standardized hook patterns by using:
+ * - useTranslations - For i18n translations
+ * - useLocale - For locale-aware formatting and rendering
+ * 
+ * This component renders key event metrics in a responsive grid,
+ * including submission counts, acceptance rates, and status breakdowns.
+ */
+export default function MetricsGrid({ stats }: MetricsGridProps) {
   const t = useTranslations('EventStatistics');
-  const isRtl = locale === 'ar';
+  const currentLocale = useLocale();
+  const isRtl = currentLocale === 'ar';
 
   // Calculate acceptance rates
   const abstractAcceptanceRate = stats.abstract_submitted > 0

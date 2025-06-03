@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useTranslations } from 'next-intl';
 import { useParams, useRouter } from 'next/navigation';
 import { Button, Label, Alert, Spinner, Textarea } from 'flowbite-react';
 import { HiInformationCircle, HiExclamationCircle } from 'react-icons/hi';
@@ -13,6 +12,7 @@ import {
   getRevisionSubmissionSchema, 
   MAX_FILE_SIZE
 } from '@/lib/schemas/submission';
+import useTranslations from '@/hooks/useTranslations';
 
 interface RevisionUploadSectionProps {
   submissionId: string;
@@ -32,6 +32,30 @@ interface RevisionSubmissionForm {
   revision_notes?: string;
 }
 
+/**
+ * RevisionUploadSection Component
+ * 
+ * This component allows users to upload a revised paper file for their submission.
+ * It provides a form with file validation, progress feedback, revision notes, and error handling.
+ * It also displays reviewer feedback when available to guide the revision process.
+ * 
+ * Features:
+ * - File type validation (.pdf, .doc, .docx only)
+ * - File size validation (max 10MB)
+ * - Form validation using zod schema
+ * - Upload progress indicator
+ * - Revision notes field for explaining changes
+ * - Reviewer feedback display with proper localization
+ * - Error handling and user feedback
+ * - Responsive design
+ * 
+ * Standardized Patterns Used:
+ * - useTranslations: Custom hook for internationalization
+ * - Form validation with react-hook-form and zod
+ * - Component-based architecture with clear separation of concerns
+ * - Consistent error handling and user feedback
+ * - Locale-aware date formatting
+ */
 export default function RevisionUploadSection({ submissionId, feedback }: RevisionUploadSectionProps) {
   const t = useTranslations('Submissions');
   const router = useRouter();

@@ -1,11 +1,21 @@
 import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
+import useTranslations from '@/hooks/useTranslations';
 
 interface NoSubmissionsProps {
   message: string;
 }
 
+/**
+ * NoSubmissions component to display empty state for submissions list
+ * 
+ * Note: This component follows the standardized hook pattern by using:
+ * - useTranslations - For i18n translations
+ * 
+ * This is a presentational component that displays an empty state
+ * with a message and a call to action to browse events.
+ */
 export default function NoSubmissions({ message }: NoSubmissionsProps) {
   const locale = useLocale();
   const t = useTranslations("Submissions");

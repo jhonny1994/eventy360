@@ -1,7 +1,30 @@
+/**
+ * DatesStep
+ * 
+ * This component provides the dates selection step in the event creation process,
+ * allowing organizers to set key dates for their academic event, including:
+ * - Event start and end dates
+ * - Abstract submission deadline
+ * - Abstract review result date
+ * - Full paper submission deadline
+ * - Final submission verdict deadline
+ * 
+ * Features:
+ * - Date sequence information display
+ * - Date input fields with validation
+ * - Required field indicators
+ * - Responsive grid layout
+ * 
+ * Standardized Patterns Used:
+ * - useTranslations: Custom hook for internationalization
+ * - useLocale: For locale-aware formatting and display
+ * - Consistent error handling and form state management
+ */
+
 "use client";
 
 import { UseFormReturn } from "react-hook-form";
-import { useTranslations } from "next-intl";
+import useTranslations from "@/hooks/useTranslations";
 import { Label, TextInput } from "flowbite-react";
 import { HiInformationCircle } from "react-icons/hi2";
 

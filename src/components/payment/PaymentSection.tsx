@@ -1,8 +1,25 @@
+/**
+ * PaymentSection
+ * 
+ * This component provides a tabbed interface for managing payment-related activities.
+ * It allows users to view payment history and report new payments.
+ * 
+ * Features:
+ * - Tab navigation between payment history and payment reporting
+ * - Payment history display
+ * - Payment reporting form
+ * - Integration with application settings
+ * 
+ * Standardized Patterns Used:
+ * - useTranslations: Custom hook for internationalization
+ */
+
 'use client';
 
 import { useState } from 'react';
 import { Card, Button } from 'flowbite-react';
-import { useTranslations } from 'next-intl';
+import useTranslations from '@/hooks/useTranslations';
+import useLocale from '@/hooks/useLocale';
 import PaymentHistoryDisplay from './PaymentHistoryDisplay';
 import ReportPaymentForm from './ReportPaymentForm';
 import type { AppSettings } from '@/lib/appConfig';
@@ -11,16 +28,17 @@ interface PaymentSectionProps {
   userId: string;
   appSettings: AppSettings | null;
   userType: 'researcher' | 'organizer';
-  locale: string;
+  locale?: string; // Made optional for backward compatibility
 }
 
 export default function PaymentSection({
   userId,
   appSettings,
   userType,
-  locale
+  locale // Kept for backward compatibility
 }: PaymentSectionProps) {
   const t = useTranslations('PaymentSection');
+  const actualLocale = useLocale();
   const [activeView, setActiveView] = useState<'history' | 'report'>('history');
 
   return (
@@ -49,7 +67,7 @@ export default function PaymentSection({
         {activeView === 'history' ? (
           <PaymentHistoryDisplay 
             userId={userId} 
-            locale={locale}
+            locale={actualLocale || locale}
             onReportPayment={() => setActiveView('report')}
           />
         ) : (
@@ -57,7 +75,7 @@ export default function PaymentSection({
             appSettings={appSettings} 
             userType={userType}
             onSuccess={() => setActiveView('history')}
-            locale={locale}
+            locale={actualLocale || locale}
           />
         )}
       </div>

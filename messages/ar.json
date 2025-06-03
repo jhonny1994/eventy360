@@ -41,40 +41,40 @@
   "Navigation": {
     "profileDashboard": "لوحة التحكم",
     "profile": "الملف الشخصي",
-    "events": "الفعاليات",
+    "events": "الملتقيات",
     "verification": "التوثيق",
     "subscriptions": "الاشتراكات والمدفوعات",
     "security": "إعدادات الأمان",
     "topics": "المواضيع",
     "submissions": "المساهمات العلمية",
-    "bookmarks": "الفعاليات المحفوظة"
+    "bookmarks": "الملتقيات المحفوظة"
   },
   "Bookmarks": {
-    "title": "الفعاليات المحفوظة",
-    "emptyState": "لا توجد لديك فعاليات محفوظة بعد",
-    "emptyStateDescription": "يمكنك حفظ الفعاليات التي تهمك للرجوع إليها لاحقاً",
-    "addBookmark": "حفظ الفعالية",
+    "title": "الملتقيات المحفوظة",
+    "emptyState": "لا توجد لديك ملتقيات محفوظة بعد",
+    "emptyStateDescription": "يمكنك حفظ الملتقيات التي تهمك للرجوع إليها لاحقاً",
+    "addBookmark": "حفظ الملتقى",
     "removeBookmark": "إزالة من المحفوظات",
     "addBookmarkTooltip": "إضافة إلى المحفوظات",
     "removeBookmarkTooltip": "إزالة من المحفوظات",
-    "bookmarkAdded": "تمت إضافة الفعالية إلى المحفوظات",
-    "bookmarkRemoved": "تمت إزالة الفعالية من المحفوظات",
-    "errorBookmarking": "حدث خطأ أثناء محاولة حفظ الفعالية",
+    "bookmarkAdded": "تمت إضافة الملتقى إلى المحفوظات",
+    "bookmarkRemoved": "تمت إزالة الملتقى من المحفوظات",
+    "errorBookmarking": "حدث خطأ أثناء محاولة حفظ الملتقى",
     "subscriptionRequired": "يتطلب اشتراكاً فعالاً",
-    "bookmarkedCount": "الفعاليات المحفوظة: {count}",
+    "bookmarkedCount": "الملتقيات المحفوظة: {count}",
     "notAuthenticated": "يجب تسجيل الدخول لاستخدام هذه الميزة",
     "fetchError": "حدث خطأ أثناء جلب المعلومات",
-    "addError": "حدث خطأ أثناء حفظ الفعالية",
-    "removeError": "حدث خطأ أثناء إزالة الفعالية من المحفوظات",
-    "addSuccess": "تمت إضافة الفعالية إلى المحفوظات",
-    "removeSuccess": "تمت إزالة الفعالية من المحفوظات",
+    "addError": "حدث خطأ أثناء حفظ الملتقى",
+    "removeError": "حدث خطأ أثناء إزالة الملتقى من المحفوظات",
+    "addSuccess": "تمت إضافة الملتقى إلى المحفوظات",
+    "removeSuccess": "تمت إزالة الملتقى من المحفوظات",
     "unexpectedError": "حدث خطأ غير متوقع",
     "notAuthorized": "غير مصرح لك باستخدام هذه الميزة"
   },
   "Events": {
     "Creation": {
-      "title": "إنشاء فعالية أكاديمية جديدة",
-      "subtitle": "قم بإنشاء وتنظيم فعالية أكاديمية شاملة",
+      "title": "إنشاء ملتقى جديد",
+      "subtitle": "قم بإنشاء وتنظيم ملتقى شامل",
       "steps": {
         "basicInfo": "المعلومات الأساسية",
         "contentDetails": "تفاصيل المحتوى",
@@ -85,7 +85,7 @@
       "navigation": {
         "previous": "السابق",
         "next": "التالي",
-        "submit": "إنشاء الفعالية",
+        "submit": "إنشاء الملتقى",
         "cancel": "إلغاء"
       },
       "common": {
@@ -98,31 +98,31 @@
         "pending": "معلقة"
       },
       "basicInfo": {
-        "title": "المعلومات الأساسية للفعالية",
-        "description": "ادخل المعلومات الأساسية للفعالية الأكاديمية",
-        "eventNameAr": "اسم الفعالية (بالعربية)",
-        "eventNameArPlaceholder": "أدخل اسم الفعالية باللغة العربية",
-        "eventSubtitleAr": "العنوان الفرعي للفعالية (بالعربية)",
-        "eventSubtitleArPlaceholder": "أدخل العنوان الفرعي للفعالية باللغة العربية",
+        "title": "المعلومات الأساسية للملتقى",
+        "description": "ادخل المعلومات الأساسية للملتقى",
+        "eventNameAr": "اسم الملتقى (بالعربية)",
+        "eventNameArPlaceholder": "أدخل اسم الملتقى باللغة العربية",
+        "eventSubtitleAr": "العنوان الفرعي للملتقى (بالعربية)",
+        "eventSubtitleArPlaceholder": "أدخل العنوان الفرعي للملتقى باللغة العربية",
         "fields": {
           "eventName": {
-            "label": "اسم الفعالية",
-            "placeholder": "أدخل اسم الفعالية الأكاديمية",
-            "description": "اختر اسماً واضحاً ومعبراً عن طبيعة الفعالية"
+            "label": "اسم الملتقى",
+            "placeholder": "أدخل اسم الملتقى",
+            "description": "اختر اسماً واضحاً ومعبراً عن طبيعة الملتقى"
           },
           "eventType": {
-            "label": "نوع الفعالية",
-            "placeholder": "اختر نوع الفعالية",
+            "label": "نوع الملتقى",
+            "placeholder": "اختر نوع الملتقى",
             "options": {
-              "scientific_event": "فعالية علمية",
-              "cultural_event": "فعالية ثقافية",
-              "sports_event": "فعالية رياضية",
+              "scientific_event": "ملتقى علمي",
+              "cultural_event": "ملتقى ثقافي",
+              "sports_event": "ملتقى رياضي",
               "competition": "مسابقة"
             }
           },
           "eventFormat": {
-            "label": "صيغة الفعالية",
-            "placeholder": "اختر صيغة الفعالية",
+            "label": "صيغة الملتقى",
+            "placeholder": "اختر صيغة الملتقى",
             "options": {
               "in_person": "حضوري",
               "virtual": "افتراضي",
@@ -133,47 +133,47 @@
           "wilaya": {
             "label": "الولاية",
             "placeholder": "اختر الولاية",
-            "description": "حدد الولاية التي ستقام فيها الفعالية"
+            "description": "حدد الولاية التي سيقام فيها الملتقى"
           },
           "daira": {
             "label": "الدائرة",
             "placeholder": "اختر الدائرة",
-            "description": "حدد الدائرة التي ستقام فيها الفعالية"
+            "description": "حدد الدائرة التي سيقام فيها الملتقى"
           },
           "contactEmail": {
             "label": "البريد الإلكتروني للتواصل",
             "placeholder": "contact@example.com",
-            "description": "بريد إلكتروني للتواصل حول الفعالية"
+            "description": "بريد إلكتروني للتواصل حول الملتقى"
           },
           "contactPhone": {
             "label": "رقم الهاتف للتواصل",
             "placeholder": "+213 xxx xxx xxx",
-            "description": "رقم هاتف للتواصل حول الفعالية (اختياري)"
+            "description": "رقم هاتف للتواصل حول الملتقى (اختياري)"
           }
         }
       },
       "contentDetails": {
         "title": "تفاصيل المحتوى والأهداف",
-        "description": "حدد محتوى الفعالية وأهدافها العلمية",
+        "description": "حدد محتوى الملتقى وأهدافه العلمية",
         "fields": {
           "problemStatement": {
             "label": "الإشكالية والهدف",
-            "placeholder": "اشرح الإشكالية الرئيسية والهدف من الفعالية",
-            "description": "وضح المشكلة البحثية أو الموضوع الذي تتناوله الفعالية"
+            "placeholder": "اشرح الإشكالية الرئيسية والهدف من الملتقى",
+            "description": "وضح المشكلة البحثية أو الموضوع الذي يتناوله الملتقى"
           },
           "objectives": {
             "label": "الأهداف المرجوة",
-            "placeholder": "حدد الأهداف المحددة للفعالية",
+            "placeholder": "حدد الأهداف المحددة للملتقى",
             "description": "اذكر الأهداف الواضحة والقابلة للقياس"
           },
           "eventAxes": {
-            "label": "محاور الفعالية",
-            "placeholder": "اذكر المحاور الرئيسية للفعالية",
+            "label": "محاور الملتقى",
+            "placeholder": "اذكر المحاور الرئيسية للملتقى",
             "description": "حدد المحاور والمواضيع الفرعية"
           },
           "axes": {
-            "label": "محاور الفعالية",
-            "placeholder": "اذكر المحاور الرئيسية للفعالية",
+            "label": "محاور الملتقى",
+            "placeholder": "اذكر المحاور الرئيسية للملتقى",
             "description": "حدد المحاور والمواضيع الفرعية"
           },
           "participationGuidelines": {
@@ -188,16 +188,16 @@
           },
           "whoOrganizes": {
             "label": "الجهة المنظمة",
-            "placeholder": "اذكر الجهة أو الجهات المنظمة للفعالية",
-            "description": "حدد المؤسسات والجهات المشاركة في تنظيم الفعالية"
+            "placeholder": "اذكر الجهة أو الجهات المنظمة للملتقى",
+            "description": "حدد المؤسسات والجهات المشاركة في تنظيم الملتقى"
           },
           "targetAudience": {
             "label": "الجمهور المستهدف",
-            "placeholder": "حدد الجمهور المستهدف من الفعالية"
+            "placeholder": "حدد الجمهور المستهدف من الملتقى"
           },
           "scientificCommittees": {
             "label": "اللجان العلمية",
-            "placeholder": "أدخل معلومات عن اللجان العلمية للفعالية"
+            "placeholder": "أدخل معلومات عن اللجان العلمية للملتقى"
           },
           "speakersKeynotes": {
             "label": "المتحدثون الرئيسيون",
@@ -206,7 +206,7 @@
           "price": {
             "label": "رسوم المشاركة",
             "placeholder": "أدخل رسوم المشاركة (اترك فارغاً إذا كانت مجانية)",
-            "description": "حدد رسوم المشاركة في الفعالية"
+            "description": "حدد رسوم المشاركة في الملتقى"
           },
           "organizingCommittee": {
             "label": "معلومات اللجنة المنظمة",
@@ -217,7 +217,7 @@
       },
       "dates": {
         "title": "التواريخ والمواعيد النهائية",
-        "description": "حدد التواريخ المهمة للفعالية والمواعيد النهائية الأكاديمية",
+        "description": "حدد التواريخ المهمة للملتقى والمواعيد النهائية",
         "sequenceInfo": {
           "title": "تسلسل التواريخ المهمة",
           "steps": {
@@ -226,17 +226,17 @@
             "fullPaperSubmission": "الموعد النهائي لتقديم المساهمات",
             "submissionVerdict": "إعلان قرارات قبول المساهمات",
             "fullPaperDeadline": "الموعد النهائي لتقديم البحوث الكاملة",
-            "eventStart": "تاريخ بداية الفعالية"
+            "eventStart": "تاريخ بداية الملتقى"
           }
         },
         "fields": {
           "eventStartDate": {
-            "label": "تاريخ بداية الفعالية",
-            "description": "التاريخ الذي ستبدأ فيه الفعالية"
+            "label": "تاريخ بداية الملتقى",
+            "description": "التاريخ الذي سيبدأ فيه الملتقى"
           },
           "eventEndDate": {
-            "label": "تاريخ نهاية الفعالية",
-            "description": "التاريخ الذي ستنتهي فيه الفعالية"
+            "label": "تاريخ نهاية الملتقى",
+            "description": "التاريخ الذي سينتهي فيه الملتقى"
           },
           "abstractSubmissionDeadline": {
             "label": "الموعد النهائي لتقديم الملخصات",
@@ -268,7 +268,7 @@
           },
           "registrationDeadline": {
             "label": "الموعد النهائي للتسجيل",
-            "description": "آخر موعد للتسجيل في الفعالية"
+            "description": "آخر موعد للتسجيل في الملتقى"
           },
           "notificationDate": {
             "label": "تاريخ الإعلان عن النتائج",
@@ -278,7 +278,7 @@
       },
       "topicSelection": {
         "title": "اختيار المواضيع البحثية",
-        "description": "اختر المواضيع البحثية المرتبطة بالفعالية",
+        "description": "اختر المواضيع البحثية المرتبطة بالملتقى",
         "search": {
           "placeholder": "ابحث عن المواضيع البحثية...",
           "noResults": "لم يتم العثور على مواضيع مطابقة",
@@ -297,33 +297,33 @@
       },
       "subscription": {
         "limitReached": {
-          "title": "تم الوصول إلى الحد الأقصى للفعاليات",
-          "freeDescription": "لقد وصلت إلى الحد الأقصى للفعاليات النشطة (1 فعالية) في الخطة المجانية.",
-          "paidDescription": "لقد وصلت إلى الحد الأقصى للفعاليات النشطة ({limit} فعاليات) في خطتك الحالية.",
-          "upgradePrompt": "قم بترقية خطتك لإنشاء المزيد من الفعاليات",
+          "title": "تم الوصول إلى الحد الأقصى للملتقيات",
+          "freeDescription": "لقد وصلت إلى الحد الأقصى للملتقيات النشطة (1 ملتقى) في الخطة المجانية.",
+          "paidDescription": "لقد وصلت إلى الحد الأقصى للملتقيات النشطة ({limit} ملتقيات) في خطتك الحالية.",
+          "upgradePrompt": "قم بترقية خطتك لإنشاء المزيد من الملتقيات",
           "upgradeButton": "ترقية الخطة",
-          "manageEvents": "إدارة الفعاليات الحالية"
+          "manageEvents": "إدارة الملتقيات الحالية"
         }
       },
       "success": {
-        "title": "تم إنشاء الفعالية بنجاح!",
-        "description": "تم إنشاء فعاليتك الأكاديمية بنجاح. يمكنك الآن إدارتها من لوحة التحكم.",
+        "title": "تم إنشاء الملتقى بنجاح!",
+        "description": "تم إنشاء ملتقاك بنجاح. يمكنك الآن إدارته من لوحة التحكم.",
         "actions": {
-          "viewEvent": "عرض الفعالية",
-          "createAnother": "إنشاء فعالية أخرى",
+          "viewEvent": "عرض الملتقى",
+          "createAnother": "إنشاء ملتقى آخر",
           "backToDashboard": "العودة إلى لوحة التحكم"
         }
       },
       "errors": {
-        "title": "خطأ في إنشاء الفعالية",
-        "generic": "حدث خطأ أثناء إنشاء الفعالية. يرجى المحاولة مرة أخرى.",
+        "title": "خطأ في إنشاء الملتقى",
+        "generic": "حدث خطأ أثناء إنشاء الملتقى. يرجى المحاولة مرة أخرى.",
         "validation": "يرجى التحقق من البيانات المدخلة وإصلاح الأخطاء",
         "network": "خطأ في الاتصال. يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى",
-        "unauthorized": "ليس لديك صلاحية لإنشاء فعاليات. يرجى التحقق من نوع حسابك.",
+        "unauthorized": "ليس لديك صلاحية لإنشاء ملتقيات. يرجى التحقق من نوع حسابك.",
         "retry": "إعادة المحاولة"
       },
       "loading": {
-        "creating": "جارٍ إنشاء الفعالية...",
+        "creating": "جارٍ إنشاء الملتقى...",
         "loadingTopics": "جارٍ تحميل المواضيع...",
         "loadingLocations": "جارٍ تحميل المواقع...",
         "submitting": "جارٍ الإرسال..."
@@ -335,29 +335,29 @@
         "invalidPrice": "يُرجى إدخال سعر صحيح",
         "selectAtLeastOneTopic": "يرجى اختيار موضوع بحثي واحد على الأقل",
         "eventEndDateMustBeAfterStart": "تاريخ النهاية يجب أن يكون بعد تاريخ البداية",
-        "abstractDeadlineMustBeBeforeEvent": "موعد تقديم الملخصات يجب أن يكون قبل بداية الفعالية",
+        "abstractDeadlineMustBeBeforeEvent": "موعد تقديم الملخصات يجب أن يكون قبل بداية الملتقى",
         "abstractResultMustBeAfterDeadline": "تاريخ نتائج مراجعة الملخصات يجب أن يكون بعد الموعد النهائي لتقديم الملخصات",
         "submissionDeadlineMustBeAfterAbstractResult": "الموعد النهائي لتقديم الأوراق يجب أن يكون بعد تاريخ نتائج مراجعة الملخصات",
         "verdictMustBeAfterSubmission": "تاريخ إعلان قرار قبول الأوراق يجب أن يكون بعد الموعد النهائي لتقديمها",
         "fullPaperMustBeAfterVerdict": "الموعد النهائي لتقديم النسخة النهائية من الورقة يجب أن يكون بعد تاريخ إعلان القرار",
         "fullPaperSubmissionMustBeAfterAbstractResult": "الموعد النهائي لتقديم الأوراق الكاملة يجب أن يكون بعد تاريخ نتائج مراجعة الملخصات",
-        "fullPaperSubmissionMustBeBeforeEvent": "الموعد النهائي لتقديم الأوراق الكاملة يجب أن يكون قبل تاريخ بدء الفعالية",
+        "fullPaperSubmissionMustBeBeforeEvent": "الموعد النهائي لتقديم الأوراق الكاملة يجب أن يكون قبل تاريخ بدء الملتقى",
         "fullPaperSubmissionMustBeBeforeVerdict": "يجب أن يكون موعد تقديم الأوراق الكاملة قبل إعلان القرار",
         "verdictMustBeAfterAbstractResult": "يجب أن يكون إعلان القرار بعد نتائج مراجعة الملخصات",
         "revisionMustBeAfterVerdict": "الموعد النهائي لتقديم التعديلات يجب أن يكون بعد تاريخ إعلان القرار",
-        "revisionMustBeBeforeEvent": "الموعد النهائي لتقديم التعديلات يجب أن يكون قبل تاريخ بدء الفعالية"
+        "revisionMustBeBeforeEvent": "الموعد النهائي لتقديم التعديلات يجب أن يكون قبل تاريخ بدء الملتقى"
       }
     },
     "discovery": {
-      "title": "اكتشاف الفعاليات الأكاديمية",
-      "description": "ابحث واكتشف الفعاليات الأكاديمية والمؤتمرات العلمية في الجزائر",
+      "title": "اكتشاف الملتقيات",
+      "description": "ابحث واكتشف الملتقيات  والمؤتمرات العلمية في الجزائر",
       "searching": "جارٍ البحث...",
-      "resultsCount": "{count, plural, zero {لا توجد فعاليات} one {فعالية واحدة} two {فعاليتان} few {# فعاليات} many {# فعالية} other {# فعالية}}",
-      "noEvents": "لا توجد فعاليات",
-      "noEventsDescription": "لم يتم العثور على فعاليات تطابق معايير البحث الخاصة بك. جرب تعديل المرشحات أو البحث بكلمات مختلفة."
+      "resultsCount": "{count, plural, zero {لا توجد ملتقيات} one {ملتقى واحد} two {ملتقيان} few {# ملتقيات} many {# ملتقى} other {# ملتقى}}",
+      "noEvents": "لا توجد ملتقيات",
+      "noEventsDescription": "لم يتم العثور على ملتقيات تطابق معايير البحث الخاصة بك. جرب تعديل المرشحات أو البحث بكلمات مختلفة."
     },
     "search": {
-      "placeholder": "ابحث عن الفعاليات بالاسم أو الموضوع أو المنظم...",
+      "placeholder": "ابحث عن الملتقيات بالاسم أو الموضوع أو المنظم...",
       "button": "بحث",
       "tip": "استخدم كلمات مفتاحية متعددة للحصول على نتائج أفضل"
     },
@@ -374,7 +374,7 @@
       "allLocations": "جميع الولايات",
       "status": "الحالة",
       "allStatuses": "جميع الحالات",
-      "format": "نوع الفعالية",
+      "format": "نوع الملتقى",
       "allFormats": "جميع الأنواع",
       "startDate": "تاريخ البداية",
       "selectStartDate": "اختر تاريخ البداية",
@@ -396,24 +396,24 @@
       "previous": "السابق",
       "next": "التالي"
     },
-    "loading": "جارٍ تحميل الفعاليات...",
+    "loading": "جارٍ تحميل الملتقيات...",
     "errors": {
-      "title": "خطأ في تحميل الفعاليات",
-      "fetchFailed": "فشل في جلب الفعاليات من قاعدة البيانات. يرجى المحاولة مرة أخرى."
+      "title": "خطأ في تحميل الملتقيات",
+      "fetchFailed": "فشل في جلب الملتقيات من قاعدة البيانات. يرجى المحاولة مرة أخرى."
     }
   },
   "EventDetails": {
-    "title": "تفاصيل الفعالية",
-    "backToEvents": "العودة إلى الفعاليات",
-    "organizedBy": "منظمة من طرف",
-    "eventDate": "تاريخ الفعالية",
+    "title": "تفاصيل الملتقى",
+    "backToEvents": "العودة إلى الملتقيات",
+    "organizedBy": "منظم من طرف",
+    "eventDate": "تاريخ الملتقى",
     "submissionDeadline": "موعد تقديم الملخصات",
     "reviewDeadline": "موعد مراجعة الملخصات",
     "notificationDate": "تاريخ الإشعار بالنتائج",
     "maxParticipants": "الحد الأقصى للمشاركين",
     "registrationFee": "رسوم التسجيل",
     "topics": "المواضيع",
-    "eventType": "نوع الفعالية",
+    "eventType": "نوع الملتقى",
     "eventSubmissionStatus": {
       "submitted": "تم التقديم",
       "lastUpdatedAt": "آخر تحديث في {date}",
@@ -421,15 +421,15 @@
     },
     "timeline": {
       "title": "الجدول الزمني",
-      "eventStarts": "بدء الفعالية",
-      "eventEnds": "انتهاء الفعالية",
+      "eventStarts": "بدء الملتقى",
+      "eventEnds": "انتهاء الملتقى",
       "submissionDeadline": "آخر موعد لتقديم الملخصات",
       "reviewDeadline": "آخر موعد للمراجعة",
       "notificationDate": "تاريخ الإشعار بالقبول",
       "abstractSubmissionOpens": "فتح باب تقديم الملخصات",
       "registrationOpens": "فتح باب التسجيل",
       "registrationCloses": "إغلاق باب التسجيل",
-      "eventDay": "يوم الفعالية",
+      "eventDay": "يوم الملتقى",
       "timeRemaining": {
         "day": "يوم",
         "days": "أيام",
@@ -449,13 +449,13 @@
         "upcoming": "قادم",
         "active": "نشط"
       },
-      "noInfo": "لا توجد معلومات عن الجدول الزمني لهذه الفعالية.",
+      "noInfo": "لا توجد معلومات عن الجدول الزمني لهذا الملتقى.",
       "events": {
         "submission": "تقديم الملخصات",
         "review": "مراجعة الملخصات",
         "notification": "إشعار النتائج",
         "registration": "التسجيل",
-        "event": "الفعالية"
+        "event": "الملتقى"
       }
     },
     "actions": {
@@ -463,10 +463,10 @@
       "sectionTitle": "الإجراءات",
       "participation": "المشاركة",
       "management": "الإدارة",
-      "editEvent": "تعديل الفعالية",
-      "manageEvent": "إدارة الفعالية",
+      "editEvent": "تعديل الملتقى",
+      "manageEvent": "إدارة الملتقى",
       "submitAbstract": "تقديم ملخص",
-      "registerEvent": "التسجيل في الفعالية",
+      "registerEvent": "التسجيل في الملتقى",
       "viewSubmissions": "عرض المقترحات",
       "upgradeRequired": "يتطلب ترقية الاشتراك",
       "register": "التسجيل",
@@ -486,8 +486,8 @@
         "registrationClosed": "التسجيل مغلق",
         "submissionOpen": "تقديم الملخصات مفتوح",
         "submissionClosed": "تقديم الملخصات مغلق",
-        "eventCompleted": "انتهت الفعالية",
-        "eventCancelled": "تم إلغاء الفعالية"
+        "eventCompleted": "انتهى الملتقى",
+        "eventCancelled": "تم إلغاء الملتقى"
       },
       "messages": {
         "registrationSuccess": "تم التسجيل بنجاح",
@@ -502,9 +502,9 @@
     },
     "status": {
       "draft": "مسودة",
-      "published": "منشورة",
-      "archived": "مؤرشفة",
-      "cancelled": "ملغية"
+      "published": "منشور",
+      "archived": "مؤرشف",
+      "cancelled": "ملغى"
     },
     "visibility": {
       "public": "عامة",
@@ -518,12 +518,12 @@
     },
     "header": {
       "createdDate": "تاريخ الإنشاء",
-      "eventInfo": "معلومات الفعالية",
-      "eventType": "نوع الفعالية",
+      "eventInfo": "معلومات الملتقى",
+      "eventType": "نوع الملتقى",
       "registrationFee": "رسوم التسجيل",
       "free": "مجاني",
       "maxParticipants": "الحد الأقصى",
-      "organizedBy": "منظمة من طرف",
+      "organizedBy": "منظم من طرف",
       "statistics": {
         "attendees": "الحاضرون",
         "submissions": "المقترحات المقدمة",
@@ -537,10 +537,10 @@
       },
       "statusHeader": "الحالة",
       "status": {
-        "upcoming": "قادمة",
-        "ongoing": "جارية",
-        "completed": "مكتملة",
-        "cancelled": "ملغية"
+        "upcoming": "قادم",
+        "ongoing": "جارٍ",
+        "completed": "مكتمل",
+        "cancelled": "ملغى"
       }
     },
     "location": {
@@ -560,7 +560,7 @@
       },
       "guidelines": {
         "title": "إرشادات الوصول",
-        "description": "يرجى الوصول قبل 15 دقيقة من موعد بدء الفعالية للسماح بوقت التسجيل والإعداد. ستتوفر معلومات المواقف وتفاصيل إمكانية الوصول قبل تاريخ الفعالية.",
+        "description": "يرجى الوصول قبل 15 دقيقة من موعد بدء الملتقى للسماح بوقت التسجيل والإعداد. ستتوفر معلومات المواقف وتفاصيل إمكانية الوصول قبل تاريخ الملتقى.",
         "parking": "تتوفر مواقف سيارات مجانية",
         "publicTransport": "يمكن الوصول بالمواصلات العامة",
         "accessibility": "المكان مجهز لذوي الاحتياجات الخاصة"
@@ -568,9 +568,9 @@
       "mapPlaceholder": "خريطة الموقع"
     },
     "description": {
-      "title": "وصف الحدث",
+      "title": "وصف الملتقى",
       "logo": {
-        "title": "شعار الحدث",
+        "title": "شعار الملتقى",
         "noLogo": "لا يوجد شعار متاح"
       },
       "qrCode": {
@@ -590,7 +590,7 @@
         "empty": "لا توجد أهداف متاحة."
       },
       "eventAxes": {
-        "title": "محاور الحدث",
+        "title": "محاور الملتقى",
         "empty": "لا توجد محاور متاحة."
       },
       "topics": {
@@ -613,27 +613,27 @@
         "phone": "الهاتف",
         "website": "الموقع الإلكتروني"
       },
-      "about": "حول الفعالية",
+      "about": "حول الملتقى",
       "targetAudience": "الجمهور المستهدف",
       "requirements": "المتطلبات",
       "agenda": "جدول الأعمال",
       "speakers": "المتحدثون",
       "emptyState": {
-        "noDescription": "لا يوجد وصف متاح لهذه الفعالية.",
-        "noObjectives": "لم يتم تحديد أهداف لهذه الفعالية.",
+        "noDescription": "لا يوجد وصف متاح لهذا الملتقى.",
+        "noObjectives": "لم يتم تحديد أهداف لهذا الملتقى.",
         "noAgenda": "لا يوجد جدول أعمال متاح.",
         "noSpeakers": "لم يتم تحديد متحدثين بعد.",
         "noContact": "معلومات التواصل غير متوفرة."
       }
     },
     "metadata": {
-      "defaultTitle": "تفاصيل الفعالية - Eventy360",
-      "defaultDescription": "اكتشف تفاصيل الفعالية وقم بالتسجيل للمشاركة في الأحداث العلمية والأكاديمية."
+      "defaultTitle": "تفاصيل الملتقى - Eventy360",
+      "defaultDescription": "اكتشف تفاصيل الملتقى وقم بالتسجيل للمشاركة في الملتقيات العلمية."
     },
     "errors": {
-      "notFound": "الفعالية غير موجودة",
-      "accessDenied": "غير مسموح لك بعرض هذه الفعالية",
-      "loadingFailed": "فشل في تحميل تفاصيل الفعالية"
+      "notFound": "الملتقى غير موجود",
+      "accessDenied": "غير مسموح لك بعرض هذا الملتقى",
+      "loadingFailed": "فشل في تحميل تفاصيل الملتقى"
     }
   },
   "HomePage": {
@@ -823,15 +823,15 @@
     "invalidPrice": "يُرجى إدخال سعر صحيح",
     "selectAtLeastOneTopic": "يُرجى اختيار موضوع بحثي واحد على الأقل",
     "eventEndDateMustBeAfterStart": "تاريخ النهاية يجب أن يكون بعد تاريخ البداية",
-    "abstractDeadlineMustBeBeforeEvent": "موعد تقديم الملخصات يجب أن يكون قبل بداية الفعالية",
+    "abstractDeadlineMustBeBeforeEvent": "موعد تقديم الملخصات يجب أن يكون قبل بداية الملتقى",
     "abstractResultMustBeAfterDeadline": "تاريخ نتائج مراجعة الملخصات يجب أن يكون بعد الموعد النهائي لتقديم الملخصات",
     "submissionDeadlineMustBeAfterAbstractResult": "الموعد النهائي لتقديم الأوراق يجب أن يكون بعد تاريخ نتائج مراجعة الملخصات",
     "verdictMustBeAfterSubmission": "تاريخ إعلان قرار قبول الأوراق يجب أن يكون بعد الموعد النهائي لتقديمها",
     "fullPaperMustBeAfterVerdict": "الموعد النهائي لتقديم النسخة النهائية من الورقة يجب أن يكون بعد تاريخ إعلان القرار",
     "fullPaperSubmissionMustBeAfterAbstractResult": "الموعد النهائي لتقديم الأوراق الكاملة يجب أن يكون بعد تاريخ نتائج مراجعة الملخصات",
-    "fullPaperSubmissionMustBeBeforeEvent": "الموعد النهائي لتقديم الأوراق الكاملة يجب أن يكون قبل تاريخ بدء الفعالية",
+    "fullPaperSubmissionMustBeBeforeEvent": "الموعد النهائي لتقديم الأوراق الكاملة يجب أن يكون قبل تاريخ بدء الملتقى",
     "revisionMustBeAfterVerdict": "يجب أن يكون موعد التعديل بعد موعد إعلان القرار",
-    "revisionMustBeBeforeEvent": "يجب أن يكون موعد التعديل قبل تاريخ الفعالية",
+    "revisionMustBeBeforeEvent": "يجب أن يكون موعد التعديل قبل تاريخ الملتقى",
     "invalidEnumValue": "يُرجى اختيار قيمة صالحة من القائمة",
     "fileTypeInvalid": "نوع الملف غير مدعوم. الأنواع المدعومة: {types}",
     "fileSizeTooLarge": "حجم الملف يتجاوز الحد المسموح به. الحد الأقصى هو {maxSize} ميغابايت.",
@@ -866,7 +866,7 @@
     "dashboardTitle": "لوحة التحكم",
     "profileCompletion": "اكتمال الملف الشخصي",
     "submissionsCount": "عدد المشاركات",
-    "eventsCreated": "الفعاليات المنشأة",
+    "eventsCreated": "الملتقيات المنشأة",
     "recentActivity": "النشاط الأخير",
     "noRecentActivity": "لا يوجد نشاط حديث",
     "quickActions": "إجراءات سريعة",
@@ -879,12 +879,12 @@
     "upgradeTo": "الترقية إلى",
     "premiumTier": "الباقة المميزة",
     "reactivateSubscription": "إعادة تفعيل الاشتراك",
-    "activeEvents": "الفعاليات النشطة",
+    "activeEvents": "الملتقيات النشطة",
     "totalSubmissions": "إجمالي المشاركات",
     "pendingReviews": "المراجعات قيد الانتظار",
-    "activeEventsList": "قائمة الفعاليات النشطة",
-    "createEvent": "إنشاء فعالية جديدة",
-    "noActiveEvents": "لا توجد فعاليات نشطة حالياً",
+    "activeEventsList": "قائمة الملتقيات النشطة",
+    "createEvent": "إنشاء ملتقى جديد",
+    "noActiveEvents": "لا توجد ملتقيات نشطة حالياً",
     "recentSubmissions": "آخر المشاركات",
     "noSubmissionsReceived": "لم يتم استلام أي مشاركات حتى الآن",
     "security": {
@@ -980,7 +980,7 @@
     },
     "topicSubscriptions": {
       "title": "اشتراكات المواضيع",
-      "description": "اشترك في المواضيع التي تهمك لتلقي إشعارات حول الفعاليات الجديدة",
+      "description": "اشترك في المواضيع التي تهمك لتلقي إشعارات حول الملتقيات الجديدة",
       "noTopicsAvailable": "لا توجد مواضيع متاحة حالياً",
       "loadingAriaLabel": "جار تحميل المواضيع...",
       "errorFetchingData": "حدث خطأ أثناء جلب بيانات المواضيع",
@@ -993,7 +993,8 @@
       "topicsCount": "{count, plural, zero {لا توجد مواضيع} one {موضوع واحد} two {موضوعان} few {# مواضيع} many {# موضوعاً} other {# موضوع}}",
       "subscribedCount": "{count, plural, zero {لا توجد اشتراكات} one {اشتراك واحد} two {اشتراكان} few {# اشتراكات} many {# اشتراكاً} other {# اشتراك}}",
       "noTopicsCount": "لا توجد مواضيع"
-    }
+    },
+    "loading": "جاري التحميل..."
   },
   "Enums": {
     "user_type_enum": {
@@ -1040,9 +1041,9 @@
       "research_team": "فرقة بحث"
     },
     "EventType": {
-      "scientific_event": "فعالية علمية",
-      "cultural_event": "فعالية ثقافية",
-      "sports_event": "فعالية رياضية",
+      "scientific_event": "ملتقى علمي",
+      "cultural_event": "ملتقى ثقافي",
+      "sports_event": "ملتقى رياضي",
       "competition": "مسابقة"
     },
     "EventFormat": {
@@ -1416,26 +1417,26 @@
     },
     "Features": {
       "Researcher": {
-        "submitPapers": "تقديم الأوراق البحثية وملخصات الأبحاث للفعاليات",
+        "submitPapers": "تقديم الأوراق البحثية وملخصات الأبحاث للملتقيات",
         "trackSubmissions": "متابعة حالة الطلبات والمشاركات المقدمة",
-        "topicSubscriptions": "الاشتراك في المجالات البحثية ذات الاهتمام وتلقي إشعارات بالفعاليات المتعلقة بها",
-        "bookmarkEvents": "حفظ الفعاليات الأكاديمية الهامة في القائمة المفضلة"
+        "topicSubscriptions": "الاشتراك في المجالات البحثية ذات الاهتمام وتلقي إشعارات بالملتقيات المتعلقة بها",
+        "bookmarkEvents": "حفظ الملتقيات الهامة في القائمة المفضلة"
       },
       "Organizer": {
-        "createManageEvents": "إنشاء وإدارة الفعاليات الأكاديمية بكفاءة وسهولة",
+        "createManageEvents": "إنشاء وإدارة الملتقيات بكفاءة وسهولة",
         "reviewSubmissions": "أدوات متكاملة لمراجعة وتقييم المشاركات وإدارتها",
         "accessContactInfo": "الوصول إلى معلومات الاتصال الخاصة بالباحثين المشاركين",
-        "eventNotifications": "استقبال إشعارات فورية متعلقة بأنشطة وفعالياتكم"
+        "eventNotifications": "استقبال إشعارات فورية متعلقة بأنشطتكم وملتقياتكم"
       },
       "FreeResearcher": {
-        "browseOnly": "تصفح الفعاليات الأكاديمية المتاحة فقط",
+        "browseOnly": "تصفح الملتقيات المتاحة فقط",
         "readOnlyFeatures": "استخدام ميزات القائمة المفضلة واشتراكات المجالات البحثية للقراءة فقط (دون تلقي إشعارات جديدة)",
         "noNewSubmissions": "لا يمكن تقديم مشاركات جديدة"
       },
       "FreeOrganizer": {
-        "publishedEventsVisible": "تبقى الفعاليات الأكاديمية المنشورة مسبقاً متاحة للعرض العام",
-        "readOnlyAccess": "الوصول إلى بيانات الفعاليات والمشاركات السابقة للقراءة فقط",
-        "noCreateEditEvents": "عدم إمكانية إنشاء أو تعديل الفعاليات الأكاديمية"
+        "publishedEventsVisible": "تبقى الملتقيات المنشورة مسبقاً متاحة للعرض العام",
+        "readOnlyAccess": "الوصول إلى بيانات الملتقيات والمشاركات السابقة للقراءة فقط",
+        "noCreateEditEvents": "عدم إمكانية إنشاء أو تعديل الملتقيات"
       }
     }
   },
@@ -1532,7 +1533,7 @@
         "dashboard": "لوحة التحكم",
         "users": "المستخدمون",
         "payments": "المدفوعات",
-        "events": "الفعاليات",
+        "events": "الملتقيات",
         "submissions": "المشاركات",
         "topics": "المواضيع",
         "emailTemplates": "قوالب البريد الإلكتروني",
@@ -1553,8 +1554,8 @@
           "unit": "منظم"
         },
         "totalEvents": {
-          "title": "إجمالي الفعاليات",
-          "unit": "فعالية"
+          "title": "إجمالي الملتقيات",
+          "unit": "ملتقى"
         },
         "pendingPayments": {
           "title": "مدفوعات تحتاج للتأكيد",
@@ -1672,7 +1673,7 @@
   },
   "AdminTopics": {
     "title": "إدارة المواضيع",
-    "description": "إنشاء وتعديل وحذف وإدارة مواضيع البحث والفعاليات.",
+    "description": "إنشاء وتعديل وحذف وإدارة مواضيع البحث والملتقيات.",
     "createTopicButton": "إضافة موضوع جديد",
     "fetchError": "حدث خطأ أثناء جلب المواضيع:",
     "noTopics": "لا توجد مواضيع لعرضها.",
@@ -1699,7 +1700,7 @@
       "delete": "حذف",
       "untitled": "بدون عنوان",
       "usageCount": "عدد الاستخدامات",
-      "eventCount": "الفعاليات: {eventCount}",
+      "eventCount": "الملتقيات: {eventCount}",
       "subscriptionCount": "الاشتراكات: {subscriptionCount}"
     },
     "filters": {
@@ -1754,7 +1755,7 @@
     "delete": {
       "title": "حذف الموضوع",
       "confirmMessage": "هل أنت متأكد أنك تريد حذف هذا الموضوع؟ لا يمكن التراجع عن هذا الإجراء.",
-      "inUseWarning": "هذا الموضوع مستخدم حالياً في {eventCount} فعالية و {subscriptionCount} اشتراك. حذفه سيؤدي إلى تأثيرات متتالية.",
+      "inUseWarning": "هذا الموضوع مستخدم حالياً في {eventCount} ملتقى و {subscriptionCount} اشتراك. حذفه سيؤدي إلى تأثيرات متتالية.",
       "confirmButton": "نعم، احذف",
       "deleteAnyway": "حذف على أي حال",
       "cancelButton": "إلغاء",
@@ -1804,35 +1805,35 @@
     "subscriptionDetails": "تفاصيل الاشتراك"
   },
   "EventManagement": {
-    "title": "إدارة الفعالية",
-    "manageEventDescription": "إدارة تفاصيل الفعالية والمساهمات والإعدادات",
-    "backToEventDetails": "العودة إلى تفاصيل الفعالية",
-    "editEvent": "تعديل الفعالية",
+    "title": "إدارة الملتقى",
+    "manageEventDescription": "إدارة تفاصيل الملتقى والمساهمات والإعدادات",
+    "backToEventDetails": "العودة إلى تفاصيل الملتقى",
+    "editEvent": "تعديل الملتقى",
     "metrics": {
       "submissions": "المساهمات"
     },
     "overview": "نظرة عامة",
     "statistics": "الإحصائيات",
     "status": "الحالة",
-    "statusPublished": "منشورة",
+    "statusPublished": "منشور",
     "statusDraft": "مسودة",
-    "eventInfo": "معلومات الفعالية",
+    "eventInfo": "معلومات الملتقى",
     "createdAt": "تاريخ الإنشاء",
-    "eventType": "نوع الفعالية",
+    "eventType": "نوع الملتقى",
     "submissionsManagement": "إدارة المساهمات",
     "submissionsList": "قائمة المساهمات",
     "viewAllSubmissions": "عرض جميع المساهمات",
     "noSubmissionsYet": "لا توجد مساهمات بعد",
     "submissionsWillAppearHere": "ستظهر المساهمات هنا عند استلامها",
     "actionsNeeded": "الإجراءات المطلوبة",
-    "completeSetup": "استكمال إعداد الفعالية",
-    "completeSetupDesc": "استكمل جميع المعلومات المطلوبة لتجهيز الفعالية للمشاركين",
-    "completeDetails": "استكمال تفاصيل الفعالية",
-    "backToManagement": "العودة إلى إدارة الفعالية"
+    "completeSetup": "استكمال إعداد الملتقى",
+    "completeSetupDesc": "استكمل جميع المعلومات المطلوبة لتجهيز الملتقى للمشاركين",
+    "completeDetails": "استكمال تفاصيل الملتقى",
+    "backToManagement": "العودة إلى إدارة الملتقى"
   },
   "EventStatistics": {
-    "title": "إحصائيات الفعالية",
-    "description": "نظرة عامة تحليلية على إحصائيات المساهمات والمشاركات في الفعالية",
+    "title": "إحصائيات الملتقى",
+    "description": "نظرة عامة تحليلية على إحصائيات المساهمات والمشاركات في الملتقى",
     "fetchError": "حدث خطأ أثناء جلب الإحصائيات",
     "errorTitle": "خطأ في تحميل الإحصائيات",
     "noSubmissionsTitle": "لا توجد إحصائيات بعد",
@@ -1881,11 +1882,11 @@
   },
   "Submissions": {
     "mySubmissions": "مساهماتي العلمية",
-    "mySubmissionsDescription": "عرض وإدارة المساهمات العلمية المقدمة للفعاليات",
+    "mySubmissionsDescription": "عرض وإدارة المساهمات العلمية المقدمة للملتقيات",
     "submissionDetails": "تفاصيل المساهمة",
     "submissionDetailsDescription": "معلومات مفصلة عن المساهمة العلمية المقدمة",
     "submitAbstractTitle": "تقديم ملخص بحثي",
-    "submitAbstractDescription": "قم بتقديم ملخص بحثي للمشاركة في هذه الفعالية",
+    "submitAbstractDescription": "قم بتقديم ملخص بحثي للمشاركة في هذا الملتقى",
     "submissionTimeline": "الجدول الزمني للمساهمة",
     "abstractSubmitted": "تم تقديم الملخص",
     "abstractAccepted": "تم قبول الملخص",
@@ -1919,7 +1920,7 @@
     "acceptedFileTypes": "PDF، DOCX، RTF (الحد الأقصى: 5MB)",
     "noSubmissions": "لا توجد مساهمات علمية",
     "startSubmitting": "ابدأ بتقديم مساهمتك العلمية الأولى!",
-    "browseEvents": "تصفح الفعاليات",
+    "browseEvents": "تصفح الملتقيات",
     "submissionTitle": "عنوان المساهمة",
     "submissionStatus": "الحالة",
     "lastUpdated": "آخر تحديث",
@@ -1932,18 +1933,18 @@
     "downloadAbstract": "تحميل ملف الملخص",
     "downloadFullPaper": "تحميل البحث الكامل",
     "submitFullPaper": "تقديم البحث الكامل",
-    "fullPaperSubmissionDescription": "قم بتقديم البحث الكامل بعد قبول الملخص للمشاركة في الفعالية",
+    "fullPaperSubmissionDescription": "قم بتقديم البحث الكامل بعد قبول الملخص للمشاركة في الملتقى",
     "submitRevision": "تقديم التعديلات",
     "submitRevisionDescription": "قم بتقديم النسخة المعدلة من البحث بناءً على ملاحظات المراجعين",
-    "eventDetails": "تفاصيل الفعالية",
-    "eventType": "نوع الفعالية",
+    "eventDetails": "تفاصيل الملتقى",
+    "eventType": "نوع الملتقى",
     "abstractDeadline": "الموعد النهائي لتقديم الملخصات",
     "fullPaperDeadline": "الموعد النهائي لتقديم البحث الكامل",
     "abstractSubmissionDeadline": "الموعد النهائي لتقديم الملخصات",
     "fullPaperSubmissionDeadline": "الموعد النهائي لتقديم البحث الكامل",
-    "viewEvent": "عرض الفعالية",
+    "viewEvent": "عرض الملتقى",
     "unknownError": "حدث خطأ غير معروف",
-    "invalidEventId": "معرف الفعالية غير صالح",
+    "invalidEventId": "معرف الملتقى غير صالح",
     "required": "هذا الحقل مطلوب",
     "abstractTooShort": "الملخص قصير جداً، يجب أن يتكون من 100 حرف على الأقل",
     "fileTooLarge": "حجم الملف كبير جداً، الحد الأقصى هو 5 ميجابايت",
@@ -1952,7 +1953,7 @@
     "cancel": "إلغاء",
     "filters": {
       "allStatus": "جميع الحالات",
-      "searchPlaceholder": "البحث عن عنوان أو فعالية...",
+      "searchPlaceholder": "البحث عن عنوان أو ملتقى...",
       "noMatchingSubmissions": "لا توجد مساهمات تطابق معايير البحث"
     },
     "pagination": {
@@ -1991,26 +1992,26 @@
     "submittedOn": "تاريخ التقديم",
     "subscriptionCheckFailed": "فشل التحقق من الاشتراك. يرجى المحاولة مرة أخرى.",
     "newSubmission": "تقديم مساهمة جديدة",
-    "newSubmissionDescription": "تقديم ملخص بحثي أو ورقة علمية للمشاركة في الفعاليات الأكاديمية",
+    "newSubmissionDescription": "تقديم ملخص بحثي أو ورقة علمية للمشاركة في الملتقيات",
     "backToSubmissions": "العودة إلى المساهمات",
-    "backToEvent": "العودة إلى الفعالية",
-    "eventInformation": "معلومات الفعالية",
-    "eventName": "اسم الفعالية",
-    "eventDates": "تواريخ الفعالية",
-    "viewEventDetails": "عرض تفاصيل الفعالية",
-    "noEventsAcceptingSubmissions": "لا توجد فعاليات تقبل المساهمات حالياً",
-    "checkBackLater": "يرجى العودة لاحقاً أو الاطلاع على الفعاليات الأخرى",
-    "browseAllEvents": "تصفح جميع الفعاليات",
-    "selectEventToSubmit": "اختر الفعالية التي تريد المساهمة فيها",
+    "backToEvent": "العودة إلى الملتقى",
+    "eventInformation": "معلومات الملتقى",
+    "eventName": "اسم الملتقى",
+    "eventDates": "تواريخ الملتقى",
+    "viewEventDetails": "عرض تفاصيل الملتقى",
+    "noEventsAcceptingSubmissions": "لا توجد ملتقيات تقبل المساهمات حالياً",
+    "checkBackLater": "يرجى العودة لاحقاً أو الاطلاع على الملتقيات الأخرى",
+    "browseAllEvents": "تصفح جميع الملتقيات",
+    "selectEventToSubmit": "اختر الملتقى الذي تريد المساهمة فيه",
     "submittingTo": "تقديم مساهمة إلى",
     "deadlineInfo": "الموعد النهائي للتقديم",
     "eventTypes": {
-      "scientific_event": "فعالية علمية",
-      "cultural_event": "فعالية ثقافية",
-      "sports_event": "فعالية رياضية",
+      "scientific_event": "ملتقى علمي",
+      "cultural_event": "ملتقى ثقافي",
+      "sports_event": "ملتقى رياضي",
       "competition": "مسابقة"
     },
-    "abstractSubmissionDescription": "قم بتعبئة النموذج التالي لتقديم ملخص بحثي للمشاركة في الفعالية. اللغة العربية مطلوبة، واللغات الأخرى اختيارية. يرجى التأكد من اتباع إرشادات التقديم بدقة.",
+    "abstractSubmissionDescription": "قم بتعبئة النموذج التالي لتقديم ملخص بحثي للمشاركة في الملتقى. اللغة العربية مطلوبة، واللغات الأخرى اختيارية. يرجى التأكد من اتباع إرشادات التقديم بدقة.",
     "uploading": "جاري الرفع...",
     "uploadFullPaper": "رفع البحث الكامل",
     "uploadRevision": "رفع التعديلات",
@@ -2028,8 +2029,8 @@
     "reviewerFeedback": "ملاحظات المراجع",
     "invalidSubmissionId": "معرف المساهمة غير صالح",
     "fileDetails": "تفاصيل الملف",
-    "eventSubmissions": "مساهمات الفعالية",
-    "eventSubmissionsDescription": "عرض وإدارة المساهمات العلمية المقدمة لهذه الفعالية",
+    "eventSubmissions": "مساهمات الملتقى",
+    "eventSubmissionsDescription": "عرض وإدارة المساهمات العلمية المقدمة لهذا الملتقى",
     "searchSubmissions": "البحث في المساهمات",
     "allStatuses": "جميع الحالات",
     "showingResults": "عرض {count} مساهمة",
@@ -2050,7 +2051,7 @@
     "cannotReview": "لا يمكن مراجعة هذه المساهمة",
     "abstractStatus": "حالة الملخص",
     "fullPaperStatus": "حالة البحث الكامل",
-    "event": "الفعالية",
+    "event": "الملتقى",
     "submittedBy": "مقدم من",
     "title": "العنوان",
     "abstract": "الملخص",

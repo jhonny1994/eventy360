@@ -1,14 +1,24 @@
 'use client';
 
 import Link from 'next/link';
-import { useLocale, useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 import { ExternalLink, FileText, Edit } from 'lucide-react';
+import useTranslations from '@/hooks/useTranslations';
 import type { Submission } from './SubmissionsList';
 
 interface ActionButtonsProps {
   submission: Submission;
 }
 
+/**
+ * ActionButtons component for rendering contextual submission action links
+ * 
+ * Note: This component follows the standardized hook pattern by using:
+ * - useTranslations - For i18n translations
+ * 
+ * This is a pure UI component that displays different action buttons
+ * based on the submission status.
+ */
 export default function ActionButtons({ submission }: ActionButtonsProps) {
   const t = useTranslations('Submissions');
   const locale = useLocale();

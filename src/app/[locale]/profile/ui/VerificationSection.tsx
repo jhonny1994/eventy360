@@ -1,8 +1,26 @@
+/**
+ * VerificationSection
+ * 
+ * This component handles verification section in the user profile.
+ * It displays verification status and document upload functionality.
+ * 
+ * Features:
+ * - Verification status badge display
+ * - Document upload for verification requests
+ * - Pending verification status handling
+ * - Error state management
+ * - RTL support
+ * 
+ * Standardized Patterns Used:
+ * - useAuth: For Supabase client access
+ * - useLocale: For locale-aware formatting and rendering
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import { Spinner, Alert, Badge } from 'flowbite-react';
-import { createClient } from '@/lib/supabase/client';
+import { useAuth } from '@/components/providers/AuthProvider';
 import { HiExclamationCircle, HiShieldCheck, HiShieldExclamation } from 'react-icons/hi';
 import VerificationDocumentUploader from '@/components/profile/VerificationDocumentUploader';
 import { useLocale } from 'next-intl';
@@ -44,7 +62,7 @@ export default function VerificationSection({
   const appLocale = useLocale();
   const isRtl = appLocale === 'ar';
   
-  const supabase = createClient();
+  const { supabase } = useAuth();
 
   // Check if user has a pending verification request
   useEffect(() => {

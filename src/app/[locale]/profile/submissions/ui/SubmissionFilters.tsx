@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import useTranslations from '@/hooks/useTranslations';
 import { Search, Filter } from 'lucide-react';
 
 export interface SubmissionFiltersState {
@@ -14,6 +14,14 @@ interface SubmissionFiltersProps {
   statusOptions: { value: string; label: string }[];
 }
 
+/**
+ * SubmissionFilters component for filtering submission lists
+ * 
+ * Note: This component follows the standardized hook pattern by using:
+ * - useTranslations - For i18n translations
+ * 
+ * This is a UI component that provides search and status filtering capabilities.
+ */
 export default function SubmissionFilters({ onFilterChange, statusOptions }: SubmissionFiltersProps) {
   const t = useTranslations('Submissions');
   const [filters, setFilters] = useState<SubmissionFiltersState>({
