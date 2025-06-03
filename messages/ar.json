@@ -293,7 +293,8 @@
         "categories": {
           "all": "جميع المجالات",
           "filter": "تصفية حسب المجال"
-        }
+        },
+        "noTopics": "لا توجد مواضيع متاحة"
       },
       "subscription": {
         "limitReached": {
@@ -1155,7 +1156,8 @@
         "pending": "قيد المراجعة",
         "verified": "تم التحقق",
         "rejected": "مرفوض",
-        "unknown": "غير معروف"
+        "unknown": "غير معروف",
+        "pendingverification": "في انتظار التحقق"
       },
       "table": {
         "date": "التاريخ",
