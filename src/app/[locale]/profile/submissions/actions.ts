@@ -9,6 +9,7 @@ import {
 import { nanoid } from 'nanoid';
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
+import { addAuthorRevisionNotes } from '@/utils/submissions/feedbackHelpers';
 
 /**
  * Submits an abstract to an event
@@ -119,7 +120,7 @@ export async function submitAbstract(
     }
 
     // Create an initial version record
-    const { error: versionError } = await supabase
+    const { data: versionData, error: versionError } = await supabase
       .from('submission_versions')
       .insert({
         submission_id: submissionId,
@@ -129,12 +130,28 @@ export async function submitAbstract(
         abstract_file_metadata: fileMetadata,
         version_number: 1,
         submitted_at: new Date().toISOString()
-      });
+      })
+      .select('id')
+      .single();
 
     if (versionError) {
       console.error('Version creation error:', versionError);
       // Don't fail the submission if version creation fails
       // But log it for troubleshooting
+    } else if (versionData) {
+      // Update the submission with the version ID
+      const { error: versionUpdateError } = await supabase
+        .from('submissions')
+        .update({
+          current_abstract_version_id: versionData.id
+        })
+        .eq('id', submissionId);
+      
+      if (versionUpdateError) {
+        console.error('Error updating version ID:', versionUpdateError);
+        // Don't fail the submission if this update fails
+        // But log it for troubleshooting
+      }
     }
 
     // Return the submission ID if successful
@@ -177,7 +194,7 @@ export async function submitFullPaper(
     // 1. Get the submission and event data
     const { data: submission, error: fetchError } = await supabase
       .from('submissions')
-      .select('event_id, abstract_status, submitted_by')
+      .select('event_id, abstract_status, submitted_by, title_translations, abstract_translations')
       .eq('id', formData.submission_id)
       .single();
 
@@ -263,22 +280,38 @@ export async function submitFullPaper(
     }
 
     // Create a new version record
-    const { error: versionError } = await supabase
+    const { data: versionData, error: versionError } = await supabase
       .from('submission_versions')
       .insert({
         submission_id: formData.submission_id,
-        title_translations: {}, // Will be filled in from a trigger
-        abstract_translations: {}, // Will be filled in from a trigger
+        title_translations: submission.title_translations,
+        abstract_translations: submission.abstract_translations,
         full_paper_file_url: publicUrl,
         full_paper_file_metadata: fileMetadata,
-        version_number: 1, // First version of full paper
+        version_number: 1,
         submitted_at: new Date().toISOString()
-      });
+      })
+      .select('id')
+      .single();
 
     if (versionError) {
       console.error('Version creation error:', versionError);
       // Don't fail the submission if version creation fails
       // But log it for troubleshooting
+    } else if (versionData) {
+      // Update the submission with the version ID
+      const { error: versionUpdateError } = await supabase
+        .from('submissions')
+        .update({
+          current_full_paper_version_id: versionData.id
+        })
+        .eq('id', formData.submission_id);
+      
+      if (versionUpdateError) {
+        console.error('Error updating version ID:', versionUpdateError);
+        // Don't fail the submission if this update fails
+        // But log it for troubleshooting
+      }
     }
 
     // Return the submission ID if successful
@@ -351,16 +384,21 @@ export async function submitRevision(
       };
     }
 
-    // Get the current version number
+    // Get the current version number and data
     const { data: currentVersion, error: versionFetchError } = await supabase
       .from('submission_versions')
-      .select('version_number')
+      .select('version_number, title_translations, abstract_translations')
       .eq('id', submission.current_full_paper_version_id || '')
       .single();
 
     let nextVersionNumber = 1;
+    let titleTranslations = {};
+    let abstractTranslations = {};
+    
     if (!versionFetchError && currentVersion) {
       nextVersionNumber = currentVersion.version_number + 1;
+      titleTranslations = currentVersion.title_translations || {};
+      abstractTranslations = currentVersion.abstract_translations || {};
     }
 
     // 2. Upload the revised paper file to storage with correct path format
@@ -402,14 +440,11 @@ export async function submitRevision(
       .from('submission_versions')
       .insert({
         submission_id: formData.submission_id,
-        title_translations: {}, // Will be filled in from a trigger
-        abstract_translations: {}, // Will be filled in from a trigger
+        title_translations: titleTranslations,
+        abstract_translations: abstractTranslations,
         full_paper_file_url: publicUrl,
         full_paper_file_metadata: fileMetadata,
         version_number: nextVersionNumber,
-        feedback_translations: formData.revision_notes
-          ? { author_revision_notes: formData.revision_notes }
-          : null, // Store revision notes in feedback_translations
         submitted_at: new Date().toISOString()
       })
       .select('id')
@@ -423,13 +458,29 @@ export async function submitRevision(
       };
     }
 
+    // If revision notes are provided, add them using the new helper function
+    if (formData.revision_notes && formData.revision_notes.trim() !== '') {
+      const notesAdded = await addAuthorRevisionNotes(
+        supabase,
+        formData.submission_id,
+        newVersion.id,
+        formData.revision_notes
+      );
+      
+      if (!notesAdded) {
+        console.error('Failed to add revision notes');
+        // Don't fail the submission if adding notes fails
+        // Just log it for troubleshooting
+      }
+    }
+
     // 3. Update the submission with the revised paper file and change status
     const { error: updateError } = await supabase
       .from('submissions')
       .update({
         full_paper_file_url: publicUrl,
         full_paper_file_metadata: fileMetadata,
-        full_paper_status: 'full_paper_submitted',
+        full_paper_status: 'revision_under_review',
         current_full_paper_version_id: newVersion.id,
         updated_at: new Date().toISOString()
       })

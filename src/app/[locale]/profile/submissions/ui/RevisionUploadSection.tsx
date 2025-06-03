@@ -13,16 +13,13 @@ import {
   MAX_FILE_SIZE
 } from '@/lib/schemas/submission';
 import useTranslations from '@/hooks/useTranslations';
+import { FeedbackItem } from '@/utils/submissions/feedbackHelpers';
 
 interface RevisionUploadSectionProps {
   submissionId: string;
   feedback?: {
-    review_feedback_translations?: {
-      ar: string;
-      en?: string;
-      fr?: string;
-    };
     review_date?: string;
+    feedback_items?: FeedbackItem[];
   };
 }
 
@@ -115,23 +112,23 @@ export default function RevisionUploadSection({ submissionId, feedback }: Revisi
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   };
 
-  // Get feedback text based on locale
-  const getFeedbackText = () => {
-    if (!feedback?.review_feedback_translations) return null;
+  // Get the most recent organizer feedback
+  const getRecentFeedback = () => {
+    if (!feedback?.feedback_items || feedback.feedback_items.length === 0) {
+      return null;
+    }
+
+    // Filter for organizer feedback and sort by created_at (most recent first)
+    const organizerFeedback = feedback.feedback_items
+      .filter(item => item.role_at_submission === 'organizer' || item.role_at_submission === 'admin')
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     
-    if (locale === 'ar') return feedback.review_feedback_translations.ar;
-    if (locale === 'en' && feedback.review_feedback_translations.en) 
-      return feedback.review_feedback_translations.en;
-    if (locale === 'fr' && feedback.review_feedback_translations.fr) 
-      return feedback.review_feedback_translations.fr;
-    
-    return feedback.review_feedback_translations.ar; // Default to Arabic
+    // Return the most recent feedback or null if none found
+    return organizerFeedback.length > 0 ? organizerFeedback[0] : null;
   };
 
-  // Format review date
-  const formatReviewDate = (dateString?: string) => {
-    if (!dateString) return '';
-    
+  // Format date
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString(locale === 'ar' ? 'ar-DZ' : 'en-US', {
       year: 'numeric',
@@ -139,6 +136,9 @@ export default function RevisionUploadSection({ submissionId, feedback }: Revisi
       day: 'numeric'
     });
   };
+
+  // Get the most recent feedback
+  const recentFeedback = getRecentFeedback();
 
   return (
     <div className="mt-8 p-4 bg-amber-50 dark:bg-amber-900/30 rounded-lg border border-amber-200 dark:border-amber-800">
@@ -148,19 +148,17 @@ export default function RevisionUploadSection({ submissionId, feedback }: Revisi
       </h3>
       
       {/* Show reviewer feedback if available */}
-      {feedback && getFeedbackText() && (
-        <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700">
+      {recentFeedback && (
+        <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/40 rounded border border-blue-200 dark:border-blue-800">
           <h4 className="font-medium text-gray-900 dark:text-white flex items-center gap-1 mb-2">
             <MessageCircle className="w-4 h-4" />
             {t('reviewerFeedback')}
-            {feedback.review_date && (
-              <span className="text-sm font-normal text-gray-500 dark:text-gray-400 ms-2">
-                ({formatReviewDate(feedback.review_date)})
-              </span>
-            )}
+            <span className="text-sm font-normal text-gray-500 dark:text-gray-400 ms-2">
+              ({formatDate(recentFeedback.created_at)})
+            </span>
           </h4>
           <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line text-sm">
-            {getFeedbackText()}
+            {recentFeedback.feedback_content}
           </p>
         </div>
       )}

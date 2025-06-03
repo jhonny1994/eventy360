@@ -11,6 +11,7 @@ import RevisionUploadSection from "../ui/RevisionUploadSection";
 import ProfilePageHeader from "../../ui/ProfilePageHeader";
 import ProfileCard from "../../ui/ProfileCard";
 import BackButton from "@/components/ui/BackButton";
+import { getFeedbackForVersion, FeedbackItem } from "@/utils/submissions/feedbackHelpers";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Submissions");
@@ -46,8 +47,8 @@ interface EventInfo {
 }
 
 interface FeedbackInfo {
-  review_feedback_translations?: TranslationsObject;
   review_date?: string;
+  feedback_items?: FeedbackItem[];
 }
 
 interface SubmissionData {
@@ -126,7 +127,8 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
       submitted_by,
       submission_date,
       review_date,
-      review_feedback_translations,
+      current_abstract_version_id,
+      current_full_paper_version_id,
       events (
         id,
         event_name_translations,
@@ -168,8 +170,18 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
     submission_date: string;
     events: EventInfo;
     review_date?: string;
-    review_feedback_translations?: TranslationsObject;
+    current_abstract_version_id?: string;
+    current_full_paper_version_id?: string;
   };
+
+  // Fetch feedback for the current version
+  let feedbackItems: FeedbackItem[] | null = null;
+  if (!submissionError && submission) {
+    const versionId = submission.current_full_paper_version_id || submission.current_abstract_version_id;
+    if (versionId) {
+      feedbackItems = await getFeedbackForVersion(supabase, versionId);
+    }
+  }
 
   // Define status colors
   const statusColors: Record<string, string> = {
@@ -256,9 +268,9 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
     submitted_by: typedSubmission.submitted_by,
     submission_date: typedSubmission.submission_date,
     events: typedSubmission.events,
-    feedback: typedSubmission.review_feedback_translations || typedSubmission.review_date ? {
-      review_feedback_translations: typedSubmission.review_feedback_translations,
-      review_date: typedSubmission.review_date
+    feedback: typedSubmission.review_date || feedbackItems?.length ? {
+      review_date: typedSubmission.review_date,
+      feedback_items: feedbackItems || undefined
     } : undefined
   };
 
@@ -406,23 +418,54 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
               </div>
 
               {/* Reviewer Feedback Section - Only show if available */}
-              {submissionData.feedback && submissionData.feedback.review_feedback_translations && (
+              {submissionData.feedback && (
                 <div className="mt-8">
                   <Card className="bg-blue-50 dark:bg-blue-900 border-blue-200 dark:border-blue-700">
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2 flex items-center gap-2">
-                      <MessageCircle className="w-5 h-5" />
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
                       {t("reviewerFeedback")}
                     </h3>
                     {submissionData.feedback.review_date && (
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
                         {formatDateTime(submissionData.feedback.review_date)}
                       </p>
                     )}
-                    <div className="prose dark:prose-invert max-w-none">
-                      <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
-                        {getTitle(submissionData.feedback.review_feedback_translations)}
+                    
+                    {/* Display feedback items */}
+                    {submissionData.feedback.feedback_items && submissionData.feedback.feedback_items.length > 0 ? (
+                      <div className="space-y-4">
+                        {submissionData.feedback.feedback_items.map((item) => {
+                          // Determine if this is an organizer (admin/reviewer) or researcher (author) note
+                          const isOrganizerFeedback = item.role_at_submission === 'organizer' || item.role_at_submission === 'admin';
+                          // Set appropriate styling based on the role
+                          const bgColorClass = isOrganizerFeedback 
+                            ? 'bg-blue-50 dark:bg-blue-900/40 border-blue-200 dark:border-blue-800' 
+                            : 'bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-700';
+                          // Set appropriate icon based on the role
+                          const RoleIcon = isOrganizerFeedback ? MessageCircle : FileText;
+                          
+                          return (
+                            <div key={item.id} className={`p-3 rounded-lg border ${bgColorClass}`}>
+                              <div className="flex justify-between mb-2">
+                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1">
+                                  <RoleIcon className="w-4 h-4" />
+                                  {item.provider_name || t(`roles.${item.role_at_submission}`)}
+                                </span>
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                  {formatDateTime(item.created_at)}
+                                </span>
+                              </div>
+                              <p className="text-gray-800 dark:text-gray-200 whitespace-pre-line">
+                                {item.feedback_content}
+                              </p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="text-gray-600 dark:text-gray-400">
+                        {t("noFeedbackProvided")}
                       </p>
-                    </div>
+                    )}
                   </Card>
                 </div>
               )}

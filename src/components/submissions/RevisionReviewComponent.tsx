@@ -9,6 +9,8 @@ import { HiInformationCircle, HiExclamationCircle, HiDownload } from 'react-icon
 import { Database } from '@/database.types';
 import { Json } from '@/database.types';
 import { useRouter } from 'next/navigation';
+import { getFeedbackForVersion, FeedbackItem } from '@/utils/submissions/feedbackHelpers';
+import { MessageCircle, FileText } from 'lucide-react';
 
 /**
  * RevisionReviewComponent
@@ -18,7 +20,6 @@ import { useRouter } from 'next/navigation';
  * and make a final decision on the paper (accept, reject, or request another revision).
  * 
  * Features:
- * - Multi-language support for viewing content and providing feedback
  * - Shows previous reviewer feedback for context
  * - Secure file download for the revised paper
  * - File metadata display (name, size)
@@ -68,7 +69,6 @@ interface SubmissionWithDetails {
   event_id: string;
   created_at: string;
   updated_at: string;
-  review_feedback_translations: TranslationObject | null;
   profiles?: {
     id: string;
     researcher_profiles?: {
@@ -97,17 +97,8 @@ export default function RevisionReviewComponent({
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeLanguage, setActiveLanguage] = useState('ar');
-  const [feedback, setFeedback] = useState<Record<string, string>>({
-    ar: '',
-    en: '',
-    fr: ''
-  });
-  const [previousFeedback, setPreviousFeedback] = useState<Record<string, string>>({
-    ar: '',
-    en: '',
-    fr: ''
-  });
+  const [feedback, setFeedback] = useState<string>('');
+  const [feedbackItems, setFeedbackItems] = useState<FeedbackItem[] | null>(null);
 
   // Fetch submission details when component mounts
   useEffect(() => {
@@ -134,7 +125,6 @@ export default function RevisionReviewComponent({
             event_id,
             created_at,
             updated_at,
-            review_feedback_translations,
             profiles:submitted_by(id, researcher_profiles(name)),
             events:event_id(id, event_name_translations)
           `)
@@ -148,13 +138,12 @@ export default function RevisionReviewComponent({
           const typedData = data as unknown as SubmissionWithDetails;
           setSubmission(typedData);
           
-          // If there's previous feedback, initialize the feedback state with it
-          if (typedData.review_feedback_translations) {
-            setPreviousFeedback({
-              ar: typedData.review_feedback_translations.ar || '',
-              en: typedData.review_feedback_translations.en || '',
-              fr: typedData.review_feedback_translations.fr || ''
-            });
+          // Fetch feedback items using the getFeedbackForVersion function
+          if (typedData.current_full_paper_version_id) {
+            const items = await getFeedbackForVersion(supabase, typedData.current_full_paper_version_id);
+            if (items) {
+              setFeedbackItems(items);
+            }
           }
         }
       } catch (err) {
@@ -167,25 +156,27 @@ export default function RevisionReviewComponent({
     fetchSubmissionDetails();
   }, [submissionId, supabase, t]);
 
-  // Handle feedback change for the active language
+  // Handle feedback change
   const handleFeedbackChange = (value: string) => {
-    setFeedback(prev => ({
-      ...prev,
-      [activeLanguage]: value
-    }));
+    setFeedback(value);
   };
 
   // Handle status update actions
   const handleStatusUpdate = async (newStatus: RevisionReviewStatus) => {
+    if (newStatus === 'revision_requested' && !feedback.trim()) {
+      setError(t('feedbackRequired'));
+      return;
+    }
+    
     setSubmitting(true);
     setError(null);
     
     try {
-      // Call the review_full_paper database function
+      // Call the review_full_paper database function with plain text feedback
       const { data, error } = await supabase.rpc('review_full_paper', {
         p_submission_id: submissionId,
         p_status: newStatus,
-        p_feedback_translations: feedback
+        p_feedback: feedback
       });
       
       if (error) throw error;
@@ -209,32 +200,17 @@ export default function RevisionReviewComponent({
     }
   };
 
-  // Render language selector tabs
-  const renderLanguageSelector = () => (
-    <div className="flex mb-4 border-b border-gray-200 dark:border-gray-700">
-      <button 
-        className={`py-2 px-4 ${activeLanguage === 'ar' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-        type="button"
-        onClick={() => setActiveLanguage('ar')}
-      >
-        العربية
-      </button>
-      <button 
-        className={`py-2 px-4 ${activeLanguage === 'en' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-        type="button"
-        onClick={() => setActiveLanguage('en')}
-      >
-        English
-      </button>
-      <button 
-        className={`py-2 px-4 ${activeLanguage === 'fr' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-        type="button"
-        onClick={() => setActiveLanguage('fr')}
-      >
-        Français
-      </button>
-    </div>
-  );
+  // Format date
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString(locale === 'ar' ? 'ar-DZ' : 'en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
   
   if (loading) {
     return (
@@ -248,202 +224,186 @@ export default function RevisionReviewComponent({
   if (!submission) {
     return (
       <Alert color="failure" icon={HiExclamationCircle}>
-        <span className="font-medium">{t('error')}</span> {t('submissionNotFound')}
+        {t('submissionNotFound')}
       </Alert>
     );
   }
   
-  // Extract submission details from the fetched data
-  const title = submission.title_translations[activeLanguage] || submission.title_translations.ar || '';
-  const abstract = submission.abstract_translations[activeLanguage] || submission.abstract_translations.ar || '';
-  const eventTitle = submission.events?.event_name_translations[activeLanguage] || submission.events?.event_name_translations.ar || '';
-  const submitterName = submission.profiles?.researcher_profiles?.name || t('unknownUser');
-  const previousFeedbackText = previousFeedback[activeLanguage] || previousFeedback.ar || '';
+  // Format file metadata for display
+  const getFileMetadata = () => {
+    if (!submission.full_paper_file_metadata) return { name: t('unknownFile'), size: t('unknownSize') };
+    
+    try {
+      const metadata = submission.full_paper_file_metadata as FileMetadata;
+      const fileName = metadata.originalName || t('unknownFile');
+      let fileSize = t('unknownSize');
+      
+      if (metadata.size !== undefined && typeof metadata.size === 'number') {
+        const sizeInKB = Math.round(metadata.size / 1024);
+        fileSize = `${sizeInKB} KB`;
+      }
+      
+      return { name: fileName, size: fileSize };
+    } catch (err) {
+      console.error("Error parsing file metadata:", err);
+      return { name: t('unknownFile'), size: t('unknownSize') };
+    }
+  };
   
-  // Get file metadata as human-readable info
-  let paperFileName = t('unknownFile');
-  let paperFileSize = t('unknownSize');
-
-  try {
-    const paperFileMetadata = submission.full_paper_file_metadata as unknown as FileMetadata;
-    paperFileName = paperFileMetadata?.originalName || t('unknownFile');
-    paperFileSize = paperFileMetadata?.size && !isNaN(paperFileMetadata.size)
-      ? Math.round(paperFileMetadata.size / 1024) + ' KB' 
-      : t('unknownSize');
-  } catch {
-    // Keep default values if there's an error
-  }
-  
-  // Determine if revision can be reviewed
-  const canReview = (submission.full_paper_status as string) === 'revision_submitted';
-  
-  // Use isRtl based on the active language for content directionality
-  const isRtl = activeLanguage === 'ar';
+  const { name: fileName, size: fileSize } = getFileMetadata();
   
   return (
-    <Card className="w-full">
-      <h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white mb-4">
+    <Card className="mb-6">
+      <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
         {t('reviewRevision')}
-      </h5>
+      </h2>
       
-      {error && (
-        <Alert color="failure" icon={HiExclamationCircle} className="mb-4">
-          <span className="font-medium">{t('error')}</span> {error}
-        </Alert>
-      )}
-      
-      {!canReview && (
-        <Alert color="warning" icon={HiInformationCircle} className="mb-4">
-          <span className="font-medium">{t('cannotReview')}</span> 
-          {t('fullPaperStatus')}: {t(`status.${submission.full_paper_status}` || 'unknown')}
-        </Alert>
-      )}
-      
-      {/* Submission Info Section */}
-      <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      {/* Display submission info */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-2">{t('submissionDetails')}</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <h6 className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('event')}</h6>
-            <p className="text-lg font-semibold">{eventTitle}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{t('title')}</p>
+            <p className="font-medium">
+              {submission.title_translations[locale] || submission.title_translations.ar || ''}
+            </p>
           </div>
           <div>
-            <h6 className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('submittedBy')}</h6>
-            <p className="text-lg font-semibold">{submitterName}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{t('event')}</p>
+            <p className="font-medium">
+              {submission.events?.event_name_translations[locale] || 
+                submission.events?.event_name_translations.ar || ''}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{t('author')}</p>
+            <p className="font-medium">
+              {submission.profiles?.researcher_profiles?.name || t('unknownAuthor')}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{t('submissionStatus')}</p>
+            <p className="font-medium">
+              {t(`status.${submission.full_paper_status}`)}
+            </p>
           </div>
         </div>
-        
-        <div className="mb-4">
-          <h6 className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('title')}</h6>
-          <p className="text-lg font-semibold" dir={isRtl ? 'rtl' : 'ltr'}>{title}</p>
-        </div>
-        
-        <div className="mb-6">
-          <h6 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('abstract')}</h6>
-          {renderLanguageSelector()}
-          <div 
-            className="p-4 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-600" 
-            dir={isRtl ? 'rtl' : 'ltr'}
-          >
-            <p className="whitespace-pre-wrap">{abstract}</p>
-          </div>
-        </div>
-        
-        {/* Previous Feedback Section */}
-        <div className="mb-6">
-          <h6 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('reviewerFeedback')}</h6>
-          {renderLanguageSelector()}
-          <div 
-            className="p-4 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-600" 
-            dir={isRtl ? 'rtl' : 'ltr'}
-          >
-            {previousFeedbackText ? (
-              <p className="whitespace-pre-wrap">{previousFeedbackText}</p>
-            ) : (
-              <p className="text-gray-500 italic">{t('noReviewerComments')}</p>
-            )}
-          </div>
-        </div>
-        
-        {/* Full Paper Download Section */}
-        {submission.full_paper_file_url ? (
-          <div className="mt-4 p-4 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-600">
-            <h6 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('fullPaperFile')}</h6>
-            
-            <div className="flex flex-col md:flex-row md:items-center justify-between">
-              <div className="mb-3 md:mb-0">
-                <p className="font-medium">{paperFileName}</p>
-                <p className="text-sm text-gray-500">{paperFileSize}</p>
-              </div>
-              
-              <a 
-                href={submission.full_paper_file_url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800"
-              >
-                <HiDownload className="mr-2 h-5 w-5" />
-                {t('downloadPaper')}
-              </a>
-            </div>
-          </div>
-        ) : (
-          <Alert color="warning" icon={HiExclamationCircle} className="mb-4">
-            <span className="font-medium">{t('noPaperUploaded')}</span>
-          </Alert>
-        )}
       </div>
       
-      {/* Feedback Form */}
-      {canReview && (
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center">
-              <Label htmlFor="feedback">{t('feedback')}</Label>
-              <HiInformationCircle 
-                className="h-4 w-4 text-gray-500 dark:text-gray-400 ml-1" 
-                title={t('feedbackTooltip')} 
-              />
-            </div>
+      {/* Display file download section */}
+      <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+        <h3 className="text-lg font-semibold mb-2">{t('revisedFile')}</h3>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div>
+            <p className="font-medium">{fileName}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{fileSize}</p>
           </div>
-          
-          {renderLanguageSelector()}
-          
-          <Textarea
-            id="feedback"
-            placeholder={activeLanguage === 'ar' ? t('feedbackPlaceholderAr') : 
-                         activeLanguage === 'en' ? t('feedbackPlaceholderEn') : 
-                         t('feedbackPlaceholderFr')}
-            rows={4}
-            dir={isRtl ? 'rtl' : 'ltr'}
-            value={feedback[activeLanguage]}
-            onChange={(e) => handleFeedbackChange(e.target.value)}
-            disabled={submitting}
-          />
-          
-          <div className="flex flex-wrap justify-end gap-2 mt-4">
-            <Button
-              color="failure"
-              onClick={() => handleStatusUpdate('full_paper_rejected')}
-              disabled={submitting}
-              className="mt-2 md:mt-0"
+          {submission.full_paper_file_url && (
+            <a 
+              href={submission.full_paper_file_url}
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="mt-2 sm:mt-0 inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700"
             >
-              {submitting ? <Spinner size="sm" className="mr-2" /> : null}
-              {t('reject')}
-            </Button>
-            <Button
-              color="warning"
-              onClick={() => handleStatusUpdate('revision_requested')}
-              disabled={submitting}
-              className="mt-2 md:mt-0"
-            >
-              {submitting ? <Spinner size="sm" className="mr-2" /> : null}
-              {t('requestRevision')}
-            </Button>
-            <Button
-              color="success"
-              onClick={() => handleStatusUpdate('full_paper_accepted')}
-              disabled={submitting}
-              className="mt-2 md:mt-0"
-            >
-              {submitting ? <Spinner size="sm" className="mr-2" /> : null}
-              {t('accept')}
-            </Button>
+              <HiDownload className="mr-2 h-4 w-4" />
+              {t('downloadFile')}
+            </a>
+          )}
+        </div>
+      </div>
+      
+      {/* Previous feedback */}
+      {feedbackItems && feedbackItems.length > 0 && (
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-3">{t('previousFeedback')}</h3>
+          <div className="space-y-4">
+            {feedbackItems.map((item) => {
+              // Determine if this is an organizer (admin/reviewer) or researcher (author) note
+              const isOrganizerFeedback = item.role_at_submission === 'organizer' || item.role_at_submission === 'admin';
+              // Set appropriate styling based on the role
+              const bgColorClass = isOrganizerFeedback 
+                ? 'bg-blue-50 dark:bg-blue-900/40 border-blue-200 dark:border-blue-800' 
+                : 'bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-700';
+              // Set appropriate icon based on the role
+              const RoleIcon = isOrganizerFeedback ? MessageCircle : FileText;
+              
+              return (
+                <div key={item.id} className={`p-3 rounded-lg border ${bgColorClass}`}>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1">
+                      <RoleIcon className="w-4 h-4" />
+                      {item.provider_name || t(`Enums.user_type_enum.${item.role_at_submission}`)}
+                    </span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      {formatDate(item.created_at)}
+                    </span>
+                  </div>
+                  <p className="text-gray-800 dark:text-gray-200 whitespace-pre-line">
+                    {item.feedback_content}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
       
-      {/* Current Status */}
-      <div className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
-        <h6 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('currentStatus')}</h6>
-        <div className="flex items-center">
-          <div className={`h-3 w-3 rounded-full mr-2 ${
-            (submission.full_paper_status as string) === 'full_paper_accepted' ? 'bg-green-500' :
-            (submission.full_paper_status as string) === 'full_paper_rejected' ? 'bg-red-500' :
-            (submission.full_paper_status as string) === 'revision_requested' ? 'bg-yellow-500' :
-            (submission.full_paper_status as string) === 'revision_submitted' ? 'bg-purple-500' :
-            'bg-blue-500'
-          }`}></div>
-          <span>{t(`status.${submission.full_paper_status}` || 'unknown')}</span>
+      {/* Provide feedback section */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-3">{t('provideFeedback')}</h3>
+        
+        {error && (
+          <Alert color="failure" icon={HiExclamationCircle} className="mb-4">
+            <span className="font-medium">{t('error')}</span> {error}
+          </Alert>
+        )}
+        
+        <div className="mb-4">
+          <Label htmlFor="feedback" className="mb-2">
+            {t('feedback')}
+          </Label>
+          <Alert color="info" icon={HiInformationCircle} className="mb-4">
+            {t('feedbackGuidelines')}
+          </Alert>
+          <Textarea 
+            id="feedback" 
+            value={feedback}
+            onChange={(e) => handleFeedbackChange(e.target.value)}
+            rows={6} 
+            placeholder={t('typeYourFeedback')}
+            required
+          />
+        </div>
+      </div>
+      
+      {/* Decision buttons */}
+      <div>
+        <h3 className="text-lg font-semibold mb-3">{t('makeDecision')}</h3>
+        <div className="flex flex-wrap gap-3">
+          <Button
+            color="success"
+            onClick={() => handleStatusUpdate('full_paper_accepted')}
+            disabled={submitting}
+          >
+            {submitting ? <Spinner size="sm" className="mr-2" /> : null}
+            {t('acceptPaper')}
+          </Button>
+          <Button
+            color="failure"
+            onClick={() => handleStatusUpdate('full_paper_rejected')}
+            disabled={submitting}
+          >
+            {submitting ? <Spinner size="sm" className="mr-2" /> : null}
+            {t('rejectPaper')}
+          </Button>
+          <Button
+            color="warning"
+            onClick={() => handleStatusUpdate('revision_requested')}
+            disabled={submitting}
+          >
+            {submitting ? <Spinner size="sm" className="mr-2" /> : null}
+            {t('requestAnotherRevision')}
+          </Button>
         </div>
       </div>
     </Card>

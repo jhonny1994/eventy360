@@ -2087,6 +2087,16 @@
       "english": "English",
       "french": "Français",
       "optional": "اختياري"
-    }
+    },
+    "author": "الباحث",
+    "provideFeedback": "تقديم الملاحظات",
+    "feedbackGuidelines": "يرجى تقديم ملاحظات بناءة ومفصلة لمساعدة الباحث على تحسين عمله.",
+    "typeYourFeedback": "اكتب ملاحظاتك هنا...",
+    "feedbackRequired": "يرجى تقديم الملاحظات للمتابعة.",
+    "revisedFile": "الملف المعدل",
+    "makeDecision": "اتخاذ القرار",
+    "acceptPaper": "قبول البحث",
+    "rejectPaper": "رفض البحث",
+    "requestAnotherRevision": "طلب تعديلات أخرى"
   }
 }

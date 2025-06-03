@@ -15,6 +15,8 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 
 **Code Quality Improvements Complete:** We've completed hook standardization across the entire application. This initiative has significantly improved code maintainability, reduced duplicated logic, and ensured consistent behavior across components. We have now completed 100% of the targeted components (55/55), including all core UI components, admin components, event discovery components, utility files, and all components in the profile, submissions, events, bookmarks, topics, verification, and subscriptions sections.
 
+**Submission System Enhancements:** We've improved the submission system to better handle feedback and revisions. This includes creating new database tables and functions for submission feedback, fixing server actions to properly handle versioning, and adding utility functions for working with submission feedback. We also added the missing `revision_under_review` status to better track the submission lifecycle.
+
 ## High-Level Status (Against 6-Phase Plan)
 
 | Phase                                                              | Status      | Notes                                                                                                                               |
@@ -54,8 +56,20 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
   - Created wrapper components like ProfileDataProvider and PremiumFeatureGuard
   - Documented standardized patterns in README.md
   - Updated HOOK_STANDARDIZATION_PLAN.md to track implementation progress (100% complete)
+- Fixed syntax errors in SQL functions
 
 ## Recently Completed Features
+
+### Submission Feedback System Enhancement
+- ✅ Created `submission_feedback` table for storing feedback from reviewers and organizers
+- ✅ Created utility functions for retrieving feedback (`getFeedbackForVersion`)
+- ✅ Fixed server actions to properly handle versioning:
+  - `submitAbstract` now updates `current_abstract_version_id` after creating version
+  - `submitFullPaper` now includes title and abstract translations from original submission
+  - `submitRevision` now copies title and abstract translations from previous version and sets proper status
+- ✅ Added missing `revision_under_review` status to submission_status_enum
+- ✅ Enhanced submission details page to display feedback items
+- ✅ Created SQL triggers and functions for feedback system including `set_submission_feedback_updated_at`, `review_abstract`, `review_full_paper`, and `handle_submission_feedback`
 
 ### Hook Standardization - COMPLETE (100%)
 - **Standardized Hooks Created:**
@@ -119,6 +133,8 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 - ✅ File upload and download management
 - ✅ Timeline-based submission status tracking
 - ✅ Role-based access control for events and submissions
+- ✅ Enhanced feedback system with dedicated tables and utility functions
+- ✅ Proper version tracking for submission revisions
 
 ### Core Infrastructure
 - Next.js App Router project with TypeScript
@@ -199,3 +215,45 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
    - Design unified dashboard with key metrics
    - Implement quick access to common admin tasks
    - Create visual reports for platform activity
+4. Consider any additional improvements to submission system:
+   - Further enhance the feedback display in the submission details page
+   - Ensure consistent notifications for feedback and revisions
+
+## Completed
+
+### Major Features
+
+1. ✅ **User Authentication & Authorization**
+   - Integrated with Supabase Auth
+   - Role-based access control
+   - Profile management
+
+2. ✅ **Event Management**
+   - Create and manage academic events
+   - Multi-language event details
+   - Event status control
+   - Venue and date management
+
+3. ✅ **Submission System**
+   - Abstract submission process
+   - Full paper submission
+   - Multi-step review workflow
+   - Revision submission and feedback
+   - Submission feedback system migration to structured format *(completed)*
+
+## In Progress
+
+1. **Admin Dashboard Enhancements**
+   - Add more analytics features
+   - Improve event approval workflow
+   - Add bulk operations for submissions
+
+2. **UI/UX Refinements**
+   - Enhance mobile responsiveness
+   - Improve accessibility
+   - Add more visual cues for submission status
+
+3. **Notification System Improvements**
+   - Implement real-time notifications
+   - Develop more granular notification preferences
+   - Add email notification templates

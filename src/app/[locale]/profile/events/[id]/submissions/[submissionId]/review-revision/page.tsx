@@ -57,7 +57,7 @@ export default async function ReviewRevisionPage({ params }: ReviewRevisionPageP
 
   // Check if the submission status allows for revision review
   const status = submission.full_paper_status as string;
-  if (status !== 'revision_submitted') {
+  if (status !== 'revision_submitted' && status !== 'revision_under_review') {
     // If not in a reviewable state, redirect to submission details
     redirect(`/${locale}/profile/events/${eventId}/submissions/${submissionId}`);
   }

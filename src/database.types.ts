@@ -782,13 +782,57 @@ export type Database = {
           },
         ]
       }
+      submission_feedback: {
+        Row: {
+          created_at: string
+          feedback_content: string
+          id: string
+          providing_user_id: string | null
+          role_at_submission: Database["public"]["Enums"]["user_type_enum"]
+          submission_version_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          feedback_content: string
+          id?: string
+          providing_user_id?: string | null
+          role_at_submission: Database["public"]["Enums"]["user_type_enum"]
+          submission_version_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          feedback_content?: string
+          id?: string
+          providing_user_id?: string | null
+          role_at_submission?: Database["public"]["Enums"]["user_type_enum"]
+          submission_version_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submission_feedback_providing_user_id_fkey"
+            columns: ["providing_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "submission_feedback_submission_version_id_fkey"
+            columns: ["submission_version_id"]
+            isOneToOne: false
+            referencedRelation: "submission_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       submission_versions: {
         Row: {
           abstract_file_metadata: Json | null
           abstract_file_url: string | null
           abstract_translations: Json
           created_at: string
-          feedback_translations: Json | null
           full_paper_file_metadata: Json | null
           full_paper_file_url: string | null
           id: string
@@ -802,7 +846,6 @@ export type Database = {
           abstract_file_url?: string | null
           abstract_translations: Json
           created_at?: string
-          feedback_translations?: Json | null
           full_paper_file_metadata?: Json | null
           full_paper_file_url?: string | null
           id?: string
@@ -816,7 +859,6 @@ export type Database = {
           abstract_file_url?: string | null
           abstract_translations?: Json
           created_at?: string
-          feedback_translations?: Json | null
           full_paper_file_metadata?: Json | null
           full_paper_file_url?: string | null
           id?: string
@@ -848,7 +890,6 @@ export type Database = {
           current_full_paper_version_id: string | null
           deleted_at: string | null
           event_id: string
-          feedback_history: Json | null
           full_paper_file_metadata: Json | null
           full_paper_file_url: string | null
           full_paper_status:
@@ -856,7 +897,6 @@ export type Database = {
             | null
           id: string
           review_date: string | null
-          review_feedback_translations: Json | null
           status: Database["public"]["Enums"]["submission_status_enum"] | null
           submission_date: string
           submitted_by: string
@@ -875,7 +915,6 @@ export type Database = {
           current_full_paper_version_id?: string | null
           deleted_at?: string | null
           event_id: string
-          feedback_history?: Json | null
           full_paper_file_metadata?: Json | null
           full_paper_file_url?: string | null
           full_paper_status?:
@@ -883,7 +922,6 @@ export type Database = {
             | null
           id?: string
           review_date?: string | null
-          review_feedback_translations?: Json | null
           status?: Database["public"]["Enums"]["submission_status_enum"] | null
           submission_date?: string
           submitted_by: string
@@ -902,7 +940,6 @@ export type Database = {
           current_full_paper_version_id?: string | null
           deleted_at?: string | null
           event_id?: string
-          feedback_history?: Json | null
           full_paper_file_metadata?: Json | null
           full_paper_file_url?: string | null
           full_paper_status?:
@@ -910,7 +947,6 @@ export type Database = {
             | null
           id?: string
           review_date?: string | null
-          review_feedback_translations?: Json | null
           status?: Database["public"]["Enums"]["submission_status_enum"] | null
           submission_date?: string
           submitted_by?: string
@@ -1212,6 +1248,10 @@ export type Database = {
         Args: { subscription_id: string }
         Returns: boolean
       }
+      add_author_revision_notes: {
+        Args: { p_submission_id: string; p_version_id: string; p_notes: string }
+        Returns: boolean
+      }
       billing_period_to_interval: {
         Args: { period: Database["public"]["Enums"]["billing_period_enum"] }
         Returns: unknown
@@ -1398,6 +1438,19 @@ export type Database = {
           abstract_submission_deadline: string
         }[]
       }
+      get_feedback_for_version: {
+        Args: { p_version_id: string }
+        Returns: {
+          id: string
+          submission_version_id: string
+          providing_user_id: string
+          role_at_submission: Database["public"]["Enums"]["user_type_enum"]
+          feedback_content: string
+          created_at: string
+          updated_at: string
+          provider_name: string
+        }[]
+      }
       get_payment_details: {
         Args: { payment_id: string }
         Returns: Json
@@ -1476,11 +1529,13 @@ export type Database = {
         Returns: unknown
       }
       handle_submission_feedback: {
-        Args: {
-          submission_id: string
-          feedback_text: Json
-          decision_status: string
-        }
+        Args:
+          | { p_submission_id: string; p_feedback_content: string }
+          | {
+              submission_id: string
+              feedback_text: Json
+              decision_status: string
+            }
         Returns: undefined
       }
       http: {
@@ -1569,19 +1624,31 @@ export type Database = {
         Returns: boolean
       }
       review_abstract: {
-        Args: {
-          p_submission_id: string
-          p_status: Database["public"]["Enums"]["submission_status_enum"]
-          p_feedback_translations: Json
-        }
+        Args:
+          | {
+              p_submission_id: string
+              p_status: Database["public"]["Enums"]["submission_status_enum"]
+              p_feedback: string
+            }
+          | {
+              p_submission_id: string
+              p_status: Database["public"]["Enums"]["submission_status_enum"]
+              p_feedback_translations: Json
+            }
         Returns: boolean
       }
       review_full_paper: {
-        Args: {
-          p_submission_id: string
-          p_status: Database["public"]["Enums"]["submission_status_enum"]
-          p_feedback_translations: Json
-        }
+        Args:
+          | {
+              p_submission_id: string
+              p_status: Database["public"]["Enums"]["submission_status_enum"]
+              p_feedback: string
+            }
+          | {
+              p_submission_id: string
+              p_status: Database["public"]["Enums"]["submission_status_enum"]
+              p_feedback_translations: Json
+            }
         Returns: boolean
       }
       search_events: {
@@ -1650,6 +1717,7 @@ export type Database = {
           p_submission_id: string
           p_full_paper_file_url: string
           p_full_paper_file_metadata: Json
+          p_revision_notes?: string
         }
         Returns: string
       }
@@ -1725,6 +1793,7 @@ export type Database = {
         | "full_paper_accepted"
         | "full_paper_rejected"
         | "revision_requested"
+        | "revision_under_review"
         | "completed"
       submission_type_enum: "abstract" | "full_paper" | "supplementary"
       subscription_status_enum: "active" | "expired" | "trial" | "cancelled"
@@ -1919,6 +1988,7 @@ export const Constants = {
         "full_paper_accepted",
         "full_paper_rejected",
         "revision_requested",
+        "revision_under_review",
         "completed",
       ],
       submission_type_enum: ["abstract", "full_paper", "supplementary"],

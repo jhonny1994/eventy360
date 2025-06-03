@@ -6,6 +6,7 @@ import ProfilePageHeader from "../../../ui/ProfilePageHeader";
 import ProfileCard from "../../../ui/ProfileCard";
 import BackButton from "@/components/ui/BackButton";
 import RevisionUploadSection from "../../ui/RevisionUploadSection";
+import { FeedbackItem } from "@/utils/submissions/feedbackHelpers";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Submissions");
@@ -21,13 +22,6 @@ interface SubmitRevisionPageProps {
     id: string;
     locale: string;
   }>;
-}
-
-// Define the TranslationsObject type to match the expected structure
-interface TranslationsObject {
-  ar: string;
-  en?: string;
-  fr?: string;
 }
 
 export default async function SubmitRevisionPage({
@@ -71,8 +65,8 @@ export default async function SubmitRevisionPage({
       id,
       abstract_status,
       full_paper_status,
-      review_feedback_translations,
       review_date,
+      current_full_paper_version_id,
       events (
         id
       )
@@ -92,12 +86,23 @@ export default async function SubmitRevisionPage({
     redirect(`/${locale}/profile/submissions/${id}`);
   }
 
-  // Prepare feedback data for the RevisionUploadSection with proper typing
+  // Fetch feedback items using the current_full_paper_version_id
+  let feedbackItems: FeedbackItem[] | undefined = undefined;
+  
+  if (submission.current_full_paper_version_id) {
+    const { data: items } = await supabase
+      .rpc("get_feedback_for_version", { 
+        p_version_id: submission.current_full_paper_version_id 
+      });
+      
+    if (items) {
+      feedbackItems = items as FeedbackItem[];
+    }
+  }
+
+  // Prepare feedback data for the RevisionUploadSection
   const feedback = {
-    review_feedback_translations:
-      submission.review_feedback_translations as unknown as
-        | TranslationsObject
-        | undefined,
+    feedback_items: feedbackItems,
     review_date: submission.review_date || undefined,
   };
 

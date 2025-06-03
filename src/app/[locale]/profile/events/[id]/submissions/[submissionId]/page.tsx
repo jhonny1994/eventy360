@@ -9,6 +9,8 @@ import ProfileCard from '@/app/[locale]/profile/ui/ProfileCard'
 import ProfilePageHeader from '@/app/[locale]/profile/ui/ProfilePageHeader'
 import BackButton from '@/components/ui/BackButton'
 import { Json } from "@/database.types";
+import { getFeedbackForVersion, FeedbackItem } from "@/utils/submissions/feedbackHelpers";
+import { FileText, MessageCircle } from 'lucide-react';
 
 interface EventSubmissionDetailPageProps {
   params: Promise<{ locale: string; id: string; submissionId: string }>
@@ -45,6 +47,10 @@ interface SubmissionData {
   full_paper_file_metadata?: Json;
   submitted_by: string;
   submission_date: string;
+  review_date?: string;
+  current_abstract_version_id?: string;
+  current_full_paper_version_id?: string;
+  feedback_items?: FeedbackItem[];
   researcher_profile?: ResearcherProfile;
 }
 
@@ -66,7 +72,8 @@ interface RawSubmission {
   submitted_by: string;
   submission_date: string;
   review_date?: string;
-  review_feedback_translations?: TranslationsObject;
+  current_abstract_version_id?: string;
+  current_full_paper_version_id?: string;
   profiles?: {
     id: string;
     researcher_profiles?: {
@@ -162,7 +169,8 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
       submitted_by,
       submission_date,
       review_date,
-      review_feedback_translations,
+      current_abstract_version_id,
+      current_full_paper_version_id,
       profiles:submitted_by(id, researcher_profiles(name))
     `)
     .eq('id', submissionId)
@@ -176,6 +184,19 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
 
   // Cast submission to typed data for safety
   const typedSubmission = submission as unknown as RawSubmission;
+
+  // Fetch feedback items for the current version
+  let feedbackItems: FeedbackItem[] | undefined = undefined;
+  
+  if (typedSubmission.current_full_paper_version_id || typedSubmission.current_abstract_version_id) {
+    const versionId = typedSubmission.current_full_paper_version_id || typedSubmission.current_abstract_version_id;
+    if (versionId) {
+      const items = await getFeedbackForVersion(supabase, versionId);
+      if (items) {
+        feedbackItems = items;
+      }
+    }
+  }
 
   // Create researcher profile from the joined data
   const researcher: ResearcherProfile = {
@@ -195,7 +216,8 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
     full_paper_accepted: "success",
     full_paper_rejected: "failure",
     revision_requested: "warning",
-    revision_submitted: "info"
+    revision_submitted: "info",
+    revision_under_review: "info"
   };
 
   // Get title based on locale
@@ -213,6 +235,18 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
       year: 'numeric',
       month: 'long',
       day: 'numeric'
+    });
+  };
+
+  // Format date with time
+  const formatDateTime = (dateString: string): string => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString(locale === 'ar' ? 'ar-DZ' : 'en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
 
@@ -243,6 +277,10 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
     full_paper_file_metadata: typedSubmission.full_paper_file_metadata,
     submitted_by: typedSubmission.submitted_by,
     submission_date: typedSubmission.submission_date,
+    review_date: typedSubmission.review_date,
+    current_abstract_version_id: typedSubmission.current_abstract_version_id,
+    current_full_paper_version_id: typedSubmission.current_full_paper_version_id,
+    feedback_items: feedbackItems,
     researcher_profile: researcher
   };
 
@@ -303,6 +341,45 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
                   </p>              
                 </div>
               </div>
+              
+              {/* Feedback items section */}
+              {submissionData.feedback_items && submissionData.feedback_items.length > 0 && (
+                <div className="mt-8">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                    {tSubmissions("submissionFeedback")}
+                  </h3>
+                  
+                  <div className="space-y-4 mt-4">
+                    {submissionData.feedback_items.map((item) => {
+                      // Determine if this is an organizer (admin/reviewer) or researcher (author) note
+                      const isOrganizerFeedback = item.role_at_submission === 'organizer' || item.role_at_submission === 'admin';
+                      // Set appropriate styling based on the role
+                      const bgColorClass = isOrganizerFeedback 
+                        ? 'bg-blue-50 dark:bg-blue-900/40 border-blue-200 dark:border-blue-800' 
+                        : 'bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-700';
+                      // Set appropriate icon based on the role
+                      const RoleIcon = isOrganizerFeedback ? MessageCircle : FileText;
+                      
+                      return (
+                        <div key={item.id} className={`p-3 rounded-lg border ${bgColorClass}`}>
+                          <div className="flex justify-between mb-2">
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1">
+                              <RoleIcon className="w-4 h-4" />
+                              {item.provider_name || tSubmissions(`roles.${item.role_at_submission}`)}
+                            </span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              {formatDateTime(item.created_at)}
+                            </span>
+                          </div>
+                          <p className="text-gray-800 dark:text-gray-200 whitespace-pre-line">
+                            {item.feedback_content}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           
@@ -370,7 +447,7 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
                   </Link>
                 )}
                 
-                {currentStatus === 'revision_submitted' && (
+                {(currentStatus === 'revision_submitted' || currentStatus === 'revision_under_review') && (
                   <Link 
                     href={`/${locale}/profile/events/${eventId}/submissions/${submissionId}/review-revision`}
                     className="flex items-center w-full justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300"
