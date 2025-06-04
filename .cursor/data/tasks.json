@@ -1,146 +1,378 @@
 {
   "tasks": [
     {
-      "id": "dcdece78-dd3a-489d-9968-2363fe16d0af",
-      "name": "Create email template for new_event_in_subscribed_topic",
-      "description": "Create a new email template with key 'new_event_in_subscribed_topic' in the email_templates table with translations in Arabic, English, and French. The template should use mustache-style placeholders and include conditional blocks for optional event information.",
-      "status": "completed",
+      "id": "d5d2d8c6-e409-408e-b6e4-76a1370c9727",
+      "name": "Create SQL Function for Research Repository",
+      "description": "Create a new SQL function 'discover_papers' that queries submissions with accepted full papers from completed events, with support for filtering, pagination, role-based access control, and text search.",
+      "notes": "This function will be similar to discover_events but focused on papers. It should handle three different user roles and support all filtering requirements.",
+      "status": "pending",
       "dependencies": [],
-      "createdAt": "2025-06-01T20:21:14.998Z",
-      "updatedAt": "2025-06-01T20:23:47.801Z",
+      "createdAt": "2025-06-04T07:07:31.334Z",
+      "updatedAt": "2025-06-04T07:07:31.334Z",
       "relatedFiles": [
         {
-          "path": "supabase/migrations/20250526083427_add_academic_event_email_templates.sql",
-          "type": "REFERENCE",
-          "description": "Reference for email template structure and format"
+          "path": "supabase/schema.sql",
+          "type": "TO_MODIFY",
+          "description": "Add the new SQL function to the schema"
         },
         {
-          "path": "documentation/NotificationSystem/ConditionalPlaceholders.md",
-          "type": "REFERENCE",
-          "description": "Documentation on conditional mustache placeholders"
+          "path": "src/database.types.ts",
+          "type": "TO_MODIFY",
+          "description": "Update TypeScript types to include the new function return type"
         }
       ],
-      "implementationGuide": "Create a SQL INSERT statement for the email_templates table with the following structure:\n\n1. template_key: 'new_event_in_subscribed_topic'\n2. subject_translations: JSON object with translations for Arabic, English, and French\n3. body_html_translations: JSON object with HTML email bodies for each language\n4. description_translations: JSON object with descriptions for each language\n5. available_placeholders: Array of strings with all supported placeholders\n\nThe email body should include:\n- Event name ({{event_name.ar}}, {{event_name.en}}, {{event_name.fr}})\n- Event date and time ({{event_date}})\n- Event location (wilaya and daira names)\n- Conditional blocks for optional information like event subtitle, speakers, etc.\n\nFollow the pattern of existing email templates like those in 20250526083427_add_academic_event_email_templates.sql.",
-      "verificationCriteria": "1. The template must use mustache-style placeholders ({{placeholder}})\n2. The template must include conditional blocks for optional information\n3. The template must have translations for Arabic, English, and French\n4. The template must include all necessary event information\n5. The SQL statement must follow the existing pattern for email templates",
-      "analysisResult": "Based on the analysis of the codebase and requirements, we need to implement a notification system for topic-based events that follows existing patterns and leverages the new conditional mustache placeholder support. The implementation will include creating an email template, a database trigger function, and a trigger on the events table.",
-      "summary": "Successfully created a new email template for 'new_event_in_subscribed_topic' with translations in Arabic, English, and French. The template uses mustache-style placeholders ({{placeholder}}) and includes conditional blocks ({{#section}}...{{/section}}) for optional event information. All necessary event details are included, and the SQL statement follows the existing pattern for email templates.",
-      "completedAt": "2025-06-01T20:23:47.800Z"
+      "implementationGuide": "1. Create a new SQL function in the Supabase schema based on the existing 'discover_events' function pattern.\n2. Query submissions with conditions: full_paper_status = 'full_paper_accepted' OR status = 'completed'.\n3. Join with events table where status = 'completed'.\n4. Join with submission_versions to get the latest version data.\n5. Add parameters for filtering by date range, event type, topics, and text search.\n6. Include role-based access control parameter to filter by user type:\n   - For researchers: return all papers\n   - For organizers: return papers only from their events\n   - For admins: return all papers\n7. Include pagination parameters (limit and offset) and return total count.\n8. Implement proper text search on title_translations and abstract_translations.",
+      "verificationCriteria": "The function should successfully query the database and return papers matching the criteria. It should apply proper role-based filtering based on the user type parameter. All filter parameters should work correctly. The function should be properly typed in the database.types.ts file.",
+      "analysisResult": "The Research Repository feature for Eventy360 should align with the existing architecture and UX patterns while enabling users to browse, search, and download published papers from completed academic events. The implementation must include:\n\n1. Database Integration:\n- A SQL function to query papers from completed events with filtering capabilities\n- An analytics tracking system for paper views and downloads\n\n2. UI Components:\n- A main repository page with search/filter interface following existing patterns\n- Paper detail pages with metadata and download options\n- Navigation integration in the profile sidebar\n\n3. Role-based Access:\n- Researchers: View all published papers globally\n- Organizers: View only papers from their own events\n- Admins: Full oversight of all papers\n\n4. Premium Feature Protection:\n- Access restricted to users with active paid/trial subscriptions\n\nThe implementation should follow existing patterns like ProfilePageHeader, ProfileCard, and standardized hooks. All components must include proper Arabic translations with RTL support. The feature should integrate seamlessly with the existing system without requiring new database tables beyond analytics tracking."
     },
     {
-      "id": "866df9e2-e254-43d8-9ebb-3d8a2d6e0891",
-      "name": "Create database trigger function for topic notifications",
-      "description": "Create a new function 'notify_topic_subscribers_new_event()' that will run after INSERT on the events table. The function will find all topics associated with the new event, find all researchers subscribed to those topics, and create notifications in the notification_queue table.",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2025-06-01T20:21:14.998Z",
-      "updatedAt": "2025-06-02T09:03:48.114Z",
+      "id": "bc369735-f1f7-435a-bdae-28f348aba5c5",
+      "name": "Create Analytics Tracking System for Papers",
+      "description": "Implement a basic analytics tracking system for paper views and downloads using the existing Supabase database structure, creating functions to record and retrieve analytics data.",
+      "notes": "Analytics data is crucial for measuring the impact of papers and usage of the repository feature.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "d5d2d8c6-e409-408e-b6e4-76a1370c9727"
+        }
+      ],
+      "createdAt": "2025-06-04T07:07:31.334Z",
+      "updatedAt": "2025-06-04T07:07:31.334Z",
       "relatedFiles": [
         {
-          "path": "supabase/migrations/20250526083426_create_submission_tracking.sql",
+          "path": "supabase/schema.sql",
+          "type": "TO_MODIFY",
+          "description": "Add the new table and functions for paper analytics"
+        },
+        {
+          "path": "src/database.types.ts",
+          "type": "TO_MODIFY",
+          "description": "Update TypeScript types to include the new table and functions"
+        }
+      ],
+      "implementationGuide": "1. Create a new table 'paper_analytics' with columns:\n   - id (primary key)\n   - paper_id (foreign key to submissions)\n   - user_id (optional, foreign key to profiles)\n   - action_type (enum: 'view', 'download')\n   - created_at (timestamp)\n   - ip_address (optional)\n2. Create SQL functions:\n   - record_paper_view(paper_id, user_id) \n   - record_paper_download(paper_id, user_id)\n   - get_paper_analytics(paper_id) to return view and download counts\n3. Update database.types.ts to include the new table and functions\n4. Include proper RLS policies to ensure data security",
+      "verificationCriteria": "The analytics functions should successfully record view and download events to the database. The get_paper_analytics function should return the correct counts. Proper RLS policies should be in place to protect the data.",
+      "analysisResult": "The Research Repository feature for Eventy360 should align with the existing architecture and UX patterns while enabling users to browse, search, and download published papers from completed academic events. The implementation must include:\n\n1. Database Integration:\n- A SQL function to query papers from completed events with filtering capabilities\n- An analytics tracking system for paper views and downloads\n\n2. UI Components:\n- A main repository page with search/filter interface following existing patterns\n- Paper detail pages with metadata and download options\n- Navigation integration in the profile sidebar\n\n3. Role-based Access:\n- Researchers: View all published papers globally\n- Organizers: View only papers from their own events\n- Admins: Full oversight of all papers\n\n4. Premium Feature Protection:\n- Access restricted to users with active paid/trial subscriptions\n\nThe implementation should follow existing patterns like ProfilePageHeader, ProfileCard, and standardized hooks. All components must include proper Arabic translations with RTL support. The feature should integrate seamlessly with the existing system without requiring new database tables beyond analytics tracking."
+    },
+    {
+      "id": "cb7de601-a448-4cd1-af9b-5e20ae129613",
+      "name": "Create Repository Main Page",
+      "description": "Create the main page for the Research Repository feature that displays a list of published papers with search and filter capabilities, following existing UI patterns and ensuring proper role-based access control.",
+      "notes": "This should follow the same pattern as the events and submissions pages, ensuring consistent user experience.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "d5d2d8c6-e409-408e-b6e4-76a1370c9727"
+        }
+      ],
+      "createdAt": "2025-06-04T07:07:31.334Z",
+      "updatedAt": "2025-06-04T07:07:31.334Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/repository/page.tsx",
+          "type": "CREATE",
+          "description": "Main page for the Research Repository"
+        },
+        {
+          "path": "src/messages/ar.json",
+          "type": "TO_MODIFY",
+          "description": "Add Arabic translation keys for the Repository main page"
+        },
+        {
+          "path": "src/messages/en.json",
+          "type": "TO_MODIFY",
+          "description": "Add English translation keys for the Repository main page"
+        }
+      ],
+      "implementationGuide": "1. Create the main page at src/app/[locale]/profile/repository/page.tsx as a server component.\n2. Add authentication check using createServerSupabaseClient.\n3. Add subscription check to ensure it's a premium feature.\n4. Get user profile to determine role-based access.\n5. Use ProfilePageHeader and ProfileCard components for consistent UI.\n6. Add metadata generation following the pattern in other pages.\n7. Add a suspense boundary for loading state.\n8. Add proper error handling for unauthenticated users.\n9. Include RTL support for Arabic language.",
+      "verificationCriteria": "The page should render correctly and display the proper UI components. Authentication and subscription checks should work correctly. RTL support should be implemented properly for Arabic.",
+      "analysisResult": "The Research Repository feature for Eventy360 should align with the existing architecture and UX patterns while enabling users to browse, search, and download published papers from completed academic events. The implementation must include:\n\n1. Database Integration:\n- A SQL function to query papers from completed events with filtering capabilities\n- An analytics tracking system for paper views and downloads\n\n2. UI Components:\n- A main repository page with search/filter interface following existing patterns\n- Paper detail pages with metadata and download options\n- Navigation integration in the profile sidebar\n\n3. Role-based Access:\n- Researchers: View all published papers globally\n- Organizers: View only papers from their own events\n- Admins: Full oversight of all papers\n\n4. Premium Feature Protection:\n- Access restricted to users with active paid/trial subscriptions\n\nThe implementation should follow existing patterns like ProfilePageHeader, ProfileCard, and standardized hooks. All components must include proper Arabic translations with RTL support. The feature should integrate seamlessly with the existing system without requiring new database tables beyond analytics tracking."
+    },
+    {
+      "id": "ef75f246-cd43-411e-88b2-ad4f1fd0c44a",
+      "name": "Create Repository Container Component",
+      "description": "Create a client component that manages state, handles data fetching, and renders the search interface, filters, and paper grid for the Research Repository feature.",
+      "notes": "This component should be similar to EventDiscoveryContainer but adapted for papers. It will be the main stateful component for the Repository feature.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "cb7de601-a448-4cd1-af9b-5e20ae129613"
+        }
+      ],
+      "createdAt": "2025-06-04T07:07:31.334Z",
+      "updatedAt": "2025-06-04T07:07:31.334Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/repository/RepositoryContainer.tsx",
+          "type": "CREATE",
+          "description": "Container component for the Research Repository"
+        },
+        {
+          "path": "src/messages/ar.json",
+          "type": "TO_MODIFY",
+          "description": "Add Arabic translation keys for the Repository container component"
+        },
+        {
+          "path": "src/messages/en.json",
+          "type": "TO_MODIFY",
+          "description": "Add English translation keys for the Repository container component"
+        }
+      ],
+      "implementationGuide": "1. Create a new component at src/components/repository/RepositoryContainer.tsx.\n2. Follow the pattern of EventDiscoveryContainer for state management.\n3. Implement hooks for authentication, search params, and router.\n4. Create state variables for papers, loading, error, and total count.\n5. Implement a fetchPapers function that calls the discover_papers SQL function.\n6. Add handlers for search, filter, and pagination changes.\n7. Update the URL with search parameters to maintain state.\n8. Render search, filters, paper grid, and pagination components.\n9. Include proper error and loading states.\n10. Support RTL layout.",
+      "verificationCriteria": "The component should successfully fetch and display papers. It should properly manage state and update the URL with search parameters. All search, filter, and pagination functionality should work correctly.",
+      "analysisResult": "The Research Repository feature for Eventy360 should align with the existing architecture and UX patterns while enabling users to browse, search, and download published papers from completed academic events. The implementation must include:\n\n1. Database Integration:\n- A SQL function to query papers from completed events with filtering capabilities\n- An analytics tracking system for paper views and downloads\n\n2. UI Components:\n- A main repository page with search/filter interface following existing patterns\n- Paper detail pages with metadata and download options\n- Navigation integration in the profile sidebar\n\n3. Role-based Access:\n- Researchers: View all published papers globally\n- Organizers: View only papers from their own events\n- Admins: Full oversight of all papers\n\n4. Premium Feature Protection:\n- Access restricted to users with active paid/trial subscriptions\n\nThe implementation should follow existing patterns like ProfilePageHeader, ProfileCard, and standardized hooks. All components must include proper Arabic translations with RTL support. The feature should integrate seamlessly with the existing system without requiring new database tables beyond analytics tracking."
+    },
+    {
+      "id": "9e49b481-1d4d-464a-b416-ada6c9f3c525",
+      "name": "Create Repository UI Components",
+      "description": "Create the UI components required for the Repository feature, including search bar, filters, paper card grid, paper card, and pagination components.",
+      "notes": "These components should follow the same patterns as the corresponding Events components but adapted for papers.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "ef75f246-cd43-411e-88b2-ad4f1fd0c44a"
+        }
+      ],
+      "createdAt": "2025-06-04T07:07:31.334Z",
+      "updatedAt": "2025-06-04T07:07:31.334Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/repository/ui/RepositorySearchBar.tsx",
+          "type": "CREATE",
+          "description": "Search component for the Repository"
+        },
+        {
+          "path": "src/app/[locale]/profile/repository/ui/RepositoryFilters.tsx",
+          "type": "CREATE",
+          "description": "Filters component for the Repository"
+        },
+        {
+          "path": "src/app/[locale]/profile/repository/ui/PaperCardGrid.tsx",
+          "type": "CREATE",
+          "description": "Grid component for displaying paper cards"
+        },
+        {
+          "path": "src/app/[locale]/profile/repository/ui/PaperCard.tsx",
+          "type": "CREATE",
+          "description": "Individual paper card component"
+        },
+        {
+          "path": "src/app/[locale]/profile/repository/ui/RepositoryPagination.tsx",
+          "type": "CREATE",
+          "description": "Pagination component for the Repository"
+        },
+        {
+          "path": "src/messages/ar.json",
+          "type": "TO_MODIFY",
+          "description": "Add Arabic translation keys for all UI components"
+        },
+        {
+          "path": "src/messages/en.json",
+          "type": "TO_MODIFY",
+          "description": "Add English translation keys for all UI components"
+        }
+      ],
+      "implementationGuide": "1. Create the following components:\n   - src/app/[locale]/profile/repository/ui/RepositorySearchBar.tsx\n   - src/app/[locale]/profile/repository/ui/RepositoryFilters.tsx\n   - src/app/[locale]/profile/repository/ui/PaperCardGrid.tsx\n   - src/app/[locale]/profile/repository/ui/PaperCard.tsx\n   - src/app/[locale]/profile/repository/ui/RepositoryPagination.tsx\n2. Use the corresponding Events components as a pattern.\n3. Ensure each component supports RTL layout.\n4. Use Tailwind CSS for styling, following the existing design system.\n5. Add proper TypeScript types for props.\n6. Include accessibility attributes.\n7. Use useTranslations hook for internationalization.",
+      "verificationCriteria": "All components should render correctly and work together seamlessly. RTL support should be implemented properly. Accessibility attributes should be included. All text should be properly internationalized.",
+      "analysisResult": "The Research Repository feature for Eventy360 should align with the existing architecture and UX patterns while enabling users to browse, search, and download published papers from completed academic events. The implementation must include:\n\n1. Database Integration:\n- A SQL function to query papers from completed events with filtering capabilities\n- An analytics tracking system for paper views and downloads\n\n2. UI Components:\n- A main repository page with search/filter interface following existing patterns\n- Paper detail pages with metadata and download options\n- Navigation integration in the profile sidebar\n\n3. Role-based Access:\n- Researchers: View all published papers globally\n- Organizers: View only papers from their own events\n- Admins: Full oversight of all papers\n\n4. Premium Feature Protection:\n- Access restricted to users with active paid/trial subscriptions\n\nThe implementation should follow existing patterns like ProfilePageHeader, ProfileCard, and standardized hooks. All components must include proper Arabic translations with RTL support. The feature should integrate seamlessly with the existing system without requiring new database tables beyond analytics tracking."
+    },
+    {
+      "id": "b27aff0c-1a3f-4af8-bb5c-bd4cdae13dc6",
+      "name": "Create Paper Detail Page",
+      "description": "Create the detail page for individual papers that displays metadata, abstract, and provides a download option, with integrated analytics tracking.",
+      "notes": "The detail page should provide comprehensive information about the paper and track views automatically on load.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "bc369735-f1f7-435a-bdae-28f348aba5c5"
+        },
+        {
+          "taskId": "9e49b481-1d4d-464a-b416-ada6c9f3c525"
+        }
+      ],
+      "createdAt": "2025-06-04T07:07:31.334Z",
+      "updatedAt": "2025-06-04T07:07:31.334Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/[locale]/profile/repository/[id]/page.tsx",
+          "type": "CREATE",
+          "description": "Detail page for individual papers"
+        },
+        {
+          "path": "src/app/[locale]/profile/repository/[id]/ui/PaperMetadata.tsx",
+          "type": "CREATE",
+          "description": "Component for displaying paper metadata"
+        },
+        {
+          "path": "src/app/[locale]/profile/repository/[id]/ui/PaperDownload.tsx",
+          "type": "CREATE",
+          "description": "Component for paper download with analytics tracking"
+        },
+        {
+          "path": "src/messages/ar.json",
+          "type": "TO_MODIFY",
+          "description": "Add Arabic translation keys for the paper detail page"
+        },
+        {
+          "path": "src/messages/en.json",
+          "type": "TO_MODIFY",
+          "description": "Add English translation keys for the paper detail page"
+        }
+      ],
+      "implementationGuide": "1. Create a new page at src/app/[locale]/profile/repository/[id]/page.tsx as a server component.\n2. Add authentication check using createServerSupabaseClient.\n3. Add subscription check to ensure it's a premium feature.\n4. Fetch the paper details including submission, event, and author information.\n5. Record a view event using the analytics tracking system.\n6. Create UI sections for:\n   - Paper metadata (title, authors, event, date)\n   - Abstract with formatting\n   - Download button with analytics tracking\n   - Related information (event details, etc.)\n7. Use ProfilePageHeader and ProfileCard components.\n8. Add metadata generation.\n9. Include RTL support for Arabic.",
+      "verificationCriteria": "The page should correctly display paper details. View tracking should work automatically. The download button should trigger download tracking. RTL support should be implemented properly.",
+      "analysisResult": "The Research Repository feature for Eventy360 should align with the existing architecture and UX patterns while enabling users to browse, search, and download published papers from completed academic events. The implementation must include:\n\n1. Database Integration:\n- A SQL function to query papers from completed events with filtering capabilities\n- An analytics tracking system for paper views and downloads\n\n2. UI Components:\n- A main repository page with search/filter interface following existing patterns\n- Paper detail pages with metadata and download options\n- Navigation integration in the profile sidebar\n\n3. Role-based Access:\n- Researchers: View all published papers globally\n- Organizers: View only papers from their own events\n- Admins: Full oversight of all papers\n\n4. Premium Feature Protection:\n- Access restricted to users with active paid/trial subscriptions\n\nThe implementation should follow existing patterns like ProfilePageHeader, ProfileCard, and standardized hooks. All components must include proper Arabic translations with RTL support. The feature should integrate seamlessly with the existing system without requiring new database tables beyond analytics tracking."
+    },
+    {
+      "id": "8c2fae5a-2efc-4e79-b662-2afc76c57113",
+      "name": "Add Navigation Link and Update Profile Layout",
+      "description": "Add a navigation link to the Research Repository in the profile sidebar and update the profile layout to include the new feature in the navigation.",
+      "notes": "This task ensures that users can easily find and access the Research Repository feature from the profile section.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "cb7de601-a448-4cd1-af9b-5e20ae129613"
+        }
+      ],
+      "createdAt": "2025-06-04T07:07:31.334Z",
+      "updatedAt": "2025-06-04T07:07:31.334Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/profile/ProfileSidebar.tsx",
+          "type": "TO_MODIFY",
+          "description": "Update the profile sidebar to include the Repository link"
+        },
+        {
+          "path": "src/messages/ar.json",
+          "type": "TO_MODIFY",
+          "description": "Add Arabic translation keys for the navigation link"
+        },
+        {
+          "path": "src/messages/en.json",
+          "type": "TO_MODIFY",
+          "description": "Add English translation keys for the navigation link"
+        }
+      ],
+      "implementationGuide": "1. Identify the file(s) that define the navigation structure in the profile section.\n2. Add a new navigation item for the Repository feature.\n3. Apply role-based visibility or include a premium badge if necessary.\n4. Apply consistent styling with existing navigation items.\n5. Ensure RTL support.",
+      "verificationCriteria": "The navigation link should appear correctly in the profile sidebar. It should navigate to the Repository page when clicked. Premium feature indication should be visible if applicable.",
+      "analysisResult": "The Research Repository feature for Eventy360 should align with the existing architecture and UX patterns while enabling users to browse, search, and download published papers from completed academic events. The implementation must include:\n\n1. Database Integration:\n- A SQL function to query papers from completed events with filtering capabilities\n- An analytics tracking system for paper views and downloads\n\n2. UI Components:\n- A main repository page with search/filter interface following existing patterns\n- Paper detail pages with metadata and download options\n- Navigation integration in the profile sidebar\n\n3. Role-based Access:\n- Researchers: View all published papers globally\n- Organizers: View only papers from their own events\n- Admins: Full oversight of all papers\n\n4. Premium Feature Protection:\n- Access restricted to users with active paid/trial subscriptions\n\nThe implementation should follow existing patterns like ProfilePageHeader, ProfileCard, and standardized hooks. All components must include proper Arabic translations with RTL support. The feature should integrate seamlessly with the existing system without requiring new database tables beyond analytics tracking."
+    },
+    {
+      "id": "e456cb5d-b273-4a8e-aa6d-f91a019cab87",
+      "name": "Implement Paper Download Functionality",
+      "description": "Create a client component that handles paper downloads, including authorization checks, analytics tracking, and proper error handling.",
+      "notes": "This component should handle the actual download process and ensure that downloads are properly tracked.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "b27aff0c-1a3f-4af8-bb5c-bd4cdae13dc6"
+        }
+      ],
+      "createdAt": "2025-06-04T07:07:31.334Z",
+      "updatedAt": "2025-06-04T07:07:31.334Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/repository/PaperDownloadButton.tsx",
+          "type": "CREATE",
+          "description": "Client component for paper downloads"
+        },
+        {
+          "path": "src/lib/repository/trackPaperDownload.ts",
+          "type": "CREATE",
+          "description": "Utility function to record download events"
+        },
+        {
+          "path": "src/messages/ar.json",
+          "type": "TO_MODIFY",
+          "description": "Add Arabic translation keys for download button and messages"
+        },
+        {
+          "path": "src/messages/en.json",
+          "type": "TO_MODIFY",
+          "description": "Add English translation keys for download button and messages"
+        }
+      ],
+      "implementationGuide": "1. Create a client component for paper downloads with:\n   - Button UI\n   - onClick handler\n   - Loading and error states\n2. Implement the download function:\n   - Check user authentication and subscription status\n   - Record download event in analytics\n   - Open the paper URL in a new tab or trigger download\n3. Add proper error handling and user feedback.\n4. Include RTL support.",
+      "verificationCriteria": "The download button should trigger the correct download action. Analytics tracking should record download events. Error handling should provide appropriate user feedback.",
+      "analysisResult": "The Research Repository feature for Eventy360 should align with the existing architecture and UX patterns while enabling users to browse, search, and download published papers from completed academic events. The implementation must include:\n\n1. Database Integration:\n- A SQL function to query papers from completed events with filtering capabilities\n- An analytics tracking system for paper views and downloads\n\n2. UI Components:\n- A main repository page with search/filter interface following existing patterns\n- Paper detail pages with metadata and download options\n- Navigation integration in the profile sidebar\n\n3. Role-based Access:\n- Researchers: View all published papers globally\n- Organizers: View only papers from their own events\n- Admins: Full oversight of all papers\n\n4. Premium Feature Protection:\n- Access restricted to users with active paid/trial subscriptions\n\nThe implementation should follow existing patterns like ProfilePageHeader, ProfileCard, and standardized hooks. All components must include proper Arabic translations with RTL support. The feature should integrate seamlessly with the existing system without requiring new database tables beyond analytics tracking."
+    },
+    {
+      "id": "89f2e36d-6bac-442f-a0ed-df6aff2e1d88",
+      "name": "Create Analytics Dashboard Components",
+      "description": "Create components to display analytics data for papers, including views and downloads, in both the paper detail page and admin dashboard.",
+      "notes": "These components will provide insights into repository usage for both paper authors and administrators.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "e456cb5d-b273-4a8e-aa6d-f91a019cab87"
+        }
+      ],
+      "createdAt": "2025-06-04T07:07:31.334Z",
+      "updatedAt": "2025-06-04T07:07:31.334Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/repository/PaperAnalytics.tsx",
+          "type": "CREATE",
+          "description": "Component for displaying paper analytics"
+        },
+        {
+          "path": "src/app/[locale]/admin/repository/analytics/page.tsx",
+          "type": "CREATE",
+          "description": "Admin page for repository analytics"
+        },
+        {
+          "path": "src/lib/repository/getAnalyticsData.ts",
+          "type": "CREATE",
+          "description": "Utility functions for fetching analytics data"
+        },
+        {
+          "path": "src/messages/ar.json",
+          "type": "TO_MODIFY",
+          "description": "Add Arabic translation keys for analytics components"
+        },
+        {
+          "path": "src/messages/en.json",
+          "type": "TO_MODIFY",
+          "description": "Add English translation keys for analytics components"
+        }
+      ],
+      "implementationGuide": "1. Create components for displaying analytics data:\n   - src/components/repository/PaperAnalytics.tsx for the paper detail page\n   - src/app/[locale]/admin/repository/analytics/page.tsx for admin dashboard\n2. Implement functions to fetch analytics data from the database.\n3. Create visualizations for views and downloads data.\n4. Include filtering options for time periods.\n5. Add proper loading and error states.\n6. Implement RTL support.",
+      "verificationCriteria": "The analytics components should display accurate data about views and downloads. Filtering options should work correctly. RTL support should be implemented properly.",
+      "analysisResult": "The Research Repository feature for Eventy360 should align with the existing architecture and UX patterns while enabling users to browse, search, and download published papers from completed academic events. The implementation must include:\n\n1. Database Integration:\n- A SQL function to query papers from completed events with filtering capabilities\n- An analytics tracking system for paper views and downloads\n\n2. UI Components:\n- A main repository page with search/filter interface following existing patterns\n- Paper detail pages with metadata and download options\n- Navigation integration in the profile sidebar\n\n3. Role-based Access:\n- Researchers: View all published papers globally\n- Organizers: View only papers from their own events\n- Admins: Full oversight of all papers\n\n4. Premium Feature Protection:\n- Access restricted to users with active paid/trial subscriptions\n\nThe implementation should follow existing patterns like ProfilePageHeader, ProfileCard, and standardized hooks. All components must include proper Arabic translations with RTL support. The feature should integrate seamlessly with the existing system without requiring new database tables beyond analytics tracking."
+    },
+    {
+      "id": "53913a5e-bc44-481f-8b7b-5db1cf7ab7ac",
+      "name": "Test and Debug the Research Repository Feature",
+      "description": "Conduct comprehensive testing of the Research Repository feature, including all components, functionality, and edge cases, and fix any issues found.",
+      "notes": "Thorough testing is crucial to ensure the feature works correctly for all user roles and scenarios.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "89f2e36d-6bac-442f-a0ed-df6aff2e1d88"
+        }
+      ],
+      "createdAt": "2025-06-04T07:07:31.334Z",
+      "updatedAt": "2025-06-04T07:07:31.334Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/repository/",
           "type": "REFERENCE",
-          "description": "Reference for notification trigger function structure"
+          "description": "All repository components"
+        },
+        {
+          "path": "src/app/[locale]/profile/repository/",
+          "type": "REFERENCE",
+          "description": "Repository pages"
         },
         {
           "path": "supabase/schema.sql",
           "type": "REFERENCE",
-          "description": "Reference for database schema and existing functions"
+          "description": "SQL functions for the repository"
         }
       ],
-      "implementationGuide": "Create a PostgreSQL function with the following logic:\n\n1. Only proceed if the event status is 'published'\n2. Query the event_topics table to find topics associated with the new event\n3. For each topic, find researchers subscribed to it via researcher_topic_subscriptions\n4. Filter researchers to only include those with active subscriptions (status IN ('active', 'trial'))\n5. Create a notification in the notification_queue table for each researcher with:\n   - template_key: 'new_event_in_subscribed_topic'\n   - recipient_profile_id: researcher's profile ID\n   - status: 'pending'\n   - payload_data: JSON object with event details (id, name, date, location, etc.)\n\nFollow the pattern of existing notification trigger functions like notify_submission_status_change and notify_organizer_new_submission.",
-      "verificationCriteria": "1. The function must only process events with status 'published'\n2. The function must find all topics associated with the event\n3. The function must find all researchers subscribed to those topics\n4. The function must filter researchers to only include those with active subscriptions\n5. The function must create notifications with all necessary event details\n6. The function must follow existing patterns for notification triggers",
-      "analysisResult": "Based on the analysis of the codebase and requirements, we need to implement a notification system for topic-based events that follows existing patterns and leverages the new conditional mustache placeholder support. The implementation will include creating an email template, a database trigger function, and a trigger on the events table.",
-      "summary": "Successfully created the notify_researchers_of_new_event_in_topic function with proper localization for location names. The function retrieves both Arabic and non-Arabic names for wilayas and dairas, creates JSONB objects with both names in the payload, and filters researchers by subscription status to ensure only those with active or trial subscriptions receive notifications.",
-      "completedAt": "2025-06-02T09:03:48.112Z"
-    },
-    {
-      "id": "8deb5871-c3c1-4902-ac80-1c10c10b379c",
-      "name": "Create database trigger for topic notifications",
-      "description": "Create a trigger 'notify_topic_subscribers_new_event_trigger' on the events table that will fire AFTER INSERT when a new event is created with status 'published'.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "866df9e2-e254-43d8-9ebb-3d8a2d6e0891"
-        }
-      ],
-      "createdAt": "2025-06-01T20:21:14.998Z",
-      "updatedAt": "2025-06-01T20:21:14.998Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/migrations/20250526083426_create_submission_tracking.sql",
-          "type": "REFERENCE",
-          "description": "Reference for trigger creation syntax"
-        }
-      ],
-      "implementationGuide": "Create a PostgreSQL trigger with the following specifications:\n\n1. Trigger name: notify_topic_subscribers_new_event_trigger\n2. Table: public.events\n3. Timing: AFTER INSERT\n4. For each row\n5. When condition: NEW.status = 'published'\n6. Execute function: public.notify_topic_subscribers_new_event()\n\nFollow the pattern of existing triggers like notify_submission_status_change_trigger.",
-      "verificationCriteria": "1. The trigger must be created on the events table\n2. The trigger must fire AFTER INSERT\n3. The trigger must only fire when the event status is 'published'\n4. The trigger must execute the notify_topic_subscribers_new_event function\n5. The trigger creation syntax must follow existing patterns",
-      "analysisResult": "Based on the analysis of the codebase and requirements, we need to implement a notification system for topic-based events that follows existing patterns and leverages the new conditional mustache placeholder support. The implementation will include creating an email template, a database trigger function, and a trigger on the events table."
-    },
-    {
-      "id": "4fc6865d-3760-41c5-a958-5749e54087a1",
-      "name": "Update handle_notification_insert function",
-      "description": "Update the handle_notification_insert function to include the new 'new_event_in_subscribed_topic' template key and categorize it as a 'scheduled' notification type.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "dcdece78-dd3a-489d-9968-2363fe16d0af"
-        }
-      ],
-      "createdAt": "2025-06-01T20:21:14.998Z",
-      "updatedAt": "2025-06-02T08:43:17.915Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/migrations/20250513150000_add_notification_type_and_processing.sql",
-          "type": "REFERENCE",
-          "description": "Reference for handle_notification_insert function"
-        },
-        {
-          "path": "supabase/schema.sql",
-          "type": "REFERENCE",
-          "description": "Reference for current function definition"
-        }
-      ],
-      "implementationGuide": "Modify the existing handle_notification_insert function to include the new template key in the CASE statement:\n\n```sql\nCASE NEW.template_key\n  ...\n  WHEN 'new_event_in_subscribed_topic' THEN\n    NEW.notification_type := 'scheduled'::public.notification_type_enum;\n  ...\nELSE\n  NEW.notification_type := 'scheduled'::public.notification_type_enum;\nEND CASE;\n```\n\nFollow the existing pattern in the function.",
-      "verificationCriteria": "1. The function must include the new template key 'new_event_in_subscribed_topic'\n2. The function must categorize the new template as 'scheduled'\n3. The update must not affect existing template categorizations\n4. The function update must follow existing patterns",
-      "analysisResult": "Based on the analysis of the codebase and requirements, we need to implement a notification system for topic-based events that follows existing patterns and leverages the new conditional mustache placeholder support. The implementation will include creating an email template, a database trigger function, and a trigger on the events table.",
-      "summary": "Successfully updated the handle_notification_insert function to include the new template key 'new_event_in_subscribed_topic' and categorized it as a 'scheduled' notification type. The function update was added to the migration file.",
-      "completedAt": "2025-06-02T08:43:17.914Z"
-    },
-    {
-      "id": "acfa51a8-74ec-4d99-bb44-342563fb7393",
-      "name": "Create migration file for topic notification system",
-      "description": "Create a new migration file '20250720000000_add_topic_notification_system.sql' that includes all the components of the topic notification system: email template, trigger function, trigger, and handle_notification_insert update.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "dcdece78-dd3a-489d-9968-2363fe16d0af"
-        },
-        {
-          "taskId": "866df9e2-e254-43d8-9ebb-3d8a2d6e0891"
-        },
-        {
-          "taskId": "8deb5871-c3c1-4902-ac80-1c10c10b379c"
-        },
-        {
-          "taskId": "4fc6865d-3760-41c5-a958-5749e54087a1"
-        }
-      ],
-      "createdAt": "2025-06-01T20:21:14.998Z",
-      "updatedAt": "2025-06-01T20:21:14.998Z",
-      "relatedFiles": [
-        {
-          "path": "supabase/migrations/20250526083427_add_academic_event_email_templates.sql",
-          "type": "REFERENCE",
-          "description": "Reference for migration file structure"
-        },
-        {
-          "path": "supabase/migrations/20250526083426_create_submission_tracking.sql",
-          "type": "REFERENCE",
-          "description": "Reference for trigger and function creation in migrations"
-        }
-      ],
-      "implementationGuide": "Create a new migration file with the following structure:\n\n1. Comment explaining the purpose of the migration\n2. Email template insertion\n3. Trigger function creation\n4. Trigger creation\n5. Update to handle_notification_insert function\n6. Comment on migration\n\nFollow the pattern of existing migration files like 20250526083427_add_academic_event_email_templates.sql and 20250526083426_create_submission_tracking.sql.",
-      "verificationCriteria": "1. The migration file must include all components of the topic notification system\n2. The migration file must follow the naming convention with date prefix\n3. The migration file must include appropriate comments\n4. The migration file must follow existing patterns for migrations",
-      "analysisResult": "Based on the analysis of the codebase and requirements, we need to implement a notification system for topic-based events that follows existing patterns and leverages the new conditional mustache placeholder support. The implementation will include creating an email template, a database trigger function, and a trigger on the events table."
+      "implementationGuide": "1. Test the following aspects of the feature:\n   - Database queries with various filter combinations\n   - Role-based access control (researcher, organizer, admin)\n   - Premium feature restriction\n   - Search and filter functionality\n   - Pagination\n   - Paper detail display\n   - Download functionality\n   - Analytics tracking\n   - RTL layout\n2. Test edge cases:\n   - Empty search results\n   - Large number of results\n   - Special characters in search\n   - Missing paper data\n3. Fix any issues found during testing.",
+      "verificationCriteria": "All functionality should work correctly. No errors should occur during normal usage. Edge cases should be handled gracefully. RTL layout should display correctly in Arabic.",
+      "analysisResult": "The Research Repository feature for Eventy360 should align with the existing architecture and UX patterns while enabling users to browse, search, and download published papers from completed academic events. The implementation must include:\n\n1. Database Integration:\n- A SQL function to query papers from completed events with filtering capabilities\n- An analytics tracking system for paper views and downloads\n\n2. UI Components:\n- A main repository page with search/filter interface following existing patterns\n- Paper detail pages with metadata and download options\n- Navigation integration in the profile sidebar\n\n3. Role-based Access:\n- Researchers: View all published papers globally\n- Organizers: View only papers from their own events\n- Admins: Full oversight of all papers\n\n4. Premium Feature Protection:\n- Access restricted to users with active paid/trial subscriptions\n\nThe implementation should follow existing patterns like ProfilePageHeader, ProfileCard, and standardized hooks. All components must include proper Arabic translations with RTL support. The feature should integrate seamlessly with the existing system without requiring new database tables beyond analytics tracking."
     }
   ]
 }
