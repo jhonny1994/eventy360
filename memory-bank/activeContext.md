@@ -99,6 +99,7 @@
 - Appropriate permission system (researchers see all papers, organizers see only papers from their events)
 - Paper details view with metadata and analytics
 - Analytics tracking for paper views and downloads
+- Permission fixes to allow organizers to view paper statistics for papers from their events
 
 ## 🚀 Current Implementation Focus
 
@@ -142,6 +143,7 @@
 - Callback route warning in console ✅ FIXED
 - Email templates responsive design issues ✅ FIXED
 - TypeScript errors in Next.js App Router files related to page props types ✅ FIXED
+- Organizers unable to view paper statistics in details page ✅ FIXED
 
 ## Implementation Priorities
 1. **Project Homepage** (Critical Features)

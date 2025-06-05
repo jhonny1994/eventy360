@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { Button, Alert, Tooltip } from 'flowbite-react';
 import { HiDownload, HiExclamationCircle, HiLockClosed } from 'react-icons/hi';
-import { useTranslations } from 'next-intl';
-import { useAuth } from '@/components/providers/AuthProvider';
+import useTranslations from '@/hooks/useTranslations';
+import { useAuth } from '@/hooks/useAuth';
 import { useSubscriptionCheck } from '@/hooks/useSubscriptionCheck';
 import { trackPaperDownload } from '@/lib/repository/trackPaperDownload';
 
@@ -34,6 +34,11 @@ interface PaperDownloadButtonProps {
 
 /**
  * Reusable component for downloading papers with analytics tracking
+ * Uses standardized hooks:
+ * - useAuth: For supabase client and session access
+ * - useSubscriptionCheck: For premium feature access control
+ * - useTranslations: For i18n translations
+ * - useLocale: For RTL/LTR detection
  */
 export default function PaperDownloadButton({
   submissionId,
@@ -53,6 +58,7 @@ export default function PaperDownloadButton({
 }: PaperDownloadButtonProps) {
   const isRtl = locale === 'ar';
   const t = useTranslations('ResearchRepository.paperDetails');
+  // Locale hook available for future use if needed
   const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   

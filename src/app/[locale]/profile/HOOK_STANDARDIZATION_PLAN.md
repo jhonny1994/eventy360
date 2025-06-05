@@ -63,6 +63,15 @@ This document outlines the plan to standardize hook usage across the Eventy360 a
 - ✅ `components/events/discovery/EventDiscoveryContainer.tsx` - Updated to use standardized useAuth hook
 - ✅ `components/events/discovery/EventFilters.tsx` - Updated to use standardized useAuth hook
 
+### Repository Section
+
+- ✅ `components/repository/RepositoryContainer.tsx` - Updated to use standardized useAuth, useTranslations, and useLocale hooks
+- ✅ `components/repository/PaperDownloadButton.tsx` - Updated to use standardized useAuth, useTranslations, and useSubscriptionCheck hooks
+- ✅ `app/[locale]/profile/repository/ui/PaperCard.tsx` - Updated to use standardized useTranslations and useLocale hooks
+- ✅ `app/[locale]/profile/repository/ui/RepositoryFilters.tsx` - Updated to use standardized useAuth, useTranslations hooks
+- ✅ `app/[locale]/profile/repository/ui/RepositorySearchBar.tsx` - Updated to use standardized useTranslations hook
+- ✅ `app/[locale]/profile/repository/RepositoryPageClient.tsx` - Already using standardized hooks (useAuth, useUserProfile, useTranslations)
+
 ### Bookmarks Section
 
 - ✅ `bookmarks/actions.ts` - Checked and confirmed no client-side hooks needed
@@ -180,6 +189,7 @@ This document outlines the plan to standardize hook usage across the Eventy360 a
 | Core UI | 11              | 11        | 100%     |
 | Submissions | 10          | 10        | 100%     |
 | Events   | 16             | 16        | 100%     |
+| Repository | 6            | 6         | 100%     |
 | Bookmarks | 4             | 4         | 100%     |
 | Topics   | 2              | 2         | 100%     |
 | Verification | 2          | 2         | 100%     |
@@ -187,4 +197,4 @@ This document outlines the plan to standardize hook usage across the Eventy360 a
 | Security | 0              | 0         | N/A      |
 | Admin    | 4              | 4         | 100%     |
 | Utility Files | 2         | 2         | 100%     |
-| **TOTAL**| **55**         | **55**    | **100%** |
+| **TOTAL**| **61**         | **61**    | **100%** |

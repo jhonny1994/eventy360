@@ -2,12 +2,13 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
 import { Alert } from 'flowbite-react';
 import { HiExclamationCircle } from 'react-icons/hi';
-import { useAuth } from '@/components/providers/AuthProvider';
+import { useAuth } from '@/hooks/useAuth';
 import type { Database } from '@/database.types';
 import { useUserProfile } from '@/hooks/useUserProfile';
+import useTranslations from '@/hooks/useTranslations';
+import useLocale from '@/hooks/useLocale';
 import RepositorySearchBar from '@/app/[locale]/profile/repository/ui/RepositorySearchBar';
 import RepositoryFilters from '@/app/[locale]/profile/repository/ui/RepositoryFilters';
 import PaperCardGrid from '@/app/[locale]/profile/repository/ui/PaperCardGrid';
@@ -69,6 +70,11 @@ const DEFAULT_PAGE_SIZE = 12;
  * Main container for research repository functionality
  * Handles search, filtering, and pagination state
  * Integrates with database functions for paper retrieval
+ * Uses standardized hooks:
+ * - useAuth: For supabase client access
+ * - useUserProfile: For user profile data
+ * - useTranslations: For i18n translations
+ * - useLocale: For locale-aware formatting
  */
 export default function RepositoryContainer({
   searchParams,
@@ -77,6 +83,7 @@ export default function RepositoryContainer({
 }: RepositoryContainerProps) {
   const isRtl = locale === 'ar';
   const t = useTranslations('ResearchRepository');
+  useLocale();
   const router = useRouter();
   const urlSearchParams = useSearchParams();
   const { supabase } = useAuth();

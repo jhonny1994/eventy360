@@ -3,8 +3,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Card, Select, Label, Button, Datepicker } from 'flowbite-react';
 import { HiFilter, HiX } from 'react-icons/hi';
-import { useTranslations } from 'next-intl';
-import { useAuth } from '@/components/providers/AuthProvider';
+import { useAuth } from '@/hooks/useAuth';
+import useTranslations from '@/hooks/useTranslations';
+import useLocale from '@/hooks/useLocale';
 import TopicSelector from '@/components/ui/TopicSelector';
 
 interface Wilaya {
@@ -41,6 +42,10 @@ interface RepositoryFiltersProps {
 /**
  * Filter controls for research repository
  * Includes topic, location, researcher, and date filters
+ * Uses standardized hooks:
+ * - useAuth: For supabase client access
+ * - useTranslations: For i18n translations
+ * - useLocale: For RTL/LTR detection and date formatting
  */
 export default function RepositoryFilters({
   selectedTopics,
@@ -54,6 +59,7 @@ export default function RepositoryFilters({
 }: RepositoryFiltersProps) {
   const isRtl = locale === 'ar';
   const t = useTranslations('ResearchRepository.filters');
+  useLocale();
   const { supabase } = useAuth();
 
   // Local state for form values

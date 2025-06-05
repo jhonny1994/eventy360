@@ -2,7 +2,8 @@
 
 import { Card, Badge, Button } from 'flowbite-react';
 import { HiCalendar, HiLocationMarker, HiExternalLink, HiDownload, HiUser, HiAcademicCap } from 'react-icons/hi';
-import { useTranslations } from 'next-intl';
+import useTranslations from '@/hooks/useTranslations';
+import useLocale from '@/hooks/useLocale';
 import Link from 'next/link';
 import type { Database } from '@/database.types';
 
@@ -44,15 +45,19 @@ interface PaperCardProps {
 /**
  * Individual paper card component
  * Displays paper information in a clean, accessible format
+ * Uses standardized hooks:
+ * - useTranslations: For i18n translations
+ * - useLocale: For locale-aware date formatting
  */
 export default function PaperCard({ paper, locale, wilayas, dairas, topics }: PaperCardProps) {
   const isRtl = locale === 'ar';
   const t = useTranslations('ResearchRepository.paperCard');
+  const currentLocale = useLocale();
 
   // Format dates for display
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString(locale === 'ar' ? 'ar-DZ' : 'en-US', {
+    return date.toLocaleDateString(currentLocale, {
       year: 'numeric',
       month: 'long',
       day: 'numeric'

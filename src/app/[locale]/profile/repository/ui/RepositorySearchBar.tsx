@@ -3,7 +3,8 @@
 import { useState, useCallback, useEffect } from 'react';
 import { TextInput, Button, Spinner } from 'flowbite-react';
 import { HiSearch, HiX } from 'react-icons/hi';
-import { useTranslations } from 'next-intl';
+import useTranslations from '@/hooks/useTranslations';
+import useLocale from '@/hooks/useLocale';
 
 interface RepositorySearchBarProps {
   initialValue: string;
@@ -15,6 +16,9 @@ interface RepositorySearchBarProps {
 /**
  * Search bar component for research repository
  * Supports Arabic RTL layout and debounced search
+ * Uses standardized hooks:
+ * - useTranslations: For i18n translations
+ * - useLocale: For RTL/LTR detection
  */
 export default function RepositorySearchBar({
   initialValue,
@@ -24,6 +28,7 @@ export default function RepositorySearchBar({
 }: RepositorySearchBarProps) {
   const isRtl = locale === 'ar';
   const t = useTranslations('ResearchRepository.search');
+  useLocale();
   const [searchQuery, setSearchQuery] = useState(initialValue);
   const [debouncedQuery, setDebouncedQuery] = useState(initialValue);
 

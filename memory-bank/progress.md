@@ -43,6 +43,7 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 - Implemented notification system for new events in subscribed topics ✅
 - Completed hook standardization across the entire application (100% complete) ✅
 - Fixed syntax errors in SQL functions ✅
+- Fixed issue with organizers being unable to view paper statistics in the paper details page ✅
 
 ## ✅ Completed Features
 
@@ -57,7 +58,7 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 - **Events Management** - Complete event lifecycle management
 - **Submissions System** - Complete submission workflow with review capabilities
 - **Feedback System** - Enhanced robust feedback handling approach
-- **Research Repository** - Complete paper browsing with search filters and permission system
+- **Research Repository** - Complete paper browsing with search filters and permission system, including analytics access for both researchers (for their papers) and organizers (for papers from their events)
 
 ### Hook Standardization - COMPLETE (100%)
 - **Standardized Hooks Created:**
