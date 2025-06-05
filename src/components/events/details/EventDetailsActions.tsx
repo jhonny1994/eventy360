@@ -1,3 +1,10 @@
+/**
+ * EventDetailsActions component for displaying action buttons and statistics
+ * 
+ * Uses standardized hooks:
+ * - useTranslations: For i18n translations
+ * - useAuth: For Supabase client access (if needed for any actions)
+ */
 'use client';
 
 import React, { useState, useEffect } from "react";
@@ -9,9 +16,10 @@ import {
   BookmarkPlus,
   BookmarkCheck,
   Loader2,
+  Eye,
 } from "lucide-react";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import useTranslations from "@/hooks/useTranslations";
 import { Button } from "flowbite-react";
 import { isEventBookmarked, toggleBookmark } from '@/app/[locale]/profile/bookmarks/actions';
 
@@ -96,6 +104,7 @@ interface EventDetailsActionsProps {
     status: string;
   } | null;
   hasSubmitted?: boolean;
+  submissionId?: string;
 }
 
 export function EventDetailsActions({
@@ -105,6 +114,7 @@ export function EventDetailsActions({
   userProfile,
   userSubscription,
   hasSubmitted = false,
+  submissionId,
 }: EventDetailsActionsProps) {
   const now = new Date();
   const eventDate = new Date(event.event_date);
@@ -177,7 +187,7 @@ export function EventDetailsActions({
             text={t("actions.bookmarkEvent")}
           />
 
-          {/* Submit Paper/Proposal - Only show if user hasn't submitted yet */}
+          {/* Submit Paper/Proposal or View Submission button */}
           {canSubmit && !hasSubmitted && (
             <Link
               href={`/${locale}/profile/submissions/create/${event.id}`}
@@ -189,6 +199,22 @@ export function EventDetailsActions({
               >
                 <FileText className="w-5 h-5 mr-2" />
                 {t("actions.submitAbstract")}
+              </Button>
+            </Link>
+          )}
+
+          {/* View Submission button - Show if user has already submitted */}
+          {hasSubmitted && submissionId && (
+            <Link
+              href={`/${locale}/profile/submissions/${submissionId}`}
+              className="w-full"
+            >
+              <Button 
+                color="info" 
+                className="w-full"
+              >
+                <Eye className="w-5 h-5 mr-2" />
+                {t("actions.viewSubmission")}
               </Button>
             </Link>
           )}

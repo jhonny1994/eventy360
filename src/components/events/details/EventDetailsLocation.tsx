@@ -1,8 +1,14 @@
+/**
+ * EventDetailsLocation component for displaying event location information
+ * 
+ * Uses standardized hooks:
+ * - useTranslations: For i18n translations
+ */
 "use client";
 
 import React from "react";
 import { MapPin, Navigation, ExternalLink } from "lucide-react";
-import { useTranslations } from "next-intl";
+import useTranslations from "@/hooks/useTranslations";
 
 interface EventDetailsLocationProps {
   event: {

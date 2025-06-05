@@ -383,6 +383,7 @@ export default async function EventDetailsPage({
   let userProfile: { user_type: string; subscription_status: string } | null = null;
   let userSubscription = null;
   let hasSubmitted = false;
+  let submissionId: string | undefined = undefined;
 
   if (user) {
     const { data: profile } = await supabase
@@ -427,6 +428,10 @@ export default async function EventDetailsPage({
           .maybeSingle();
         
         hasSubmitted = !!existingSubmission;
+        // Store the submission ID if it exists
+        if (existingSubmission) {
+          submissionId = existingSubmission.id;
+        }
       }
     }
   }
@@ -505,6 +510,7 @@ export default async function EventDetailsPage({
               userProfile={userProfile}
               userSubscription={userSubscription}
               hasSubmitted={hasSubmitted}
+              submissionId={submissionId}
             />
           </ProfileCard>
         )}

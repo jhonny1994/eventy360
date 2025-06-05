@@ -30,6 +30,7 @@ import type { Database } from '@/database.types';
 import { BookmarkButton } from '@/components/ui/BookmarkButton';
 import { useEffect, useState } from 'react';
 import { isEventBookmarked } from '@/app/[locale]/profile/bookmarks/actions';
+import { useUserProfile } from '@/hooks/useUserProfile';
 
 type Event = Database['public']['Functions']['discover_events']['Returns'][0];
 
@@ -53,13 +54,17 @@ function EventCard({ event }: EventCardProps) {
   const isRtl = actualLocale === 'ar';
   const [bookmarked, setBookmarked] = useState(false);
   const [checkingBookmarkStatus, setCheckingBookmarkStatus] = useState(true);
+  const { profile } = useUserProfile();
+  
+  // Check if user is an organizer
+  const isOrganizer = profile?.baseProfile?.user_type === 'organizer';
 
   // Check if the event is bookmarked on component mount
   useEffect(() => {
     async function checkBookmarkStatus() {
       try {
-        const isBookmarked = await isEventBookmarked(event.id);
-        setBookmarked(isBookmarked);
+        const status = await isEventBookmarked(event.id);
+        setBookmarked(status);
       } catch (error) {
         console.error('Error checking bookmark status:', error);
       } finally {
@@ -207,14 +212,17 @@ function EventCard({ event }: EventCardProps) {
             </Button>
           </Link>
         </div>
-        <BookmarkButton 
-          eventId={event.id}
-          initialBookmarked={bookmarked}
-          size="sm"
-          color="light"
-          iconOnly
-          disabled={checkingBookmarkStatus}
-        />
+        {/* Only show bookmark button if user is NOT an organizer */}
+        {!isOrganizer && (
+          <BookmarkButton 
+            eventId={event.id}
+            initialBookmarked={bookmarked}
+            size="sm"
+            color="light"
+            iconOnly
+            disabled={checkingBookmarkStatus}
+          />
+        )}
       </div>
     </Card>
   );
@@ -231,6 +239,7 @@ function EventCard({ event }: EventCardProps) {
  * Standardized patterns:
  * - useTranslations for internationalization
  * - useLocale for locale-aware formatting and rendering
+ * - useUserProfile for user profile data
  */
 export default function EventCardGrid({
   events,

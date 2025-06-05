@@ -2,7 +2,7 @@
 
 import { Button } from 'flowbite-react';
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
-import { useTranslations } from 'next-intl';
+import useTranslations from '@/hooks/useTranslations';
 
 interface EventPaginationProps {
   currentPage: number;
@@ -15,8 +15,10 @@ interface EventPaginationProps {
 }
 
 /**
- * Pagination component for event discovery
- * Supports RTL layout and follows existing pagination patterns
+ * EventPagination component for paginating through event results
+ * 
+ * Uses standardized hooks:
+ * - useTranslations: For i18n translations
  */
 export default function EventPagination({
   currentPage,

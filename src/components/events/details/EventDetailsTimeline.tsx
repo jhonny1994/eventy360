@@ -1,9 +1,14 @@
-// "use client" directive to mark the component as a Client Component
+/**
+ * EventDetailsTimeline component for displaying event timeline
+ * 
+ * Uses standardized hooks:
+ * - useTranslations: For i18n translations
+ */
 "use client";
 
 import React from 'react';
 import { Clock, CalendarCheck, Bell, CheckCircle } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import useTranslations from '@/hooks/useTranslations';
 
 interface EventDetailsTimelineProps {
   event: {
@@ -14,7 +19,7 @@ interface EventDetailsTimelineProps {
     notification_date: string | null;
     submission_verdict_deadline: string; // Added final verdict deadline
   };
-  locale: string;
+  locale: string; // Added locale prop
 }
 
 // Use string identifiers instead of direct component references
@@ -30,6 +35,7 @@ interface TimelineEvent {
 
 export function EventDetailsTimeline({ event, locale }: EventDetailsTimelineProps) {
   const t = useTranslations('EventDetails.timeline')
+  const currentLocale = locale // Use the locale prop directly
   const now = new Date();
   const eventPoints: TimelineEvent[] = [
     { id: 'event_date', label: t('eventStarts'), dateString: event.event_date, iconName: 'Clock' },
@@ -120,13 +126,13 @@ export function EventDetailsTimeline({ event, locale }: EventDetailsTimelineProp
                     {item.label}
                   </h3>
                   <p className="text-xs text-gray-500 mt-0.5">
-                    {item.date.toLocaleDateString(locale === 'ar' ? 'ar-DZ' : 'en-US', {
+                    {item.date.toLocaleDateString(currentLocale, {
                       month: 'short',
                       day: 'numeric',
                       year: 'numeric',
                     })}
                     {' at '}
-                    {item.date.toLocaleTimeString(locale === 'ar' ? 'ar-DZ' : 'en-US', {
+                    {item.date.toLocaleTimeString(currentLocale, {
                       hour: '2-digit',
                       minute: '2-digit',
                       hour12: true,

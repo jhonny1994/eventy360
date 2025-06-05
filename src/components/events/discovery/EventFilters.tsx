@@ -3,10 +3,10 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Card, Select, Label, Button, Datepicker } from 'flowbite-react';
 import { HiFilter, HiX } from 'react-icons/hi';
-import { useTranslations } from 'next-intl';
-import { useAuth } from '@/components/providers/AuthProvider';
-import TopicSelector from '@/components/ui/TopicSelector';
+import useTranslations from '@/hooks/useTranslations';
+import { useAuth } from '@/hooks/useAuth';
 import type { Database } from '@/database.types';
+import TopicSelector from '@/components/ui/TopicSelector';
 
 interface Wilaya {
   id: number;
@@ -33,8 +33,11 @@ interface EventFiltersProps {
 }
 
 /**
- * Filter controls for event discovery
- * Includes topic, location, status, format, and date filters
+ * EventFilters component for filtering events by various criteria
+ * 
+ * Uses standardized hooks:
+ * - useAuth: For Supabase client access
+ * - useTranslations: For i18n translations
  */
 export default function EventFilters({
   selectedTopics,
@@ -67,14 +70,16 @@ export default function EventFilters({
   // Load wilayas (provinces)
   useEffect(() => {
     const loadWilayas = async () => {
-      try {        const { data, error } = await supabase
+      try {
+        const { data, error } = await supabase
           .from('wilayas')
           .select('id, name_ar, name_other')
           .order('id');
 
         if (error) throw error;
         setWilayas(data || []);
-      } catch {
+      } catch (error) {
+        console.error('Failed to load wilaya data:', error);
       }
     };
 
@@ -168,7 +173,7 @@ export default function EventFilters({
             </span>
           )}
         </div>
-          <div className={`flex items-center ${isRtl ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
+        <div className={`flex items-center ${isRtl ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
           {hasActiveFilters && (
             <Button
               color="light"
@@ -192,7 +197,8 @@ export default function EventFilters({
       {/* Filter Controls */}
       {isExpanded && (
         <div className="mt-4 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">            {/* Topics Filter */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Topics Filter */}
             <div>
               <Label htmlFor="topics-filter">{t('topics')}</Label>
               <TopicSelector
@@ -203,7 +209,9 @@ export default function EventFilters({
                 placeholder={t('selectTopics')}
                 locale={locale}
               />
-            </div>            {/* Location Filter */}
+            </div>
+            
+            {/* Location Filter */}
             <div>
               <Label htmlFor="location-filter">{t('location')}</Label>
               <div className="relative">
@@ -222,7 +230,9 @@ export default function EventFilters({
                   ))}
                 </Select>
               </div>
-            </div>{/* Status Filter */}
+            </div>
+
+            {/* Status Filter */}
             <div>
               <Label htmlFor="status-filter">{t('status')}</Label>
               <div className="relative">
@@ -243,7 +253,9 @@ export default function EventFilters({
                   <option value="canceled">{tEnums('EventStatus.canceled')}</option>
                 </Select>
               </div>
-            </div>            {/* Format Filter */}
+            </div>
+            
+            {/* Format Filter */}
             <div>
               <Label htmlFor="format-filter">{t('format')}</Label>
               <div className="relative">
@@ -261,7 +273,10 @@ export default function EventFilters({
                   <option value="hybrid">{tEnums('EventFormat.hybrid')}</option>
                 </Select>
               </div>
-            </div>{/* Start Date Filter */}            <div>
+            </div>
+            
+            {/* Start Date Filter */}
+            <div>
               <Label htmlFor="start-date-filter">{t('startDate')}</Label>
               <Datepicker
                 id="start-date-filter"
@@ -277,7 +292,8 @@ export default function EventFilters({
               />
             </div>
 
-            {/* End Date Filter */}            <div>
+            {/* End Date Filter */}
+            <div>
               <Label htmlFor="end-date-filter">{t('endDate')}</Label>
               <Datepicker
                 id="end-date-filter"

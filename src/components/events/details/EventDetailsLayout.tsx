@@ -1,6 +1,15 @@
+'use client';
+
+/**
+ * EventDetailsLayout component for displaying the overall event details page layout
+ * 
+ * Uses standardized hooks:
+ * - useTranslations: For i18n translations (to be added for text content)
+ */
 import React from 'react'
 import { ChevronRight, Home } from 'lucide-react'
 import Link from 'next/link'
+import useTranslations from '@/hooks/useTranslations'
 
 interface EventDetailsLayoutProps {
   event: {
@@ -22,10 +31,12 @@ export function EventDetailsLayout({
   userRole, 
   children 
 }: EventDetailsLayoutProps) {
+  const t = useTranslations('EventDetails.layout')
+  
   // Get localized title
   const title = typeof event.title === 'object' 
-    ? event.title[locale] || event.title['ar'] || 'Event Details'
-    : event.title || 'Event Details'
+    ? event.title[locale] || event.title['ar'] || t('defaultTitle')
+    : event.title || t('defaultTitle')
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -44,14 +55,14 @@ export function EventDetailsLayout({
               href={`/${locale}/profile`}
               className="text-gray-500 hover:text-gray-700"
             >
-              Profile
+              {t('breadcrumbs.profile')}
             </Link>
             <ChevronRight className="w-4 h-4 text-gray-400" />
             <Link 
               href={`/${locale}/profile/events`}
               className="text-gray-500 hover:text-gray-700"
             >
-              Events
+              {t('breadcrumbs.events')}
             </Link>
             <ChevronRight className="w-4 h-4 text-gray-400" />
             <span className="text-gray-900 font-medium truncate max-w-xs">
@@ -76,11 +87,11 @@ export function EventDetailsLayout({
               {event.organizer && (
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                    Organizer
+                    {t('sidebar.organizer')}
                   </h3>
                   <div className="space-y-2">
                     <p className="font-medium text-gray-900">
-                      {event.organizer.display_name || 'Anonymous Organizer'}
+                      {event.organizer.display_name || t('sidebar.anonymousOrganizer')}
                     </p>
                     {event.organizer.university && (
                       <p className="text-sm text-gray-600">
@@ -95,20 +106,20 @@ export function EventDetailsLayout({
               {userRole === 'owner' && (
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                    Quick Actions
+                    {t('sidebar.quickActions')}
                   </h3>
                   <div className="space-y-2">
                     <Link
                       href={`/${locale}/profile/events/${event.id}/manage`}
                       className="block w-full px-4 py-2 text-sm font-medium text-center bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                     >
-                      Manage Event
+                      {t('sidebar.manageEvent')}
                     </Link>
                     <Link
                       href={`/${locale}/profile/events/${event.id}/edit`}
                       className="block w-full px-4 py-2 text-sm font-medium text-center border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
                     >
-                      Edit Event
+                      {t('sidebar.editEvent')}
                     </Link>
                   </div>
                 </div>
@@ -117,13 +128,13 @@ export function EventDetailsLayout({
               {/* Share Section */}
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  Share Event
+                  {t('sidebar.shareEvent')}
                 </h3>
                 <p className="text-sm text-gray-600 mb-3">
-                  Share this event with your network
+                  {t('sidebar.shareDescription')}
                 </p>
                 <button className="w-full px-4 py-2 text-sm font-medium bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors">
-                  Copy Link
+                  {t('sidebar.copyLink')}
                 </button>
               </div>
             </div>

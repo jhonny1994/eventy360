@@ -103,17 +103,17 @@ export default function PaperDownload({ paper, locale }: PaperDownloadProps) {
             </div>
           </div>
           
-          <PaperDownloadButton
-            submissionId={paper.id}
-            fileUrl={paper.full_paper_file_url}
-            fileMetadata={fileMetadata}
-            locale={locale}
+        <PaperDownloadButton
+          submissionId={paper.id}
+          fileUrl={paper.full_paper_file_url}
+          fileMetadata={fileMetadata}
+          locale={locale}
             showFileName={false}
-            color="info"
+          color="info"
             size="lg"
             className="w-full sm:w-auto"
-            onError={handleError}
-          />
+          onError={handleError}
+        />
         </div>
       </div>
       

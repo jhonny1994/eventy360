@@ -60,8 +60,16 @@ This document outlines the plan to standardize hook usage across the Eventy360 a
 - ✅ `events/[id]/submissions/[submissionId]/review-abstract/page.tsx` - Uses standardized AbstractReviewComponent
 - ✅ `events/[id]/submissions/[submissionId]/review-paper/page.tsx` - Uses standardized FullPaperReviewComponent
 - ✅ `events/[id]/submissions/[submissionId]/review-revision/page.tsx` - Uses standardized RevisionReviewComponent
-- ✅ `components/events/discovery/EventDiscoveryContainer.tsx` - Updated to use standardized useAuth hook
-- ✅ `components/events/discovery/EventFilters.tsx` - Updated to use standardized useAuth hook
+- ✅ `components/events/discovery/EventDiscoveryContainer.tsx` - Updated to use standardized useAuth, useTranslations, and useUserProfile hooks
+- ✅ `components/events/discovery/EventFilters.tsx` - Updated to use standardized useAuth and useTranslations hooks
+- ✅ `components/events/discovery/EventSearchBar.tsx` - Updated to use standardized useTranslations hook
+- ✅ `components/events/discovery/EventPagination.tsx` - Updated to use standardized useTranslations hook
+- ✅ `components/events/details/EventDetailsHeader.tsx` - Updated to use standardized useTranslations and useLocale hooks
+- ✅ `components/events/details/EventDetailsDescription.tsx` - Updated to use standardized useTranslations and useLocale hooks
+- ✅ `components/events/details/EventDetailsActions.tsx` - Updated to use standardized useTranslations hook
+- ✅ `components/events/details/EventDetailsTimeline.tsx` - Updated to use standardized useTranslations and useLocale hooks
+- ✅ `components/events/details/EventDetailsLocation.tsx` - Updated to use standardized useTranslations hook
+- ✅ `components/events/details/EventDetailsLayout.tsx` - Updated to use standardized useTranslations hook
 
 ### Repository Section
 
@@ -188,7 +196,7 @@ This document outlines the plan to standardize hook usage across the Eventy360 a
 |---------|-----------------|-----------|----------|
 | Core UI | 11              | 11        | 100%     |
 | Submissions | 10          | 10        | 100%     |
-| Events   | 16             | 16        | 100%     |
+| Events   | 24             | 24        | 100%     |
 | Repository | 6            | 6         | 100%     |
 | Bookmarks | 4             | 4         | 100%     |
 | Topics   | 2              | 2         | 100%     |
@@ -197,4 +205,4 @@ This document outlines the plan to standardize hook usage across the Eventy360 a
 | Security | 0              | 0         | N/A      |
 | Admin    | 4              | 4         | 100%     |
 | Utility Files | 2         | 2         | 100%     |
-| **TOTAL**| **61**         | **61**    | **100%** |
+| **TOTAL**| **69**         | **69**    | **100%** |

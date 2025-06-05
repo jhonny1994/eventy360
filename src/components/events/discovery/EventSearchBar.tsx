@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { TextInput, Button, Spinner } from 'flowbite-react';
 import { HiSearch, HiX } from 'react-icons/hi';
-import { useTranslations } from 'next-intl';
+import useTranslations from '@/hooks/useTranslations';
 
 interface EventSearchBarProps {
   initialValue: string;
@@ -13,8 +13,10 @@ interface EventSearchBarProps {
 }
 
 /**
- * Search bar component for event discovery
- * Supports Arabic RTL layout and debounced search
+ * EventSearchBar component for searching events
+ * 
+ * Uses standardized hooks:
+ * - useTranslations: For i18n translations
  */
 export default function EventSearchBar({
   initialValue,

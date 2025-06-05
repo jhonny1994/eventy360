@@ -1,7 +1,17 @@
+'use client';
+
+/**
+ * EventDetailsDescription component for displaying comprehensive event information
+ * 
+ * Uses standardized hooks:
+ * - useTranslations: For i18n translations
+ * - useLocale: For locale-aware rendering
+ */
 import React from 'react'
 import { Tag, Users, Target, Lightbulb, BookOpen, UserCheck, MapPin, Mail, Phone, Globe, QrCode, Building } from 'lucide-react'
 import Image from 'next/image'
-import { useTranslations } from 'next-intl'
+import useTranslations from '@/hooks/useTranslations'
+import useLocale from '@/hooks/useLocale'
 
 interface EventDetailsDescriptionProps {
   event: {
@@ -36,7 +46,8 @@ interface EventDetailsDescriptionProps {
 
 export function EventDetailsDescription({ event, locale }: EventDetailsDescriptionProps) {
   const t = useTranslations('EventDetails.description')
-  const isRtl = locale === 'ar'
+  const currentLocale = useLocale()
+  const isRtl = currentLocale === 'ar'
 
   return (
     <div className="space-y-8" dir={isRtl ? 'rtl' : 'ltr'}>

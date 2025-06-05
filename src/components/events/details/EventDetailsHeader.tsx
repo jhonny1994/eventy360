@@ -1,7 +1,16 @@
+'use client';
+
+/**
+ * EventDetailsHeader component for displaying event header information
+ * 
+ * Uses standardized hooks:
+ * - useTranslations: For i18n translations
+ */
 import React from 'react'
 import { Calendar, Users, DollarSign, CheckCircle, Tag } from 'lucide-react'
 import Image from 'next/image'
-import { useTranslations } from 'next-intl'
+import useTranslations from '@/hooks/useTranslations'
+import useLocale from '@/hooks/useLocale'
 
 interface EventDetailsHeaderProps {
   event: {
@@ -31,6 +40,8 @@ interface EventDetailsHeaderProps {
 export function EventDetailsHeader({ event, locale }: EventDetailsHeaderProps) {
   const t = useTranslations('EventDetails.header')
   const tEnums = useTranslations('Enums')
+  const currentLocale = useLocale()
+  
   // Get localized title
   const title = typeof event.title === 'object' 
     ? event.title[locale] || event.title['ar'] || t('eventInfo')
@@ -109,7 +120,7 @@ export function EventDetailsHeader({ event, locale }: EventDetailsHeaderProps) {
             <div>
               <h3 className="text-sm font-medium text-gray-900">{t('createdDate')}</h3>
               <p className="text-sm text-gray-600 mt-1">
-                {new Date(event.created_at).toLocaleDateString(locale === 'ar' ? 'ar-DZ' : 'en-US', {
+                {new Date(event.created_at).toLocaleDateString(currentLocale, {
                   year: 'numeric',
                   month: 'short',
                   day: 'numeric'

@@ -199,9 +199,9 @@ export default function PaperMetadata({ paper, eventName, locale }: PaperMetadat
           <div className="flex items-center mb-1">
             <HiEye className="w-5 h-5 text-gray-400 mr-2 rtl:ml-2 rtl:mr-0" />
             <h3 className="text-sm font-medium text-gray-900">{t('views')}</h3>
-          </div>
+            </div>
           <p className="text-sm text-gray-600 ml-7 rtl:mr-7 rtl:ml-0">{paper.view_count}</p>
-        </div>
+            </div>
       )}
 
       {/* Downloads */}
