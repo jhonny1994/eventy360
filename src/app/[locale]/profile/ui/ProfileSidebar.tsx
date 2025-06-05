@@ -22,7 +22,8 @@ import {
   HiIdentification,
   HiLocationMarker,
   HiDocumentText,
-  HiBookmark
+  HiBookmark,
+  HiLibrary
 } from 'react-icons/hi';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { IconType } from 'react-icons';
@@ -92,6 +93,7 @@ interface TranslationStrings {
   topics?: string;
   submissions?: string;
   bookmarks?: string;
+  researchRepository?: string;
 }
 
 /**
@@ -161,8 +163,10 @@ export default function ProfileSidebar({
     // Only show submissions and bookmarks for researchers
     ...(userType === 'researcher' ? [
       { name: translations.submissions || 'Submissions', href: `/${locale}/profile/submissions`, icon: HiDocumentText },
-      { name: translations.bookmarks || 'Bookmarks', href: `/${locale}/profile/bookmarks`, icon: HiBookmark }
+      { name: translations.bookmarks || 'Bookmarks', href: `/${locale}/profile/bookmarks`, icon: HiBookmark },
     ] : []),
+    // Show repository for both researchers and organizers
+    { name: translations.researchRepository || 'Research Repository', href: `/${locale}/profile/repository`, icon: HiLibrary },
     { name: translations.verification, href: `/${locale}/profile/verification`, icon: HiOutlineShieldCheck },
     { name: translations.subscriptions, href: `/${locale}/profile/subscriptions`, icon: HiCreditCard },
     { name: translations.topics || 'Topics', href: `/${locale}/profile/topics`, icon: HiAcademicCap },

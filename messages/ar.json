@@ -47,7 +47,8 @@
     "security": "إعدادات الأمان",
     "topics": "المواضيع",
     "submissions": "المساهمات العلمية",
-    "bookmarks": "الملتقيات المحفوظة"
+    "bookmarks": "الملتقيات المحفوظة",
+    "researchRepository": "مستودع الأبحاث"
   },
   "Bookmarks": {
     "title": "الملتقيات المحفوظة",
@@ -2100,5 +2101,132 @@
     "acceptPaper": "قبول البحث",
     "rejectPaper": "رفض البحث",
     "requestAnotherRevision": "طلب تعديلات أخرى"
+  },
+  "ResearchRepository": {
+    "title": "مستودع الأبحاث",
+    "titleForOrganizer": "أبحاث الملتقيات الخاصة بك",
+    "subtitle": "استكشف الأبحاث المنشورة من الملتقيات المكتملة",
+    "metadata": {
+      "title": "مستودع الأبحاث | منصة إيفنتي360",
+      "description": "استكشف وابحث في الأوراق البحثية المنشورة من الملتقيات العلمية المكتملة على منصة إيفنتي360"
+    },
+    "search": {
+      "placeholder": "ابحث عن الأبحاث بالعنوان، المحتوى، أو اسم الملتقى",
+      "button": "بحث",
+      "advanced": "بحث متقدم",
+      "noResults": "لم يتم العثور على نتائج",
+      "resultsCount": "تم العثور على {count} بحث",
+      "clearFilters": "مسح عوامل التصفية"
+    },
+    "filters": {
+      "title": "تصفية النتائج",
+      "topics": "المواضيع",
+      "topicsPlaceholder": "اختر المواضيع",
+      "wilaya": "الولاية",
+      "wilayaPlaceholder": "اختر الولاية",
+      "daira": "الدائرة",
+      "dairaPlaceholder": "اختر الدائرة",
+      "dateRange": "الفترة الزمنية",
+      "startDate": "من تاريخ",
+      "endDate": "إلى تاريخ",
+      "researcher": "الباحث",
+      "researcherPlaceholder": "اسم الباحث",
+      "apply": "تطبيق",
+      "reset": "إعادة ضبط",
+      "collapse": "طي"
+    },
+    "placeholder": {
+      "title": "مستودع الأبحاث",
+      "description": "استكشف الأوراق البحثية المنشورة من الملتقيات المكتملة",
+      "loading": "جاري تحميل الأبحاث...",
+      "papers": "بحث"
+    },
+    "paperCard": {
+      "by": "بواسطة",
+      "from": "من",
+      "event": "الملتقى",
+      "date": "تاريخ النشر",
+      "viewDetails": "عرض التفاصيل",
+      "downloadPaper": "تحميل البحث",
+      "viewAnalytics": "عرض الإحصائيات",
+      "premiumFeature": "ميزة مدفوعة",
+      "subscriptionRequired": "يتطلب اشتراكاً فعالاً",
+      "viewCount": "المشاهدات: {count}",
+      "downloadCount": "التحميلات: {count}",
+      "wilaya": "ولاية",
+      "daira": "دائرة",
+      "untitled": "بدون عنوان",
+      "unknownEvent": "ملتقى غير معروف"
+    },
+    "paperDetails": {
+      "title": "تفاصيل البحث",
+      "paperDetails": "تفاصيل البحث",
+      "paperDetailsDescription": "عرض المعلومات الكاملة للبحث المنشور",
+      "abstract": "ملخص",
+      "author": "المؤلف",
+      "institution": "المؤسسة",
+      "event": "الملتقى",
+      "eventDate": "تاريخ الملتقى",
+      "submissionDate": "تاريخ التقديم",
+      "topics": "المواضيع",
+      "topic": "موضوع",
+      "location": "الموقع",
+      "downloadPaper": "تحميل البحث",
+      "download": "تحميل",
+      "downloading": "جاري التحميل...",
+      "backToRepository": "العودة إلى المستودع",
+      "views": "المشاهدات",
+      "downloads": "التحميلات",
+      "noAbstract": "لا يوجد ملخص متاح",
+      "noFileAvailable": "لا يوجد ملف متاح للتحميل",
+      "paperFile": "ملف البحث",
+      "unknownSize": "حجم غير معروف",
+      "downloadTrackingError": "حدث خطأ أثناء تسجيل التحميل",
+      "notFound": "لم يتم العثور على البحث",
+      "untitled": "بدون عنوان",
+      "wilaya": "الولاية",
+      "daira": "الدائرة",
+      "loginRequired": "يجب تسجيل الدخول لتحميل هذا الملف",
+      "loading": "جاري تحميل البيانات...",
+      "metadata": "البيانات الوصفية",
+      "viewEvent": "عرض الملتقى",
+      "downloadDisclaimer": "عند التحميل، يرجى مراعاة حقوق الملكية الفكرية واحترام حقوق المؤلف."
+    },
+    "analytics": {
+      "title": "إحصائيات البحث",
+      "views": "المشاهدات",
+      "downloads": "التحميلات",
+      "viewsOverTime": "المشاهدات عبر الوقت",
+      "downloadsOverTime": "التحميلات عبر الوقت",
+      "totalViews": "إجمالي المشاهدات",
+      "totalDownloads": "إجمالي التحميلات",
+      "lastViewed": "آخر مشاهدة",
+      "lastDownloaded": "آخر تحميل",
+      "noData": "لا توجد بيانات متاحة"
+    },
+    "errors": {
+      "loadFailed": "فشل تحميل الأبحاث",
+      "detailsFailed": "فشل تحميل تفاصيل البحث",
+      "downloadFailed": "فشل تحميل البحث",
+      "analyticsFailed": "فشل تحميل الإحصائيات",
+      "unauthorized": "غير مصرح لك بالوصول إلى هذه الميزة",
+      "subscriptionRequired": "تتطلب هذه الميزة اشتراكاً فعالاً",
+      "title": "خطأ",
+      "fetchFailed": "فشل في جلب الأبحاث",
+      "profileFetchFailed": "فشل في تحميل معلومات الملف الشخصي"
+    },
+    "emptyState": {
+      "title": "لا توجد أبحاث متاحة",
+      "description": "لم يتم العثور على أبحاث منشورة في المستودع",
+      "noResults": "لم يتم العثور على نتائج تطابق معايير البحث",
+      "tryAdjusting": "حاول تعديل معايير البحث أو إزالة بعض عوامل التصفية"
+    },
+    "pagination": {
+      "previous": "السابق",
+      "next": "التالي",
+      "page": "الصفحة {current} من {total}",
+      "showing": "عرض {start}-{end} من {total} بحث",
+      "pageSize": "عناصر في الصفحة"
+    }
   }
 }

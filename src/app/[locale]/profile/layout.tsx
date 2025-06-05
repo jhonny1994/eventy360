@@ -125,6 +125,7 @@ export default async function ProfileLayout({
     security: navT('security'),
     topics: navT('topics'),
     bookmarks: navT('bookmarks'),
+    researchRepository: navT('researchRepository'),
   };
 
 

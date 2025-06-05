@@ -521,8 +521,8 @@ function checkEventAccess(
   user: { id: string } | null,
   userProfile: { user_type: string } | null
 ): boolean {
-  // Public events can be viewed by anyone
-  if (event.visibility === "public" && event.status === "published") {
+  // Public events can be viewed by anyone, regardless of status
+  if (event.visibility === "public") {
     return true;
   }
 
@@ -541,9 +541,9 @@ function checkEventAccess(
     return event.organizer_id === user.id;
   }
 
-  // Researchers can view published events
+  // Researchers can view any event in discovery
   if (userProfile.user_type === "researcher") {
-    return event.status === "published";
+    return true;
   }
 
   return false;

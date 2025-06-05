@@ -579,6 +579,45 @@ export type Database = {
           },
         ]
       }
+      paper_analytics: {
+        Row: {
+          action_type: string
+          created_at: string
+          id: string
+          submission_id: string
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          id?: string
+          submission_id: string
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          id?: string
+          submission_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "paper_analytics_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "submissions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "paper_analytics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           admin_notes: string | null
@@ -1316,6 +1355,39 @@ export type Database = {
           total_records: number
         }[]
       }
+      discover_papers: {
+        Args: {
+          search_query?: string
+          topic_ids?: string[]
+          wilaya_id_param?: number
+          daira_id_param?: number
+          start_date?: string
+          end_date?: string
+          author_name_filter?: string
+          organizer_id?: string
+          limit_count?: number
+          offset_count?: number
+        }
+        Returns: {
+          id: string
+          paper_title_translations: Json
+          paper_abstract_translations: Json
+          event_id: string
+          event_name_translations: Json
+          event_date: string
+          author_id: string
+          author_name: string
+          author_institution: string
+          full_paper_file_url: string
+          full_paper_file_metadata: Json
+          submission_date: string
+          author_wilaya_id: number
+          author_daira_id: number
+          event_topic_ids: string[]
+          rank: number
+          total_records: number
+        }[]
+      }
       filter_events_by_date_range: {
         Args: {
           start_date?: string
@@ -1384,6 +1456,10 @@ export type Database = {
           abstract_submission_deadline: string
         }[]
       }
+      get_daira_name: {
+        Args: { p_daira_id: number; p_locale?: string }
+        Returns: string
+      }
       get_event_submission_stats: {
         Args: { event_id: string }
         Returns: {
@@ -1451,6 +1527,36 @@ export type Database = {
           provider_name: string
         }[]
       }
+      get_paper_analytics: {
+        Args: { p_submission_id: string }
+        Returns: {
+          view_count: number
+          download_count: number
+          last_viewed_at: string
+          last_downloaded_at: string
+        }[]
+      }
+      get_paper_analytics_over_time: {
+        Args: {
+          p_submission_id: string
+          p_start_date?: string
+          p_end_date?: string
+          p_interval?: string
+        }
+        Returns: {
+          date: string
+          views: number
+          downloads: number
+        }[]
+      }
+      get_papers_analytics: {
+        Args: { p_submission_ids: string[] }
+        Returns: {
+          submission_id: string
+          view_count: number
+          download_count: number
+        }[]
+      }
       get_payment_details: {
         Args: { payment_id: string }
         Returns: Json
@@ -1508,6 +1614,10 @@ export type Database = {
         }
         Returns: Json
       }
+      get_wilaya_name: {
+        Args: { p_wilaya_id: number; p_locale?: string }
+        Returns: string
+      }
       gtrgm_compress: {
         Args: { "": unknown }
         Returns: unknown
@@ -1529,13 +1639,11 @@ export type Database = {
         Returns: unknown
       }
       handle_submission_feedback: {
-        Args:
-          | { p_submission_id: string; p_feedback_content: string }
-          | {
-              submission_id: string
-              feedback_text: Json
-              decision_status: string
-            }
+        Args: {
+          p_submission_id: string
+          p_feedback_content: string
+          p_decision_status: string
+        }
         Returns: undefined
       }
       http: {
@@ -1593,6 +1701,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      jsonb_values_to_text: {
+        Args: { data: Json }
+        Returns: string
+      }
       purge_expired_deletions: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -1624,31 +1736,19 @@ export type Database = {
         Returns: boolean
       }
       review_abstract: {
-        Args:
-          | {
-              p_submission_id: string
-              p_status: Database["public"]["Enums"]["submission_status_enum"]
-              p_feedback: string
-            }
-          | {
-              p_submission_id: string
-              p_status: Database["public"]["Enums"]["submission_status_enum"]
-              p_feedback_translations: Json
-            }
+        Args: {
+          p_submission_id: string
+          p_status: Database["public"]["Enums"]["submission_status_enum"]
+          p_feedback: string
+        }
         Returns: boolean
       }
       review_full_paper: {
-        Args:
-          | {
-              p_submission_id: string
-              p_status: Database["public"]["Enums"]["submission_status_enum"]
-              p_feedback: string
-            }
-          | {
-              p_submission_id: string
-              p_status: Database["public"]["Enums"]["submission_status_enum"]
-              p_feedback_translations: Json
-            }
+        Args: {
+          p_submission_id: string
+          p_status: Database["public"]["Enums"]["submission_status_enum"]
+          p_feedback: string
+        }
         Returns: boolean
       }
       search_events: {
@@ -1723,6 +1823,10 @@ export type Database = {
       }
       text_to_bytea: {
         Args: { data: string }
+        Returns: string
+      }
+      track_paper_activity: {
+        Args: { p_submission_id: string; p_action_type: string }
         Returns: string
       }
       update_event_status_based_on_date: {

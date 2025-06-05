@@ -22,7 +22,7 @@ Based on the Algerian academic context:
 *   **Subscription System**: Tiered (free/paid/trial for researcher/organizer), manual offline payment processing & admin verification. ✅ COMPLETED
 *   **Event Management**: Detailed event creation, topic association, lifecycle (published -> active -> completed). ✅ COMPLETED
 *   **Submission System**: Abstract/full paper workflow (PDF/DOC/DOCX, 5MB limit), status tracking, email notifications. ✅ COMPLETED
-*   **Research Repository**: Centralized storage of accepted papers, MVP search and filter. 🔄 IN PROGRESS
+*   **Research Repository**: Centralized storage of accepted papers, MVP search and filter. ✅ COMPLETED
 *   **Project Homepage**: Central landing page showcasing platform benefits with role-specific content. 🔄 IN PROGRESS
 *   **Search/Discovery**: Arabic full-text search, advanced filters, topic recommendations, bookmarking. ✅ COMPLETED (Bookmarking & topic recommendations), 🔄 IN PROGRESS (Full-text search)
 *   **Verification System**: Manual admin check awards a visual Verification Badge to user profiles. ✅ COMPLETED

@@ -357,41 +357,48 @@ ALTER FUNCTION "public"."activate_subscription"("subscription_id" "uuid") OWNER 
 CREATE OR REPLACE FUNCTION "public"."add_author_revision_notes"("p_submission_id" "uuid", "p_version_id" "uuid", "p_notes" "text") RETURNS boolean
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
-DECLARE
-    v_submission_author UUID;
+DECLARE 
+v_submission_author UUID;
+
 BEGIN
-    -- Check if the submission exists and the user is the author
-    SELECT submitted_by INTO v_submission_author
-    FROM public.submissions
-    WHERE id = p_submission_id;
-    
-    IF NOT FOUND THEN
-        RAISE EXCEPTION 'Submission not found';
-    END IF;
-    
-    IF auth.uid() != v_submission_author THEN
-        RAISE EXCEPTION 'Only the submission author can add revision notes';
-    END IF;
-    
-    -- Insert the notes into the submission_feedback table
-    INSERT INTO public.submission_feedback (
+SELECT
+    submitted_by INTO v_submission_author
+FROM
+    public.submissions
+WHERE
+    id = p_submission_id;
+
+IF NOT FOUND THEN RAISE EXCEPTION 'Submission not found';
+END IF;
+
+IF auth.uid() != v_submission_author THEN RAISE EXCEPTION 'Only the submission author can add revision notes';
+END IF;
+
+INSERT INTO
+    public.submission_feedback (
         submission_version_id,
         providing_user_id,
         role_at_submission,
         feedback_content
-    ) VALUES (
+    )
+VALUES
+    (
         p_version_id,
         auth.uid(),
         'researcher',
         p_notes
     );
-    
-    RETURN TRUE;
+
+RETURN TRUE;
 END;
 $$;
 
 
 ALTER FUNCTION "public"."add_author_revision_notes"("p_submission_id" "uuid", "p_version_id" "uuid", "p_notes" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."add_author_revision_notes"("p_submission_id" "uuid", "p_version_id" "uuid", "p_notes" "text") IS 'Allows authors to add their revision notes to the submission_feedback table.';
+
 
 
 CREATE OR REPLACE FUNCTION "public"."billing_period_to_interval"("period" "public"."billing_period_enum") RETURNS interval
@@ -1095,11 +1102,10 @@ BEGIN
         LEFT JOIN profiles p ON e.created_by = p.id
         LEFT JOIN organizer_profiles op ON p.id = op.profile_id
         WHERE 
-            -- Always filter published events for general discovery
-            e.status = 'published'
+            -- Removed hardcoded status filter - now shows all events unless filtered
             
             -- Organizer filtering: if p_organizer_id is provided, show only that organizer's events
-            AND (p_organizer_id IS NULL OR e.created_by = p_organizer_id)
+            (p_organizer_id IS NULL OR e.created_by = p_organizer_id)
             
             -- Text search across event name, subtitle and problem statement
             AND (
@@ -1131,7 +1137,7 @@ BEGIN
             AND (start_date IS NULL OR e.event_date >= start_date)
             AND (end_date IS NULL OR e.event_date <= end_date)
             
-            -- Status filtering
+            -- Status filtering - only applies if explicitly provided
             AND (
                 event_status_filter IS NULL 
                 OR event_status_filter = ARRAY[]::event_status_enum[]
@@ -1144,6 +1150,9 @@ BEGIN
                 OR event_format_filter = ARRAY[]::event_format_enum[]
                 OR e.format = ANY(event_format_filter)
             )
+            
+            -- Ensure deleted events are not included
+            AND e.deleted_at IS NULL
     )
     SELECT 
         fe.*,
@@ -1162,6 +1171,159 @@ $$;
 
 
 ALTER FUNCTION "public"."discover_events"("search_query" "text", "topic_ids" "uuid"[], "wilaya_id_param" integer, "daira_id_param" integer, "start_date" timestamp with time zone, "end_date" timestamp with time zone, "event_status_filter" "public"."event_status_enum"[], "event_format_filter" "public"."event_format_enum"[], "p_organizer_id" "uuid", "limit_count" integer, "offset_count" integer) OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."discover_papers"("search_query" "text" DEFAULT NULL::"text", "topic_ids" "uuid"[] DEFAULT NULL::"uuid"[], "wilaya_id_param" integer DEFAULT NULL::integer, "daira_id_param" integer DEFAULT NULL::integer, "start_date" timestamp with time zone DEFAULT NULL::timestamp with time zone, "end_date" timestamp with time zone DEFAULT NULL::timestamp with time zone, "author_name_filter" "text" DEFAULT NULL::"text", "organizer_id" "uuid" DEFAULT NULL::"uuid", "limit_count" integer DEFAULT 20, "offset_count" integer DEFAULT 0) RETURNS TABLE("id" "uuid", "paper_title_translations" "jsonb", "paper_abstract_translations" "jsonb", "event_id" "uuid", "event_name_translations" "jsonb", "event_date" timestamp with time zone, "author_id" "uuid", "author_name" "text", "author_institution" "text", "full_paper_file_url" "text", "full_paper_file_metadata" "jsonb", "submission_date" timestamp with time zone, "author_wilaya_id" integer, "author_daira_id" integer, "event_topic_ids" "uuid"[], "rank" real, "total_records" bigint)
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+BEGIN
+    RETURN QUERY
+    WITH filtered_papers AS (
+        SELECT 
+            s.id,
+            s.title_translations as paper_title_translations,
+            s.abstract_translations as paper_abstract_translations,
+            s.event_id,
+            e.event_name_translations,
+            e.event_date,
+            s.submitted_by as author_id,
+            rp.name as author_name,
+            rp.institution as author_institution,
+            s.full_paper_file_url,
+            s.full_paper_file_metadata,
+            s.submission_date,
+            rp.wilaya_id as author_wilaya_id,
+            rp.daira_id as author_daira_id,
+            ARRAY(
+                SELECT
+                    et.topic_id
+                FROM
+                    event_topics et
+                WHERE
+                    et.event_id = e.id
+            ) as event_topic_ids,
+            CASE
+                WHEN search_query IS NOT NULL
+                AND search_query != '' THEN COALESCE(
+                    ts_rank_cd(
+                        setweight(
+                            to_tsvector(
+                                'simple',
+                                public.jsonb_values_to_text(s.title_translations)
+                            ),
+                            'A'
+                        ) || setweight(
+                            to_tsvector(
+                                'simple',
+                                public.jsonb_values_to_text(s.abstract_translations)
+                            ),
+                            'B'
+                        ) || setweight(
+                            to_tsvector(
+                                'simple',
+                                public.jsonb_values_to_text(e.event_name_translations)
+                            ),
+                            'C'
+                        ),
+                        plainto_tsquery('simple', search_query)
+                    ),
+                    0.0
+                )
+                ELSE 0.0
+            END as rank
+        FROM
+            public.submissions s
+            JOIN public.events e ON s.event_id = e.id
+            JOIN public.profiles p ON s.submitted_by = p.id
+            JOIN public.researcher_profiles rp ON p.id = rp.profile_id
+        WHERE
+              -- e.status = 'completed'  -- Commented out
+      true -- This will always evaluate to true, effectively removing the restriction
+            AND (
+                s.status = 'completed'
+                OR s.full_paper_status = 'full_paper_accepted'
+            )
+            AND s.deleted_at IS NULL
+            AND e.deleted_at IS NULL
+            AND (
+                author_name_filter IS NULL
+                OR author_name_filter = ''
+                OR rp.name ILIKE '%' || author_name_filter || '%'
+            )
+            AND (
+                organizer_id IS NULL
+                OR e.created_by = organizer_id
+            )
+            AND (
+                search_query IS NULL
+                OR search_query = ''
+                OR (
+                    to_tsvector(
+                        'simple',
+                        COALESCE(
+                            public.jsonb_values_to_text(s.title_translations),
+                            ''
+                        ) || ' ' || COALESCE(
+                            public.jsonb_values_to_text(s.abstract_translations),
+                            ''
+                        ) || ' ' || COALESCE(
+                            public.jsonb_values_to_text(e.event_name_translations),
+                            ''
+                        )
+                    ) @@ plainto_tsquery('simple', search_query)
+                )
+            )
+            AND (
+                topic_ids IS NULL
+                OR topic_ids = ARRAY [] :: UUID []
+                OR EXISTS (
+                    SELECT
+                        1
+                    FROM
+                        event_topics et
+                    WHERE
+                        et.event_id = e.id
+                        AND et.topic_id = ANY(topic_ids)
+                )
+            )
+            AND (
+                wilaya_id_param IS NULL
+                OR rp.wilaya_id = wilaya_id_param
+            )
+            AND (
+                daira_id_param IS NULL
+                OR rp.daira_id = daira_id_param
+            )
+            AND (
+                start_date IS NULL
+                OR s.submission_date >= start_date
+            )
+            AND (
+                end_date IS NULL
+                OR s.submission_date <= end_date
+            )
+    )
+    SELECT 
+        fp.*,
+        COUNT(*) OVER() as total_records
+    FROM filtered_papers fp
+    ORDER BY 
+        CASE 
+            WHEN search_query IS NOT NULL AND search_query != '' THEN fp.rank
+            ELSE 0
+        END DESC,
+        fp.submission_date DESC
+    LIMIT limit_count
+    OFFSET offset_count;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."discover_papers"("search_query" "text", "topic_ids" "uuid"[], "wilaya_id_param" integer, "daira_id_param" integer, "start_date" timestamp with time zone, "end_date" timestamp with time zone, "author_name_filter" "text", "organizer_id" "uuid", "limit_count" integer, "offset_count" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."discover_papers"("search_query" "text", "topic_ids" "uuid"[], "wilaya_id_param" integer, "daira_id_param" integer, "start_date" timestamp with time zone, "end_date" timestamp with time zone, "author_name_filter" "text", "organizer_id" "uuid", "limit_count" integer, "offset_count" integer) IS 'Search across the research repository for published papers from completed events with various filtering options, including filtering by author name and organizer ID';
+
 
 
 CREATE OR REPLACE FUNCTION "public"."filter_events_by_date_range"("start_date" timestamp with time zone DEFAULT NULL::timestamp with time zone, "end_date" timestamp with time zone DEFAULT NULL::timestamp with time zone, "limit_count" integer DEFAULT 20, "offset_count" integer DEFAULT 0) RETURNS TABLE("id" "uuid", "event_name" "text", "event_subtitle" "text", "event_date" timestamp with time zone, "event_end_date" timestamp with time zone, "wilaya_name" "text", "daira_name" "text", "organizer_name" "text", "topics" "text"[], "status" "public"."event_status_enum", "format" "public"."event_format_enum", "logo_url" "text", "abstract_submission_deadline" timestamp with time zone)
@@ -1323,6 +1485,26 @@ COMMENT ON FUNCTION "public"."filter_events_by_topic"("topic_ids" "uuid"[], "lim
 
 
 
+CREATE OR REPLACE FUNCTION "public"."get_daira_name"("p_daira_id" integer, "p_locale" "text" DEFAULT 'en'::"text") RETURNS "text"
+    LANGUAGE "plpgsql"
+    AS $$
+BEGIN
+    IF p_locale = 'ar' THEN
+        RETURN (SELECT name_ar FROM dairas WHERE id = p_daira_id);
+    ELSE
+        RETURN (SELECT name_other FROM dairas WHERE id = p_daira_id);
+    END IF;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."get_daira_name"("p_daira_id" integer, "p_locale" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."get_daira_name"("p_daira_id" integer, "p_locale" "text") IS 'Returns the appropriate daira name based on the provided locale';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."get_event_submission_stats"("event_id" "uuid") RETURNS TABLE("total_submissions" integer, "abstract_submitted" integer, "abstract_accepted" integer, "abstract_rejected" integer, "full_paper_submitted" integer, "full_paper_accepted" integer, "full_paper_rejected" integer, "revision_requested" integer, "completed" integer)
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $_$BEGIN
@@ -1457,9 +1639,9 @@ COMMENT ON FUNCTION "public"."get_featured_events"("limit_count" integer) IS 'Re
 CREATE OR REPLACE FUNCTION "public"."get_feedback_for_version"("p_version_id" "uuid") RETURNS TABLE("id" "uuid", "submission_version_id" "uuid", "providing_user_id" "uuid", "role_at_submission" "public"."user_type_enum", "feedback_content" "text", "created_at" timestamp with time zone, "updated_at" timestamp with time zone, "provider_name" "text")
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
-BEGIN
-  RETURN QUERY
-  SELECT 
+BEGIN 
+RETURN QUERY
+SELECT
     sf.id,
     sf.submission_version_id,
     sf.providing_user_id,
@@ -1467,42 +1649,286 @@ BEGIN
     sf.feedback_content,
     sf.created_at,
     sf.updated_at,
-    -- Improved provider_name handling for all user types
-    CASE 
-      WHEN sf.role_at_submission = 'researcher' THEN 
-        COALESCE(rp.name, 'Unknown Researcher')
-      WHEN sf.role_at_submission = 'organizer' THEN 
-        COALESCE(
-          op.name_translations ->> op.language,
-          (SELECT value FROM jsonb_each_text(op.name_translations) WHERE value IS NOT NULL LIMIT 1),
-          'Unknown Organizer'
+    CASE
+        WHEN sf.role_at_submission = 'researcher' THEN COALESCE(rp.name, 'Unknown Researcher')
+        WHEN sf.role_at_submission = 'organizer' THEN COALESCE(
+            op.name_translations ->> op.language,
+            -- 1. Try organizer's preferred language
+            op.name_translations ->> 'ar',
+            -- 2. Fallback to Arabic
+            'Unknown Organizer'
         )
-      WHEN sf.role_at_submission = 'admin' THEN 
-        COALESCE(ap.name, 'Unknown Admin')
-      ELSE 'Unknown User'
+        WHEN sf.role_at_submission = 'admin' THEN COALESCE(ap.name, 'Unknown Admin')
+        ELSE 'Unknown User'
     END AS provider_name
-  FROM 
+FROM
     public.submission_feedback sf
-    -- Join for researcher names
-    LEFT JOIN public.profiles p_researcher ON sf.providing_user_id = p_researcher.id AND sf.role_at_submission = 'researcher'
-    LEFT JOIN public.researcher_profiles rp ON p_researcher.id = rp.profile_id
-    
-    -- Join for organizer names
-    LEFT JOIN public.profiles p_organizer ON sf.providing_user_id = p_organizer.id AND sf.role_at_submission = 'organizer'
-    LEFT JOIN public.organizer_profiles op ON p_organizer.id = op.profile_id
-    
-    -- Join for admin names
-    LEFT JOIN public.profiles p_admin ON sf.providing_user_id = p_admin.id AND sf.role_at_submission = 'admin'
-    LEFT JOIN public.admin_profiles ap ON p_admin.id = ap.profile_id
-  WHERE 
+    LEFT JOIN public.researcher_profiles rp ON sf.providing_user_id = rp.profile_id
+    AND sf.role_at_submission = 'researcher'
+    LEFT JOIN public.organizer_profiles op ON sf.providing_user_id = op.profile_id
+    AND sf.role_at_submission = 'organizer'
+    LEFT JOIN public.admin_profiles ap ON sf.providing_user_id = ap.profile_id
+    AND sf.role_at_submission = 'admin'
+WHERE
     sf.submission_version_id = p_version_id
-  ORDER BY 
+ORDER BY
     sf.created_at DESC;
 END;
 $$;
 
 
 ALTER FUNCTION "public"."get_feedback_for_version"("p_version_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."get_feedback_for_version"("p_version_id" "uuid") IS 'Fetches all feedback for a specific submission version, including a formatted provider name with specific language fallback for organizers.';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."get_paper_analytics"("p_submission_id" "uuid") RETURNS TABLE("view_count" bigint, "download_count" bigint, "last_viewed_at" timestamp with time zone, "last_downloaded_at" timestamp with time zone)
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$ BEGIN IF auth.uid() IS NULL THEN RAISE EXCEPTION 'Authentication required';
+
+END IF;
+
+IF NOT EXISTS (
+    SELECT
+        1
+    FROM
+        public.submissions s
+    WHERE
+        s.id = p_submission_id
+        AND s.submitted_by = auth.uid()
+)
+AND NOT EXISTS (
+    SELECT
+        1
+    FROM
+        public.profiles
+    WHERE
+        id = auth.uid()
+        AND user_type = 'admin'
+) THEN RAISE EXCEPTION 'Permission denied: You do not have access to this paper''s analytics';
+
+END IF;
+
+RETURN QUERY
+SELECT
+    (
+        SELECT
+            COUNT(*)
+        FROM
+            public.paper_analytics
+        WHERE
+            submission_id = p_submission_id
+            AND action_type = 'view'
+    ) AS view_count,
+    (
+        SELECT
+            COUNT(*)
+        FROM
+            public.paper_analytics
+        WHERE
+            submission_id = p_submission_id
+            AND action_type = 'download'
+    ) AS download_count,
+    (
+        SELECT
+            MAX(created_at)
+        FROM
+            public.paper_analytics
+        WHERE
+            submission_id = p_submission_id
+            AND action_type = 'view'
+    ) AS last_viewed_at,
+    (
+        SELECT
+            MAX(created_at)
+        FROM
+            public.paper_analytics
+        WHERE
+            submission_id = p_submission_id
+            AND action_type = 'download'
+    ) AS last_downloaded_at;
+
+END;
+
+$$;
+
+
+ALTER FUNCTION "public"."get_paper_analytics"("p_submission_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."get_paper_analytics"("p_submission_id" "uuid") IS 'Returns analytics data (view and download counts) for a specific paper';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."get_paper_analytics_over_time"("p_submission_id" "uuid", "p_start_date" timestamp with time zone DEFAULT ("now"() - '30 days'::interval), "p_end_date" timestamp with time zone DEFAULT "now"(), "p_interval" "text" DEFAULT 'day'::"text") RETURNS TABLE("date" timestamp with time zone, "views" bigint, "downloads" bigint)
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$ DECLARE v_interval text;
+
+BEGIN IF auth.uid() IS NULL THEN RAISE EXCEPTION 'Authentication required';
+
+END IF;
+
+IF NOT EXISTS (
+    SELECT
+        1
+    FROM
+        public.submissions s
+    WHERE
+        s.id = p_submission_id
+        AND s.submitted_by = auth.uid()
+)
+AND NOT EXISTS (
+    SELECT
+        1
+    FROM
+        public.profiles
+    WHERE
+        id = auth.uid()
+        AND user_type = 'admin'
+) THEN RAISE EXCEPTION 'Permission denied: You do not have access to this paper''s analytics';
+
+END IF;
+
+IF p_interval NOT IN ('hour', 'day', 'week', 'month') THEN v_interval := 'day';
+
+ELSE v_interval := p_interval;
+
+END IF;
+
+RETURN QUERY WITH date_series AS (
+    SELECT
+        date_trunc(v_interval, d) AS date_point
+    FROM
+        generate_series(
+            date_trunc(v_interval, p_start_date),
+            date_trunc(v_interval, p_end_date),
+            (
+                CASE
+                    WHEN v_interval = 'hour' THEN '1 hour' :: interval
+                    WHEN v_interval = 'day' THEN '1 day' :: interval
+                    WHEN v_interval = 'week' THEN '1 week' :: interval
+                    WHEN v_interval = 'month' THEN '1 month' :: interval
+                    ELSE '1 day' :: interval
+                END
+            )
+        ) d
+),
+views AS (
+    SELECT
+        date_trunc(v_interval, created_at) AS date_point,
+        COUNT(*) AS count
+    FROM
+        public.paper_analytics
+    WHERE
+        submission_id = p_submission_id
+        AND action_type = 'view'
+        AND created_at BETWEEN p_start_date
+        AND p_end_date
+    GROUP BY
+        date_trunc(v_interval, created_at)
+),
+downloads AS (
+    SELECT
+        date_trunc(v_interval, created_at) AS date_point,
+        COUNT(*) AS count
+    FROM
+        public.paper_analytics
+    WHERE
+        submission_id = p_submission_id
+        AND action_type = 'download'
+        AND created_at BETWEEN p_start_date
+        AND p_end_date
+    GROUP BY
+        date_trunc(v_interval, created_at)
+)
+SELECT
+    ds.date_point AS date,
+    COALESCE(v.count, 0) AS views,
+    COALESCE(d.count, 0) AS downloads
+FROM
+    date_series ds
+    LEFT JOIN views v ON ds.date_point = v.date_point
+    LEFT JOIN downloads d ON ds.date_point = d.date_point
+ORDER BY
+    ds.date_point;
+
+END;
+
+$$;
+
+
+ALTER FUNCTION "public"."get_paper_analytics_over_time"("p_submission_id" "uuid", "p_start_date" timestamp with time zone, "p_end_date" timestamp with time zone, "p_interval" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."get_paper_analytics_over_time"("p_submission_id" "uuid", "p_start_date" timestamp with time zone, "p_end_date" timestamp with time zone, "p_interval" "text") IS 'Returns time-series analytics data for a specific paper for charting';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."get_papers_analytics"("p_submission_ids" "uuid"[]) RETURNS TABLE("submission_id" "uuid", "view_count" bigint, "download_count" bigint)
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+DECLARE
+    v_user_id uuid;
+    v_user_type text;
+BEGIN
+    -- Ensure the user is authenticated
+    v_user_id := auth.uid();
+    IF v_user_id IS NULL THEN
+        RAISE EXCEPTION 'Authentication required';
+    END IF;
+
+    -- Get the user's type
+    SELECT user_type INTO v_user_type FROM profiles WHERE id = v_user_id;
+
+    -- Check if the user is an admin, the author of these papers, or an organizer who created the events
+    IF v_user_type = 'admin' THEN
+        -- Admins can see all papers
+        NULL;
+    ELSIF v_user_type = 'organizer' THEN
+        -- For organizers, filter to include papers from events they created
+        p_submission_ids := ARRAY(
+            SELECT s.id 
+            FROM submissions s
+            JOIN events e ON s.event_id = e.id
+            WHERE s.id = ANY(p_submission_ids) 
+            AND (s.submitted_by = v_user_id OR e.created_by = v_user_id)
+        );
+    ELSE
+        -- For researchers, filter to only include their own papers
+        p_submission_ids := ARRAY(
+            SELECT id FROM submissions 
+            WHERE id = ANY(p_submission_ids) 
+            AND submitted_by = v_user_id
+        );
+    END IF;
+
+    -- Handle case where p_submission_ids is empty after filtering
+    IF p_submission_ids IS NULL OR array_length(p_submission_ids, 1) IS NULL THEN
+        -- Return empty result set with correct structure
+        RETURN QUERY SELECT NULL::uuid, 0::bigint, 0::bigint WHERE false;
+        RETURN;
+    END IF;
+
+    RETURN QUERY
+    SELECT
+        s.id AS submission_id,
+        COALESCE((SELECT COUNT(*) FROM paper_analytics pa 
+                 WHERE pa.submission_id = s.id AND pa.action_type = 'view'), 0) AS view_count,
+        COALESCE((SELECT COUNT(*) FROM paper_analytics pa 
+                 WHERE pa.submission_id = s.id AND pa.action_type = 'download'), 0) AS download_count
+    FROM unnest(p_submission_ids) AS s(id)
+    WHERE s.id IS NOT NULL;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."get_papers_analytics"("p_submission_ids" "uuid"[]) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."get_papers_analytics"("p_submission_ids" "uuid"[]) IS 'Returns analytics data (view and download counts) for multiple papers, allowing organizers to view analytics for papers from events they created';
+
 
 
 CREATE OR REPLACE FUNCTION "public"."get_payment_details"("payment_id" "uuid") RETURNS "jsonb"
@@ -1955,6 +2381,26 @@ COMMENT ON FUNCTION "public"."get_subscription_pricing"("user_type" "public"."us
 
 
 
+CREATE OR REPLACE FUNCTION "public"."get_wilaya_name"("p_wilaya_id" integer, "p_locale" "text" DEFAULT 'en'::"text") RETURNS "text"
+    LANGUAGE "plpgsql"
+    AS $$
+BEGIN
+    IF p_locale = 'ar' THEN
+        RETURN (SELECT name_ar FROM wilayas WHERE id = p_wilaya_id);
+    ELSE
+        RETURN (SELECT name_other FROM wilayas WHERE id = p_wilaya_id);
+    END IF;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."get_wilaya_name"("p_wilaya_id" integer, "p_locale" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."get_wilaya_name"("p_wilaya_id" integer, "p_locale" "text") IS 'Returns the appropriate wilaya name based on the provided locale';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."handle_event_deadline_changes"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
@@ -2337,97 +2783,29 @@ COMMENT ON FUNCTION "public"."handle_profile_verification_change"() IS 'Handles 
 
 
 
-CREATE OR REPLACE FUNCTION "public"."handle_submission_feedback"("p_submission_id" "uuid", "p_feedback_content" "text") RETURNS "void"
+CREATE OR REPLACE FUNCTION "public"."handle_submission_feedback"("p_submission_id" "uuid", "p_feedback_content" "text", "p_decision_status" character varying) RETURNS "void"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
 BEGIN 
-    -- Queue an email task to notify the author about the feedback
-    PERFORM public.queue_email_task(
-        'submission_feedback',
-        jsonb_build_object(
-            'submission_id', p_submission_id,
-            'feedback', jsonb_build_object('content', p_feedback_content)
-        )
-    );
+PERFORM manage_submission_notification(
+    -- This function needs to be defined or be an existing dispatcher
+    p_submission_id,
+    p_decision_status,
+    CASE
+        WHEN p_feedback_content IS NOT NULL
+        AND p_feedback_content != '' THEN jsonb_build_object('content', p_feedback_content)
+        ELSE NULL -- No feedback key if content is null/empty
+    END
+);
 END;
 $$;
 
 
-ALTER FUNCTION "public"."handle_submission_feedback"("p_submission_id" "uuid", "p_feedback_content" "text") OWNER TO "postgres";
+ALTER FUNCTION "public"."handle_submission_feedback"("p_submission_id" "uuid", "p_feedback_content" "text", "p_decision_status" character varying) OWNER TO "postgres";
 
 
-CREATE OR REPLACE FUNCTION "public"."handle_submission_feedback"("submission_id" "uuid", "feedback_text" "jsonb", "decision_status" "text") RETURNS "void"
-    LANGUAGE "plpgsql"
-    AS $$
-DECLARE
-  submission_record RECORD;
-  researcher_id uuid;
-  event_id uuid;
-  submission_title jsonb;
-  event_name jsonb;
-  template_key text;
-  payload jsonb;
-BEGIN
-  -- Get submission details
-  SELECT s.researcher_profile_id, s.event_id, s.title, e.name
-  INTO researcher_id, event_id, submission_title, event_name
-  FROM public.submissions s
-  JOIN public.events e ON s.event_id = e.id
-  WHERE s.id = submission_id;
-  
-  -- Determine template key based on decision status
-  CASE decision_status
-    WHEN 'accepted' THEN
-      template_key := 'abstract_accepted_notification';
-    WHEN 'rejected' THEN
-      template_key := 'abstract_rejected_notification';
-    WHEN 'revisions_requested' THEN
-      template_key := 'revision_requested_notification';
-    ELSE
-      RAISE EXCEPTION 'Invalid decision status: %', decision_status;
-  END CASE;
-  
-  -- Build the payload with base fields
-  payload := jsonb_build_object(
-    'event_id', event_id,
-    'submission_id', submission_id,
-    'event_name', event_name,
-    'submission_title', submission_title
-  );
-  
-  -- Add feedback to the payload only if it exists
-  IF feedback_text IS NOT NULL AND feedback_text != '{}'::jsonb THEN
-    payload := payload || jsonb_build_object('feedback', feedback_text);
-  END IF;
-  
-  -- Create notification with conditional feedback
-  -- The send-email Edge Function will conditionally include the feedback
-  -- section if it exists in the payload
-  INSERT INTO public.notification_queue (
-    template_key,
-    recipient_profile_id,
-    notification_type,
-    payload_data,
-    status
-  ) VALUES (
-    template_key,
-    researcher_id,
-    'immediate',
-    payload,
-    'pending'
-  );
-  
-  -- Update submission status
-  UPDATE public.submissions
-  SET status = decision_status, 
-      updated_at = NOW(),
-      feedback = feedback_text
-  WHERE id = submission_id;
-END;
-$$;
+COMMENT ON FUNCTION "public"."handle_submission_feedback"("p_submission_id" "uuid", "p_feedback_content" "text", "p_decision_status" character varying) IS 'Helper to queue submission-related notifications programmatically, preparing feedback payload.';
 
-
-ALTER FUNCTION "public"."handle_submission_feedback"("submission_id" "uuid", "feedback_text" "jsonb", "decision_status" "text") OWNER TO "postgres";
 
 
 CREATE OR REPLACE FUNCTION "public"."handle_verification_badge_change"() RETURNS "trigger"
@@ -2676,6 +3054,23 @@ COMMENT ON FUNCTION "public"."is_admin"() IS 'Returns true if the currently auth
 
 
 
+CREATE OR REPLACE FUNCTION "public"."jsonb_values_to_text"("data" "jsonb") RETURNS "text"
+    LANGUAGE "sql" IMMUTABLE STRICT PARALLEL SAFE
+    AS $$
+SELECT
+    string_agg(value, ' ')
+FROM
+    jsonb_each_text(data);
+$$;
+
+
+ALTER FUNCTION "public"."jsonb_values_to_text"("data" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."jsonb_values_to_text"("data" "jsonb") IS 'Extracts all text values from a JSONB object and concatenates them with spaces for FTS.';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."notify_organizer_new_submission"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
@@ -2815,87 +3210,116 @@ ALTER FUNCTION "public"."notify_researchers_of_new_event_in_topic"() OWNER TO "p
 CREATE OR REPLACE FUNCTION "public"."notify_submission_status_change"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
-DECLARE
-    v_current_version_id UUID;
-    v_feedback TEXT;
-BEGIN
-    -- Only notify if the status actually changed
-    IF OLD.status IS DISTINCT FROM NEW.status THEN
-        -- Get the appropriate current version ID
-        v_current_version_id := CASE 
-            WHEN NEW.status IN ('abstract_accepted', 'abstract_rejected', 'abstract_submitted') THEN NEW.current_abstract_version_id
-            ELSE NEW.current_full_paper_version_id
-        END;
-        
-        -- Get the latest feedback if there is any
-        SELECT feedback_content INTO v_feedback
-        FROM public.submission_feedback
-        WHERE submission_version_id = v_current_version_id
-        AND role_at_submission = 'organizer'
-        ORDER BY created_at DESC
-        LIMIT 1;
-        
-        -- Create a notification based on the new status
-        INSERT INTO public.notification_queue (
-            recipient_profile_id,
-            template_key,
-            payload_data,
-            status,
-            process_after
-        )
-        SELECT
-            NEW.submitted_by,
-            CASE NEW.status
-                WHEN 'abstract_submitted' THEN 'abstract_received_confirmation'
-                WHEN 'abstract_accepted' THEN 'abstract_accepted_notification'
-                WHEN 'abstract_rejected' THEN 'abstract_rejected_notification'
-                WHEN 'full_paper_submitted' THEN 'full_paper_received_confirmation'
-                WHEN 'full_paper_accepted' THEN 'full_paper_accepted_notification'
-                WHEN 'full_paper_rejected' THEN 'full_paper_rejected_notification'
-                WHEN 'revision_requested' THEN 'revision_requested_notification'
-                WHEN 'completed' THEN 
-                    CASE 
-                        WHEN OLD.status = 'full_paper_accepted' THEN 'full_paper_accepted_notification'
-                        WHEN OLD.status = 'full_paper_rejected' THEN 'full_paper_rejected_notification'
-                        ELSE NULL
-                    END
+DECLARE 
+v_current_version_id UUID;
+v_feedback TEXT;
+v_template_key TEXT;
+v_event_name_translations JSONB;
+
+BEGIN 
+IF OLD.status IS DISTINCT
+FROM
+    NEW.status THEN v_template_key := CASE
+        NEW.status
+        WHEN 'abstract_submitted' THEN 'abstract_received_confirmation'
+        WHEN 'abstract_accepted' THEN 'abstract_accepted_notification'
+        WHEN 'abstract_rejected' THEN 'abstract_rejected_notification'
+        WHEN 'full_paper_submitted' THEN 'full_paper_received_confirmation'
+        WHEN 'full_paper_accepted' THEN 'full_paper_accepted_notification'
+        WHEN 'full_paper_rejected' THEN 'full_paper_rejected_notification'
+        WHEN 'revision_requested' THEN 'revision_requested_notification' -- Add handling for revision_under_review if a notification is needed for authors here
+        -- WHEN 'revision_under_review' THEN 'revision_received_confirmation_to_author' -- Example
+        WHEN 'completed' THEN CASE
+            OLD.status
+            WHEN 'full_paper_accepted' THEN 'full_paper_accepted_notification' -- Or a different "final" template
+            WHEN 'full_paper_rejected' THEN 'full_paper_rejected_notification' -- Or a different "final" template
+            ELSE NULL
+        END
+        ELSE NULL
+    END;
+
+IF v_template_key IS NOT NULL THEN v_current_version_id := CASE
+    WHEN NEW.status IN (
+        'abstract_accepted',
+        'abstract_rejected',
+        'abstract_submitted'
+    ) THEN NEW.current_abstract_version_id
+    WHEN NEW.status IN (
+        'full_paper_accepted',
+        'full_paper_rejected',
+        'full_paper_submitted',
+        'revision_requested',
+        'revision_under_review'
+    ) THEN NEW.current_full_paper_version_id
+    ELSE NULL -- Should ideally not happen if template_key is determined
+END;
+
+IF v_current_version_id IS NOT NULL THEN
+SELECT
+    feedback_content INTO v_feedback
+FROM
+    public.submission_feedback
+WHERE
+    submission_version_id = v_current_version_id
+    AND role_at_submission = 'organizer' -- Only include organizer's feedback in these status change notifications
+ORDER BY
+    created_at DESC
+LIMIT
+    1;
+END IF;
+
+SELECT
+    event_name_translations INTO v_event_name_translations
+FROM
+    public.events
+WHERE
+    id = NEW.event_id;
+
+INSERT INTO
+    public.notification_queue (
+        recipient_profile_id,
+        template_key,
+        payload_data,
+        status,
+        process_after,
+        notification_type
+    )
+VALUES
+    (
+        NEW.submitted_by,
+        v_template_key,
+        jsonb_build_object(
+            'submission_id',
+            NEW.id,
+            'event_id',
+            NEW.event_id,
+            'event_name',
+            v_event_name_translations,
+            'submission_title',
+            NEW.title_translations,
+            'feedback',
+            CASE
+                WHEN v_feedback IS NOT NULL THEN jsonb_build_object('content', v_feedback)
                 ELSE NULL
-            END,
-            jsonb_build_object(
-                'submission_id', NEW.id,
-                'event_id', NEW.event_id,
-                'event_name', (SELECT event_name_translations FROM public.events WHERE id = NEW.event_id),
-                'submission_title', NEW.title_translations,
-                'feedback', jsonb_build_object('content', v_feedback)
-            ),
-            'pending',
-            NOW()
-        WHERE
-            -- Only proceed if we have a valid template for this status
-            CASE NEW.status
-                WHEN 'abstract_submitted' THEN 'abstract_received_confirmation'
-                WHEN 'abstract_accepted' THEN 'abstract_accepted_notification'
-                WHEN 'abstract_rejected' THEN 'abstract_rejected_notification'
-                WHEN 'full_paper_submitted' THEN 'full_paper_received_confirmation'
-                WHEN 'full_paper_accepted' THEN 'full_paper_accepted_notification'
-                WHEN 'full_paper_rejected' THEN 'full_paper_rejected_notification'
-                WHEN 'revision_requested' THEN 'revision_requested_notification'
-                WHEN 'completed' THEN 
-                    CASE 
-                        WHEN OLD.status = 'full_paper_accepted' THEN 'full_paper_accepted_notification'
-                        WHEN OLD.status = 'full_paper_rejected' THEN 'full_paper_rejected_notification'
-                        ELSE NULL
-                    END
-                ELSE NULL
-            END IS NOT NULL;
-    END IF;
-    
-    RETURN NEW;
+            END
+        ),
+        'pending',
+        NOW(),
+        'immediate' -- Most submission status changes are immediate
+    );
+END IF;
+END IF;
+
+RETURN NEW;
 END;
 $$;
 
 
 ALTER FUNCTION "public"."notify_submission_status_change"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."notify_submission_status_change"() IS 'Trigger function to send notifications on submission status changes, fetching feedback from submission_feedback table.';
+
 
 
 CREATE OR REPLACE FUNCTION "public"."purge_expired_deletions"() RETURNS "void"
@@ -3155,136 +3579,77 @@ $$;
 ALTER FUNCTION "public"."restore_submission"("p_submission_id" "uuid") OWNER TO "postgres";
 
 
-CREATE OR REPLACE FUNCTION "public"."review_abstract"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback_translations" "jsonb") RETURNS boolean
-    LANGUAGE "plpgsql" SECURITY DEFINER
-    AS $$
-DECLARE
-    v_event_id UUID;
-    v_event_organizer UUID;
-    v_current_status public.submission_status_enum;
-    v_version_id UUID;
-BEGIN
-    -- Check if the submission exists and get its current status
-    SELECT s.event_id, e.created_by, s.abstract_status, s.current_abstract_version_id
-    INTO v_event_id, v_event_organizer, v_current_status, v_version_id
-    FROM public.submissions s
-    JOIN public.events e ON s.event_id = e.id
-    WHERE s.id = p_submission_id;
-    
-    IF NOT FOUND THEN
-        RAISE EXCEPTION 'Submission not found';
-    END IF;
-    
-    -- Check if the user is the event organizer
-    IF auth.uid() != v_event_organizer THEN
-        RAISE EXCEPTION 'Only the event organizer can review abstracts';
-    END IF;
-    
-    -- Check if the current status allows for review
-    IF v_current_status != 'abstract_submitted' THEN
-        RAISE EXCEPTION 'Abstract is not in a reviewable state';
-    END IF;
-    
-    -- Check if the new status is valid for abstract review
-    IF p_status NOT IN ('abstract_accepted', 'abstract_rejected') THEN
-        RAISE EXCEPTION 'Invalid status for abstract review';
-    END IF;
-    
-    -- Update the submission status
-    UPDATE public.submissions
-    SET 
-        abstract_status = p_status,
-        status = p_status,
-        review_feedback_translations = p_feedback_translations
-    WHERE id = p_submission_id;
-    
-    -- Update the version record with feedback
-    UPDATE public.submission_versions
-    SET feedback_translations = p_feedback_translations
-    WHERE id = v_version_id;
-    
-    -- Add to feedback history
-    UPDATE public.submissions
-    SET feedback_history = COALESCE(feedback_history, '[]'::jsonb) || jsonb_build_object(
-        'timestamp', EXTRACT(EPOCH FROM NOW()),
-        'status', p_status,
-        'action', 'review_abstract',
-        'actor', auth.uid(),
-        'feedback', p_feedback_translations,
-        'version_id', v_version_id
-    )::jsonb
-    WHERE id = p_submission_id;
-    
-    RETURN TRUE;
-END;
-$$;
-
-
-ALTER FUNCTION "public"."review_abstract"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback_translations" "jsonb") OWNER TO "postgres";
-
-
-COMMENT ON FUNCTION "public"."review_abstract"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback_translations" "jsonb") IS 'Function for event organizers to review an abstract (accept or reject) with feedback.';
-
-
-
 CREATE OR REPLACE FUNCTION "public"."review_abstract"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback" "text") RETURNS boolean
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
-DECLARE
-  v_event_id UUID;
-  v_event_organizer UUID;
-  v_current_status public.submission_status_enum;
-  v_version_id UUID;
+DECLARE 
+v_event_organizer UUID;
+v_current_status public.submission_status_enum;
+v_version_id UUID;
+
 BEGIN
-  -- Check if the submission exists and get its current status
-  SELECT s.event_id, e.created_by, s.abstract_status, s.current_abstract_version_id
-  INTO v_event_id, v_event_organizer, v_current_status, v_version_id
-  FROM public.submissions s
-  JOIN public.events e ON s.event_id = e.id
-  WHERE s.id = p_submission_id;
+SELECT
+    e.created_by,
+    s.abstract_status,
+    s.current_abstract_version_id INTO v_event_organizer,
+    v_current_status,
+    v_version_id
+FROM
+    public.submissions s
+    JOIN public.events e ON s.event_id = e.id
+WHERE
+    s.id = p_submission_id;
 
-  IF NOT FOUND THEN
-    RAISE EXCEPTION 'Submission not found';
-  END IF;
+IF NOT FOUND THEN RAISE EXCEPTION 'Submission not found';
+END IF;
 
-  -- Check if the user is the event organizer
-  IF auth.uid() != v_event_organizer THEN
-    RAISE EXCEPTION 'Only the event organizer can review abstracts';
-  END IF;
+IF auth.uid() != v_event_organizer THEN RAISE EXCEPTION 'Only the event organizer can review abstracts';
+END IF;
 
-  -- Check if the current status allows for review
-  IF v_current_status != 'abstract_submitted' THEN
-    RAISE EXCEPTION 'Abstract is not in a reviewable state';
-  END IF;
+IF v_current_status != 'abstract_submitted' THEN RAISE EXCEPTION 'Abstract is not in a reviewable state';
+END IF;
 
-  -- Check if the new status is valid for abstract review
-  IF p_status NOT IN ('abstract_accepted', 'abstract_rejected') THEN
-    RAISE EXCEPTION 'Invalid status for abstract review';
-  END IF;
+IF p_status NOT IN ('abstract_accepted', 'abstract_rejected') THEN RAISE EXCEPTION 'Invalid status for abstract review';
+END IF;
 
-  -- Update the submission status
-  UPDATE public.submissions
-  SET
+UPDATE
+    public.submissions
+SET
     abstract_status = p_status,
-    status = p_status
-  WHERE id = p_submission_id;
+    status = p_status,
+    review_date = NOW()
+WHERE
+    id = p_submission_id;
 
-  -- Insert feedback into the submission_feedback table
-  IF p_feedback IS NOT NULL AND p_feedback != '' THEN
-    INSERT INTO public.submission_feedback (
-      submission_version_id,
-      providing_user_id,
-      role_at_submission,
-      feedback_content
-    ) VALUES (
-      v_version_id,
-      auth.uid(),
-      COALESCE((SELECT user_type FROM public.profiles WHERE id = auth.uid()), 'organizer'),
-      p_feedback
+IF p_feedback IS NOT NULL
+AND p_feedback != '' THEN
+INSERT INTO
+    public.submission_feedback (
+        submission_version_id,
+        providing_user_id,
+        role_at_submission,
+        feedback_content
+    )
+VALUES
+    (
+        v_version_id,
+        auth.uid(),
+        COALESCE(
+            (
+                SELECT
+                    user_type
+                FROM
+                    public.profiles
+                WHERE
+                    id = auth.uid()
+            ),
+            'organizer'
+        ),
+        p_feedback
     );
-  END IF;
+END IF;
 
-  RETURN TRUE;
+RETURN TRUE;
 END;
 $$;
 
@@ -3292,141 +3657,98 @@ $$;
 ALTER FUNCTION "public"."review_abstract"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback" "text") OWNER TO "postgres";
 
 
-CREATE OR REPLACE FUNCTION "public"."review_full_paper"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback_translations" "jsonb") RETURNS boolean
-    LANGUAGE "plpgsql" SECURITY DEFINER
-    AS $$
-DECLARE
-    v_event_id UUID;
-    v_event_organizer UUID;
-    v_current_status public.submission_status_enum;
-    v_version_id UUID;
-BEGIN
-    -- Check if the submission exists and get its current status
-    SELECT s.event_id, e.created_by, s.full_paper_status, s.current_full_paper_version_id
-    INTO v_event_id, v_event_organizer, v_current_status, v_version_id
-    FROM public.submissions s
-    JOIN public.events e ON s.event_id = e.id
-    WHERE s.id = p_submission_id;
-    
-    IF NOT FOUND THEN
-        RAISE EXCEPTION 'Submission not found';
-    END IF;
-    
-    -- Check if the user is the event organizer
-    IF auth.uid() != v_event_organizer THEN
-        RAISE EXCEPTION 'Only the event organizer can review papers';
-    END IF;
-    
-    -- Check if the current status allows for review
-    IF v_current_status NOT IN ('full_paper_submitted', 'revision_requested') THEN
-        RAISE EXCEPTION 'Paper is not in a reviewable state';
-    END IF;
-    
-    -- Check if the new status is valid for full paper review
-    IF p_status NOT IN ('full_paper_accepted', 'full_paper_rejected', 'revision_requested') THEN
-        RAISE EXCEPTION 'Invalid status for full paper review';
-    END IF;
-    
-    -- Update the submission status
-    UPDATE public.submissions
-    SET 
-        full_paper_status = p_status,
-        status = p_status,
-        review_feedback_translations = p_feedback_translations
-    WHERE id = p_submission_id;
-    
-    -- Update the version record with feedback
-    UPDATE public.submission_versions
-    SET feedback_translations = p_feedback_translations
-    WHERE id = v_version_id;
-    
-    -- Add to feedback history
-    UPDATE public.submissions
-    SET feedback_history = COALESCE(feedback_history, '[]'::jsonb) || jsonb_build_object(
-        'timestamp', EXTRACT(EPOCH FROM NOW()),
-        'status', p_status,
-        'action', 'review_full_paper',
-        'actor', auth.uid(),
-        'feedback', p_feedback_translations,
-        'version_id', v_version_id
-    )::jsonb
-    WHERE id = p_submission_id;
-    
-    RETURN TRUE;
-END;
-$$;
-
-
-ALTER FUNCTION "public"."review_full_paper"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback_translations" "jsonb") OWNER TO "postgres";
-
-
-COMMENT ON FUNCTION "public"."review_full_paper"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback_translations" "jsonb") IS 'Function for event organizers to review a full paper (accept, reject, or request revision) with feedback.';
+COMMENT ON FUNCTION "public"."review_abstract"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback" "text") IS 'Organizer reviews an abstract, updates status, and stores TEXT feedback in submission_feedback. Notification handled by trigger.';
 
 
 
 CREATE OR REPLACE FUNCTION "public"."review_full_paper"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback" "text") RETURNS boolean
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
-DECLARE
-  v_event_id UUID;
-  v_event_organizer UUID;
-  v_current_status public.submission_status_enum;
-  v_version_id UUID;
+DECLARE 
+v_event_organizer UUID;
+v_current_status public.submission_status_enum;
+v_version_id UUID;
+
 BEGIN
-  -- Check if the submission exists and get its current status
-  SELECT s.event_id, e.created_by, s.full_paper_status, s.current_full_paper_version_id
-  INTO v_event_id, v_event_organizer, v_current_status, v_version_id
-  FROM public.submissions s
-  JOIN public.events e ON s.event_id = e.id
-  WHERE s.id = p_submission_id;
+SELECT
+    e.created_by,
+    s.full_paper_status,
+    s.current_full_paper_version_id INTO v_event_organizer,
+    v_current_status,
+    v_version_id
+FROM
+    public.submissions s
+    JOIN public.events e ON s.event_id = e.id
+WHERE
+    s.id = p_submission_id;
 
-  IF NOT FOUND THEN
-    RAISE EXCEPTION 'Submission not found';
-  END IF;
+IF NOT FOUND THEN RAISE EXCEPTION 'Submission not found';
+END IF;
 
-  -- Check if the user is the event organizer
-  IF auth.uid() != v_event_organizer THEN
-    RAISE EXCEPTION 'Only the event organizer can review papers';
-  END IF;
+IF auth.uid() != v_event_organizer THEN RAISE EXCEPTION 'Only the event organizer can review papers';
+END IF;
 
-  -- Check if the current status allows for review
-  IF v_current_status NOT IN ('full_paper_submitted', 'revision_requested', 'revision_under_review') THEN
-    RAISE EXCEPTION 'Paper is not in a reviewable state';
-  END IF;
+IF v_current_status NOT IN (
+    'full_paper_submitted',
+    'revision_requested',
+    'revision_under_review'
+) THEN RAISE EXCEPTION 'Paper is not in a reviewable state';
+END IF;
 
-  -- Check if the new status is valid for full paper review
-  IF p_status NOT IN ('full_paper_accepted', 'full_paper_rejected', 'revision_requested') THEN
-    RAISE EXCEPTION 'Invalid status for full paper review';
-  END IF;
+IF p_status NOT IN (
+    'full_paper_accepted',
+    'full_paper_rejected',
+    'revision_requested'
+) THEN RAISE EXCEPTION 'Invalid status for full paper review';
+END IF;
 
-  -- Update the submission status
-  UPDATE public.submissions
-  SET
+UPDATE
+    public.submissions
+SET
     full_paper_status = p_status,
-    status = p_status
-  WHERE id = p_submission_id;
+    status = p_status,
+    review_date = NOW()
+WHERE
+    id = p_submission_id;
 
-  -- Insert feedback into the submission_feedback table
-  IF p_feedback IS NOT NULL AND p_feedback != '' THEN
-    INSERT INTO public.submission_feedback (
-      submission_version_id,
-      providing_user_id,
-      role_at_submission,
-      feedback_content
-    ) VALUES (
-      v_version_id,
-      auth.uid(),
-      COALESCE((SELECT user_type FROM public.profiles WHERE id = auth.uid()), 'organizer'),
-      p_feedback
+IF p_feedback IS NOT NULL
+AND p_feedback != '' THEN
+INSERT INTO
+    public.submission_feedback (
+        submission_version_id,
+        providing_user_id,
+        role_at_submission,
+        feedback_content
+    )
+VALUES
+    (
+        v_version_id,
+        auth.uid(),
+        COALESCE(
+            (
+                SELECT
+                    user_type
+                FROM
+                    public.profiles
+                WHERE
+                    id = auth.uid()
+            ),
+            'organizer'
+        ),
+        p_feedback
     );
-  END IF;
+END IF;
 
-  RETURN TRUE;
+RETURN TRUE;
 END;
 $$;
 
 
 ALTER FUNCTION "public"."review_full_paper"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."review_full_paper"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback" "text") IS 'Organizer reviews a full paper, updates status, and stores TEXT feedback in submission_feedback. Notification handled by trigger.';
+
 
 
 CREATE OR REPLACE FUNCTION "public"."search_events"("search_query" "text", "limit_count" integer DEFAULT 20, "offset_count" integer DEFAULT 0) RETURNS TABLE("id" "uuid", "event_name" "text", "event_subtitle" "text", "event_date" timestamp with time zone, "event_end_date" timestamp with time zone, "wilaya_name" "text", "daira_name" "text", "organizer_name" "text", "topics" "text"[], "status" "public"."event_status_enum", "format" "public"."event_format_enum", "logo_url" "text", "abstract_submission_deadline" timestamp with time zone, "rank" real)
@@ -3520,8 +3842,8 @@ CREATE OR REPLACE FUNCTION "public"."set_submission_feedback_updated_at"() RETUR
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
 BEGIN 
-    NEW.updated_at = timezone('utc'::text, now());
-    RETURN NEW;
+NEW.updated_at = timezone('utc' :: text, now());
+RETURN NEW;
 END;
 $$;
 
@@ -3867,61 +4189,60 @@ COMMENT ON FUNCTION "public"."submit_full_paper"("p_submission_id" "uuid", "p_fu
 CREATE OR REPLACE FUNCTION "public"."submit_revision"("p_submission_id" "uuid", "p_full_paper_file_url" "text", "p_full_paper_file_metadata" "jsonb", "p_revision_notes" "text" DEFAULT NULL::"text") RETURNS "uuid"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
-DECLARE
-    v_event_id UUID;
-    v_submission_status public.submission_status_enum;
-    v_abstract_version_id UUID;
-    v_version_number INT;
-    v_version_id UUID;
-    v_event_deadline TIMESTAMP WITH TIME ZONE;
+DECLARE 
+v_event_id UUID;
+v_submission_status public.submission_status_enum;
+v_abstract_version_id UUID;
+v_version_number INT;
+v_version_id UUID;
+v_event_deadline TIMESTAMP WITH TIME ZONE;
+
 BEGIN
-    -- Check if the submission exists and get its current status
-    SELECT 
-        s.event_id, 
-        s.full_paper_status,
-        s.current_abstract_version_id,
-        e.revision_deadline
-    INTO 
-        v_event_id, 
-        v_submission_status,
-        v_abstract_version_id,
-        v_event_deadline
-    FROM public.submissions s
+SELECT
+    s.event_id,
+    s.full_paper_status,
+    s.current_abstract_version_id,
+    e.revision_deadline INTO v_event_id,
+    v_submission_status,
+    v_abstract_version_id,
+    v_event_deadline
+FROM
+    public.submissions s
     JOIN public.events e ON s.event_id = e.id
-    WHERE s.id = p_submission_id AND s.submitted_by = auth.uid();
-    
-    IF NOT FOUND THEN
-        RAISE EXCEPTION 'Submission not found or you are not the author';
-    END IF;
-    
-    -- Check if revision was requested
-    IF v_submission_status != 'revision_requested' THEN
-        RAISE EXCEPTION 'Cannot submit revision: revision was not requested';
-    END IF;
-    
-    -- Check if the revision deadline has passed
-    IF v_event_deadline IS NOT NULL AND v_event_deadline < NOW() THEN
-        RAISE EXCEPTION 'Revision deadline has passed';
-    END IF;
-    
-    -- Get the next version number
-    SELECT COALESCE(MAX(version_number), 0) + 1 INTO v_version_number
-    FROM public.submission_versions
-    WHERE submission_id = p_submission_id;
-    
-    -- Get the abstract details from the current abstract version
-    WITH abstract_version AS (
-        SELECT 
-            title_translations,
-            abstract_translations,
-            abstract_file_url,
-            abstract_file_metadata
-        FROM public.submission_versions
-        WHERE id = v_abstract_version_id
-    )
-    
-    -- Create a new version record with both abstract and revised full paper
-    INSERT INTO public.submission_versions (
+WHERE
+    s.id = p_submission_id
+    AND s.submitted_by = auth.uid();
+
+IF NOT FOUND THEN RAISE EXCEPTION 'Submission not found or you are not the author';
+END IF;
+
+IF v_submission_status != 'revision_requested' THEN RAISE EXCEPTION 'Cannot submit revision: revision was not requested';
+END IF;
+
+IF v_event_deadline IS NOT NULL
+AND v_event_deadline < NOW() THEN RAISE EXCEPTION 'Revision deadline has passed';
+END IF;
+
+SELECT
+    COALESCE(MAX(version_number), 0) + 1 INTO v_version_number
+FROM
+    public.submission_versions
+WHERE
+    submission_id = p_submission_id;
+
+WITH abstract_version AS (
+    SELECT
+        title_translations,
+        abstract_translations,
+        abstract_file_url,
+        abstract_file_metadata
+    FROM
+        public.submission_versions
+    WHERE
+        id = v_abstract_version_id
+)
+INSERT INTO
+    public.submission_versions (
         submission_id,
         version_number,
         title_translations,
@@ -3931,38 +4252,35 @@ BEGIN
         full_paper_file_url,
         full_paper_file_metadata
     )
-    SELECT
-        p_submission_id,
-        v_version_number,
-        title_translations,
-        abstract_translations,
-        abstract_file_url,
-        abstract_file_metadata,
-        p_full_paper_file_url,
-        p_full_paper_file_metadata
-    FROM abstract_version
-    RETURNING id INTO v_version_id;
-    
-    -- Update the submission with the revised paper and current version
-    UPDATE public.submissions
-    SET 
-        full_paper_file_url = p_full_paper_file_url,
-        full_paper_file_metadata = p_full_paper_file_metadata,
-        current_full_paper_version_id = v_version_id,
-        status = 'revision_under_review',
-        full_paper_status = 'revision_under_review'
-    WHERE id = p_submission_id;
-    
-    -- Add revision notes if provided using the new add_author_revision_notes function
-    IF p_revision_notes IS NOT NULL AND p_revision_notes != '' THEN
-        PERFORM add_author_revision_notes(
-            p_submission_id,
-            v_version_id,
-            p_revision_notes
-        );
-    END IF;
-    
-    RETURN v_version_id;
+SELECT
+    p_submission_id,
+    v_version_number,
+    av.title_translations,
+    av.abstract_translations,
+    av.abstract_file_url,
+    av.abstract_file_metadata,
+    p_full_paper_file_url,
+    p_full_paper_file_metadata
+FROM
+    abstract_version av RETURNING id INTO v_version_id;
+
+UPDATE
+    public.submissions
+SET
+    full_paper_file_url = p_full_paper_file_url,
+    full_paper_file_metadata = p_full_paper_file_metadata,
+    current_full_paper_version_id = v_version_id,
+    status = 'revision_under_review',
+    -- Use the new enum value
+    full_paper_status = 'revision_under_review' -- Use the new enum value
+WHERE
+    id = p_submission_id;
+
+IF p_revision_notes IS NOT NULL
+AND p_revision_notes != '' THEN PERFORM public.add_author_revision_notes(p_submission_id, v_version_id, p_revision_notes);
+END IF;
+
+RETURN v_version_id;
 END;
 $$;
 
@@ -3970,7 +4288,7 @@ $$;
 ALTER FUNCTION "public"."submit_revision"("p_submission_id" "uuid", "p_full_paper_file_url" "text", "p_full_paper_file_metadata" "jsonb", "p_revision_notes" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."submit_revision"("p_submission_id" "uuid", "p_full_paper_file_url" "text", "p_full_paper_file_metadata" "jsonb", "p_revision_notes" "text") IS 'Function for researchers to submit a revised paper after revision was requested. Creates a new version record and optionally adds revision notes.';
+COMMENT ON FUNCTION "public"."submit_revision"("p_submission_id" "uuid", "p_full_paper_file_url" "text", "p_full_paper_file_metadata" "jsonb", "p_revision_notes" "text") IS 'Allows researchers to submit a revised paper. Creates a new version and stores author notes in submission_feedback.';
 
 
 
@@ -3999,45 +4317,94 @@ $$;
 ALTER FUNCTION "public"."sync_submission_status"() OWNER TO "postgres";
 
 
+CREATE OR REPLACE FUNCTION "public"."track_paper_activity"("p_submission_id" "uuid", "p_action_type" "text") RETURNS "uuid"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$ DECLARE v_id UUID;
+
+BEGIN -- Ensure the user is authenticated
+IF auth.uid() IS NULL THEN RAISE EXCEPTION 'Authentication required';
+
+END IF;
+
+INSERT INTO
+    public.paper_analytics(submission_id, user_id, action_type)
+VALUES
+    (p_submission_id, auth.uid(), p_action_type) RETURNING id INTO v_id;
+
+RETURN v_id;
+
+END;
+
+$$;
+
+
+ALTER FUNCTION "public"."track_paper_activity"("p_submission_id" "uuid", "p_action_type" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."track_paper_activity"("p_submission_id" "uuid", "p_action_type" "text") IS 'Records paper view or download activity in the analytics table using the authenticated user ID';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."track_submission_versions"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
-BEGIN
-    -- Only save a version if relevant fields change
-    IF TG_OP = 'UPDATE' AND (
-        OLD.title_translations IS DISTINCT FROM NEW.title_translations OR
-        OLD.abstract_translations IS DISTINCT FROM NEW.abstract_translations OR
-        OLD.abstract_file_url IS DISTINCT FROM NEW.abstract_file_url OR
-        OLD.abstract_file_metadata IS DISTINCT FROM NEW.abstract_file_metadata OR
-        OLD.full_paper_file_url IS DISTINCT FROM NEW.full_paper_file_url OR
-        OLD.full_paper_file_metadata IS DISTINCT FROM NEW.full_paper_file_metadata OR
-        OLD.status IS DISTINCT FROM NEW.status
-    ) THEN
-        -- Insert a new version record - removed feedback_translations
-        INSERT INTO public.submission_versions (
-            submission_id,
-            title_translations,
-            abstract_translations,
-            abstract_file_url,
-            abstract_file_metadata,
-            full_paper_file_url,
-            full_paper_file_metadata
-        ) VALUES (
-            OLD.id,
-            OLD.title_translations,
-            OLD.abstract_translations,
-            OLD.abstract_file_url,
-            OLD.abstract_file_metadata,
-            OLD.full_paper_file_url,
-            OLD.full_paper_file_metadata
-        );
-    END IF;
-    RETURN NEW;
+BEGIN 
+IF TG_OP = 'UPDATE'
+AND (
+    OLD.title_translations IS DISTINCT
+    FROM
+        NEW.title_translations
+        OR OLD.abstract_translations IS DISTINCT
+    FROM
+        NEW.abstract_translations
+        OR OLD.abstract_file_url IS DISTINCT
+    FROM
+        NEW.abstract_file_url
+        OR OLD.abstract_file_metadata IS DISTINCT
+    FROM
+        NEW.abstract_file_metadata
+        OR OLD.full_paper_file_url IS DISTINCT
+    FROM
+        NEW.full_paper_file_url
+        OR OLD.full_paper_file_metadata IS DISTINCT
+    FROM
+        NEW.full_paper_file_metadata
+        OR OLD.status IS DISTINCT
+    FROM
+        NEW.status
+) THEN
+INSERT INTO
+    public.submission_versions (
+        submission_id,
+        title_translations,
+        abstract_translations,
+        abstract_file_url,
+        abstract_file_metadata,
+        full_paper_file_url,
+        full_paper_file_metadata
+    )
+VALUES
+    (
+        OLD.id,
+        OLD.title_translations,
+        OLD.abstract_translations,
+        OLD.abstract_file_url,
+        OLD.abstract_file_metadata,
+        OLD.full_paper_file_url,
+        OLD.full_paper_file_metadata
+    );
+END IF;
+
+RETURN NEW;
 END;
 $$;
 
 
 ALTER FUNCTION "public"."track_submission_versions"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."track_submission_versions"() IS 'Tracks changes to submissions by creating new version records, excluding feedback fields.';
+
 
 
 CREATE OR REPLACE FUNCTION "public"."update_event_status_based_on_date"() RETURNS "void"
@@ -4622,6 +4989,23 @@ ALTER SEQUENCE "public"."notification_queue_id_seq" OWNED BY "public"."notificat
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."paper_analytics" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "submission_id" "uuid" NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "action_type" "text" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()) NOT NULL,
+    CONSTRAINT "paper_analytics_action_type_check" CHECK (("action_type" = ANY (ARRAY['view'::"text", 'download'::"text"])))
+);
+
+
+ALTER TABLE "public"."paper_analytics" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."paper_analytics" IS 'Tracks paper view and download statistics for the research repository';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."payments" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -4717,7 +5101,7 @@ COMMENT ON COLUMN "public"."submission_feedback"."providing_user_id" IS 'The use
 
 
 
-COMMENT ON COLUMN "public"."submission_feedback"."role_at_submission" IS 'The role of the user when providing feedback (organizer, researcher)';
+COMMENT ON COLUMN "public"."submission_feedback"."role_at_submission" IS 'The role of the user when providing feedback (organizer, researcher, admin)';
 
 
 
@@ -4916,6 +5300,11 @@ ALTER TABLE ONLY "public"."organizer_profiles"
 
 
 
+ALTER TABLE ONLY "public"."paper_analytics"
+    ADD CONSTRAINT "paper_analytics_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."payments"
     ADD CONSTRAINT "payments_pkey" PRIMARY KEY ("id");
 
@@ -5111,6 +5500,22 @@ CREATE INDEX "idx_organizer_profiles_name_trgm" ON "public"."organizer_profiles"
 
 
 CREATE INDEX "idx_organizer_profiles_wilaya_id" ON "public"."organizer_profiles" USING "btree" ("wilaya_id");
+
+
+
+CREATE INDEX "idx_paper_analytics_submission_action" ON "public"."paper_analytics" USING "btree" ("submission_id", "action_type");
+
+
+
+COMMENT ON INDEX "public"."idx_paper_analytics_submission_action" IS 'Improves performance for queries filtering by submission_id and action_type';
+
+
+
+CREATE INDEX "idx_paper_analytics_submission_action_time" ON "public"."paper_analytics" USING "btree" ("submission_id", "action_type", "created_at");
+
+
+
+COMMENT ON INDEX "public"."idx_paper_analytics_submission_action_time" IS 'Improves performance for time-series queries filtering by submission_id, action_type, and created_at';
 
 
 
@@ -5378,6 +5783,16 @@ ALTER TABLE ONLY "public"."organizer_profiles"
 
 
 
+ALTER TABLE ONLY "public"."paper_analytics"
+    ADD CONSTRAINT "paper_analytics_submission_id_fkey" FOREIGN KEY ("submission_id") REFERENCES "public"."submissions"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."paper_analytics"
+    ADD CONSTRAINT "paper_analytics_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
 ALTER TABLE ONLY "public"."payments"
     ADD CONSTRAINT "payments_admin_verifier_id_fkey" FOREIGN KEY ("admin_verifier_id") REFERENCES "public"."profiles"("id");
 
@@ -5460,16 +5875,6 @@ ALTER TABLE ONLY "public"."verification_requests"
 
 ALTER TABLE ONLY "public"."verification_requests"
     ADD CONSTRAINT "verification_requests_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
-
-
-
-CREATE POLICY "events_select_deleted_for_owner_admin" ON "public"."events" FOR SELECT TO "authenticated" USING ((("deleted_at" IS NOT NULL) AND (("created_by" = "auth"."uid"()) OR (EXISTS ( SELECT 1
-   FROM "public"."profiles"
-  WHERE (("profiles"."id" = "auth"."uid"()) AND ("profiles"."user_type" = 'admin'::"public"."user_type_enum")))))));
-
-
-
-CREATE POLICY "events_select_for_authenticated" ON "public"."events" FOR SELECT TO "authenticated" USING (("deleted_at" IS NULL));
 
 
 
@@ -5850,6 +6255,12 @@ GRANT ALL ON FUNCTION "public"."discover_events"("search_query" "text", "topic_i
 
 
 
+GRANT ALL ON FUNCTION "public"."discover_papers"("search_query" "text", "topic_ids" "uuid"[], "wilaya_id_param" integer, "daira_id_param" integer, "start_date" timestamp with time zone, "end_date" timestamp with time zone, "author_name_filter" "text", "organizer_id" "uuid", "limit_count" integer, "offset_count" integer) TO "anon";
+GRANT ALL ON FUNCTION "public"."discover_papers"("search_query" "text", "topic_ids" "uuid"[], "wilaya_id_param" integer, "daira_id_param" integer, "start_date" timestamp with time zone, "end_date" timestamp with time zone, "author_name_filter" "text", "organizer_id" "uuid", "limit_count" integer, "offset_count" integer) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."discover_papers"("search_query" "text", "topic_ids" "uuid"[], "wilaya_id_param" integer, "daira_id_param" integer, "start_date" timestamp with time zone, "end_date" timestamp with time zone, "author_name_filter" "text", "organizer_id" "uuid", "limit_count" integer, "offset_count" integer) TO "service_role";
+
+
+
 GRANT ALL ON FUNCTION "public"."filter_events_by_date_range"("start_date" timestamp with time zone, "end_date" timestamp with time zone, "limit_count" integer, "offset_count" integer) TO "anon";
 GRANT ALL ON FUNCTION "public"."filter_events_by_date_range"("start_date" timestamp with time zone, "end_date" timestamp with time zone, "limit_count" integer, "offset_count" integer) TO "authenticated";
 GRANT ALL ON FUNCTION "public"."filter_events_by_date_range"("start_date" timestamp with time zone, "end_date" timestamp with time zone, "limit_count" integer, "offset_count" integer) TO "service_role";
@@ -5865,6 +6276,12 @@ GRANT ALL ON FUNCTION "public"."filter_events_by_location"("wilaya_id_param" int
 GRANT ALL ON FUNCTION "public"."filter_events_by_topic"("topic_ids" "uuid"[], "limit_count" integer, "offset_count" integer) TO "anon";
 GRANT ALL ON FUNCTION "public"."filter_events_by_topic"("topic_ids" "uuid"[], "limit_count" integer, "offset_count" integer) TO "authenticated";
 GRANT ALL ON FUNCTION "public"."filter_events_by_topic"("topic_ids" "uuid"[], "limit_count" integer, "offset_count" integer) TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."get_daira_name"("p_daira_id" integer, "p_locale" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."get_daira_name"("p_daira_id" integer, "p_locale" "text") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."get_daira_name"("p_daira_id" integer, "p_locale" "text") TO "service_role";
 
 
 
@@ -5889,6 +6306,24 @@ GRANT ALL ON FUNCTION "public"."get_featured_events"("limit_count" integer) TO "
 GRANT ALL ON FUNCTION "public"."get_feedback_for_version"("p_version_id" "uuid") TO "anon";
 GRANT ALL ON FUNCTION "public"."get_feedback_for_version"("p_version_id" "uuid") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."get_feedback_for_version"("p_version_id" "uuid") TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."get_paper_analytics"("p_submission_id" "uuid") TO "anon";
+GRANT ALL ON FUNCTION "public"."get_paper_analytics"("p_submission_id" "uuid") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."get_paper_analytics"("p_submission_id" "uuid") TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."get_paper_analytics_over_time"("p_submission_id" "uuid", "p_start_date" timestamp with time zone, "p_end_date" timestamp with time zone, "p_interval" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."get_paper_analytics_over_time"("p_submission_id" "uuid", "p_start_date" timestamp with time zone, "p_end_date" timestamp with time zone, "p_interval" "text") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."get_paper_analytics_over_time"("p_submission_id" "uuid", "p_start_date" timestamp with time zone, "p_end_date" timestamp with time zone, "p_interval" "text") TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."get_papers_analytics"("p_submission_ids" "uuid"[]) TO "anon";
+GRANT ALL ON FUNCTION "public"."get_papers_analytics"("p_submission_ids" "uuid"[]) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."get_papers_analytics"("p_submission_ids" "uuid"[]) TO "service_role";
 
 
 
@@ -5925,6 +6360,12 @@ GRANT ALL ON FUNCTION "public"."get_subscription_details"("target_user_id" "uuid
 GRANT ALL ON FUNCTION "public"."get_subscription_pricing"("user_type" "public"."user_type_enum", "billing_period" "public"."billing_period_enum") TO "anon";
 GRANT ALL ON FUNCTION "public"."get_subscription_pricing"("user_type" "public"."user_type_enum", "billing_period" "public"."billing_period_enum") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."get_subscription_pricing"("user_type" "public"."user_type_enum", "billing_period" "public"."billing_period_enum") TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."get_wilaya_name"("p_wilaya_id" integer, "p_locale" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."get_wilaya_name"("p_wilaya_id" integer, "p_locale" "text") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."get_wilaya_name"("p_wilaya_id" integer, "p_locale" "text") TO "service_role";
 
 
 
@@ -6061,15 +6502,9 @@ GRANT ALL ON FUNCTION "public"."handle_profile_verification_change"() TO "servic
 
 
 
-GRANT ALL ON FUNCTION "public"."handle_submission_feedback"("p_submission_id" "uuid", "p_feedback_content" "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."handle_submission_feedback"("p_submission_id" "uuid", "p_feedback_content" "text") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."handle_submission_feedback"("p_submission_id" "uuid", "p_feedback_content" "text") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."handle_submission_feedback"("submission_id" "uuid", "feedback_text" "jsonb", "decision_status" "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."handle_submission_feedback"("submission_id" "uuid", "feedback_text" "jsonb", "decision_status" "text") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."handle_submission_feedback"("submission_id" "uuid", "feedback_text" "jsonb", "decision_status" "text") TO "service_role";
+GRANT ALL ON FUNCTION "public"."handle_submission_feedback"("p_submission_id" "uuid", "p_feedback_content" "text", "p_decision_status" character varying) TO "anon";
+GRANT ALL ON FUNCTION "public"."handle_submission_feedback"("p_submission_id" "uuid", "p_feedback_content" "text", "p_decision_status" character varying) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."handle_submission_feedback"("p_submission_id" "uuid", "p_feedback_content" "text", "p_decision_status" character varying) TO "service_role";
 
 
 
@@ -6201,6 +6636,12 @@ GRANT ALL ON FUNCTION "public"."is_admin"() TO "service_role";
 
 
 
+GRANT ALL ON FUNCTION "public"."jsonb_values_to_text"("data" "jsonb") TO "anon";
+GRANT ALL ON FUNCTION "public"."jsonb_values_to_text"("data" "jsonb") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."jsonb_values_to_text"("data" "jsonb") TO "service_role";
+
+
+
 GRANT ALL ON FUNCTION "public"."notify_organizer_new_submission"() TO "anon";
 GRANT ALL ON FUNCTION "public"."notify_organizer_new_submission"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."notify_organizer_new_submission"() TO "service_role";
@@ -6249,21 +6690,9 @@ GRANT ALL ON FUNCTION "public"."restore_submission"("p_submission_id" "uuid") TO
 
 
 
-GRANT ALL ON FUNCTION "public"."review_abstract"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback_translations" "jsonb") TO "anon";
-GRANT ALL ON FUNCTION "public"."review_abstract"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback_translations" "jsonb") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."review_abstract"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback_translations" "jsonb") TO "service_role";
-
-
-
 GRANT ALL ON FUNCTION "public"."review_abstract"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."review_abstract"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback" "text") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."review_abstract"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback" "text") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."review_full_paper"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback_translations" "jsonb") TO "anon";
-GRANT ALL ON FUNCTION "public"."review_full_paper"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback_translations" "jsonb") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."review_full_paper"("p_submission_id" "uuid", "p_status" "public"."submission_status_enum", "p_feedback_translations" "jsonb") TO "service_role";
 
 
 
@@ -6414,6 +6843,12 @@ GRANT ALL ON FUNCTION "public"."text_to_bytea"("data" "text") TO "postgres";
 GRANT ALL ON FUNCTION "public"."text_to_bytea"("data" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."text_to_bytea"("data" "text") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."text_to_bytea"("data" "text") TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."track_paper_activity"("p_submission_id" "uuid", "p_action_type" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."track_paper_activity"("p_submission_id" "uuid", "p_action_type" "text") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."track_paper_activity"("p_submission_id" "uuid", "p_action_type" "text") TO "service_role";
 
 
 
@@ -6618,6 +7053,12 @@ GRANT ALL ON TABLE "public"."notification_queue" TO "service_role";
 GRANT ALL ON SEQUENCE "public"."notification_queue_id_seq" TO "anon";
 GRANT ALL ON SEQUENCE "public"."notification_queue_id_seq" TO "authenticated";
 GRANT ALL ON SEQUENCE "public"."notification_queue_id_seq" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."paper_analytics" TO "anon";
+GRANT ALL ON TABLE "public"."paper_analytics" TO "authenticated";
+GRANT ALL ON TABLE "public"."paper_analytics" TO "service_role";
 
 
 

@@ -38,16 +38,7 @@ export function EventDetailsHeader({ event, locale }: EventDetailsHeaderProps) {
 
   // Get status color and text
   const getStatusInfo = (status: string) => {
-    switch (status) {
-      case 'published':
-        return { text: t('status.ongoing') }
-      case 'draft':
-        return { text: t('status.upcoming') }
-      case 'cancelled':
-        return { text: t('status.cancelled') }
-      default:
-        return { text: status }
-    }
+    return { text: tEnums(`EventStatus.${status}`) }
   }
 
   const statusInfo = getStatusInfo(event.status)
