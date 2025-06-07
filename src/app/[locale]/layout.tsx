@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
 import { Inter, Noto_Kufi_Arabic } from "next/font/google";
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
 import "../globals.css";
-import { notFound } from 'next/navigation';
-import { routing } from '@/i18n/routing';
-import { AuthProvider } from '@/components/providers/AuthProvider';
-import { ThemeProvider } from '@/components/providers/theme-provider';
-import { ToastProvider } from '@/components/providers/ToastProvider';
-import FlowbiteProvider from '@/components/providers/FlowbiteProvider';
-
+import { notFound } from "next/navigation";
+import { routing } from "@/i18n/routing";
+import { AuthProvider } from "@/components/providers/AuthProvider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { ToastProvider } from "@/components/providers/ToastProvider";
+import { GlobalBackgroundProvider } from "@/components/providers/GlobalBackgroundProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -19,7 +18,7 @@ const inter = Inter({
 const notoKufiArabic = Noto_Kufi_Arabic({
   variable: "--font-noto-kufi-arabic",
   subsets: ["arabic"],
-  weight: ['400', '700'],
+  weight: ["400", "700"],
 });
 
 const locales = routing.locales;
@@ -27,6 +26,7 @@ const locales = routing.locales;
 export const metadata: Metadata = {
   title: "Eventy360",
   description: "Algerian Academic Event Platform",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL as string),
 };
 
 interface RootLayoutProps {
@@ -34,45 +34,53 @@ interface RootLayoutProps {
   params: Promise<{ locale: string }>;
 }
 
-export default async function RootLayout({ children, params }: RootLayoutProps) {
-  
+export default async function RootLayout({
+  children,
+  params,
+}: RootLayoutProps) {
   const { locale } = await params;
 
-  if (!locales.includes(locale as typeof locales[number])) {
+  if (!locales.includes(locale as (typeof locales)[number])) {
     notFound();
   }
 
   let messages;
   try {
     messages = await getMessages();
-  } catch  {
+  } catch {
     notFound();
   }
 
   return (
-    <html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} suppressHydrationWarning>
+    <html
+      lang={locale}
+      dir={locale === "ar" ? "rtl" : "ltr"}
+      suppressHydrationWarning
+    >
       <body
         className={`${inter.variable} ${notoKufiArabic.variable} font-sans bg-background text-foreground antialiased`}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
             <AuthProvider>
               <ToastProvider>
-                <FlowbiteProvider>
-                  <div className="relative flex min-h-screen flex-col">
-                    <main className="flex-1">{children}</main>
+                <div className="relative flex min-h-screen flex-col">
+                  {/* Global AnimatedHeroBackground will be loaded client-side */}
+                  <div className="absolute inset-0 -z-10" id="global-background">
+                    <GlobalBackgroundProvider />
                   </div>
-                </FlowbiteProvider>
+                  <main className="relative flex-1">{children}</main>
+                </div>
               </ToastProvider>
             </AuthProvider>
           </ThemeProvider>
-          </NextIntlClientProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
-} 
+}

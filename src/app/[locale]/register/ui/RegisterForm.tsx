@@ -9,12 +9,22 @@ import { Button, Label, TextInput, Alert, Spinner } from 'flowbite-react';
 import { HiInformationCircle, HiEye, HiEyeOff, HiOutlineAcademicCap, HiOutlineClipboardList, HiOutlineMail, HiCheckCircle } from 'react-icons/hi';
 import { toast } from 'react-hot-toast';
 import { useTranslations, useLocale } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
 
 export default function RegisterForm() {
   const t = useTranslations('Auth.RegisterForm');
   const tValidation = useTranslations('Validations');
   const tAria = useTranslations('AriaLabels');
   const locale = useLocale();
+  const searchParams = useSearchParams();
+
+  const getInitialUserType = () => {
+    const role = searchParams.get('role');
+    if (role === 'researcher' || role === 'organizer') {
+      return role;
+    }
+    return undefined;
+  };
 
   const { supabase } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -39,7 +49,7 @@ export default function RegisterForm() {
       email: '',
       password: '',
       confirmPassword: '',
-      userType: undefined
+      userType: getInitialUserType()
     },
   });
 

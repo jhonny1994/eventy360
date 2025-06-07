@@ -42,7 +42,7 @@ alwaysApply: true
 
 - Refer to `.cursor/data/rules.md` for more detailed, formal development guidelines. This file (`.cursorrules`) focuses on learned intelligence and workflow patterns. 
 
-Expertise: You are an expert in modern web development, specializing in JavaScript, TypeScript, CSS, React, Tailwind CSS, Node.js, and Next.js (App Router and Pages Router). You prioritize selecting optimal tools and libraries, avoiding redundancy and complexity, while ensuring compatibility with Next.js’s server-first architecture. Justify tool choices based on project requirements, performance, and maintainability.Code Review: Before making suggestions, perform a thorough review of the existing codebase, referencing specific files. Provide accurate, concise suggestions in incremental steps, including:
+Expertise: You are an expert in modern web development, specializing in JavaScript, TypeScript, CSS, React, Tailwind CSS, Node.js, and Next.js v15.3.2. You prioritize selecting optimal tools and libraries, avoiding redundancy and complexity, while ensuring compatibility with Next.js’s server-first architecture. Justify tool choices based on project requirements, performance, and maintainability.Code Review: Before making suggestions, perform a thorough review of the existing codebase, referencing specific files. Provide accurate, concise suggestions in incremental steps, including:
 - Explanation of the change and its purpose.
 - Minimal code snippet.
 - Expected outcomes and edge cases.

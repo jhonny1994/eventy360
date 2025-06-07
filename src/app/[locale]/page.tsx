@@ -1,75 +1,73 @@
-"use client";
+import { Metadata } from "next";
+import Navbar from "@/components/ui/navigation/Navbar";
+import HeroSection from "@/components/ui/homepage/HeroSection";
+import PathwaySection from "@/components/ui/homepage/PathwaySection";
+import ClientFeaturesSection from "@/components/ui/homepage/ClientFeaturesSection";
+import PricingSection from "@/components/ui/homepage/PricingSection";
+import CTASection from "@/components/ui/homepage/CTASection";
+import Footer from "@/components/ui/homepage/Footer";
 
-import { useTranslations } from 'next-intl';
-import { useTheme } from "next-themes";
-import { useEffect, useState } from 'react';
+/**
+ * Homepage metadata for SEO optimization
+ */
+export const metadata: Metadata = {
+  title: "Eventy360 - Algerian Academic Event Platform",
+  description:
+    "Centralized platform for discovering academic events, submitting research papers, and accessing scholarly resources in Algeria",
+  keywords:
+    "academic events, conferences, research, Algeria, papers submissions",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL as string),
+  openGraph: {
+    title: "Eventy360 - Connect with Academic Events in Algeria",
+    description:
+      "Discover conferences, submit papers, and access research resources all in one place",
+    type: "website",
+    url: new URL(process.env.NEXT_PUBLIC_APP_URL as string),
+    siteName: "Eventy360",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Eventy360 - Academic Events Platform",
+      },
+    ],
+  },
+};
 
-export default function Home() {
-  const t = useTranslations('HomePage');
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
-
-  if (!mounted) {
-    
-    return <div className="p-24">{t('loading')}</div>;
-  }
-
+/**
+ * HomePage Component - Main landing page for Eventy360
+ *
+ * Structure:
+ * - Navigation bar with language & theme controls
+ * - Hero section with animated background
+ * - Pathway section for different user roles
+ * - Features section highlighting platform capabilities
+ * - Pricing information
+ * - Call-to-action section
+ * - Footer with site information
+ */
+export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center gap-8 p-12 md:p-24">
-      {/* Theme Toggle Button */}
-      <div className="fixed top-4 right-4 z-50">
-        <button
-          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-          aria-label={t('AriaLabels.toggleTheme')}
-          className="p-2 rounded-md border bg-background text-foreground shadow-md"
-        >
-          {theme === 'light' ? '🌙' : '☀️'} {/* Icons are less likely to need translation */}
-        </button>
-      </div>
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
+      <main className="flex-grow">
+        {/* Hero section with animated particles background */}
+        <HeroSection />
 
-      {/* Heading */}
-      <h1 className="text-4xl font-bold text-foreground">{t('title')} - New Theme</h1>
+        {/* User pathways section */}
+        <PathwaySection />
 
-      {/* Button Examples */}
-      <div className="flex flex-wrap gap-4">
-        {/* Primary Button */}
-        <button type="button" className="text-white bg-primary hover:opacity-90 focus:ring-4 focus:ring-primary/50 font-medium rounded-lg text-sm px-5 py-2.5 dark:text-neutral-dark dark:bg-primary dark:hover:opacity-90 dark:focus:ring-primary/50">
-          {t('primaryButton')}
-        </button>
-        {/* Secondary Button */}
-        <button type="button" className="text-neutral-dark bg-secondary hover:opacity-90 focus:ring-4 focus:ring-secondary/50 font-medium rounded-lg text-sm px-5 py-2.5 dark:text-neutral-dark dark:bg-secondary dark:hover:opacity-90 dark:focus:ring-secondary/50">
-          {t('secondaryButton')}
-        </button>
-        {/* Link Example */}
-        <a href="#" className="text-primary hover:underline dark:text-primary">
-          {t('linkExample')}
-        </a>
-      </div>
+        {/* Platform features section */}
+        <ClientFeaturesSection />
 
-      {/* Card Example */}
-      <div className="w-full max-w-md p-6 bg-background border rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-2 text-foreground">{t('dummyCardTitle')}</h2>
-        {/* Changed text color for better contrast */}
-        <p className="text-neutral-dark/60 dark:text-neutral-light/60">
-         {t('dummyCardContent')}
-        </p>
-      </div>
+        {/* Pricing plans section */}
+        <PricingSection />
 
-      {/* Alert Examples */}
-      <div className="w-full max-w-md p-4 bg-accent-success border text-white rounded-lg dark:bg-accent-success dark:text-neutral-dark">
-        <p><strong className="font-bold">{t('alertSuccessPrefix')}</strong> {t('alertSuccessContent')}</p>
-      </div>
-      <div className="w-full max-w-md p-4 bg-info border text-white rounded-lg dark:bg-info dark:text-neutral-dark">
-        <p><strong className="font-bold">{t('alertInfoPrefix')}</strong> {t('alertInfoContent')}</p>
-      </div>
-      <div className="w-full max-w-md p-4 bg-warning border text-neutral-dark rounded-lg dark:bg-warning dark:text-neutral-dark">
-        <p><strong className="font-bold">{t('alertWarningPrefix')}</strong> {t('alertWarningContent')}</p>
-      </div>
-      <div className="w-full max-w-md p-4 bg-error border text-white rounded-lg dark:bg-error dark:text-neutral-dark">
-        <p><strong className="font-bold">{t('alertErrorPrefix')}</strong> {t('alertErrorContent')}</p>
-      </div>
-    </main>
+        {/* Call-to-action section */}
+        <CTASection />
+      </main>
+      <Footer />
+    </div>
   );
-} 
+}

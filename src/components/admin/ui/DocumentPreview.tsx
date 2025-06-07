@@ -134,7 +134,7 @@ export default function DocumentPreview({
     } finally {
       setLoading(false);
     }
-  }, [documentPath, translations]);
+  }, [documentPath, supabase.storage, translations]);
 
   useEffect(() => {
     fetchDocument();
