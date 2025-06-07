@@ -37,7 +37,8 @@
       "cash": "نقداً",
       "online": "دفع إلكتروني"
     },
-    "switchLanguage": "تغيير اللغة"
+    "switchLanguage": "تغيير اللغة",
+    "skipToMainContent": "تجاوز إلى المحتوى الرئيسي"
   },
   "Navigation": {
     "profileDashboard": "لوحة التحكم الشخصية",
@@ -55,10 +56,11 @@
     "features": "المميزات",
     "pricing": "الأسعار",
     "login": "تسجيل الدخول",
+    "register": "إنشاء حساب",
     "signup": "إنشاء حساب",
     "openMenu": "فتح القائمة",
     "closeMenu": "إغلاق القائمة",
-    "userMenu": "قائمة المستخدم",
+    "userMenu": "قائمة لمستخدم",
     "repository": "المستودع",
     "createEvent": "إنشاء ملتقى",
     "myEvents": "ملتقياتي",
@@ -965,7 +967,12 @@
     "toggleTheme": "تبديل نمط العرض بين الفاتح والداكن",
     "loadingPage": "جارٍ تحميل الصفحة...",
     "submitting": "جارٍ الإرسال...",
-    "loading": "جارٍ التحميل..."
+    "loading": "جارٍ التحميل...",
+    "social": {
+      "facebook": "صفحتنا على الفيسبوك",
+      "twitter": "حسابنا على تويتر",
+      "linkedin": "صفحتنا على لينكد إن"
+    }
   },
   "ProfilePage": {
     "editProfileButton": "تعديل الملف الشخصي",

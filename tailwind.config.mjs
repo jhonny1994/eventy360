@@ -13,6 +13,9 @@ const config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['var(--font-inter)', 'var(--font-noto-kufi-arabic)'],
+      },
       colors: {
         'primary-blue': {
           light: '#0D47A1', // Light theme

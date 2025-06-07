@@ -3,6 +3,7 @@
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 import { Moon, Sun } from "lucide-react";
+import useTranslations from "@/hooks/useTranslations";
 
 /**
  * ThemeToggle - Animated theme toggle component that switches between light and dark modes
@@ -17,6 +18,7 @@ const ThemeToggle = () => {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
   const [isAnimating, setIsAnimating] = useState(false);
+  const t = useTranslations("AriaLabels");
   
   // Effect to prevent hydration mismatch
   useEffect(() => {
@@ -42,7 +44,8 @@ const ThemeToggle = () => {
     <button
       onClick={toggleTheme}
       className="relative rounded-full bg-neutral-mid/20 p-2 transition-all duration-300 hover:bg-neutral-mid/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-      aria-label={isDarkMode ? "Switch to light theme" : "Switch to dark theme"}
+      aria-label={t("toggleTheme")}
+      aria-pressed={isDarkMode}
     >
       <div className="relative">
         {isDarkMode ? (

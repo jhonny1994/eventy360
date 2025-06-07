@@ -28,12 +28,12 @@ const PricingSection = () => {
     return (
       <section id="pricing" className="py-24">
         <div className="container mx-auto animate-pulse px-4 text-center">
-          <div className="mb-4 h-10 w-1/2 rounded-full bg-gray-200 dark:bg-gray-700 mx-auto" />
-          <div className="mb-12 h-6 w-3/4 rounded-full bg-gray-200 dark:bg-gray-700 mx-auto" />
-          <div className="h-12 w-96 rounded-full bg-gray-200 dark:bg-gray-700 mx-auto mb-16" />
+          <div className="mb-4 h-10 w-1/2 rounded-lg bg-neutral-mid/20 mx-auto" />
+          <div className="mb-12 h-6 w-3/4 rounded-lg bg-neutral-mid/20 mx-auto" />
+          <div className="h-12 w-64 rounded-lg bg-neutral-mid/20 mx-auto mb-16" />
           <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 lg:grid-cols-2">
-            <div className="h-96 w-full rounded-2xl bg-gray-200 dark:bg-gray-700" />
-            <div className="h-96 w-full rounded-2xl bg-gray-200 dark:bg-gray-700" />
+            <div className="h-[500px] w-full rounded-2xl bg-neutral-mid/20" />
+            <div className="h-[500px] w-full rounded-2xl bg-neutral-mid/20" />
           </div>
         </div>
       </section>

@@ -12,7 +12,7 @@ import {
   ModalBody, 
   ModalFooter,
 } from 'flowbite-react';
-import { HiCheckCircle, HiXCircle } from 'react-icons/hi'; // Removed unused icons
+import { HiCheckCircle, HiXCircle } from 'react-icons/hi';
 import type { AppSettings } from '@/lib/appConfig';
 
 interface PricingModalProps {
@@ -70,7 +70,6 @@ const PriceCard: React.FC<{
 
 export default function PricingModal({ isOpen, setIsOpen, appSettings, userType, onPlanSelect }: PricingModalProps) {
   const t = useTranslations('PricingModal');
-  // const tEnums = useTranslations('Enums'); // Removed as unused for now
   const tCommon = useTranslations('Common');
 
   if (!appSettings || !appSettings.calculated_prices) {
@@ -86,7 +85,6 @@ export default function PricingModal({ isOpen, setIsOpen, appSettings, userType,
   }
 
   const { researcher: researcherPrices, organizer: organizerPrices } = appSettings.calculated_prices;
-  // Removed unused variables
 
   const researcherFeatures = [
     { text: t('Features.Researcher.submitPapers'), included: true },
@@ -101,20 +99,6 @@ export default function PricingModal({ isOpen, setIsOpen, appSettings, userType,
     { text: t('Features.Organizer.accessContactInfo'), included: true },
     { text: t('Features.Organizer.eventNotifications'), included: true },
   ];
-  
-  /* // Commented out as not rendered yet
-  const freeFeaturesResearcher = [
-    { text: t('Features.FreeResearcher.browseOnly'), included: true },
-    { text: t('Features.FreeResearcher.readOnlyFeatures'), included: true },
-    { text: t('Features.FreeResearcher.noNewSubmissions'), included: false },
-  ];
-
-  const freeFeaturesOrganizer = [
-    { text: t('Features.FreeOrganizer.publishedEventsVisible'), included: true },
-    { text: t('Features.FreeOrganizer.readOnlyAccess'), included: true },
-    { text: t('Features.FreeOrganizer.noCreateEditEvents'), included: false },
-  ];
-  */
 
   const handlePlanSelection = (tier: 'researcher' | 'organizer', period: 'monthly' | 'quarterly' | 'biannual' | 'annual') => {
     const price = tier === 'researcher' ? researcherPrices[period] : organizerPrices[period];
@@ -123,7 +107,6 @@ export default function PricingModal({ isOpen, setIsOpen, appSettings, userType,
 
   const renderPlanOptions = (tier: 'researcher' | 'organizer') => {
     const prices = tier === 'researcher' ? researcherPrices : organizerPrices;
-    // Removed baseMonthly variable - was unused
     const features = tier === 'researcher' ? researcherFeatures : organizerFeatures;
     
     return (
@@ -135,7 +118,6 @@ export default function PricingModal({ isOpen, setIsOpen, appSettings, userType,
             <p className="text-gray-600 dark:text-gray-400 mb-1">
               {t('startsWith')} {tier === 'researcher' ? prices.monthly : prices.monthly} {t('currencySymbol')} / {t('monthLabel')}
             </p>
-            {/* The trialInfo paragraph will be removed from translations */}
             <p className="text-sm text-primary-600 dark:text-primary-400 mb-4">
               {t('trialInfo', { tierName: tier === 'researcher' ? t('researcherTierTitle') : t('organizerTierTitle') })}
             </p>
@@ -152,7 +134,6 @@ export default function PricingModal({ isOpen, setIsOpen, appSettings, userType,
               key={period}
               periodKey={period}
               calculatedPrice={prices[period]}
-              // Removed baseMonthlyPrice prop - was unused
               discount={
                 period === 'quarterly' ? appSettings.discount_quarterly ?? undefined :
                 period === 'biannual' ? appSettings.discount_biannual ?? undefined :

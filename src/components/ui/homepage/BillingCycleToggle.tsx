@@ -21,7 +21,7 @@ const BillingCycleToggle = ({ billingPeriod, setBillingPeriod }: BillingCycleTog
           <button
             key={period}
             onClick={() => setBillingPeriod(period)}
-            className="relative z-10 w-28 rounded-full px-4 py-2 text-sm font-semibold text-foreground/70 transition-colors duration-300 hover:text-foreground dark:text-foreground/60 dark:hover:text-foreground"
+            className="relative z-10 w-28 rounded-full px-4 py-2 text-sm font-semibold text-foreground/70 transition-colors duration-300 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:text-foreground/60 dark:hover:text-foreground"
           >
             <span className="relative z-10">{t(`periods.${period}`)}</span>
             {billingPeriod === period && (

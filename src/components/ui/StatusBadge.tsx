@@ -38,7 +38,6 @@ export default function StatusBadge({
   const locale = useLocale();
   const isRtl = locale === 'ar';
   
-  // Map status to color and icon
   let color: BadgeColor = 'gray';
   let icon = null;
   

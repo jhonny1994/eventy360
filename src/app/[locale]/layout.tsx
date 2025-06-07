@@ -9,6 +9,7 @@ import { AuthProvider } from "@/components/providers/AuthProvider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ToastProvider } from "@/components/providers/ToastProvider";
 import { GlobalBackgroundProvider } from "@/components/providers/GlobalBackgroundProvider";
+import SkipToContentLink from "@/components/ui/navigation/SkipToContentLink";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -61,6 +62,7 @@ export default async function RootLayout({
         className={`${inter.variable} ${notoKufiArabic.variable} font-sans bg-background text-foreground antialiased`}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
+          <SkipToContentLink />
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -74,7 +76,13 @@ export default async function RootLayout({
                   <div className="absolute inset-0 -z-10" id="global-background">
                     <GlobalBackgroundProvider />
                   </div>
-                  <main className="relative flex-1">{children}</main>
+                  <main
+                    id="main-content"
+                    tabIndex={-1}
+                    className="relative flex-1 outline-none"
+                  >
+                    {children}
+                  </main>
                 </div>
               </ToastProvider>
             </AuthProvider>

@@ -17,7 +17,7 @@ const CTAGroup = ({
   const locale = useLocale();
 
   return (
-    <div className="mt-8 flex justify-center gap-x-4">
+    <div className="mt-8 flex justify-center gap-4">
       <Link
         href={`/${locale}/register?role=researcher`}
         className="rounded-md bg-primary px-6 py-3 text-lg font-semibold text-white transition-transform hover:scale-105"

@@ -44,13 +44,13 @@ const FeatureCard = memo(({ icon, title, description }: FeatureCardProps) => (
       hidden: { opacity: 0, y: 20 },
       visible: { opacity: 1, y: 0 },
     }}
-    className="rounded-lg bg-background dark:bg-background/30 p-6 text-center shadow-sm backdrop-blur-sm"
+    className="flex h-full flex-col rounded-lg bg-background dark:bg-background/30 p-6 text-center shadow-sm backdrop-blur-sm"
   >
     <div className="mb-4 inline-block rounded-lg bg-primary/15 dark:bg-primary/25 p-3 text-primary">
       {icon}
     </div>
     <h3 className="mb-2 text-xl font-bold">{title}</h3>
-    <p className="text-foreground/80">{description}</p>
+    <p className="flex-grow text-foreground/80">{description}</p>
   </motion.div>
 ));
 

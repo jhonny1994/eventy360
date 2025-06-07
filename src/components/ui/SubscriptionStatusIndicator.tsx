@@ -25,7 +25,6 @@ export default function SubscriptionStatusIndicator({
 }: SubscriptionStatusIndicatorProps) {
   const t = useTranslations('Subscription');
 
-  // Get status text
   const getStatusText = () => {
     if (tier === 'free') return t('free');
     
@@ -43,13 +42,10 @@ export default function SubscriptionStatusIndicator({
     }
   };
 
-  // Days remaining info
   const daysRemainingText = daysRemaining > 0 ? t('daysRemaining', { days: daysRemaining }) : '';
   
-  // Determine if we should show tooltip
   const showTooltip = status === 'trial' || status === 'active';
 
-  // Use our consistent StatusBadge component
   const badge = (
     <StatusBadge 
       status={tier === 'free' ? 'free' : status}

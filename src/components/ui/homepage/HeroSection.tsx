@@ -1,11 +1,17 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import dynamic from 'next/dynamic';
 import useTranslations from "@/hooks/useTranslations";
 import useLocale from "@/hooks/useLocale";
 import Image from "next/image";
 import CTAGroup from "./CTAGroup";
-import AnimatedHeroBackground from "./AnimatedHeroBackground";
+import useReducedMotion from "@/hooks/useReducedMotion";
+
+const AnimatedHeroBackground = dynamic(() => import('./AnimatedHeroBackground'), {
+  ssr: false,
+  loading: () => null, // Optional: return a placeholder component or null
+});
 
 /**
  * HeroSection - Main hero section for the homepage
@@ -22,9 +28,12 @@ const HeroSection = () => {
   const locale = useLocale();
   const isRTL = locale === "ar";
   const heroRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   // Parallax effect on scroll
   useEffect(() => {
+    if (prefersReducedMotion) return;
+
     const handleScroll = () => {
       if (!heroRef.current) return;
       const scrollY = window.scrollY;
@@ -40,7 +49,7 @@ const HeroSection = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [prefersReducedMotion]);
 
   return (
     <section 
@@ -87,7 +96,7 @@ const HeroSection = () => {
       </div>
       
       {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 transform animate-bounce flex-col items-center">
+      <div className={`absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 transform flex-col items-center ${prefersReducedMotion ? 'hidden' : 'animate-bounce'}`}>
         <span className="mb-2 text-sm text-foreground/60 dark:text-white/60">
           {t("Hero.scrollIndicator")}
         </span>

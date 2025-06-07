@@ -1,11 +1,13 @@
 import { Metadata } from "next";
+import dynamic from 'next/dynamic';
 import Navbar from "@/components/ui/navigation/Navbar";
 import HeroSection from "@/components/ui/homepage/HeroSection";
-import PathwaySection from "@/components/ui/homepage/PathwaySection";
-import ClientFeaturesSection from "@/components/ui/homepage/ClientFeaturesSection";
-import PricingSection from "@/components/ui/homepage/PricingSection";
-import CTASection from "@/components/ui/homepage/CTASection";
-import Footer from "@/components/ui/homepage/Footer";
+
+const PathwaySection = dynamic(() => import('@/components/ui/homepage/PathwaySection'));
+const ClientFeaturesSection = dynamic(() => import('@/components/ui/homepage/ClientFeaturesSection'));
+const PricingSection = dynamic(() => import('@/components/ui/homepage/PricingSection'));
+const CTASection = dynamic(() => import('@/components/ui/homepage/CTASection'));
+const Footer = dynamic(() => import('@/components/ui/homepage/Footer'));
 
 /**
  * Homepage metadata for SEO optimization

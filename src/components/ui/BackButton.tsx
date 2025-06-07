@@ -22,18 +22,14 @@ export default function BackButton({
   color = 'light',
   size = 'sm',
 }: BackButtonProps) {
-  // Always call useTranslations to avoid conditional hook errors
   let buttonLabel = label || 'Back';
   
   try {
     const t = useTranslations('UIComponents.BackButton');
-    // Only override buttonLabel if no explicit label was provided
     if (!label) {
       buttonLabel = t('defaultLabel');
     }
-  } catch {
-    // If translations are not available, use the default label
-  }
+  } catch {}
   
   return (
     <Link href={href} className="inline-block">

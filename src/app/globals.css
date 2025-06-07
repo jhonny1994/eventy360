@@ -3,14 +3,14 @@
 @source "../../.flowbite-react/class-list.json";
 
 @theme {
-  --color-primary: #0D47A1;
-  --color-secondary: #FFA000;
-  --color-accent-success: #388E3C;
-  --color-info: #0288D1;
-  --color-warning: #F57C00;
-  --color-error: #D32F2F;
-  --color-neutral-light: #FAFAFA;
-  --color-neutral-mid: #E0E0E0;
+  --color-primary: #0d47a1;
+  --color-secondary: #ffa000;
+  --color-accent-success: #388e3c;
+  --color-info: #0288d1;
+  --color-warning: #f57c00;
+  --color-error: #d32f2f;
+  --color-neutral-light: #fafafa;
+  --color-neutral-mid: #e0e0e0;
   --color-neutral-dark: #212121;
   --font-sans: var(--font-tajawal), ui-sans-serif, system-ui, sans-serif;
   --font-inter: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -51,5 +51,9 @@
 
   body {
     @apply antialiased;
+  }
+
+  *:focus-visible {
+    @apply outline-none ring-2 ring-offset-2 ring-primary ring-offset-neutral-light dark:ring-offset-neutral-dark;
   }
 }

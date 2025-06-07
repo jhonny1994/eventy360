@@ -4,7 +4,6 @@ import useTranslations from "@/hooks/useTranslations";
 import RoleCard from "./RoleCard";
 import { User, Building } from "lucide-react";
 import useLocale from "@/hooks/useLocale";
-import { useTheme } from "next-themes";
 
 /**
  * PathwaySection - Section displaying different user pathways
@@ -13,14 +12,11 @@ import { useTheme } from "next-themes";
 const PathwaySection = () => {
   const t = useTranslations("Homepage");
   const locale = useLocale();
-  const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
 
   return (
     <section 
       id="pathway" 
-      style={{ backgroundColor: isDark ? 'transparent' : 'var(--neutral-light)' }}
-      className="py-24"
+      className="py-24 bg-[--neutral-light] dark:bg-transparent"
     >
       <div className="container mx-auto px-4 text-center">
         <h2 className="mb-12 text-3xl font-bold md:text-4xl">{t("Pathway.headline")}</h2>
