@@ -191,13 +191,13 @@ const CustomNavbar = () => {
         
         <NavbarCollapse className="backdrop-blur-lg">
           <div className="py-2 md:py-0 flex flex-col md:flex-row md:items-center md:space-x-6 rtl:md:space-x-reverse">
-            {sectionLinks.map((link) => (
+            {sectionLinks.map((link, index) => (
               <NavbarLink
                 key={link.href}
                 href={link.href}
                 onClick={(e) => handleAnchorClick(e, link.href)}
                 active={activeSection === link.href.substring(1)}
-                className="my-1 md:my-0"
+                className={`my-1 md:my-0 ${index > 0 ? 'md:rtl:mr-6 md:ltr:ml-6' : ''}`}
               >
                 {link.label}
               </NavbarLink>
