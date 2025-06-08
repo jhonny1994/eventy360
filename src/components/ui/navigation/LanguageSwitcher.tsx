@@ -16,6 +16,7 @@ const languageFlags: Record<string, { countryCode: string, name: string }> = {
 
 /**
  * LanguageSwitcher - A dropdown component for switching between available languages
+ * With consistent dimensions to prevent layout shifts
  */
 const LanguageSwitcher = () => {
   const router = useRouter();
@@ -126,26 +127,26 @@ const LanguageSwitcher = () => {
   }, [isOpen, handleKeyDown]);
   
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative h-9 w-9" ref={dropdownRef}>
       <button
         ref={triggerRef}
         onClick={() => setIsOpen(!isOpen)}
         onMouseEnter={handleButtonHover}
-        className="flex items-center justify-center rounded-full p-2 transition-all duration-300 hover:bg-neutral-mid/20 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+        className="flex h-full w-full items-center justify-center rounded-full p-2 bg-neutral-mid/20 dark:bg-gray-700/50 transition-all duration-300 hover:bg-neutral-mid/30 dark:hover:bg-gray-700/80 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
         aria-label={t("switchLanguage")}
         aria-expanded={isOpen}
         aria-haspopup="true"
         aria-controls="language-menu"
       >
         <Globe 
-          className={`h-5 w-5 transition-transform duration-700 ${isRotating ? "rotate-180" : ""}`}
+          className={`h-5 w-5 text-primary dark:text-white transition-transform duration-700 ${isRotating ? "rotate-180" : ""}`}
         />
       </button>
       
       {isOpen && (
         <div
           id="language-menu"
-          className="absolute right-0 mt-2 w-40 rounded-md bg-background shadow-lg ring-1 ring-black ring-opacity-5 transition-all duration-200"
+          className="absolute right-0 mt-2 w-40 rounded-md bg-background dark:bg-gray-900 shadow-lg ring-1 ring-black ring-opacity-5 transition-all duration-200"
           role="menu"
           aria-orientation="vertical"
         >
@@ -153,8 +154,8 @@ const LanguageSwitcher = () => {
             {Object.entries(languageFlags).map(([langCode, { countryCode, name }], index) => (
               <button
                 key={langCode}
-                className={`flex w-full items-center px-4 py-2 text-left text-sm text-foreground transition-all duration-200 hover:bg-neutral-mid/20 ${
-                  locale === langCode ? "bg-neutral-mid/20" : ""
+                className={`flex w-full items-center px-4 py-2 text-left text-sm text-foreground dark:text-white transition-all duration-200 hover:bg-neutral-mid/20 dark:hover:bg-gray-800 ${
+                  locale === langCode ? "bg-neutral-mid/20 dark:bg-gray-800" : ""
                 } animate-fade-in`}
                 style={{ animationDelay: `${index * 50}ms` }}
                 onClick={() => handleLanguageChange(langCode)}

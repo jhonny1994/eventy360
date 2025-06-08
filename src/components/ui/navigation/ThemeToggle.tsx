@@ -13,6 +13,7 @@ import useTranslations from "@/hooks/useTranslations";
  * - Transitions with color changes and morphing
  * - Uses localStorage for theme persistence via next-themes
  * - Particle effect animation on theme change
+ * - Prevents layout shift with consistent dimensions
  */
 const ThemeToggle = () => {
   const [mounted, setMounted] = useState(false);
@@ -25,11 +26,6 @@ const ThemeToggle = () => {
     setMounted(true);
   }, []);
 
-  // For SSR, don't render anything to avoid hydration mismatch
-  if (!mounted) {
-    return null;
-  }
-  
   const toggleTheme = () => {
     setIsAnimating(true);
     setTimeout(() => {
@@ -38,25 +34,37 @@ const ThemeToggle = () => {
     }, 150);
   };
 
+  // If not mounted, render a placeholder with the same dimensions
+  if (!mounted) {
+    return (
+      <div 
+        className="rounded-full bg-neutral-mid/20 dark:bg-gray-700/50 p-2 h-9 w-9 flex items-center justify-center"
+        aria-hidden="true"
+      >
+        <div className="h-5 w-5" />
+      </div>
+    );
+  }
+
   const isDarkMode = theme === "dark";
 
   return (
     <button
       onClick={toggleTheme}
-      className="relative rounded-full bg-neutral-mid/20 p-2 transition-all duration-300 hover:bg-neutral-mid/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+      className="relative rounded-full bg-neutral-mid/20 dark:bg-gray-700/50 p-2 h-9 w-9 transition-all duration-300 hover:bg-neutral-mid/30 dark:hover:bg-gray-700/80 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
       aria-label={t("toggleTheme")}
       aria-pressed={isDarkMode}
     >
       <div className="relative">
         {isDarkMode ? (
           <Moon 
-            className={`h-5 w-5 text-primary transition-transform duration-300 ${
+            className={`h-5 w-5 text-primary dark:text-white transition-transform duration-300 ${
               isAnimating ? "scale-75 opacity-0" : "scale-100 opacity-100"
             }`}
           />
         ) : (
           <Sun 
-            className={`h-5 w-5 text-primary transition-transform duration-300 ${
+            className={`h-5 w-5 text-primary dark:text-white transition-transform duration-300 ${
               isAnimating ? "scale-75 opacity-0" : "scale-100 opacity-100"
             }`}
           />

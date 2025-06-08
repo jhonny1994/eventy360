@@ -14,6 +14,7 @@ import { useTheme } from "next-themes";
  * - Theme-aware (light/dark mode)
  * - Performance optimized with reduced particle count
  * - Positioned behind all content with proper z-index
+ * - Prevents overflow with proper constraints
  */
 const GlobalBackground = () => {
   const [init, setInit] = useState(false);
@@ -87,7 +88,7 @@ const GlobalBackground = () => {
             area: 800,
           },
           // Fewer particles for better site-wide performance
-          value: 30,
+          value: 10,
         },
         opacity: {
           value: { min: 0.3, max: 0.8 },
@@ -137,12 +138,14 @@ const GlobalBackground = () => {
       <div className={`absolute inset-0 ${theme === "dark" ? "bg-[#111827]" : "bg-[#f9fafb]"}`}></div>
       
       {/* Particles container */}
-      <Particles
-        id="tsparticles-global"
-        particlesLoaded={async () => {}}
-        options={options}
-        className="absolute inset-0 h-full w-full"
-      />
+      <div className="absolute inset-0 overflow-hidden max-w-full">
+        <Particles
+          id="tsparticles-global"
+          particlesLoaded={async () => {}}
+          options={options}
+          className="absolute inset-0 h-full w-full"
+        />
+      </div>
     </>
   );
 };

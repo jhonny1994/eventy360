@@ -58,8 +58,11 @@ export default async function RootLayout({
       dir={locale === "ar" ? "rtl" : "ltr"}
       suppressHydrationWarning
     >
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+      </head>
       <body
-        className={`${inter.variable} ${notoKufiArabic.variable} font-sans bg-background text-foreground antialiased`}
+        className={`${inter.variable} ${notoKufiArabic.variable} font-sans bg-background text-foreground antialiased overflow-x-hidden`}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
           <SkipToContentLink />
@@ -71,7 +74,7 @@ export default async function RootLayout({
           >
             <AuthProvider>
               <ToastProvider>
-                <div className="relative flex min-h-screen flex-col">
+                <div className="relative flex min-h-screen flex-col overflow-x-hidden">
                   {/* Global AnimatedHeroBackground will be loaded client-side */}
                   <div className="absolute inset-0 -z-10" id="global-background">
                     <GlobalBackgroundProvider />
@@ -79,7 +82,7 @@ export default async function RootLayout({
                   <main
                     id="main-content"
                     tabIndex={-1}
-                    className="relative flex-1 outline-none"
+                    className="relative flex-1 outline-none overflow-x-hidden"
                   >
                     {children}
                   </main>

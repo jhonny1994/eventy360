@@ -13,6 +13,7 @@ import { useTheme } from "next-themes";
  * - Responds to theme changes (light/dark) 
  * - Uses tsParticles for optimized canvas rendering
  * - Properly layered to remain below content
+ * - Prevents overflow with proper constraints
  */
 const AnimatedHeroBackground = () => {
   const [init, setInit] = useState(false);
@@ -116,13 +117,13 @@ const AnimatedHeroBackground = () => {
   }, [theme]);
 
   return (
-    <div className="absolute inset-0 z-0">
+    <div className="absolute inset-0 z-0 overflow-hidden max-w-full">
       {/* Static background color */}
       <div className={`absolute inset-0 ${theme === "dark" ? "bg-[#111827]" : "bg-[#f9fafb]"}`}></div>
       
       {/* Particles container */}
       {init && (
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 overflow-hidden">
           <Particles
             id="tsparticles"
             particlesLoaded={particlesLoaded}
