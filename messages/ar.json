@@ -67,7 +67,8 @@
     "user": "المستخدم",
     "researcher": "باحث",
     "organizer": "منظم",
-    "logout": "تسجيل الخروج"
+    "logout": "تسجيل الخروج",
+    "changeLang": "تغيير اللغة"
   },
   "Homepage": {
     "Hero": {

@@ -1,180 +1,226 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { createPortal } from "react-dom";
+import { usePathname } from "next/navigation";
 import ReactCountryFlag from "react-country-flag";
-import { useRouter } from "@/i18n/navigation";
-import useLocale from "@/hooks/useLocale";
-import useTranslations from "@/hooks/useTranslations";
-import { Globe } from "lucide-react";
 
-/**
- * Language flags with emoji representation
- */
-const languageFlags: Record<string, { countryCode: string, name: string }> = {
-  ar: { countryCode: "DZ", name: "العربية" },
+import useTranslations from "@/hooks/useTranslations";
+import useLocale from "@/hooks/useLocale";
+
+// Define language interface
+interface Language {
+  code: string;
+  name: string;
+  countryCode: string;
+}
+
+// Define dropdown position interface
+interface DropdownPosition {
+  top: number;
+  left?: number;
+  right?: number;
+}
+
+// Languages available in the application
+const languages: Language[] = [
+  { code: "en", name: "English", countryCode: "GB" },
+  { code: "ar", name: "العربية", countryCode: "DZ" },
+  { code: "fr", name: "Français", countryCode: "FR" },
+];
+
+// Helper function to get available languages
+export const getLanguages = (): Language[] => {
+  return languages;
 };
 
-/**
- * LanguageSwitcher - A dropdown component for switching between available languages
- * With consistent dimensions to prevent layout shifts
- */
-const LanguageSwitcher = () => {
-  const router = useRouter();
-  const locale = useLocale();
-  const t = useTranslations("Common");
+export default function LanguageSwitcher() {
+  const t = useTranslations("Navigation");
   const [isOpen, setIsOpen] = useState(false);
-  const [isRotating, setIsRotating] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [position, setPosition] = useState<DropdownPosition>({ top: 0 });
+  const btnRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  
+  const locale = useLocale();
+  const pathname = usePathname();
+  const isRTL = locale === "ar";
+
+  // Get current language
+  const currentLanguage =
+    languages.find((lang) => lang.code === locale) || languages[0];
+
+  // Update dropdown position based on button position
+  const updateDropdownPosition = () => {
+    if (btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      const scrollX = window.scrollX || window.pageXOffset;
+      const scrollY = window.scrollY || window.pageYOffset;
+      
+      // Account for mobile viewport and fixed position elements
+      if (isRTL) {
+        setPosition({
+          top: rect.bottom + scrollY,
+          right: window.innerWidth - rect.right - scrollX
+        });
+      } else {
+        setPosition({
+          top: rect.bottom + scrollY,
+          left: rect.left + scrollX
+        });
+      }
+    }
+  };
+
+  // Handle client-side mounting for portal
+  useEffect(() => {
+    setIsMounted(true);
+
+    // Initial position update when mounting
+    if (btnRef.current && isOpen) {
+      updateDropdownPosition();
+    }
+  }, []);
+
+  // Add scroll and resize listeners to update position
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isOpen && btnRef.current) {
+        updateDropdownPosition();
+      }
+    };
+
+    const handleResize = () => {
+      if (isOpen && btnRef.current) {
+        updateDropdownPosition();
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleResize, { passive: true });
+    
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [isOpen]);
+
+  // Handle click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        isOpen &&
+        btnRef.current &&
+        !btnRef.current.contains(event.target as Node) &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
-    
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
-  
-  const handleLanguageChange = (newLocale: string) => {
-    router.push("/", { locale: newLocale });
-    setIsOpen(false);
-  };
-  
-  const handleButtonHover = () => {
-    setIsRotating(true);
-    setTimeout(() => setIsRotating(false), 800);
-  };
-  
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (!isOpen) return;
+  }, [isOpen]);
 
-      const focusableElements = Array.from(
-        dropdownRef.current?.querySelectorAll<HTMLButtonElement>(
-          'button[role="menuitem"]'
-        ) || []
-      );
-
-      if (e.key === "Escape") {
-        setIsOpen(false);
-        triggerRef.current?.focus();
-        return;
-      }
-
-      if (e.key === "Tab") {
-        e.preventDefault();
-        const firstElement = focusableElements[0];
-        const lastElement = focusableElements[focusableElements.length - 1];
-        if (e.shiftKey) {
-          if (document.activeElement === firstElement) {
-            lastElement.focus();
-          } else {
-            const currentIndex = focusableElements.findIndex(
-              (el) => el === document.activeElement
-            );
-            focusableElements[currentIndex - 1].focus();
-          }
-        } else {
-          if (document.activeElement === lastElement) {
-            firstElement.focus();
-          } else {
-            const currentIndex = focusableElements.findIndex(
-              (el) => el === document.activeElement
-            );
-            focusableElements[currentIndex + 1].focus();
-          }
-        }
-        return;
-      }
-
-      const currentIndex = focusableElements.findIndex(
-        (el) => el === document.activeElement
-      );
-
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        const nextIndex = (currentIndex + 1) % focusableElements.length;
-        focusableElements[nextIndex].focus();
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        const prevIndex =
-          (currentIndex - 1 + focusableElements.length) %
-          focusableElements.length;
-        focusableElements[prevIndex].focus();
-      }
-    },
-    [isOpen]
-  );
-
-  useEffect(() => {
-    if (isOpen) {
-      document.addEventListener("keydown", handleKeyDown);
-      const firstItem = dropdownRef.current?.querySelector<HTMLButtonElement>(
-        'button[role="menuitem"]'
-      );
-      firstItem?.focus();
-    } else {
-      document.removeEventListener("keydown", handleKeyDown);
+  const toggleDropdown = () => {
+    if (!isOpen) {
+      // Update position immediately before opening
+      setTimeout(updateDropdownPosition, 0);
     }
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isOpen, handleKeyDown]);
-  
+    setIsOpen(!isOpen);
+  };
+
+  const getBaseUrl = (path = pathname) => {
+    // Remove current locale from the pathname
+    const segments = path.split("/");
+    segments.splice(1, 1);
+    return segments.join("/") || "/";
+  };
+
+  const formatLocaleUrl = (locale: string) => {
+    const baseUrl = getBaseUrl();
+    return `/${locale}${baseUrl}`;
+  };
+
+  const dropdownMenu =
+    isOpen && isMounted
+      ? createPortal(
+          <div
+            ref={dropdownRef}
+            className={`fixed z-100 rounded-md border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800 w-40 ${
+              isRTL ? "origin-top-right" : "origin-top-left"
+            }`}
+            style={{
+              top: `${position.top}px`,
+              left: isRTL ? undefined : `${position.left}px`,
+              right: isRTL ? `${position.right}px` : undefined,
+              maxHeight: "200px",
+              overflowY: "auto",
+              animation: "dropdown-in 0.2s ease-out",
+            }}
+          >
+            <div className="py-1">
+              {languages.map((lang) => (
+                <Link
+                  key={lang.code}
+                  href={formatLocaleUrl(lang.code)}
+                  locale={lang.code}
+                  className={`flex items-center px-4 py-2 text-sm ${
+                    locale === lang.code
+                      ? "bg-primary/10 text-primary font-medium dark:bg-primary/20"
+                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                  }`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  <ReactCountryFlag
+                    countryCode={lang.countryCode}
+                    svg
+                    style={{
+                      width: "1em",
+                      height: "1em",
+                      marginRight: isRTL ? 0 : "0.5rem",
+                      marginLeft: isRTL ? "0.5rem" : 0,
+                    }}
+                    aria-label={`Flag of ${lang.name}`}
+                    title={lang.name}
+                  />
+                  {lang.name}
+                </Link>
+              ))}
+            </div>
+          </div>,
+          document.body
+        )
+      : null;
+
   return (
-    <div className="relative h-9 w-9" ref={dropdownRef}>
+    <>
       <button
-        ref={triggerRef}
-        onClick={() => setIsOpen(!isOpen)}
-        onMouseEnter={handleButtonHover}
-        className="flex h-full w-full items-center justify-center rounded-full p-2 bg-neutral-mid/20 dark:bg-gray-700/50 transition-all duration-300 hover:bg-neutral-mid/30 dark:hover:bg-gray-700/80 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
-        aria-label={t("switchLanguage")}
+        ref={btnRef}
+        type="button"
+        onClick={toggleDropdown}
         aria-expanded={isOpen}
         aria-haspopup="true"
-        aria-controls="language-menu"
+        className={`relative flex h-9 w-9 items-center justify-center rounded-full p-2 text-gray-700 transition-colors hover:bg-neutral-mid/20 dark:text-white dark:hover:bg-gray-700/30 ${
+          isOpen ? "bg-neutral-mid/20 dark:bg-gray-700/50" : ""
+        }`}
       >
-        <Globe 
-          className={`h-5 w-5 text-primary dark:text-white transition-transform duration-700 ${isRotating ? "rotate-180" : ""}`}
+        <ReactCountryFlag
+          countryCode={currentLanguage.countryCode}
+          svg
+          style={{
+            width: "1.25em",
+            height: "1.25em",
+          }}
+          aria-label={`Current language: ${currentLanguage.name}`}
+          title={currentLanguage.name}
         />
+        <span className="sr-only">{t("changeLang")}</span>
       </button>
-      
-      {isOpen && (
-        <div
-          id="language-menu"
-          className="absolute right-0 mt-2 w-40 rounded-md bg-background dark:bg-gray-900 shadow-lg ring-1 ring-black ring-opacity-5 transition-all duration-200"
-          role="menu"
-          aria-orientation="vertical"
-        >
-          <div className="py-1">
-            {Object.entries(languageFlags).map(([langCode, { countryCode, name }], index) => (
-              <button
-                key={langCode}
-                className={`flex w-full items-center px-4 py-2 text-left text-sm text-foreground dark:text-white transition-all duration-200 hover:bg-neutral-mid/20 dark:hover:bg-gray-800 ${
-                  locale === langCode ? "bg-neutral-mid/20 dark:bg-gray-800" : ""
-                } animate-fade-in`}
-                style={{ animationDelay: `${index * 50}ms` }}
-                onClick={() => handleLanguageChange(langCode)}
-                role="menuitem"
-              >
-                <ReactCountryFlag
-                  countryCode={countryCode}
-                  svg
-                  className="me-3 text-xl"
-                  aria-label={name}
-                />
-                <span>{name}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
+      {dropdownMenu}
+    </>
   );
-};
-
-export default LanguageSwitcher; 
+}
