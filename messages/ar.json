@@ -1115,6 +1115,7 @@
       "subscriptionRequired": "يجب أن يكون لديك اشتراك نشط لإدارة اشتراكات المواضيع",
       "subscribeSuccess": "تم الاشتراك في الموضوع بنجاح",
       "unsubscribeSuccess": "تم إلغاء الاشتراك من الموضوع بنجاح",
+      "alreadySubscribedError": "أنت مشترك بالفعل في هذا الموضوع",
       "subscribed": "مشترك",
       "topicsCount": "{count, plural, zero {لا توجد مواضيع} one {موضوع واحد} two {موضوعان} few {# مواضيع} many {# موضوعاً} other {# موضوع}}",
       "subscribedCount": "{count, plural, zero {لا توجد اشتراكات} one {اشتراك واحد} two {اشتراكان} few {# اشتراكات} many {# اشتراكاً} other {# اشتراك}}",

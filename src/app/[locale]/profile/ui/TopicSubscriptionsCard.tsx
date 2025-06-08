@@ -7,6 +7,7 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import useTranslations from '@/hooks/useTranslations';
 import { HiCheck, HiX } from 'react-icons/hi';
 import PremiumFeatureGuard from './PremiumFeatureGuard';
+import { PostgrestError } from '@supabase/supabase-js';
 
 interface Topic {
   id: string;
@@ -16,6 +17,11 @@ interface Topic {
     ar: string;
     [key: string]: string;
   };
+}
+
+// Extended error type to handle both PostgrestError and HTTP response errors
+interface ExtendedError extends PostgrestError {
+  status?: number;
 }
 
 export default function TopicSubscriptionsCard() {
@@ -149,6 +155,30 @@ function TopicSubscriptionsContent() {
           type: 'success'
         });
       } else {
+        // Check if user is already subscribed (defensive check to prevent 409 errors)
+        // This can happen if the UI state gets out of sync with the database
+        const { data: existingSubscription, error: checkError } = await supabase
+          .from('researcher_topic_subscriptions')
+          .select('profile_id')
+          .match({ profile_id: userId, topic_id: topicId })
+          .maybeSingle();
+          
+        if (checkError) {
+          throw checkError;
+        }
+        
+        if (existingSubscription) {
+          // User is already subscribed despite UI state showing otherwise
+          // Update UI state and show already subscribed message
+          setSubscribedTopicIds(prev => new Set([...prev, topicId]));
+          setToast({
+            show: true,
+            message: t('alreadySubscribedError'),
+            type: 'error'
+          });
+          return;
+        }
+        
         // Optimistically update UI first
         setSubscribedTopicIds(prev => new Set([...prev, topicId]));
 
@@ -163,29 +193,55 @@ function TopicSubscriptionsContent() {
             newSet.delete(topicId);
             return newSet;
           });
-          throw insertError;
+          
+          // Check for duplicate entry error (409 Conflict or unique constraint violation)
+          if (insertError.code === '23505' || (insertError as ExtendedError).status === 409) {
+            // Show already subscribed toast
+            setToast({
+              show: true,
+              message: t('alreadySubscribedError'),
+              type: 'error'
+            });
+          } else {
+            throw insertError;
+          }
+        } else {
+          // Show success toast
+          setToast({
+            show: true,
+            message: t('subscribeSuccess'),
+            type: 'success'
+          });
         }
-        
-        // Show success toast
-        setToast({
-          show: true,
-          message: t('subscribeSuccess'),
-          type: 'success'
-        });
       }
     } catch (err) {
       if (typeof err === 'object' && err !== null && 'message' in err && typeof err.message === 'string' && err.message.includes('Auth')) {
         setError(t('errorUserNotAuthenticated'));
       } else {
-        const errorMessage = err instanceof Error ? err.message : t('errorUpdatingSubscription');
-        setError(errorMessage);
+        // Check if it's a duplicate subscription error from Postgres
+        const isDuplicateError = 
+          (err as ExtendedError)?.code === '23505' || 
+          (err as ExtendedError)?.status === 409 || 
+          (typeof (err as Error)?.message === 'string' && 
+           ((err as Error).message.includes('duplicate') || (err as Error).message.includes('already exists')));
         
-        // Show error toast
-        setToast({
-          show: true,
-          message: errorMessage,
-          type: 'error'
-        });
+        if (isDuplicateError) {
+          setToast({
+            show: true,
+            message: t('alreadySubscribedError'),
+            type: 'error'
+          });
+        } else {
+          const errorMessage = err instanceof Error ? err.message : t('errorUpdatingSubscription');
+          setError(errorMessage);
+          
+          // Show error toast
+          setToast({
+            show: true,
+            message: errorMessage,
+            type: 'error'
+          });
+        }
       }
     } finally {
       setPendingTopicIds(prev => {
@@ -277,12 +333,9 @@ function TopicSubscriptionsContent() {
                       <Checkbox
                         id={`topic-${topic.id}`}
                         checked={isSubscribed}
-                              onChange={(e) => {
-                                e.stopPropagation();
-                                handleToggleSubscription(topic.id);
-                              }}
+                              readOnly
                               disabled={isDisabled}
-                              className={isSubscribed ? 'text-blue-600 border-blue-600 focus:ring-blue-500' : ''}
+                              className={`${isSubscribed ? 'text-blue-600 border-blue-600 focus:ring-blue-500' : ''} pointer-events-none`}
                       />
                             {isSubscribed && (
                               <div className={`absolute top-2 ${locale === 'ar' ? 'right-auto -left-1' : '-right-1'} w-2 h-2 bg-blue-500 rounded-full animate-pulse`}></div>
@@ -293,7 +346,6 @@ function TopicSubscriptionsContent() {
                       <div className="min-w-0 flex-1 px-3">
                     <label
                       htmlFor={`topic-${topic.id}`}
-                          onClick={(e) => e.stopPropagation()}
                           className={`text-sm font-medium ${
                             isDisabled
                           ? 'text-gray-400 dark:text-gray-500'

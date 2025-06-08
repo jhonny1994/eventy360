@@ -54,12 +54,12 @@ export default function ProfileCard({
 
   return (
     <div
-      className={`bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden ${className}`}
+      className={`bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden p-6 ${className}`}
       dir={isRtl ? 'rtl' : 'ltr'}
     >
       {title && (
         <div
-          className="flex items-center border-b border-gray-200 dark:border-gray-700 px-6 py-4"
+          className="flex items-center border-b border-gray-200 dark:border-gray-700 -m-6 mb-6 px-6 py-4"
         >
           {Icon && (
             <div
@@ -73,7 +73,7 @@ export default function ProfileCard({
           </h2>
         </div>
       )}
-      <div className="p-6">
+      <div>
         {children}
       </div>
     </div>

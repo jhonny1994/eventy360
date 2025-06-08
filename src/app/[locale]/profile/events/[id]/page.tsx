@@ -477,12 +477,10 @@ export default async function EventDetailsPage({
         )}
       </ProfilePageHeader>
 
-      <ProfileCard locale={locale}>
-        <EventDetailsHeader
-          event={eventWithOrganizer}
-          locale={locale}
-        />
-      </ProfileCard>
+      <EventDetailsHeader
+        event={eventWithOrganizer}
+        locale={locale}
+      />
 
       {/* Timeline and Description - Full Width */}
       <div className="space-y-6">

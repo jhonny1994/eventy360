@@ -140,7 +140,7 @@ export default async function ProfileLayout({
       />
 
       {/* Main content */}
-      <main className="flex-1 overflow-y-auto pt-6 pb-8 px-4 md:p-6">
+      <main className="flex-1 overflow-y-auto pt-16 sm:pt-14 pb-8 px-4 md:p-6 md:pt-14">
         <div className="container mx-auto max-w-7xl">
           {children}
         </div>
