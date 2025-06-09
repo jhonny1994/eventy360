@@ -121,10 +121,10 @@ export default async function PaymentDetailsPage({
           </div>
         </Alert>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Left Column: User Info and Payment Details */}
           <div className="lg:col-span-2">
-            <Card className="mb-6">
+            <Card className="mb-4 sm:mb-6">
               <div className="flex justify-between items-start">
                 <h3 className="text-xl font-medium mb-4 flex items-center">
                   <HiUser className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 text-gray-500`} />
@@ -137,7 +137,7 @@ export default async function PaymentDetailsPage({
                 />
               </div>
               
-              <div className="flex items-center mb-4">
+              <div className={`flex items-center mb-4 ${isRtl ? 'flex-row-reverse' : ''}`}>
                 <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0 border border-gray-300 dark:border-gray-600">
                   {payment.profile_picture_url ? (
                     <Image 
@@ -343,25 +343,25 @@ export default async function PaymentDetailsPage({
                 </div>
               )}
             </Card>
-          </div>
 
-          {/* Right Column: Payment Proof Document */}
-          <div className="lg:col-span-1">
-            <Card className="h-full flex flex-col">
-              <h3 className="text-xl font-medium mb-4 flex items-center">
+            {/* Document Card */}
+            <Card>
+              <h3 className="text-xl font-medium mb-3 sm:mb-4 flex items-center">
                 <HiDocumentText className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 text-gray-500`} />
                 {t('details.paymentProof')}
               </h3>
               
               {payment.proof_document_path ? (
-                <div className="flex flex-col">
+                <div className="flex flex-col items-center justify-center p-3 sm:p-4 md:py-8 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                  {/* Document Display Section */}
                   <DocumentPreview
                     documentPath={payment.proof_document_path}
                     translations={documentPreviewTranslations}
                     locale={locale}
                   />
                   
-                  <div className="mt-4 flex justify-center">
+                  {/* Download Button */}
+                  <div className="mt-3 sm:mt-4">
                     <DownloadDocumentButton
                       documentPath={payment.proof_document_path}
                       translations={downloadTranslations}
@@ -371,12 +371,38 @@ export default async function PaymentDetailsPage({
                   </div>
                 </div>
               ) : (
-                <div className="p-4 text-center text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-lg">
-                  <HiDocumentText className="mx-auto h-10 w-10 text-gray-400 mb-2" />
-                  {t('details.noDocumentUploaded')}
+                <div className="flex flex-col items-center justify-center p-3 sm:p-4 md:py-8 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center justify-center h-24 w-24 rounded-full bg-red-100 dark:bg-gray-700 mb-3 sm:mb-4">
+                    <HiExclamationCircle className="h-12 w-12 text-red-500 dark:text-red-400" />
+                  </div>
+                  <p className="mb-2 text-lg font-medium text-red-500 dark:text-red-400">
+                    {t('details.noDocumentProvided')}
+                  </p>
+                  <p className="text-sm text-center text-gray-500 dark:text-gray-400">
+                    {t('details.contactUser')}
+                  </p>
                 </div>
               )}
             </Card>
+          </div>
+
+          {/* Right Column: Action Card */}
+          <div className="lg:col-span-1">
+            {/* Actions */}
+            {payment.status === 'pending_verification' && (
+              <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <h4 className="text-md font-medium mb-4">
+                  {t('details.actions')}:
+                </h4>
+                <ApproveRejectActions 
+                  requestId={id} 
+                  translations={actionTranslations} 
+                  apiEndpoint="verify_payment"
+                  locale={locale}
+                  userId={payment.user_id}
+                />
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -24,9 +24,9 @@ This document outlines the plan for implementing and enhancing the admin routes 
 ### Payments Route (`/payments`) - ✅ Exists
 - [x] List page with filtering
 - [x] Detail page implementation
-- [ ] Add direct link button to detail page from list view
-- [ ] Improve mobile responsiveness
-- [ ] Update translations in `ar.json` for new payment features
+- [x] Add direct link button to detail page from list view
+- [x] Improve mobile responsiveness
+- [x] Update translations in `ar.json` for new payment features
 
 ### Events Route (`/events`)
 - [ ] Create basic list page with status filter

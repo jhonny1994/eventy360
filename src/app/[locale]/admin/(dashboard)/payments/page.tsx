@@ -1,12 +1,11 @@
 import { getTranslations } from "next-intl/server";
-import { Card, Button } from "flowbite-react";
-import { HiEye, HiSearch, HiUser } from "react-icons/hi";
+import { Card } from "flowbite-react";
+import { HiSearch, HiUser } from "react-icons/hi";
 import { createServerSupabaseClient } from "@/utils/supabase/server";
 import { requireAdmin } from "@/utils/admin/auth";
 import { formatDate } from "@/utils/admin/format";
-import Link from "next/link";
 import Image from "next/image";
-import { StatusBadge, PaginationClient } from "@/components/admin/ui";
+import { StatusBadge, PaginationClient, DetailLinkButton } from "@/components/admin/ui";
 import { PaymentWithUserDetailsType, mapToStatusBadgeTranslations } from "@/types/payments";
 import { callRpcFunction } from "@/lib/hooks/useRpcFunction";
 import StatusFilter from './StatusFilter';
@@ -206,28 +205,28 @@ export default async function AdminPaymentsPage({
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className={`w-full text-sm text-gray-500 dark:text-gray-400 ${getRtlClass()}`} dir={isRtl ? 'rtl' : 'ltr'} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+              <table className={`w-full text-sm text-gray-500 dark:text-gray-400 ${getRtlClass()} min-w-[700px]`} dir={isRtl ? 'rtl' : 'ltr'} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
-                    <th scope="col" className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                    <th scope="col" className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                       {t('table.user')}
                     </th>
-                    <th scope="col" className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                    <th scope="col" className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                       {t('table.amount')}
                     </th>
-                    <th scope="col" className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                    <th scope="col" className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                       {t('table.billingPeriod')}
                     </th>
-                    <th scope="col" className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                    <th scope="col" className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                       {t('table.paymentMethod')}
                     </th>
-                    <th scope="col" className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                    <th scope="col" className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                       {t('table.reportedAt')}
                     </th>
-                    <th scope="col" className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                    <th scope="col" className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                       {t('table.status')}
                     </th>
-                    <th scope="col" className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                    <th scope="col" className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                       {t('table.actions')}
                     </th>
                   </tr>
@@ -240,47 +239,69 @@ export default async function AdminPaymentsPage({
                       dir={isRtl ? 'rtl' : 'ltr'}
                     >
                       {/* User column with profile picture and name */}
-                      <td className={`px-4 py-3 font-medium text-gray-900 dark:text-white ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
-                        <div className={`flex items-center gap-3 ${isRtl ? 'justify-end flex-row-reverse' : 'justify-start'}`}>
-                          {payment.profile_picture_url ? (
-                            <Image
-                              src={payment.profile_picture_url}
-                              alt={payment.user_name || "User"}
-                              width={32}
-                              height={32}
-                              className="w-8 h-8 rounded-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                              <HiUser className="w-4 h-4 text-gray-500" />
-                            </div>
+                      <td className={`px-3 py-3 sm:px-4 sm:py-3 font-medium text-gray-900 dark:text-white ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                        <div className={`flex items-center gap-3 ${isRtl ? 'flex-row-reverse justify-end' : ''}`}>
+                          {isRtl && (
+                            <>
+                              <span>{payment.user_name || "Unknown User"}</span>
+                              {payment.profile_picture_url ? (
+                                <Image
+                                  src={payment.profile_picture_url}
+                                  alt={payment.user_name || "User"}
+                                  width={32}
+                                  height={32}
+                                  className="w-8 h-8 rounded-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                                  <HiUser className="w-4 h-4 text-gray-500" />
+                                </div>
+                              )}
+                            </>
                           )}
-                          <div>{payment.user_name || "Unknown User"}</div>
+                          {!isRtl && (
+                            <>
+                              {payment.profile_picture_url ? (
+                                <Image
+                                  src={payment.profile_picture_url}
+                                  alt={payment.user_name || "User"}
+                                  width={32}
+                                  height={32}
+                                  className="w-8 h-8 rounded-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                                  <HiUser className="w-4 h-4 text-gray-500" />
+                                </div>
+                              )}
+                              <span>{payment.user_name || "Unknown User"}</span>
+                            </>
+                          )}
                         </div>
                       </td>
 
                       {/* Amount column */}
-                      <td className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
-                        {payment.amount} {t('currency')}
+                      <td className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                        <span className="whitespace-nowrap">{payment.amount} {t('currency')}</span>
                       </td>
 
                       {/* Billing Period column */}
-                      <td className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
-                        {t(`billingPeriods.${payment.billing_period}`)}
+                      <td className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                        <span className="whitespace-nowrap">{t(`billingPeriods.${payment.billing_period}`)}</span>
                       </td>
 
                       {/* Payment Method column */}
-                      <td className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
-                        {t(`paymentMethods.${payment.payment_method_reported}`)}
+                      <td className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                        <span className="whitespace-nowrap">{t(`paymentMethods.${payment.payment_method_reported}`)}</span>
                       </td>
 
                       {/* Reported date column */}
-                      <td className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
-                        {formatDate(payment.reported_at, locale)}
+                      <td className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                        <span className="whitespace-nowrap">{formatDate(payment.reported_at, locale)}</span>
                       </td>
 
                       {/* Status column */}
-                      <td className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                      <td className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                         <StatusBadge
                           status={payment.status}
                           translations={statusBadgeTranslations}
@@ -289,13 +310,11 @@ export default async function AdminPaymentsPage({
                       </td>
 
                       {/* Actions column */}
-                      <td className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
-                        <Link href={`/${locale}/admin/payments/${payment.id}`}>
-                          <Button size="xs">
-                            <HiEye className={`${isRtl ? 'ml-1' : 'mr-1'} h-4 w-4`} />
-                            {t('table.viewDetails')}
-                          </Button>
-                        </Link>
+                      <td className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                        <DetailLinkButton
+                          href={`/${locale}/admin/payments/${payment.id}`}
+                          label={t('table.viewDetails')}
+                        />
                       </td>
                     </tr>
                   ))}

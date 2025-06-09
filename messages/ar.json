@@ -1436,6 +1436,8 @@
       "errorLoading": "خطأ في تحميل تفاصيل الدفع",
       "verifiedAt": "تاريخ التحقق",
       "verifiedBy": "تم التحقق بواسطة",
+      "noDocumentProvided": "لم يتم تقديم مستند إثبات الدفع",
+      "contactUser": "يرجى التواصل مع المستخدم لطلب مستند إثبات الدفع",
       "approveRejectActions": {
         "reasonTooShort": "سبب الرفض قصير جدًا",
         "approveConfirmation": "هل أنت متأكد من أنك تريد الموافقة على هذا الدفع؟",

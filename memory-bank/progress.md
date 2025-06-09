@@ -13,6 +13,8 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 
 **Phase 5 Final Implementation:** We are now completing the final elements of Phase 5, focusing on the Research Repository, Project Homepage, Admin Panel Consolidation, and Enhanced Analytics for all user types (organizers, researchers, admins).
 
+**Admin Panel Improvements:** We've enhanced the payments route in the admin dashboard by adding direct link buttons to detail pages and improving mobile responsiveness. This follows the same pattern as the verifications route, ensuring a consistent user experience across the admin panel.
+
 **Platform Refinement:** We are also addressing platform-wide improvements including URL fallbacks for better navigation, minor UI fixes to improve consistency, and standardization checks to ensure quality across the codebase.
 
 **Code Quality Improvements Complete:** We've completed hook standardization across the entire application. This initiative has significantly improved code maintainability, reduced duplicated logic, and ensured consistent behavior across components. All 55 components across the application now use our standardized hooks.
@@ -44,6 +46,7 @@ Eventy360 is a Next.js application with Supabase backend, offering multilingual 
 - Completed hook standardization across the entire application (100% complete) ✅
 - Fixed syntax errors in SQL functions ✅
 - Fixed issue with organizers being unable to view paper statistics in the paper details page ✅
+- Enhanced payments route in admin dashboard with direct link buttons and improved mobile responsiveness ✅
 
 ## ✅ Completed Features
 
