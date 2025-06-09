@@ -10,9 +10,13 @@ import {
   NavbarLink, 
   NavbarToggle,
   Dropdown,
-  Avatar
+  DropdownHeader,
+  DropdownItem,
+  DropdownDivider,
+  Avatar,
+  ThemeProvider
 } from "flowbite-react";
-import { createTheme, ThemeProvider } from "flowbite-react";
+import { createTheme } from "flowbite-react";
 
 import useTranslations from "@/hooks/useTranslations";
 import useLocale from "@/hooks/useLocale";
@@ -54,15 +58,15 @@ const CustomNavbar = () => {
   
   const { activeSection } = useScrollEffects(sectionLinks, true);
 
-  // Custom theme for the navbar
+  // Custom theme for the navbar and dropdown components
   const navbarTheme = createTheme({
     navbar: {
       root: {
-        base: "fixed top-0 z-40 w-full border-b border-gray-200 dark:border-gray-700 bg-background/90 dark:bg-gray-900/90 backdrop-blur-md shadow-sm transition-all duration-300 max-w-[100vw] overflow-hidden",
+        base: "fixed top-0 z-40 w-full border-b border-gray-200 dark:border-gray-700 bg-background/90 dark:bg-gray-900/90 backdrop-blur-md shadow-sm transition-all duration-300 max-w-[100vw]",
       },
       collapse: {
         base: "w-full md:block md:w-auto",
-        list: "mt-4 flex flex-col md:mt-0 md:flex-row md:space-x-8 rtl:space-x-reverse",
+        list: "mt-4 flex flex-col md:mt-0 md:flex-row md:space-x-8 rtl:md:space-x-reverse",
         hidden: {
           on: "hidden",
           off: "",
@@ -78,8 +82,8 @@ const CustomNavbar = () => {
       link: {
         base: "block py-2 px-3 md:p-0",
         active: {
-          on: "bg-primary/90 text-white dark:text-white md:bg-transparent md:text-primary md:border-b-2 md:border-primary",
-          off: "text-foreground hover:bg-neutral-mid/20 md:hover:bg-transparent md:hover:text-primary"
+          on: "bg-primary/90 text-white dark:text-white md:bg-transparent md:text-primary md:dark:text-primary md:border-b-2 md:border-primary",
+          off: "text-foreground hover:bg-neutral-mid/20 md:hover:bg-transparent md:hover:text-primary dark:text-gray-300"
         },
         disabled: {
           on: "text-gray-400 hover:cursor-not-allowed",
@@ -88,14 +92,49 @@ const CustomNavbar = () => {
       }
     },
     dropdown: {
+      arrowIcon: "ml-2 h-4 w-4",
+      content: "py-1 focus:outline-none",
       floating: {
-        base: "z-50 my-1 w-fit rounded-lg border border-gray-200 bg-white shadow-lg outline-none dark:border-gray-700 dark:bg-gray-800",
-        content: "py-1 text-sm text-gray-700 focus:outline-none dark:text-gray-200",
-        target: "w-fit",
+        animation: "transition-opacity",
+        arrow: {
+          base: "absolute z-10 h-2 w-2 rotate-45",
+          style: {
+            dark: "bg-gray-900 dark:bg-gray-700",
+            light: "bg-white",
+            auto: "bg-white dark:bg-gray-700"
+          },
+          placement: "-4px"
+        },
+        base: "absolute z-[60] w-fit divide-y divide-gray-100 rounded-lg border border-gray-200 bg-white shadow-lg outline-none dark:divide-gray-600 dark:border-gray-700 dark:bg-gray-800",
+        content: "py-1 text-sm text-gray-700 dark:text-gray-200",
+        divider: "my-1 h-px bg-gray-100 dark:bg-gray-600",
+        header: "block px-4 py-2 text-sm text-gray-700 dark:text-gray-200",
+        hidden: "invisible opacity-0",
         item: {
-          base: "flex items-center justify-start py-2 px-4 text-sm text-gray-700 cursor-pointer hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white focus:bg-gray-100 dark:focus:bg-gray-600 dark:focus:text-white",
-          icon: "mr-2 h-4 w-4"
-        }
+          container: "",
+          base: "flex w-full cursor-pointer items-center justify-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:bg-gray-600 dark:focus:text-white"
+        },
+        style: {
+          dark: "border border-gray-700 bg-gray-800 text-white",
+          light: "border border-gray-200 bg-white text-gray-900",
+          auto: "border border-gray-200 bg-white text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+        },
+        target: "w-fit"
+      },
+      inlineWrapper: "flex items-center"
+    },
+    avatar: {
+      root: {
+        base: "flex items-center space-x-3 rtl:space-x-reverse",
+        bordered: "ring-2",
+        rounded: "rounded-full",
+        size: {
+          xs: "h-5 w-5",
+          sm: "h-8 w-8",
+          md: "h-10 w-10",
+          lg: "h-16 w-16",
+          xl: "h-24 w-24",
+        },
       }
     }
   });
@@ -115,7 +154,7 @@ const CustomNavbar = () => {
   
   return (
     <ThemeProvider theme={navbarTheme}>
-      <Navbar fluid>
+      <Navbar fluid className="relative">
         <NavbarBrand as={Link} href={`/${locale}`}>
           <Image
             src="/png/logo.png"
@@ -136,18 +175,19 @@ const CustomNavbar = () => {
           </div>
           
           {user ? (
-            <div className="hidden md:block">
+            <div className="hidden md:block z-50 relative">
               <Dropdown
                 arrowIcon={false}
                 inline
                 label={
-                  <div className="flex items-center">
+                  <div className="flex items-center justify-center rounded-full p-1 cursor-pointer hover:bg-neutral-mid/20 dark:hover:bg-gray-700/30">
                     {profilePictureUrl ? (
                       <Avatar 
                         img={profilePictureUrl} 
                         rounded 
                         alt={displayName}
-                        size="sm" 
+                        size="sm"
+                        placeholderInitials={displayName ? displayName.charAt(0) : "U"}
                       />
                     ) : (
                       <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
@@ -156,17 +196,32 @@ const CustomNavbar = () => {
                     )}
                   </div>
                 }
+                dismissOnClick={true}
+                placement="bottom"
+                theme={{
+                  floating: {
+                    style: {
+                      auto: "border border-gray-200 bg-white text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    },
+                    base: "absolute z-[60] w-fit divide-y divide-gray-100 rounded-lg border border-gray-200 bg-white shadow-lg outline-none dark:divide-gray-600 dark:border-gray-700 dark:bg-gray-800",
+                    content: "py-1 text-sm text-gray-700 dark:text-gray-200",
+                    item: {
+                      base: "flex w-full cursor-pointer items-center justify-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:bg-gray-600 dark:focus:text-white"
+                    }
+                  }
+                }}
+                className="z-[9999]"
               >
-                <div className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                  <span className="block text-sm">{displayName}</span>
-                </div>
-                <a href={`/${locale}/profile`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600">
+                <DropdownHeader>
+                  <span className="block text-sm font-medium truncate max-w-[200px]">{displayName}</span>
+                </DropdownHeader>
+                <DropdownItem as={Link} href={`/${locale}/profile`} icon={User}>
                   {t("profile")}
-                </a>
-                <div className="my-1 h-px bg-gray-200 dark:bg-gray-600"></div>
-                <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600">
+                </DropdownItem>
+                <DropdownDivider />
+                <DropdownItem icon={LogOut} onClick={handleLogout}>
                   {t("logout")}
-                </button>
+                </DropdownItem>
               </Dropdown>
             </div>
           ) : (
@@ -186,10 +241,10 @@ const CustomNavbar = () => {
             </div>
           )}
           
-          <NavbarToggle />
+          <NavbarToggle aria-controls="navbar-main" />
         </div>
         
-        <NavbarCollapse className="backdrop-blur-lg">
+        <NavbarCollapse id="navbar-main" className="backdrop-blur-lg">
           <div className="py-2 md:py-0 flex flex-col md:flex-row md:items-center md:space-x-6 rtl:md:space-x-reverse">
             {sectionLinks.map((link, index) => (
               <NavbarLink
@@ -219,16 +274,18 @@ const CustomNavbar = () => {
                   {profilePictureUrl ? (
                     <Image
                       src={profilePictureUrl}
-                      alt={displayName}
+                      alt={displayName || "User"}
                       width={32}
                       height={32}
                       className="h-8 w-8 rounded-full"
                       style={{ width: '2rem', height: '2rem' }}
                     />
                   ) : (
-                    <User className="h-6 w-6" />
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+                      <User className="h-4 w-4 text-primary" />
+                    </div>
                   )}
-                  <span className="mx-3 font-semibold">{displayName}</span>
+                  <span className="mx-3 font-semibold truncate">{displayName}</span>
                 </Link>
                 <button
                   onClick={handleLogout}
