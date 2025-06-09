@@ -37,19 +37,19 @@ const UserDropdown = () => {
           inline
           label={
             <div className="flex items-center justify-center rounded-full p-1 cursor-pointer hover:bg-neutral-mid/20 dark:hover:bg-gray-700/30">
-              {profilePictureUrl ? (
+            {profilePictureUrl ? (
                 <Avatar 
                   img={profilePictureUrl} 
                   rounded 
-                  alt={displayName}
+                alt={displayName}
                   size="sm"
                   placeholderInitials={displayName ? displayName.charAt(0) : "U"} 
-                />
-              ) : (
+              />
+            ) : (
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
                   <User className="h-4 w-4 text-primary" />
                 </div>
-              )}
+            )}
             </div>
           }
           dismissOnClick={true}
@@ -67,7 +67,7 @@ const UserDropdown = () => {
             }
           }}
           className="z-[9999]"
-        >
+          >
           <DropdownHeader>
             <span className="block text-sm font-medium truncate max-w-[200px]">{displayName}</span>
           </DropdownHeader>

@@ -186,7 +186,7 @@ const CustomNavbar = () => {
                         img={profilePictureUrl} 
                         rounded 
                         alt={displayName}
-                        size="sm"
+                        size="sm" 
                         placeholderInitials={displayName ? displayName.charAt(0) : "U"}
                       />
                     ) : (

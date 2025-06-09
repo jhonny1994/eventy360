@@ -133,9 +133,9 @@ export default function ProfileSidebarClient({ profile, locale, translations }: 
           onClick={() => setMobileOpen(false)}
         ></div>
 
-        {/* Mobile sidebar - increased width to w-80 */}
+        {/* Mobile sidebar - increased width to w-84 */}
         <aside
-          className={`fixed top-0 bottom-0 start-0 w-80 bg-white dark:bg-gray-800 shadow-xl z-40 transition-transform duration-300 ${mobileOpen ? 'translate-x-0' : isRTL ? 'translate-x-full' : '-translate-x-full'}`}
+          className={`fixed top-0 bottom-0 start-0 w-84 bg-white dark:bg-gray-800 shadow-xl z-40 transition-transform duration-300 ${mobileOpen ? 'translate-x-0' : isRTL ? 'translate-x-full' : '-translate-x-full'}`}
           dir={isRTL ? 'rtl' : 'ltr'}
         >
           <div className="flex flex-col h-full">
@@ -163,7 +163,7 @@ export default function ProfileSidebarClient({ profile, locale, translations }: 
   return (
     <>
       <aside
-        className={`h-screen bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 overflow-hidden flex-shrink-0 ${expanded ? 'w-80' : 'w-20'}`}
+        className={`h-screen bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 overflow-hidden flex-shrink-0 ${expanded ? 'w-84' : 'w-20'}`}
         dir={isRTL ? 'rtl' : 'ltr'}
       >
         <div className="flex flex-col h-full">
@@ -251,43 +251,51 @@ export default function ProfileSidebarClient({ profile, locale, translations }: 
                 );
               })}
             </div>
+
+            {/* Action buttons */}
+            <div className="w-full mt-6 space-y-3">
+              <Link
+                href={`/${locale}/profile/edit`}
+                className="flex items-center justify-center gap-2 w-full p-2.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 dark:text-blue-400 transition-colors"
+              >
+                <HiPencil className="h-5 w-5" />
+                <span className="font-medium">{translations.editProfile}</span>
+              </Link>
+
+              <Button
+                onClick={handleLogout}
+                color="light"
+                className="w-full flex items-center justify-center gap-2"
+              >
+                <HiArrowRightOnRectangle className="h-5 w-5" />
+                <span>{translations.logout}</span>
+              </Button>
+            </div>
           </>
         )}
 
-        {/* Action buttons - changed to vertical stack */}
-        <div className={`w-full mt-auto py-4 ${isExpanded ? 'space-y-3' : 'flex flex-col items-center space-y-4'}`}>
-          {isExpanded ? (
-            <>
-              <Link href="/profile/edit" className="block w-full">
-                <Button color="light" className="w-full justify-center">
-                  <HiPencil className={`${isRTL ? 'ml-2' : 'mr-2'} h-5 w-5`} />
-                  {translations.editProfile}
-                </Button>
+        {/* Collapsed state content */}
+        {!isExpanded && (
+          <div className="flex flex-col items-center mt-6 space-y-6">
+            <Tooltip content={translations.editProfile} placement={isRTL ? "left" : "right"}>
+              <Link
+                href={`/${locale}/profile/edit`}
+                className="p-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 dark:text-blue-400"
+              >
+                <HiPencil className="h-5 w-5" />
               </Link>
-              <Button color="light" className="w-full justify-center" onClick={handleLogout}>
-                <HiArrowRightOnRectangle className={`${isRTL ? 'ml-2' : 'mr-2'} h-5 w-5`} />
-                {translations.logout}
-              </Button>
-            </>
-          ) : (
-            <>
-              <Tooltip content={translations.editProfile} placement={isRTL ? "left" : "right"}>
-                <Link href="/profile/edit">
-                  <Button color="light" size="sm" className="!p-2" pill>
-                    <HiPencil className="h-5 w-5" />
-                    <span className="sr-only">{translations.editProfile}</span>
-                  </Button>
-                </Link>
-              </Tooltip>
-              <Tooltip content={translations.logout} placement={isRTL ? "left" : "right"}>
-                <Button color="light" size="sm" className="!p-2" pill onClick={handleLogout}>
-                  <HiArrowRightOnRectangle className="h-5 w-5" />
-                  <span className="sr-only">{translations.logout}</span>
-                </Button>
-              </Tooltip>
-            </>
-          )}
-        </div>
+            </Tooltip>
+
+            <Tooltip content={translations.logout} placement={isRTL ? "left" : "right"}>
+              <button
+                onClick={handleLogout}
+                className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-400"
+              >
+                <HiArrowRightOnRectangle className="h-5 w-5" />
+              </button>
+            </Tooltip>
+          </div>
+        )}
       </div>
     );
   }

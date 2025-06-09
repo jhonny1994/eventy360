@@ -1013,6 +1013,9 @@
     "noActiveEvents": "لا توجد ملتقيات نشطة حالياً",
     "recentSubmissions": "آخر المشاركات",
     "noSubmissionsReceived": "لم يتم استلام أي مشاركات حتى الآن",
+    "acceptedPapers": "الأوراق المقبولة",
+    "paperViews": "مشاهدات الأوراق",
+    "submissionsReceived": "المشاركات المستلمة",
     "security": {
       "title": "إعدادات الأمان",
       "changePassword": "تغيير كلمة المرور",
@@ -1121,7 +1124,22 @@
       "subscribedCount": "{count, plural, zero {لا توجد اشتراكات} one {اشتراك واحد} two {اشتراكان} few {# اشتراكات} many {# اشتراكاً} other {# اشتراك}}",
       "noTopicsCount": "لا توجد مواضيع"
     },
-    "loading": "جاري التحميل..."
+    "loading": "جاري التحميل...",
+    "errorLoadingProfile": "حدث خطأ أثناء تحميل معلومات الملف الشخصي",
+    "completedSteps": "الخطوات المكتملة",
+    "completionDetailsTitle": "تفاصيل اكتمال الملف",
+    "completionDetailsDescription": "أكمل الخطوات التالية للوصول إلى أقصى استفادة من منصتنا:",
+    "viewCompletionDetails": "عرض تفاصيل اكتمال الملف",
+    "close": "إغلاق",
+    "completionSteps": {
+      "completed_profile_info": "استكمال معلومات الملف الشخصي",
+      "uploaded_profile_photo": "رفع صورة شخصية",
+      "verified": "التحقق من الهوية",
+      "subscribed": "الاشتراك المدفوع",
+      "participated_in_event": "المشاركة في ملتقى",
+      "bookmarked_event": "حفظ ملتقى في المفضلة",
+      "created_event": "إنشاء ملتقى"
+    }
   },
   "Enums": {
     "user_type_enum": {

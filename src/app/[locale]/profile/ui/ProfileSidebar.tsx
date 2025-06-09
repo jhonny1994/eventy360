@@ -202,12 +202,12 @@ export default function ProfileSidebar({
       <aside
         className={`${
           isMobile
-            ? `fixed inset-y-0 ${isRtl ? 'right-0' : 'left-0'} z-40 w-72 transition-transform duration-300 ease-in-out ${
+            ? `fixed inset-y-0 ${isRtl ? 'right-0' : 'left-0'} z-40 w-80 transition-transform duration-300 ease-in-out ${
                 isMobileSidebarOpen 
                   ? 'translate-x-0' 
                   : `${isRtl ? 'translate-x-full' : '-translate-x-full'}`
               }`
-            : 'hidden md:block w-72 flex-shrink-0'
+            : 'hidden md:block w-80 flex-shrink-0'
         } bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto`}
         dir={isRtl ? 'rtl' : 'ltr'}
       >
@@ -248,11 +248,11 @@ export default function ProfileSidebar({
           {/* Logout button with consistent styling */}
           <div className="p-4 border-t border-gray-200 dark:border-gray-700">
             <Button
-              color="light"
-              className="w-full flex items-center justify-center gap-2 py-2.5"
               onClick={handleLogout}
+              color="light"
+              className="w-full flex items-center justify-center py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
-              <HiLogout className="w-5 h-5" />
+              <HiLogout className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5`} />
               <span>{translations.logout}</span>
             </Button>
           </div>

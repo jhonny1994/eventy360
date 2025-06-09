@@ -54,8 +54,8 @@ export default function ProfilePageHeader({
 
   return (
     <div className="flex items-center justify-between mb-6 w-full" dir={isRtl ? 'rtl' : 'ltr'}>
-      <div className="flex items-center gap-3">
-        <div className={`p-2 ${iconBgColor} rounded-full`}>
+      <div className="flex items-center gap-4">
+        <div className={`p-3 ${iconBgColor} rounded-full`}>
           <Icon className={`h-6 w-6 ${iconTextColor}`} />
         </div>
         <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
