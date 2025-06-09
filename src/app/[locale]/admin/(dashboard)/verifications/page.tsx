@@ -1,12 +1,11 @@
 import { getTranslations } from "next-intl/server";
-import { Card, Button } from "flowbite-react";
-import { HiEye, HiSearch } from "react-icons/hi";
+import { Card } from "flowbite-react";
+import { HiSearch } from "react-icons/hi";
 import { createServerSupabaseClient } from "@/utils/supabase/server";
 import { requireAdmin } from "@/utils/admin/auth";
 import { formatDate } from "@/utils/admin/format";
-import Link from "next/link";
 import Image from "next/image";
-import { StatusBadge, PaginationClient } from "@/components/admin/ui";
+import { StatusBadge, PaginationClient, DetailLinkButton } from "@/components/admin/ui";
 import StatusFilter from './StatusFilter';
 
 enum VerificationStatus {
@@ -154,7 +153,7 @@ export default async function AdminVerificationsPage({
       </div>
       {/* Filter section */}
       <div className="flex flex-col sm:flex-row justify-between mb-4 gap-4">
-        <div className="flex items-center">
+        <div className="flex items-center w-full sm:w-auto mb-2 sm:mb-0">
           <StatusFilter
             activeFilter={status || null}
             pendingCount={pendingCount || 0}
@@ -205,22 +204,22 @@ export default async function AdminVerificationsPage({
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className={`w-full text-sm text-gray-500 dark:text-gray-400 ${getRtlClass()}`} dir={isRtl ? 'rtl' : 'ltr'} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+              <table className={`w-full text-sm text-gray-500 dark:text-gray-400 ${getRtlClass()} min-w-[700px]`} dir={isRtl ? 'rtl' : 'ltr'} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
-                    <th scope="col" className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                    <th scope="col" className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                       {t("table.user")}
                     </th>
-                    <th scope="col" className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                    <th scope="col" className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                       {t("table.userType")}
                     </th>
-                    <th scope="col" className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                    <th scope="col" className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                       {t("table.submittedAt")}
                     </th>
-                    <th scope="col" className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                    <th scope="col" className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                       {t("table.status")}
                     </th>
-                    <th scope="col" className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                    <th scope="col" className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                       {t("table.actions")}
                     </th>
                   </tr>
@@ -233,35 +232,55 @@ export default async function AdminVerificationsPage({
                       dir={isRtl ? 'rtl' : 'ltr'}
                     >
                       {/* User column with profile picture and name */}
-                      <td className={`px-4 py-3 font-medium text-gray-900 dark:text-white ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
-                        <div className={`flex items-center gap-3 ${isRtl ? 'justify-end flex-row-reverse' : 'justify-start'}`}>
-                          {request.profile_picture_url ? (
-                            <Image
-                              src={request.profile_picture_url}
-                              alt={request.user_name || "User"}
-                              width={32}
-                              height={32}
-                              className="w-8 h-8 rounded-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                      <td className={`px-3 py-3 sm:px-4 sm:py-3 font-medium text-gray-900 dark:text-white ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                        <div className={`flex items-center gap-3 ${isRtl ? 'flex-row-reverse justify-end' : ''}`}>
+                          {isRtl && (
+                            <>
+                              <span>{request.user_name || "Unknown User"}</span>
+                              {request.profile_picture_url ? (
+                                <Image
+                                  src={request.profile_picture_url}
+                                  alt={request.user_name || "User"}
+                                  width={32}
+                                  height={32}
+                                  className="w-8 h-8 rounded-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                              )}
+                            </>
                           )}
-                          {request.user_name || "Unknown User"}
+                          {!isRtl && (
+                            <>
+                              {request.profile_picture_url ? (
+                                <Image
+                                  src={request.profile_picture_url}
+                                  alt={request.user_name || "User"}
+                                  width={32}
+                                  height={32}
+                                  className="w-8 h-8 rounded-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                              )}
+                              <span>{request.user_name || "Unknown User"}</span>
+                            </>
+                          )}
                         </div>
                       </td>
 
                       {/* User type column */}
-                      <td className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                      <td className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                         {request.user_type && t(`userTypes.${request.user_type}`)}
                       </td>
 
                       {/* Submission date column */}
-                      <td className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                      <td className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                         {formatDate(request.submitted_at, locale)}
                       </td>
 
                       {/* Status column with badge */}
-                      <td className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                      <td className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
                         <StatusBadge
                           status={request.status}
                           translations={statusTranslations}
@@ -270,13 +289,11 @@ export default async function AdminVerificationsPage({
                       </td>
 
                       {/* Actions column with view button */}
-                      <td className={`px-4 py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
-                        <Link href={`/${locale}/admin/verifications/${request.id}`} >
-                          <Button size="xs" color="info">
-                            <HiEye className={`${isRtl ? 'ml-1' : 'mr-1'} h-4 w-4`} />
-                            {t("actions.view")}
-                          </Button>
-                        </Link>
+                      <td className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                        <DetailLinkButton 
+                          href={`/${locale}/admin/verifications/${request.id}`} 
+                          label={t("actions.viewDetails")}
+                        />
                       </td>
                     </tr>
                   ))}
@@ -285,7 +302,7 @@ export default async function AdminVerificationsPage({
             </div>
             
             {/* Pagination */}
-            <div className="px-4 py-3">
+            <div className="px-3 py-3 sm:px-4 sm:py-3">
               <PaginationClient
                 currentPage={page}
                 totalPages={totalPages}

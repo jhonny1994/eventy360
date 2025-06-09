@@ -72,11 +72,19 @@ export default function StatusBadge({
     <Badge 
       color={color}
       size={size}
-      className={`flex items-center ${isRtl ? 'space-x-reverse' : ''} space-x-1 ${className}`}
+      className={`inline-flex items-center px-3 ${className}`}
       dir={isRtl ? 'rtl' : 'ltr'}
     >
-      {showIcon && icon && <span>{icon}</span>}
-      <span>{label || status}</span>
+      <div className="flex items-center gap-1.5">
+        {showIcon && icon && (
+          <span className="flex">
+            {icon}
+          </span>
+        )}
+        <span>
+          {label || status}
+        </span>
+      </div>
     </Badge>
   );
 } 

@@ -3,6 +3,7 @@
 import { Button, Badge } from 'flowbite-react';
 import Link from 'next/link';
 import { HiFilter } from 'react-icons/hi';
+import { useLocale } from 'next-intl';
 
 
 interface StatusFilterProps {
@@ -31,6 +32,9 @@ export default function StatusFilter({
   pageSize = 10,
   translations,
 }: StatusFilterProps) {
+  const appLocale = useLocale();
+  const isRtl = appLocale === 'ar';
+
   // Build URLs for filter links
   const getFilterUrl = (filterStatus: string | null) => {
     const params = new URLSearchParams();
@@ -50,7 +54,7 @@ export default function StatusFilter({
           size="sm"
           className="flex items-center"
         >
-          <HiFilter className="mr-1 h-4 w-4" />
+          <HiFilter className={`${isRtl ? 'ml-1' : 'mr-1'} h-4 w-4`} />
           {translations.allRequests}
         </Button>
       </Link>
@@ -61,7 +65,7 @@ export default function StatusFilter({
           className="flex items-center"
         >
           {translations.pending}
-          <Badge color="warning" className="ms-2">
+          <Badge color="warning" className={`${isRtl ? 'me-2' : 'ms-2'}`}>
             {pendingCount}
           </Badge>
         </Button>

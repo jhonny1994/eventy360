@@ -81,6 +81,11 @@
           "path": "src/messages/ar.json",
           "type": "TO_MODIFY",
           "description": "Add Arabic translation keys for the Repository main page"
+        },
+        {
+          "path": "src/messages/en.json",
+          "type": "TO_MODIFY",
+          "description": "Add English translation keys for the Repository main page"
         }
       ],
       "implementationGuide": "1. Create the main page at src/app/[locale]/profile/repository/page.tsx as a server component.\n2. Add authentication check using createServerSupabaseClient.\n3. Add subscription check to ensure it's a premium feature.\n4. Get user profile to determine role-based access.\n5. Use ProfilePageHeader and ProfileCard components for consistent UI.\n6. Add metadata generation following the pattern in other pages.\n7. Add a suspense boundary for loading state.\n8. Add proper error handling for unauthenticated users.\n9. Include RTL support for Arabic language.",
@@ -112,6 +117,11 @@
           "path": "src/messages/ar.json",
           "type": "TO_MODIFY",
           "description": "Add Arabic translation keys for the Repository container component"
+        },
+        {
+          "path": "src/messages/en.json",
+          "type": "TO_MODIFY",
+          "description": "Add English translation keys for the Repository container component"
         }
       ],
       "implementationGuide": "1. Create a new component at src/components/repository/RepositoryContainer.tsx.\n2. Follow the pattern of EventDiscoveryContainer for state management.\n3. Implement hooks for authentication, search params, and router.\n4. Create state variables for papers, loading, error, and total count.\n5. Implement a fetchPapers function that calls the discover_papers SQL function.\n6. Add handlers for search, filter, and pagination changes.\n7. Update the URL with search parameters to maintain state.\n8. Render search, filters, paper grid, and pagination components.\n9. Include proper error and loading states.\n10. Support RTL layout.",
@@ -163,6 +173,11 @@
           "path": "src/messages/ar.json",
           "type": "TO_MODIFY",
           "description": "Add Arabic translation keys for all UI components"
+        },
+        {
+          "path": "src/messages/en.json",
+          "type": "TO_MODIFY",
+          "description": "Add English translation keys for all UI components"
         }
       ],
       "implementationGuide": "1. Create the following components:\n   - src/app/[locale]/profile/repository/ui/RepositorySearchBar.tsx\n   - src/app/[locale]/profile/repository/ui/RepositoryFilters.tsx\n   - src/app/[locale]/profile/repository/ui/PaperCardGrid.tsx\n   - src/app/[locale]/profile/repository/ui/PaperCard.tsx\n   - src/app/[locale]/profile/repository/ui/RepositoryPagination.tsx\n2. Use the corresponding Events components as a pattern.\n3. Ensure each component supports RTL layout.\n4. Use Tailwind CSS for styling, following the existing design system.\n5. Add proper TypeScript types for props.\n6. Include accessibility attributes.\n7. Use useTranslations hook for internationalization.",
@@ -207,6 +222,11 @@
           "path": "src/messages/ar.json",
           "type": "TO_MODIFY",
           "description": "Add Arabic translation keys for the paper detail page"
+        },
+        {
+          "path": "src/messages/en.json",
+          "type": "TO_MODIFY",
+          "description": "Add English translation keys for the paper detail page"
         }
       ],
       "implementationGuide": "1. Create a new page at src/app/[locale]/profile/repository/[id]/page.tsx as a server component.\n2. Add authentication check using createServerSupabaseClient.\n3. Add subscription check to ensure it's a premium feature.\n4. Fetch the paper details including submission, event, and author information.\n5. Record a view event using the analytics tracking system.\n6. Create UI sections for:\n   - Paper metadata (title, authors, event, date)\n   - Abstract with formatting\n   - Download button with analytics tracking\n   - Related information (event details, etc.)\n7. Use ProfilePageHeader and ProfileCard components.\n8. Add metadata generation.\n9. Include RTL support for Arabic.",
@@ -238,6 +258,11 @@
           "path": "src/messages/ar.json",
           "type": "TO_MODIFY",
           "description": "Add Arabic translation keys for the navigation link"
+        },
+        {
+          "path": "src/messages/en.json",
+          "type": "TO_MODIFY",
+          "description": "Add English translation keys for the navigation link"
         }
       ],
       "implementationGuide": "1. Identify the file(s) that define the navigation structure in the profile section.\n2. Add a new navigation item for the Repository feature.\n3. Apply role-based visibility or include a premium badge if necessary.\n4. Apply consistent styling with existing navigation items.\n5. Ensure RTL support.",
@@ -274,6 +299,11 @@
           "path": "src/messages/ar.json",
           "type": "TO_MODIFY",
           "description": "Add Arabic translation keys for download button and messages"
+        },
+        {
+          "path": "src/messages/en.json",
+          "type": "TO_MODIFY",
+          "description": "Add English translation keys for download button and messages"
         }
       ],
       "implementationGuide": "1. Create a client component for paper downloads with:\n   - Button UI\n   - onClick handler\n   - Loading and error states\n2. Implement the download function:\n   - Check user authentication and subscription status\n   - Record download event in analytics\n   - Open the paper URL in a new tab or trigger download\n3. Add proper error handling and user feedback.\n4. Include RTL support.",

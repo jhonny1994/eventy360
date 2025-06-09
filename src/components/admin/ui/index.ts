@@ -12,3 +12,5 @@ export { default as SearchFilter } from './SearchFilter';
 export { default as PaginationControl } from './PaginationControl';
 export { default as PaginationClient } from './PaginationClient';
 export { default as BackButton } from '../../ui/BackButton';
+export { default as AdminDetailModal } from './AdminDetailModal';
+export { default as DetailLinkButton } from './DetailLinkButton';

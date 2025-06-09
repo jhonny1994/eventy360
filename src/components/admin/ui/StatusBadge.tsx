@@ -1,6 +1,5 @@
 "use client";
 
-import { useLocale } from "next-intl";
 import UniversalStatusBadge, { StatusType } from "@/components/ui/StatusBadge";
 
 type StatusBadgeProps = {
@@ -25,10 +24,6 @@ export default function StatusBadge({
   status,
   translations
 }: StatusBadgeProps) {
-  // Get locale from the application context
-  const appLocale = useLocale();
-  const isRtl = appLocale === 'ar';
-  
   // Map admin-specific status names to universal status types
   const mapStatusToType = (adminStatus: string | null): string => {
     switch (adminStatus?.toLowerCase()) {
@@ -47,8 +42,26 @@ export default function StatusBadge({
   
   // Map keys to translation strings
   const getTranslatedLabel = (key: string | null): string => {
-    const keyPart = key?.split(".")[1] || "unknown"; // Extract 'pending', 'approved', etc.
-    return translations[keyPart as keyof typeof translations] || translations.unknown;
+    if (!key) return translations.unknown;
+    
+    // Try to use the key directly first
+    if (translations[key as keyof typeof translations]) {
+      return translations[key as keyof typeof translations];
+    }
+    
+    // Fallback to checking for pending, approved, rejected
+    switch (key.toLowerCase()) {
+      case 'pending':
+      case 'pending_verification':
+        return translations.pending;
+      case 'approved':
+      case 'verified':
+        return translations.approved;
+      case 'rejected':
+        return translations.rejected;
+      default:
+        return translations.unknown;
+    }
   };
 
   // Map admin status to universal status type
@@ -61,7 +74,7 @@ export default function StatusBadge({
     <UniversalStatusBadge 
       status={universalStatus as StatusType}
       label={label}
-      className={isRtl ? 'text-right' : 'text-left'}
+      className="w-auto"
     />
   );
 }

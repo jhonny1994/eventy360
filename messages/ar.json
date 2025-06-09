@@ -1762,6 +1762,7 @@
     },
     "actions": {
       "view": "عرض",
+      "viewDetails": "عرض التفاصيل",
       "approve": "الموافقة",
       "reject": "رفض"
     },
@@ -1805,6 +1806,14 @@
       "actionError": "حدث خطأ أثناء معالجة الطلب",
       "reasonRequired": "سبب الرفض مطلوب",
       "verificationApproved": "تم توثيق الحساب بنجاح",
+      "retry": "إعادة المحاولة",
+      "approveRejectActions": {
+        "reasonTooShort": "السبب قصير جدًا",
+        "approveConfirmation": "هل أنت متأكد من أنك تريد الموافقة على طلب التوثيق هذا؟",
+        "rejectConfirmation": "هل أنت متأكد من أنك تريد رفض طلب التوثيق هذا؟",
+        "minimumCharactersNote": "الحد الأدنى 10 أحرف للسبب",
+        "internalNotesHint": "ملاحظات داخلية فقط (لن تظهر للمستخدم)"
+      },
       "documentPreview": {
         "documentPathMissing": "مسار المستند مفقود",
         "approveConfirmation": "هل أنت متأكد من أنك تريد الموافقة على طلب التوثيق هذا؟ سيؤدي ذلك إلى وضع علامة على حساب المستخدم كموثق.",

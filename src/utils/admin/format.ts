@@ -5,16 +5,19 @@
 /**
  * Formats a date string according to specified locale
  * @param dateString - ISO date string to format
- * @param locale - Locale to use for formatting (defaults to Arabic)
+ * @param locale - Locale to use for formatting (defaults to English)
  * @returns Formatted date string or 'N/A' if no date provided
  */
 export const formatDate = (
   dateString: string | null,
-  locale = "ar-DZ"
+  locale = "en"
 ): string => {
   if (!dateString) return "N/A";
 
-  return new Date(dateString).toLocaleDateString(locale, {
+  // Use ar-DZ for Arabic locale to get proper Algerian month names
+  const formattedLocale = locale === "ar" ? "ar-DZ" : locale;
+
+  return new Date(dateString).toLocaleDateString(formattedLocale, {
     year: "numeric",
     month: "long",
     day: "numeric",
