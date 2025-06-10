@@ -2382,5 +2382,47 @@
       "showing": "عرض {start}-{end} من {total} بحث",
       "pageSize": "عناصر في الصفحة"
     }
+  },
+  "AdminUsers": {
+    "title": "إدارة المستخدمين",
+    "usersCount": "إجمالي المستخدمين: {count}",
+    "filters": {
+      "allUsers": "جميع المستخدمين",
+      "researchers": "الباحثون",
+      "organizers": "منظمو الملتقيات",
+      "search": "بحث",
+      "searchUserPlaceholder": "البحث عن طريق الاسم أو البريد الإلكتروني...",
+      "noMatchingUsers": "لا يوجد مستخدمين مطابقين لمعايير البحث."
+    },
+    "table": {
+      "user": "المستخدم",
+      "email": "البريد الإلكتروني",
+      "userType": "نوع المستخدم",
+      "verificationStatus": "حالة التحقق",
+      "actions": "الإجراءات"
+    },
+    "userTypes": {
+      "researcher": "باحث",
+      "organizer": "منظم",
+      "admin": "مدير"
+    },
+    "verificationStatus": {
+      "verified": "تم التحقق",
+      "notVerified": "لم يتم التحقق"
+    },
+    "actions": {
+      "viewVerification": "عرض طلب التحقق",
+      "viewSubscription": "عرض الاشتراك"
+    },
+    "pagination": {
+      "showing": "عرض",
+      "of": "من",
+      "entries": "سجل",
+      "previousPage": "الصفحة السابقة",
+      "nextPage": "الصفحة التالية",
+      "pageSize": "عدد العناصر بالصفحة"
+    },
+    "fetchError": "حدث خطأ أثناء جلب بيانات المستخدمين:",
+    "noUsers": "لا يوجد مستخدمين مسجلين حتى الآن."
   }
 }

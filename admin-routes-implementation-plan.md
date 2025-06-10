@@ -6,13 +6,13 @@ This document outlines the plan for implementing and enhancing the admin routes 
 ## Routes Implementation Status
 
 ### Users Route (`/users`)
-- [ ] Create basic list page with user type filter
-- [ ] Implement search by name functionality
-- [ ] Add columns: profile photo, name, email, user type, verification status
-- [ ] Add "View Verification" button linking to verification detail page
-- [ ] Add "View Subscription" button linking to current subscription detail page
-- [ ] Add basic pagination
-- [ ] Add translations to `ar.json` for Users route
+- [x] Create basic list page with user type filter
+- [x] Implement search by name functionality
+- [x] Add columns: profile photo, name, email, user type, verification status
+- [x] Add "View Verification" button linking to verification detail page
+- [x] Add "View Subscription" button linking to current subscription detail page
+- [x] Add basic pagination
+- [x] Add translations to `ar.json` for Users route
 
 ### Verifications Route (`/verifications`) - ✅ Exists
 - [x] List page with filtering

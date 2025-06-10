@@ -30,7 +30,7 @@ COMMENT ON SCHEMA "public" IS 'standard public schema';
 
 
 
-CREATE EXTENSION IF NOT EXISTS "http" WITH SCHEMA "public";
+CREATE EXTENSION IF NOT EXISTS "http" WITH SCHEMA "extensions";
 
 
 
@@ -51,7 +51,7 @@ CREATE EXTENSION IF NOT EXISTS "pg_stat_statements" WITH SCHEMA "extensions";
 
 
 
-CREATE EXTENSION IF NOT EXISTS "pg_trgm" WITH SCHEMA "public";
+CREATE EXTENSION IF NOT EXISTS "pg_trgm" WITH SCHEMA "extensions";
 
 
 
@@ -5386,19 +5386,7 @@ ALTER TABLE ONLY "public"."wilayas"
 
 
 
-CREATE INDEX "idx_admin_actions_log_action_type" ON "public"."admin_actions_log" USING "btree" ("action_type");
-
-
-
 CREATE INDEX "idx_admin_actions_log_admin_user_id" ON "public"."admin_actions_log" USING "btree" ("admin_user_id");
-
-
-
-CREATE INDEX "idx_admin_actions_log_created_at" ON "public"."admin_actions_log" USING "btree" ("created_at");
-
-
-
-CREATE INDEX "idx_admin_actions_log_target_entity" ON "public"."admin_actions_log" USING "btree" ("target_entity_id", "target_entity_type");
 
 
 
@@ -5414,11 +5402,11 @@ CREATE INDEX "idx_bookmarks_profile_id" ON "public"."bookmarks" USING "btree" ("
 
 
 
-CREATE INDEX "idx_email_log_recipient_email" ON "public"."email_log" USING "btree" ("recipient_email");
+CREATE INDEX "idx_dairas_wilaya_id" ON "public"."dairas" USING "btree" ("wilaya_id");
 
 
 
-CREATE INDEX "idx_email_log_status" ON "public"."email_log" USING "btree" ("status");
+CREATE INDEX "idx_email_log_queue_id" ON "public"."email_log" USING "btree" ("queue_id");
 
 
 
@@ -5430,10 +5418,6 @@ CREATE INDEX "idx_email_templates_template_key" ON "public"."email_templates" US
 
 
 
-CREATE INDEX "idx_event_topics_event_id" ON "public"."event_topics" USING "btree" ("event_id");
-
-
-
 CREATE INDEX "idx_event_topics_event_topic" ON "public"."event_topics" USING "btree" ("event_id", "topic_id");
 
 
@@ -5442,31 +5426,15 @@ CREATE INDEX "idx_event_topics_topic_id" ON "public"."event_topics" USING "btree
 
 
 
-CREATE INDEX "idx_events_arabic_search" ON "public"."events" USING "gin" ((((((((("event_name_translations" ->> 'ar'::"text") || ' '::"text") || COALESCE(("event_subtitle_translations" ->> 'ar'::"text"), ''::"text")) || ' '::"text") || ("problem_statement_translations" ->> 'ar'::"text")) || ' '::"text") || ("event_objectives_translations" ->> 'ar'::"text"))) "public"."gin_trgm_ops");
-
-
-
 CREATE INDEX "idx_events_created_by" ON "public"."events" USING "btree" ("created_by");
 
 
 
-CREATE INDEX "idx_events_date_range" ON "public"."events" USING "btree" ("event_date", "event_end_date") WHERE ("deleted_at" IS NULL);
-
-
-
-CREATE INDEX "idx_events_deleted_at" ON "public"."events" USING "btree" ("deleted_at");
-
-
-
-CREATE INDEX "idx_events_event_type" ON "public"."events" USING "btree" ("event_type");
+CREATE INDEX "idx_events_daira_id" ON "public"."events" USING "btree" ("daira_id");
 
 
 
 CREATE INDEX "idx_events_featured" ON "public"."events" USING "btree" ("status", "event_date", "created_at") WHERE ("deleted_at" IS NULL);
-
-
-
-CREATE INDEX "idx_events_format" ON "public"."events" USING "btree" ("format");
 
 
 
@@ -5478,18 +5446,6 @@ CREATE INDEX "idx_events_status" ON "public"."events" USING "btree" ("status");
 
 
 
-CREATE INDEX "idx_events_status_format" ON "public"."events" USING "btree" ("status", "format") WHERE ("deleted_at" IS NULL);
-
-
-
-CREATE INDEX "idx_events_wilaya_id" ON "public"."events" USING "btree" ("wilaya_id");
-
-
-
-CREATE INDEX "idx_notification_queue_critical_templates" ON "public"."notification_queue" USING "btree" ("template_key") WHERE ("template_key" = ANY (ARRAY['payment_received_pending_verification'::"text", 'payment_verified_notification'::"text", 'payment_rejected_notification'::"text", 'admin_invitation'::"text"]));
-
-
-
 CREATE INDEX "idx_notification_queue_recipient_profile_id" ON "public"."notification_queue" USING "btree" ("recipient_profile_id");
 
 
@@ -5498,27 +5454,7 @@ CREATE INDEX "idx_notification_queue_status_process_after" ON "public"."notifica
 
 
 
-CREATE INDEX "idx_organizer_profiles_institution_type" ON "public"."organizer_profiles" USING "btree" ("institution_type");
-
-
-
-CREATE INDEX "idx_organizer_profiles_language" ON "public"."organizer_profiles" USING "btree" ("language");
-
-
-
-CREATE INDEX "idx_organizer_profiles_name_trgm" ON "public"."organizer_profiles" USING "gin" ((("name_translations" ->> 'ar'::"text")) "public"."gin_trgm_ops");
-
-
-
-CREATE INDEX "idx_organizer_profiles_wilaya_id" ON "public"."organizer_profiles" USING "btree" ("wilaya_id");
-
-
-
-CREATE INDEX "idx_paper_analytics_submission_action" ON "public"."paper_analytics" USING "btree" ("submission_id", "action_type");
-
-
-
-COMMENT ON INDEX "public"."idx_paper_analytics_submission_action" IS 'Improves performance for queries filtering by submission_id and action_type';
+CREATE INDEX "idx_organizer_profiles_daira_id" ON "public"."organizer_profiles" USING "btree" ("daira_id");
 
 
 
@@ -5530,19 +5466,27 @@ COMMENT ON INDEX "public"."idx_paper_analytics_submission_action_time" IS 'Impro
 
 
 
-CREATE INDEX "idx_researcher_profiles_language" ON "public"."researcher_profiles" USING "btree" ("language");
+CREATE INDEX "idx_paper_analytics_user_id" ON "public"."paper_analytics" USING "btree" ("user_id");
 
 
 
-CREATE INDEX "idx_researcher_profiles_name_trgm" ON "public"."researcher_profiles" USING "gin" ("name" "public"."gin_trgm_ops");
+CREATE INDEX "idx_payments_admin_verifier_id" ON "public"."payments" USING "btree" ("admin_verifier_id");
 
 
 
-CREATE INDEX "idx_researcher_profiles_wilaya_id" ON "public"."researcher_profiles" USING "btree" ("wilaya_id");
+CREATE INDEX "idx_payments_subscription_id" ON "public"."payments" USING "btree" ("subscription_id");
 
 
 
-CREATE INDEX "idx_submission_feedback_providing_user_id" ON "public"."submission_feedback" USING "btree" ("providing_user_id");
+CREATE INDEX "idx_payments_user_id" ON "public"."payments" USING "btree" ("user_id");
+
+
+
+CREATE INDEX "idx_researcher_profiles_daira_id" ON "public"."researcher_profiles" USING "btree" ("daira_id");
+
+
+
+CREATE INDEX "idx_researcher_topic_subscriptions_topic_id" ON "public"."researcher_topic_subscriptions" USING "btree" ("topic_id");
 
 
 
@@ -5570,10 +5514,6 @@ CREATE INDEX "idx_submissions_current_full_paper_version_id" ON "public"."submis
 
 
 
-CREATE INDEX "idx_submissions_deleted_at" ON "public"."submissions" USING "btree" ("deleted_at");
-
-
-
 CREATE INDEX "idx_submissions_event_id" ON "public"."submissions" USING "btree" ("event_id");
 
 
@@ -5590,19 +5530,15 @@ CREATE INDEX "idx_topics_slug" ON "public"."topics" USING "btree" ("slug");
 
 
 
+CREATE INDEX "idx_verification_requests_processed_by" ON "public"."verification_requests" USING "btree" ("processed_by");
+
+
+
 CREATE INDEX "idx_verification_requests_status" ON "public"."verification_requests" USING "btree" ("status");
 
 
 
-CREATE INDEX "idx_verification_requests_status_submitted_at" ON "public"."verification_requests" USING "btree" ("status", "submitted_at" DESC);
-
-
-
 CREATE INDEX "idx_verification_requests_submitted_at" ON "public"."verification_requests" USING "btree" ("submitted_at");
-
-
-
-CREATE INDEX "idx_verification_requests_submitted_at_status" ON "public"."verification_requests" USING "btree" ("submitted_at" DESC, "status");
 
 
 
@@ -5962,21 +5898,157 @@ GRANT USAGE ON SCHEMA "public" TO "service_role";
 
 
 
+
+
+
+
+
+
 GRANT ALL ON TYPE "public"."admin_action_type" TO "authenticated";
 
 
 
-GRANT ALL ON FUNCTION "public"."gtrgm_in"("cstring") TO "postgres";
-GRANT ALL ON FUNCTION "public"."gtrgm_in"("cstring") TO "anon";
-GRANT ALL ON FUNCTION "public"."gtrgm_in"("cstring") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."gtrgm_in"("cstring") TO "service_role";
 
 
 
-GRANT ALL ON FUNCTION "public"."gtrgm_out"("public"."gtrgm") TO "postgres";
-GRANT ALL ON FUNCTION "public"."gtrgm_out"("public"."gtrgm") TO "anon";
-GRANT ALL ON FUNCTION "public"."gtrgm_out"("public"."gtrgm") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."gtrgm_out"("public"."gtrgm") TO "service_role";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -6187,13 +6259,6 @@ GRANT ALL ON FUNCTION "public"."billing_period_to_interval"("period" "public"."b
 
 
 
-GRANT ALL ON FUNCTION "public"."bytea_to_text"("data" "bytea") TO "postgres";
-GRANT ALL ON FUNCTION "public"."bytea_to_text"("data" "bytea") TO "anon";
-GRANT ALL ON FUNCTION "public"."bytea_to_text"("data" "bytea") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."bytea_to_text"("data" "bytea") TO "service_role";
-
-
-
 GRANT ALL ON FUNCTION "public"."calculate_event_statistics"("p_event_id" "uuid") TO "anon";
 GRANT ALL ON FUNCTION "public"."calculate_event_statistics"("p_event_id" "uuid") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."calculate_event_statistics"("p_event_id" "uuid") TO "service_role";
@@ -6380,97 +6445,6 @@ GRANT ALL ON FUNCTION "public"."get_wilaya_name"("p_wilaya_id" integer, "p_local
 
 
 
-GRANT ALL ON FUNCTION "public"."gin_extract_query_trgm"("text", "internal", smallint, "internal", "internal", "internal", "internal") TO "postgres";
-GRANT ALL ON FUNCTION "public"."gin_extract_query_trgm"("text", "internal", smallint, "internal", "internal", "internal", "internal") TO "anon";
-GRANT ALL ON FUNCTION "public"."gin_extract_query_trgm"("text", "internal", smallint, "internal", "internal", "internal", "internal") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."gin_extract_query_trgm"("text", "internal", smallint, "internal", "internal", "internal", "internal") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."gin_extract_value_trgm"("text", "internal") TO "postgres";
-GRANT ALL ON FUNCTION "public"."gin_extract_value_trgm"("text", "internal") TO "anon";
-GRANT ALL ON FUNCTION "public"."gin_extract_value_trgm"("text", "internal") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."gin_extract_value_trgm"("text", "internal") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."gin_trgm_consistent"("internal", smallint, "text", integer, "internal", "internal", "internal", "internal") TO "postgres";
-GRANT ALL ON FUNCTION "public"."gin_trgm_consistent"("internal", smallint, "text", integer, "internal", "internal", "internal", "internal") TO "anon";
-GRANT ALL ON FUNCTION "public"."gin_trgm_consistent"("internal", smallint, "text", integer, "internal", "internal", "internal", "internal") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."gin_trgm_consistent"("internal", smallint, "text", integer, "internal", "internal", "internal", "internal") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."gin_trgm_triconsistent"("internal", smallint, "text", integer, "internal", "internal", "internal") TO "postgres";
-GRANT ALL ON FUNCTION "public"."gin_trgm_triconsistent"("internal", smallint, "text", integer, "internal", "internal", "internal") TO "anon";
-GRANT ALL ON FUNCTION "public"."gin_trgm_triconsistent"("internal", smallint, "text", integer, "internal", "internal", "internal") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."gin_trgm_triconsistent"("internal", smallint, "text", integer, "internal", "internal", "internal") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."gtrgm_compress"("internal") TO "postgres";
-GRANT ALL ON FUNCTION "public"."gtrgm_compress"("internal") TO "anon";
-GRANT ALL ON FUNCTION "public"."gtrgm_compress"("internal") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."gtrgm_compress"("internal") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."gtrgm_consistent"("internal", "text", smallint, "oid", "internal") TO "postgres";
-GRANT ALL ON FUNCTION "public"."gtrgm_consistent"("internal", "text", smallint, "oid", "internal") TO "anon";
-GRANT ALL ON FUNCTION "public"."gtrgm_consistent"("internal", "text", smallint, "oid", "internal") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."gtrgm_consistent"("internal", "text", smallint, "oid", "internal") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."gtrgm_decompress"("internal") TO "postgres";
-GRANT ALL ON FUNCTION "public"."gtrgm_decompress"("internal") TO "anon";
-GRANT ALL ON FUNCTION "public"."gtrgm_decompress"("internal") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."gtrgm_decompress"("internal") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."gtrgm_distance"("internal", "text", smallint, "oid", "internal") TO "postgres";
-GRANT ALL ON FUNCTION "public"."gtrgm_distance"("internal", "text", smallint, "oid", "internal") TO "anon";
-GRANT ALL ON FUNCTION "public"."gtrgm_distance"("internal", "text", smallint, "oid", "internal") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."gtrgm_distance"("internal", "text", smallint, "oid", "internal") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."gtrgm_options"("internal") TO "postgres";
-GRANT ALL ON FUNCTION "public"."gtrgm_options"("internal") TO "anon";
-GRANT ALL ON FUNCTION "public"."gtrgm_options"("internal") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."gtrgm_options"("internal") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."gtrgm_penalty"("internal", "internal", "internal") TO "postgres";
-GRANT ALL ON FUNCTION "public"."gtrgm_penalty"("internal", "internal", "internal") TO "anon";
-GRANT ALL ON FUNCTION "public"."gtrgm_penalty"("internal", "internal", "internal") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."gtrgm_penalty"("internal", "internal", "internal") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."gtrgm_picksplit"("internal", "internal") TO "postgres";
-GRANT ALL ON FUNCTION "public"."gtrgm_picksplit"("internal", "internal") TO "anon";
-GRANT ALL ON FUNCTION "public"."gtrgm_picksplit"("internal", "internal") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."gtrgm_picksplit"("internal", "internal") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."gtrgm_same"("public"."gtrgm", "public"."gtrgm", "internal") TO "postgres";
-GRANT ALL ON FUNCTION "public"."gtrgm_same"("public"."gtrgm", "public"."gtrgm", "internal") TO "anon";
-GRANT ALL ON FUNCTION "public"."gtrgm_same"("public"."gtrgm", "public"."gtrgm", "internal") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."gtrgm_same"("public"."gtrgm", "public"."gtrgm", "internal") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."gtrgm_union"("internal", "internal") TO "postgres";
-GRANT ALL ON FUNCTION "public"."gtrgm_union"("internal", "internal") TO "anon";
-GRANT ALL ON FUNCTION "public"."gtrgm_union"("internal", "internal") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."gtrgm_union"("internal", "internal") TO "service_role";
-
-
-
 GRANT ALL ON FUNCTION "public"."handle_event_deadline_changes"() TO "anon";
 GRANT ALL ON FUNCTION "public"."handle_event_deadline_changes"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."handle_event_deadline_changes"() TO "service_role";
@@ -6540,104 +6514,6 @@ GRANT ALL ON FUNCTION "public"."handle_verification_request_status_change"() TO 
 GRANT ALL ON FUNCTION "public"."handle_verification_request_submission"() TO "anon";
 GRANT ALL ON FUNCTION "public"."handle_verification_request_submission"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."handle_verification_request_submission"() TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."http"("request" "public"."http_request") TO "postgres";
-GRANT ALL ON FUNCTION "public"."http"("request" "public"."http_request") TO "anon";
-GRANT ALL ON FUNCTION "public"."http"("request" "public"."http_request") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."http"("request" "public"."http_request") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."http_delete"("uri" character varying) TO "postgres";
-GRANT ALL ON FUNCTION "public"."http_delete"("uri" character varying) TO "anon";
-GRANT ALL ON FUNCTION "public"."http_delete"("uri" character varying) TO "authenticated";
-GRANT ALL ON FUNCTION "public"."http_delete"("uri" character varying) TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."http_delete"("uri" character varying, "content" character varying, "content_type" character varying) TO "postgres";
-GRANT ALL ON FUNCTION "public"."http_delete"("uri" character varying, "content" character varying, "content_type" character varying) TO "anon";
-GRANT ALL ON FUNCTION "public"."http_delete"("uri" character varying, "content" character varying, "content_type" character varying) TO "authenticated";
-GRANT ALL ON FUNCTION "public"."http_delete"("uri" character varying, "content" character varying, "content_type" character varying) TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."http_get"("uri" character varying) TO "postgres";
-GRANT ALL ON FUNCTION "public"."http_get"("uri" character varying) TO "anon";
-GRANT ALL ON FUNCTION "public"."http_get"("uri" character varying) TO "authenticated";
-GRANT ALL ON FUNCTION "public"."http_get"("uri" character varying) TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."http_get"("uri" character varying, "data" "jsonb") TO "postgres";
-GRANT ALL ON FUNCTION "public"."http_get"("uri" character varying, "data" "jsonb") TO "anon";
-GRANT ALL ON FUNCTION "public"."http_get"("uri" character varying, "data" "jsonb") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."http_get"("uri" character varying, "data" "jsonb") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."http_head"("uri" character varying) TO "postgres";
-GRANT ALL ON FUNCTION "public"."http_head"("uri" character varying) TO "anon";
-GRANT ALL ON FUNCTION "public"."http_head"("uri" character varying) TO "authenticated";
-GRANT ALL ON FUNCTION "public"."http_head"("uri" character varying) TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."http_header"("field" character varying, "value" character varying) TO "postgres";
-GRANT ALL ON FUNCTION "public"."http_header"("field" character varying, "value" character varying) TO "anon";
-GRANT ALL ON FUNCTION "public"."http_header"("field" character varying, "value" character varying) TO "authenticated";
-GRANT ALL ON FUNCTION "public"."http_header"("field" character varying, "value" character varying) TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."http_list_curlopt"() TO "postgres";
-GRANT ALL ON FUNCTION "public"."http_list_curlopt"() TO "anon";
-GRANT ALL ON FUNCTION "public"."http_list_curlopt"() TO "authenticated";
-GRANT ALL ON FUNCTION "public"."http_list_curlopt"() TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."http_patch"("uri" character varying, "content" character varying, "content_type" character varying) TO "postgres";
-GRANT ALL ON FUNCTION "public"."http_patch"("uri" character varying, "content" character varying, "content_type" character varying) TO "anon";
-GRANT ALL ON FUNCTION "public"."http_patch"("uri" character varying, "content" character varying, "content_type" character varying) TO "authenticated";
-GRANT ALL ON FUNCTION "public"."http_patch"("uri" character varying, "content" character varying, "content_type" character varying) TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."http_post"("uri" character varying, "data" "jsonb") TO "postgres";
-GRANT ALL ON FUNCTION "public"."http_post"("uri" character varying, "data" "jsonb") TO "anon";
-GRANT ALL ON FUNCTION "public"."http_post"("uri" character varying, "data" "jsonb") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."http_post"("uri" character varying, "data" "jsonb") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."http_post"("uri" character varying, "content" character varying, "content_type" character varying) TO "postgres";
-GRANT ALL ON FUNCTION "public"."http_post"("uri" character varying, "content" character varying, "content_type" character varying) TO "anon";
-GRANT ALL ON FUNCTION "public"."http_post"("uri" character varying, "content" character varying, "content_type" character varying) TO "authenticated";
-GRANT ALL ON FUNCTION "public"."http_post"("uri" character varying, "content" character varying, "content_type" character varying) TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."http_put"("uri" character varying, "content" character varying, "content_type" character varying) TO "postgres";
-GRANT ALL ON FUNCTION "public"."http_put"("uri" character varying, "content" character varying, "content_type" character varying) TO "anon";
-GRANT ALL ON FUNCTION "public"."http_put"("uri" character varying, "content" character varying, "content_type" character varying) TO "authenticated";
-GRANT ALL ON FUNCTION "public"."http_put"("uri" character varying, "content" character varying, "content_type" character varying) TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."http_reset_curlopt"() TO "postgres";
-GRANT ALL ON FUNCTION "public"."http_reset_curlopt"() TO "anon";
-GRANT ALL ON FUNCTION "public"."http_reset_curlopt"() TO "authenticated";
-GRANT ALL ON FUNCTION "public"."http_reset_curlopt"() TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."http_set_curlopt"("curlopt" character varying, "value" character varying) TO "postgres";
-GRANT ALL ON FUNCTION "public"."http_set_curlopt"("curlopt" character varying, "value" character varying) TO "anon";
-GRANT ALL ON FUNCTION "public"."http_set_curlopt"("curlopt" character varying, "value" character varying) TO "authenticated";
-GRANT ALL ON FUNCTION "public"."http_set_curlopt"("curlopt" character varying, "value" character varying) TO "service_role";
 
 
 
@@ -6725,13 +6601,6 @@ GRANT ALL ON FUNCTION "public"."set_current_timestamp_updated_at"() TO "service_
 
 
 
-GRANT ALL ON FUNCTION "public"."set_limit"(real) TO "postgres";
-GRANT ALL ON FUNCTION "public"."set_limit"(real) TO "anon";
-GRANT ALL ON FUNCTION "public"."set_limit"(real) TO "authenticated";
-GRANT ALL ON FUNCTION "public"."set_limit"(real) TO "service_role";
-
-
-
 GRANT ALL ON FUNCTION "public"."set_submission_feedback_updated_at"() TO "anon";
 GRANT ALL ON FUNCTION "public"."set_submission_feedback_updated_at"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."set_submission_feedback_updated_at"() TO "service_role";
@@ -6744,41 +6613,6 @@ GRANT ALL ON FUNCTION "public"."set_submission_version_number"() TO "service_rol
 
 
 
-GRANT ALL ON FUNCTION "public"."show_limit"() TO "postgres";
-GRANT ALL ON FUNCTION "public"."show_limit"() TO "anon";
-GRANT ALL ON FUNCTION "public"."show_limit"() TO "authenticated";
-GRANT ALL ON FUNCTION "public"."show_limit"() TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."show_trgm"("text") TO "postgres";
-GRANT ALL ON FUNCTION "public"."show_trgm"("text") TO "anon";
-GRANT ALL ON FUNCTION "public"."show_trgm"("text") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."show_trgm"("text") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."similarity"("text", "text") TO "postgres";
-GRANT ALL ON FUNCTION "public"."similarity"("text", "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."similarity"("text", "text") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."similarity"("text", "text") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."similarity_dist"("text", "text") TO "postgres";
-GRANT ALL ON FUNCTION "public"."similarity_dist"("text", "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."similarity_dist"("text", "text") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."similarity_dist"("text", "text") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."similarity_op"("text", "text") TO "postgres";
-GRANT ALL ON FUNCTION "public"."similarity_op"("text", "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."similarity_op"("text", "text") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."similarity_op"("text", "text") TO "service_role";
-
-
-
 GRANT ALL ON FUNCTION "public"."soft_delete_event"("p_event_id" "uuid") TO "anon";
 GRANT ALL ON FUNCTION "public"."soft_delete_event"("p_event_id" "uuid") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."soft_delete_event"("p_event_id" "uuid") TO "service_role";
@@ -6788,41 +6622,6 @@ GRANT ALL ON FUNCTION "public"."soft_delete_event"("p_event_id" "uuid") TO "serv
 GRANT ALL ON FUNCTION "public"."soft_delete_submission"("p_submission_id" "uuid") TO "anon";
 GRANT ALL ON FUNCTION "public"."soft_delete_submission"("p_submission_id" "uuid") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."soft_delete_submission"("p_submission_id" "uuid") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."strict_word_similarity"("text", "text") TO "postgres";
-GRANT ALL ON FUNCTION "public"."strict_word_similarity"("text", "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."strict_word_similarity"("text", "text") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."strict_word_similarity"("text", "text") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."strict_word_similarity_commutator_op"("text", "text") TO "postgres";
-GRANT ALL ON FUNCTION "public"."strict_word_similarity_commutator_op"("text", "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."strict_word_similarity_commutator_op"("text", "text") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."strict_word_similarity_commutator_op"("text", "text") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."strict_word_similarity_dist_commutator_op"("text", "text") TO "postgres";
-GRANT ALL ON FUNCTION "public"."strict_word_similarity_dist_commutator_op"("text", "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."strict_word_similarity_dist_commutator_op"("text", "text") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."strict_word_similarity_dist_commutator_op"("text", "text") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."strict_word_similarity_dist_op"("text", "text") TO "postgres";
-GRANT ALL ON FUNCTION "public"."strict_word_similarity_dist_op"("text", "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."strict_word_similarity_dist_op"("text", "text") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."strict_word_similarity_dist_op"("text", "text") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."strict_word_similarity_op"("text", "text") TO "postgres";
-GRANT ALL ON FUNCTION "public"."strict_word_similarity_op"("text", "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."strict_word_similarity_op"("text", "text") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."strict_word_similarity_op"("text", "text") TO "service_role";
 
 
 
@@ -6850,13 +6649,6 @@ GRANT ALL ON FUNCTION "public"."sync_submission_status"() TO "service_role";
 
 
 
-GRANT ALL ON FUNCTION "public"."text_to_bytea"("data" "text") TO "postgres";
-GRANT ALL ON FUNCTION "public"."text_to_bytea"("data" "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."text_to_bytea"("data" "text") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."text_to_bytea"("data" "text") TO "service_role";
-
-
-
 GRANT ALL ON FUNCTION "public"."track_paper_activity"("p_submission_id" "uuid", "p_action_type" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."track_paper_activity"("p_submission_id" "uuid", "p_action_type" "text") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."track_paper_activity"("p_submission_id" "uuid", "p_action_type" "text") TO "service_role";
@@ -6875,65 +6667,9 @@ GRANT ALL ON FUNCTION "public"."update_event_status_based_on_date"() TO "service
 
 
 
-GRANT ALL ON FUNCTION "public"."urlencode"("string" "bytea") TO "postgres";
-GRANT ALL ON FUNCTION "public"."urlencode"("string" "bytea") TO "anon";
-GRANT ALL ON FUNCTION "public"."urlencode"("string" "bytea") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."urlencode"("string" "bytea") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."urlencode"("data" "jsonb") TO "postgres";
-GRANT ALL ON FUNCTION "public"."urlencode"("data" "jsonb") TO "anon";
-GRANT ALL ON FUNCTION "public"."urlencode"("data" "jsonb") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."urlencode"("data" "jsonb") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."urlencode"("string" character varying) TO "postgres";
-GRANT ALL ON FUNCTION "public"."urlencode"("string" character varying) TO "anon";
-GRANT ALL ON FUNCTION "public"."urlencode"("string" character varying) TO "authenticated";
-GRANT ALL ON FUNCTION "public"."urlencode"("string" character varying) TO "service_role";
-
-
-
 GRANT ALL ON FUNCTION "public"."verify_payment"("payment_id" "uuid", "verify_status" "public"."payment_status_enum", "p_admin_notes" "text", "rejection_reason" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."verify_payment"("payment_id" "uuid", "verify_status" "public"."payment_status_enum", "p_admin_notes" "text", "rejection_reason" "text") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."verify_payment"("payment_id" "uuid", "verify_status" "public"."payment_status_enum", "p_admin_notes" "text", "rejection_reason" "text") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."word_similarity"("text", "text") TO "postgres";
-GRANT ALL ON FUNCTION "public"."word_similarity"("text", "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."word_similarity"("text", "text") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."word_similarity"("text", "text") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."word_similarity_commutator_op"("text", "text") TO "postgres";
-GRANT ALL ON FUNCTION "public"."word_similarity_commutator_op"("text", "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."word_similarity_commutator_op"("text", "text") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."word_similarity_commutator_op"("text", "text") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."word_similarity_dist_commutator_op"("text", "text") TO "postgres";
-GRANT ALL ON FUNCTION "public"."word_similarity_dist_commutator_op"("text", "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."word_similarity_dist_commutator_op"("text", "text") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."word_similarity_dist_commutator_op"("text", "text") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."word_similarity_dist_op"("text", "text") TO "postgres";
-GRANT ALL ON FUNCTION "public"."word_similarity_dist_op"("text", "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."word_similarity_dist_op"("text", "text") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."word_similarity_dist_op"("text", "text") TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."word_similarity_op"("text", "text") TO "postgres";
-GRANT ALL ON FUNCTION "public"."word_similarity_op"("text", "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."word_similarity_op"("text", "text") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."word_similarity_op"("text", "text") TO "service_role";
 
 
 

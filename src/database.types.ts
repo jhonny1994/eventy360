@@ -1295,10 +1295,6 @@ export type Database = {
         Args: { period: Database["public"]["Enums"]["billing_period_enum"] }
         Returns: unknown
       }
-      bytea_to_text: {
-        Args: { data: string }
-        Returns: string
-      }
       calculate_event_statistics: {
         Args: { p_event_id: string }
         Returns: Json
@@ -1618,26 +1614,6 @@ export type Database = {
         Args: { p_wilaya_id: number; p_locale?: string }
         Returns: string
       }
-      gtrgm_compress: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_decompress: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_in: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_options: {
-        Args: { "": unknown }
-        Returns: undefined
-      }
-      gtrgm_out: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
       handle_submission_feedback: {
         Args: {
           p_submission_id: string
@@ -1645,57 +1621,6 @@ export type Database = {
           p_decision_status: string
         }
         Returns: undefined
-      }
-      http: {
-        Args: { request: Database["public"]["CompositeTypes"]["http_request"] }
-        Returns: Database["public"]["CompositeTypes"]["http_response"]
-      }
-      http_delete: {
-        Args:
-          | { uri: string }
-          | { uri: string; content: string; content_type: string }
-        Returns: Database["public"]["CompositeTypes"]["http_response"]
-      }
-      http_get: {
-        Args: { uri: string } | { uri: string; data: Json }
-        Returns: Database["public"]["CompositeTypes"]["http_response"]
-      }
-      http_head: {
-        Args: { uri: string }
-        Returns: Database["public"]["CompositeTypes"]["http_response"]
-      }
-      http_header: {
-        Args: { field: string; value: string }
-        Returns: Database["public"]["CompositeTypes"]["http_header"]
-      }
-      http_list_curlopt: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          curlopt: string
-          value: string
-        }[]
-      }
-      http_patch: {
-        Args: { uri: string; content: string; content_type: string }
-        Returns: Database["public"]["CompositeTypes"]["http_response"]
-      }
-      http_post: {
-        Args:
-          | { uri: string; content: string; content_type: string }
-          | { uri: string; data: Json }
-        Returns: Database["public"]["CompositeTypes"]["http_response"]
-      }
-      http_put: {
-        Args: { uri: string; content: string; content_type: string }
-        Returns: Database["public"]["CompositeTypes"]["http_response"]
-      }
-      http_reset_curlopt: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      http_set_curlopt: {
-        Args: { curlopt: string; value: string }
-        Returns: boolean
       }
       is_admin: {
         Args: Record<PropertyKey, never>
@@ -1774,18 +1699,6 @@ export type Database = {
           rank: number
         }[]
       }
-      set_limit: {
-        Args: { "": number }
-        Returns: number
-      }
-      show_limit: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      show_trgm: {
-        Args: { "": string }
-        Returns: string[]
-      }
       soft_delete_event: {
         Args: { p_event_id: string }
         Returns: boolean
@@ -1821,10 +1734,6 @@ export type Database = {
         }
         Returns: string
       }
-      text_to_bytea: {
-        Args: { data: string }
-        Returns: string
-      }
       track_paper_activity: {
         Args: { p_submission_id: string; p_action_type: string }
         Returns: string
@@ -1832,10 +1741,6 @@ export type Database = {
       update_event_status_based_on_date: {
         Args: Record<PropertyKey, never>
         Returns: undefined
-      }
-      urlencode: {
-        Args: { data: Json } | { string: string } | { string: string }
-        Returns: string
       }
       verify_payment: {
         Args: {
@@ -1910,23 +1815,7 @@ export type Database = {
       verification_request_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
-      http_header: {
-        field: string | null
-        value: string | null
-      }
-      http_request: {
-        method: unknown | null
-        uri: string | null
-        headers: Database["public"]["CompositeTypes"]["http_header"][] | null
-        content_type: string | null
-        content: string | null
-      }
-      http_response: {
-        status: number | null
-        content_type: string | null
-        headers: Database["public"]["CompositeTypes"]["http_header"][] | null
-        content: string | null
-      }
+      [_ in never]: never
     }
   }
 }
