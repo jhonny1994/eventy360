@@ -36,13 +36,13 @@ This document outlines the plan for implementing and enhancing the admin routes 
 - [x] Add basic pagination
 - [x] Add translations to `ar.json` for Events route
 
-### Submissions Route (`/submissions`)
-- [ ] Create basic list page with status filter
-- [ ] Add columns: title, author, event, status
-- [ ] Implement view details modal (view-only)
-- [ ] Add download option for papers
-- [ ] Add basic pagination
-- [ ] Add translations to `ar.json` for Submissions route
+### Submissions Route (`/submissions`) - ✅ Exists
+- [x] Create basic list page with status filter
+- [x] Add columns: title, author, event, status
+- [x] Implement view details modal (view-only)
+- [x] Add download option for papers
+- [x] Add basic pagination
+- [x] Add translations to `ar.json` for Submissions route
 
 ### Topics Route (`/topics`) - ✅ Exists
 - [x] List page implementation

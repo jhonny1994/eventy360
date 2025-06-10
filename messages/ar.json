@@ -2489,5 +2489,67 @@
         "hybrid": "مختلط"
       }
     }
+  },
+  "AdminSubmissions": {
+    "title": "المشاركات",
+    "submissionsCount": "إجمالي المشاركات: {count}",
+    "noSubmissions": "لا توجد مشاركات",
+    "fetchError": "حدث خطأ أثناء جلب المشاركات:",
+    "unknownSubmission": "مشاركة غير معروفة",
+    "unknownResearcher": "باحث غير معروف",
+    "unknownEvent": "فعالية غير معروفة",
+    "filters": {
+      "allSubmissions": "جميع المشاركات",
+      "received": "مستلمة",
+      "underReview": "قيد المراجعة",
+      "accepted": "مقبولة",
+      "rejected": "مرفوضة",
+      "search": "بحث",
+      "searchSubmissionPlaceholder": "البحث عن مشاركة...",
+      "noMatchingSubmissions": "لا توجد مشاركات مطابقة لمعايير البحث"
+    },
+    "status": {
+      "received": "مستلمة",
+      "underReview": "قيد المراجعة",
+      "accepted": "مقبولة",
+      "rejected": "مرفوضة"
+    },
+    "table": {
+      "title": "عنوان المشاركة",
+      "author": "المؤلف",
+      "event": "الفعالية",
+      "submissionDate": "تاريخ التقديم",
+      "status": "الحالة",
+      "actions": "الإجراءات"
+    },
+    "actions": {
+      "viewDetails": "عرض التفاصيل"
+    },
+    "pagination": {
+      "showing": "عرض",
+      "of": "من",
+      "entries": "سجل",
+      "previousPage": "الصفحة السابقة",
+      "nextPage": "الصفحة التالية",
+      "pageSize": "حجم الصفحة"
+    },
+    "modal": {
+      "submissionDetails": "تفاصيل المشاركة",
+      "close": "إغلاق",
+      "submissionInfo": "معلومات المشاركة",
+      "title": "العنوان",
+      "abstract": "الملخص",
+      "researcher": "الباحث",
+      "event": "الفعالية",
+      "submissionDate": "تاريخ التقديم",
+      "status": "الحالة",
+      "version": "الإصدار",
+      "keywords": "الكلمات المفتاحية",
+      "noKeywords": "لا توجد كلمات مفتاحية",
+      "downloadFile": "تحميل الملف",
+      "noFileAvailable": "لا يوجد ملف متاح",
+      "reviewFeedback": "ملاحظات المراجعة",
+      "noFeedback": "لا توجد ملاحظات"
+    }
   }
 }
