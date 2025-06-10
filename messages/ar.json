@@ -2424,5 +2424,70 @@
     },
     "fetchError": "حدث خطأ أثناء جلب بيانات المستخدمين:",
     "noUsers": "لا يوجد مستخدمين مسجلين حتى الآن."
+  },
+  "AdminEvents": {
+    "title": "الفعاليات",
+    "eventsCount": "إجمالي الفعاليات: {count}",
+    "noEvents": "لا توجد فعاليات",
+    "fetchError": "حدث خطأ أثناء جلب الفعاليات:",
+    "unknownEvent": "فعالية غير معروفة",
+    "unknownOrganizer": "منظم غير معروف",
+    "filters": {
+      "allEvents": "جميع الفعاليات",
+      "ongoing": "جارية",
+      "completed": "منتهية",
+      "cancelled": "ملغية",
+      "search": "بحث",
+      "searchEventPlaceholder": "البحث عن فعالية...",
+      "noMatchingEvents": "لا توجد فعاليات مطابقة لمعايير البحث"
+    },
+    "status": {
+      "ongoing": "جارية",
+      "completed": "منتهية",
+      "cancelled": "ملغية"
+    },
+    "table": {
+      "event": "الفعالية",
+      "date": "التاريخ",
+      "from": "من",
+      "to": "إلى",
+      "organizer": "المنظم",
+      "status": "الحالة",
+      "actions": "الإجراءات"
+    },
+    "actions": {
+      "viewDetails": "عرض التفاصيل"
+    },
+    "pagination": {
+      "showing": "عرض",
+      "of": "من",
+      "entries": "سجل",
+      "previousPage": "الصفحة السابقة",
+      "nextPage": "الصفحة التالية",
+      "pageSize": "حجم الصفحة"
+    },
+    "modal": {
+      "eventDetails": "تفاصيل الفعالية",
+      "close": "إغلاق",
+      "eventInfo": "معلومات الفعالية",
+      "dates": "التواريخ",
+      "location": "الموقع",
+      "contact": "معلومات الاتصال",
+      "from": "من",
+      "to": "إلى",
+      "submissionDeadline": "موعد تقديم الملخصات",
+      "organizer": "المنظم",
+      "problemStatement": "بيان المشكلة",
+      "eventAxes": "محاور الفعالية",
+      "eventObjectives": "أهداف الفعالية",
+      "submissionGuidelines": "إرشادات التقديم",
+      "whoOrganizes": "الجهة المنظمة",
+      "notAvailable": "غير متوفر",
+      "format": {
+        "physical": "حضوري",
+        "virtual": "افتراضي",
+        "hybrid": "مختلط"
+      }
+    }
   }
 }

@@ -1,73 +1,70 @@
-'use client';
+"use client";
 
 /**
  * EventDetailsHeader component for displaying event header information
- * 
+ *
  * Uses standardized hooks:
  * - useTranslations: For i18n translations
  */
-import React from 'react'
-import { Calendar, Users, DollarSign, CheckCircle, Tag } from 'lucide-react'
-import Image from 'next/image'
-import useTranslations from '@/hooks/useTranslations'
-import useLocale from '@/hooks/useLocale'
+import React from "react";
+import { Calendar, Users, DollarSign, CheckCircle, Tag } from "lucide-react";
+import Image from "next/image";
+import useTranslations from "@/hooks/useTranslations";
+import useLocale from "@/hooks/useLocale";
 
 interface EventDetailsHeaderProps {
   event: {
-    id: string
-    title: { [key: string]: string } | string
-    subtitle: string | null
-    event_type: string
-    event_date: string
-    max_participants: number | null
-    registration_fee: number | null
-    status: string
-    visibility: string
-    format: string
-    phone: string
-    email: string
-    website: string | null
-    created_at: string
+    id: string;
+    title: { [key: string]: string } | string;
+    subtitle: string | null;
+    event_type: string;
+    event_date: string;
+    max_participants: number | null;
+    registration_fee: number | null;
+    status: string;
+    visibility: string;
+    format: string;
+    phone: string;
+    email: string;
+    website: string | null;
+    created_at: string;
     organizer: {
-      display_name: string | null
-      profile_picture_url: string | null
-      is_verified: boolean
-    } | null
-  }
-  locale: string
+      display_name: string | null;
+      profile_picture_url: string | null;
+      is_verified: boolean;
+    } | null;
+  };
+  locale: string;
 }
 
 export function EventDetailsHeader({ event, locale }: EventDetailsHeaderProps) {
-  const t = useTranslations('EventDetails.header')
-  const tEnums = useTranslations('Enums')
-  const currentLocale = useLocale()
-  
+  const t = useTranslations("EventDetails.header");
+  const tEnums = useTranslations("Enums");
+  const currentLocale = useLocale();
+
   // Get localized title
-  const title = typeof event.title === 'object' 
-    ? event.title[locale] || event.title['ar'] || t('eventInfo')
-    : event.title || t('eventInfo')
+  const title =
+    typeof event.title === "object"
+      ? event.title[locale] || event.title["ar"] || t("eventInfo")
+      : event.title || t("eventInfo");
 
   // Get status color and text
   const getStatusInfo = (status: string) => {
-    return { text: tEnums(`EventStatus.${status}`) }
-  }
+    return { text: tEnums(`EventStatus.${status}`) };
+  };
 
-  const statusInfo = getStatusInfo(event.status)
+  const statusInfo = getStatusInfo(event.status);
 
   return (
     <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
       {/* Content */}
       <div className="p-6">
         {/* Title */}
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          {title}
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">{title}</h1>
 
         {/* Subtitle */}
         {event.subtitle && (
-          <p className="text-lg text-gray-600 mb-4">
-            {event.subtitle}
-          </p>
+          <p className="text-lg text-gray-600 mb-4">{event.subtitle}</p>
         )}
 
         {/* Organizer Info - Moved under title */}
@@ -79,7 +76,7 @@ export function EventDetailsHeader({ event, locale }: EventDetailsHeaderProps) {
                   <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-700">
                     <Image
                       src={event.organizer.profile_picture_url}
-                      alt={event.organizer.display_name || 'Organizer'}
+                      alt={event.organizer.display_name || "Organizer"}
                       width={48}
                       height={48}
                       className="object-cover w-full h-full"
@@ -88,22 +85,32 @@ export function EventDetailsHeader({ event, locale }: EventDetailsHeaderProps) {
                 ) : (
                   <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
                     <span className="text-gray-600 font-medium">
-                      {(event.organizer.display_name || 'A')[0].toUpperCase()}
+                      {(event.organizer.display_name || "A")[0].toUpperCase()}
                     </span>
                   </div>
                 )}
                 {/* Verification badge - only shown if organizer is verified */}
                 {event.organizer.is_verified && (
                   <div className="absolute -bottom-1 -right-1 bg-white text-blue-600 dark:bg-gray-800 dark:text-blue-400 rounded-full p-1 shadow-sm border border-blue-100 dark:border-blue-900">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-3 w-3"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   </div>
                 )}
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-900">
-                  {t('organizedBy')} {event.organizer.display_name || 'Anonymous'}
+                  {t("organizedBy")}{" "}
+                  {event.organizer.display_name || "Anonymous"}
                 </p>
               </div>
             </div>
@@ -118,12 +125,14 @@ export function EventDetailsHeader({ event, locale }: EventDetailsHeaderProps) {
               <Calendar className="w-5 h-5 text-gray-400" />
             </div>
             <div>
-              <h3 className="text-sm font-medium text-gray-900">{t('createdDate')}</h3>
+              <h3 className="text-sm font-medium text-gray-900">
+                {t("createdDate")}
+              </h3>
               <p className="text-sm text-gray-600 mt-1">
                 {new Date(event.created_at).toLocaleDateString(currentLocale, {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric'
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
                 })}
               </p>
             </div>
@@ -135,9 +144,13 @@ export function EventDetailsHeader({ event, locale }: EventDetailsHeaderProps) {
               <Tag className="w-5 h-5 text-gray-400" />
             </div>
             <div>
-              <h3 className="text-sm font-medium text-gray-900">{t('eventType')}</h3>
+              <h3 className="text-sm font-medium text-gray-900">
+                {t("eventType")}
+              </h3>
               <p className="text-sm text-gray-600 mt-1">
-                {event.event_type ? tEnums(`EventType.${event.event_type}`) : t('unknown')}
+                {event.event_type
+                  ? tEnums(`EventFormat.${event.event_type}`)
+                  : t("unknown")}
               </p>
             </div>
           </div>
@@ -148,10 +161,10 @@ export function EventDetailsHeader({ event, locale }: EventDetailsHeaderProps) {
               <CheckCircle className="w-5 h-5 text-gray-400" />
             </div>
             <div>
-              <h3 className="text-sm font-medium text-gray-900">{t('statusHeader')}</h3>
-              <p className="text-sm text-gray-600 mt-1">
-                {statusInfo.text}
-              </p>
+              <h3 className="text-sm font-medium text-gray-900">
+                {t("statusHeader")}
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">{statusInfo.text}</p>
             </div>
           </div>
 
@@ -161,9 +174,13 @@ export function EventDetailsHeader({ event, locale }: EventDetailsHeaderProps) {
               <DollarSign className="w-5 h-5 text-gray-400" />
             </div>
             <div>
-              <h3 className="text-sm font-medium text-gray-900">{t('registrationFee')}</h3>
+              <h3 className="text-sm font-medium text-gray-900">
+                {t("registrationFee")}
+              </h3>
               <p className="text-sm text-gray-600 mt-1">
-                {event.registration_fee ? `$${event.registration_fee}` : t('free')}
+                {event.registration_fee
+                  ? `$${event.registration_fee}`
+                  : t("free")}
               </p>
             </div>
           </div>
@@ -175,9 +192,12 @@ export function EventDetailsHeader({ event, locale }: EventDetailsHeaderProps) {
                 <Users className="w-5 h-5 text-gray-400" />
               </div>
               <div>
-                <h3 className="text-sm font-medium text-gray-900">{t('statistics.attendees')}</h3>
+                <h3 className="text-sm font-medium text-gray-900">
+                  {t("statistics.attendees")}
+                </h3>
                 <p className="text-sm text-gray-600 mt-1">
-                  {t('maxParticipants')} {event.max_participants} {t('statistics.attendees')}
+                  {t("maxParticipants")} {event.max_participants}{" "}
+                  {t("statistics.attendees")}
                 </p>
               </div>
             </div>
@@ -187,5 +207,5 @@ export function EventDetailsHeader({ event, locale }: EventDetailsHeaderProps) {
         {/* Statistics Section removed */}
       </div>
     </div>
-  )
+  );
 }

@@ -28,13 +28,13 @@ This document outlines the plan for implementing and enhancing the admin routes 
 - [x] Improve mobile responsiveness
 - [x] Update translations in `ar.json` for new payment features
 
-### Events Route (`/events`)
-- [ ] Create basic list page with status filter
-- [ ] Implement search by name functionality
-- [ ] Add columns: event name, date, organizer, status
-- [ ] Add view details modal
-- [ ] Add basic pagination
-- [ ] Add translations to `ar.json` for Events route
+### Events Route (`/events`) - ✅ Exists
+- [x] Create basic list page with status filter
+- [x] Implement search by name functionality
+- [x] Add columns: event name, date, organizer, status
+- [x] Add view details modal
+- [x] Add basic pagination
+- [x] Add translations to `ar.json` for Events route
 
 ### Submissions Route (`/submissions`)
 - [ ] Create basic list page with status filter

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
@@ -51,7 +51,7 @@ export default function LanguageSwitcher() {
     languages.find((lang) => lang.code === locale) || languages[0];
 
   // Update dropdown position based on button position
-  const updateDropdownPosition = () => {
+  const updateDropdownPosition = useCallback(() => {
     if (btnRef.current) {
       const rect = btnRef.current.getBoundingClientRect();
       const scrollX = window.scrollX || window.pageXOffset;
@@ -70,7 +70,7 @@ export default function LanguageSwitcher() {
         });
       }
     }
-  };
+  }, [isRTL]);
 
   // Handle client-side mounting for portal
   useEffect(() => {
@@ -80,7 +80,7 @@ export default function LanguageSwitcher() {
     if (btnRef.current && isOpen) {
       updateDropdownPosition();
     }
-  }, []);
+  }, [isOpen, updateDropdownPosition]);
 
   // Add scroll and resize listeners to update position
   useEffect(() => {
@@ -103,7 +103,7 @@ export default function LanguageSwitcher() {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleResize);
     };
-  }, [isOpen]);
+  }, [isOpen, updateDropdownPosition]);
 
   // Handle click outside to close dropdown
   useEffect(() => {

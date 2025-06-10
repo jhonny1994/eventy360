@@ -9,6 +9,7 @@ interface DetailLinkButtonProps {
   label: string;
   disabled?: boolean;
   className?: string;
+  onClick?: () => void;
 }
 
 /**
@@ -22,10 +23,23 @@ export default function DetailLinkButton({
   href,
   label,
   disabled = false,
-  className = ''
+  className = '',
+  onClick
 }: DetailLinkButtonProps) {
   const locale = useLocale();
   const isRtl = locale === 'ar';
+  
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (disabled) {
+      e.preventDefault();
+      return;
+    }
+    
+    if (onClick) {
+      e.preventDefault();
+      onClick();
+    }
+  };
   
   return (
     <Link 
@@ -35,7 +49,7 @@ export default function DetailLinkButton({
           ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
           : 'bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800'
         } ${className}`}
-      onClick={e => disabled && e.preventDefault()}
+      onClick={handleClick}
     >
       <HiEye className={`h-4 w-4 ${isRtl ? 'ml-2' : 'mr-2'}`} />
       {label}
