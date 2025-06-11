@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client';
 import { useTranslations, useLocale } from 'next-intl';
 import {
   Table,
@@ -25,7 +25,7 @@ export default function PaymentHistoryDisplay({ userId }: PaymentHistoryDisplayP
   const t = useTranslations('ProfilePage.PaymentHistory'); // Namespace for translations
   const locale = useLocale();
   const isRtl = locale === 'ar';
-  const supabase = createClientComponentClient<Database>();
+  const supabase = createClient();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

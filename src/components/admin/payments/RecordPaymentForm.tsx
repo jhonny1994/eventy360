@@ -8,9 +8,8 @@ import { useTranslations } from 'next-intl';
 import { Alert, Button, Card, Label, TextInput, Select, Textarea, Spinner } from 'flowbite-react';
 import { useRouter } from 'next/navigation';
 import { HiCheck, HiInformationCircle, HiSearch, HiUser, HiX } from 'react-icons/hi';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client';
 import { BillingPeriodType, PaymentMethodType } from '@/types/payments';
-import { Database } from '@/database.types';
 import Image from 'next/image';
 
 // Define schema for the payment form
@@ -46,6 +45,7 @@ export default function RecordPaymentForm() {
   const t = useTranslations('AdminPayments.RecordPaymentForm');
   const tCommon = useTranslations('Common');
   const router = useRouter();
+  const supabase = createClient();
 
   // State for form submission
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -94,8 +94,6 @@ export default function RecordPaymentForm() {
     setSearchResults([]);
 
     try {
-      const supabase = createClientComponentClient<Database>();
-      
       // Get researcher profiles
       const { data: researchers, error: researcherError } = await supabase
         .from('researcher_profiles')
@@ -190,8 +188,6 @@ export default function RecordPaymentForm() {
     setFormSuccess(null);
 
     try {
-      const supabase = createClientComponentClient<Database>();
-      
       // Call the RPC function
       const { data: result, error } = await supabase.rpc('record_manual_payment', {
         target_user_id: data.userId,
