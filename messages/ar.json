@@ -1680,6 +1680,7 @@
       "sidebar": {
         "dashboard": "لوحة التحكم",
         "users": "المستخدمون",
+        "admins": "المسؤولون",
         "payments": "المدفوعات",
         "events": "الملتقيات",
         "submissions": "المشاركات",
@@ -2550,6 +2551,51 @@
       "noFileAvailable": "لا يوجد ملف متاح",
       "reviewFeedback": "ملاحظات المراجعة",
       "noFeedback": "لا توجد ملاحظات"
+    }
+  },
+  "AdminAdmins": {
+    "title": "إدارة المسؤولين",
+    "adminsCount": "إجمالي المسؤولين: {count}",
+    "inviteButton": "دعوة مسؤول جديد",
+    "filters": {
+      "searchAdminPlaceholder": "البحث عن مسؤول...",
+      "search": "بحث",
+      "noMatchingAdmins": "لا توجد نتائج مطابقة للبحث."
+    },
+    "table": {
+      "admin": "المسؤول",
+      "createdAt": "تاريخ الإنشاء"
+    },
+    "pagination": {
+      "showing": "عرض",
+      "of": "من",
+      "entries": "سجل",
+      "previousPage": "الصفحة السابقة",
+      "nextPage": "الصفحة التالية",
+      "pageSize": "حجم الصفحة"
+    },
+    "fetchError": "حدث خطأ أثناء جلب بيانات المسؤولين:",
+    "noAdmins": "لا يوجد مسؤولين مسجلين حتى الآن.",
+    "inviteModal": {
+      "title": "دعوة مسؤول جديد",
+      "form": {
+        "emailLabel": "البريد الإلكتروني",
+        "emailPlaceholder": "أدخل البريد الإلكتروني",
+        "nameLabel": "الاسم",
+        "namePlaceholder": "أدخل الاسم",
+        "send": "إرسال الدعوة",
+        "sending": "جاري الإرسال...",
+        "cancel": "إلغاء"
+      },
+      "success": {
+        "title": "تم إرسال الدعوة بنجاح",
+        "message": "تم إرسال دعوة للمسؤول الجديد. سيتلقى رابط تسجيل الدخول عبر البريد الإلكتروني."
+      },
+      "errors": {
+        "allFieldsRequired": "جميع الحقول مطلوبة",
+        "invalidEmail": "يرجى إدخال بريد إلكتروني صالح",
+        "inviteFailed": "فشل إرسال الدعوة. يرجى المحاولة مرة أخرى."
+      }
     }
   }
 }

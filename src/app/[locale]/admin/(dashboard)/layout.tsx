@@ -32,6 +32,7 @@ export default async function AdminLayout({
   const sidebarTranslations = {
     dashboard: t("sidebar.dashboard"),
     users: t("sidebar.users"),
+    admins: t("sidebar.admins"),
     payments: t("sidebar.payments"),
     events: t("sidebar.events"),
     submissions: t("sidebar.submissions"),

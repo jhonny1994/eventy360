@@ -50,10 +50,85 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const supabaseClient: SupabaseClient = createClient(
+    // Get the authorization header
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader) {
+      console.error("Missing authorization header");
+      return new Response(
+        JSON.stringify({ error: "Unauthorized: Missing authorization header" }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Create client with service role for admin operations
+    const supabaseAdmin: SupabaseClient = createClient(
       supabaseUrl,
       supabaseServiceRoleKey
     );
+
+    // Create client with auth token for caller verification
+    const supabaseClient: SupabaseClient = createClient(
+      supabaseUrl,
+      supabaseServiceRoleKey,
+      {
+        global: {
+          headers: {
+            Authorization: authHeader,
+          },
+        },
+      }
+    );
+
+    // Verify the caller's identity
+    const {
+      data: { user },
+      error: userError,
+    } = await supabaseClient.auth.getUser();
+
+    if (userError || !user) {
+      console.error("Error verifying user:", userError);
+      return new Response(
+        JSON.stringify({ error: "Unauthorized: Invalid token" }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Check if the caller is an admin
+    const { data: callerProfile, error: profileError } = await supabaseAdmin
+      .from("profiles")
+      .select("user_type")
+      .eq("id", user.id)
+      .single();
+
+    if (profileError || !callerProfile) {
+      console.error("Error fetching caller profile:", profileError);
+      return new Response(
+        JSON.stringify({ error: "Unauthorized: User profile not found" }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    if (callerProfile.user_type !== "admin") {
+      console.error("Non-admin user attempting to invite admin:", user.id);
+      return new Response(
+        JSON.stringify({
+          error: "Forbidden: Only admins can invite new admins",
+        }),
+        {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
 
     // Get invitedUserEmail and invitedUserName from the request body
     let invitedUserEmail: string | undefined;
@@ -105,7 +180,7 @@ Deno.serve(async (req: Request) => {
 
     // Check if user already exists
     const { data: existingUser, error: existingUserError } =
-      await supabaseClient.auth.admin.getUserByEmail(invitedUserEmail);
+      await supabaseAdmin.auth.admin.getUserByEmail(invitedUserEmail);
 
     let userId: string;
     let isNewUser = false;
@@ -132,7 +207,7 @@ Deno.serve(async (req: Request) => {
     } else {
       // Create a new user
       const { data: newUser, error: createUserError } =
-        await supabaseClient.auth.admin.createUser({
+        await supabaseAdmin.auth.admin.createUser({
           email: invitedUserEmail,
           email_confirm: true, // Auto-confirm email as admin is inviting
           // password: // Let user set password via magic link flow
@@ -174,7 +249,7 @@ Deno.serve(async (req: Request) => {
 
     // Create or update profile and admin_profile records
     // Ensure profiles record exists
-    const { error: profileUpsertError } = await supabaseClient
+    const { error: profileUpsertError } = await supabaseAdmin
       .from("profiles")
       .upsert(
         {
@@ -190,7 +265,7 @@ Deno.serve(async (req: Request) => {
       console.error("Profile upsert error:", profileUpsertError);
       // If user creation was part of this flow and profile fails, consider cleanup
       if (isNewUser) {
-        await supabaseClient.auth.admin.deleteUser(userId);
+        await supabaseAdmin.auth.admin.deleteUser(userId);
         console.log(
           "Cleaned up new auth user due to profile upsert failure:",
           userId
@@ -213,7 +288,7 @@ Deno.serve(async (req: Request) => {
     );
 
     // Ensure admin_profiles record exists
-    const { error: adminProfileUpsertError } = await supabaseClient
+    const { error: adminProfileUpsertError } = await supabaseAdmin
       .from("admin_profiles")
       .upsert(
         {
@@ -235,7 +310,7 @@ Deno.serve(async (req: Request) => {
 
     // Generate an invitation magic link
     const { data: linkData, error: linkError } =
-      await supabaseClient.auth.admin.generateLink({
+      await supabaseAdmin.auth.admin.generateLink({
         type: "magiclink",
         email: invitedUserEmail,
         options: {
@@ -262,7 +337,7 @@ Deno.serve(async (req: Request) => {
     console.log("Magic link generated:", magicLink);
 
     // Call the create_admin_invitation SQL function to record invitation and queue notification
-    const { error: rpcError } = await supabaseClient.rpc(
+    const { error: rpcError } = await supabaseAdmin.rpc(
       "create_admin_invitation",
       {
         p_invited_user_email: invitedUserEmail,
@@ -284,6 +359,18 @@ Deno.serve(async (req: Request) => {
     }
 
     console.log("Admin invitation notification queued successfully via RPC.");
+
+    // Log the admin action
+    await supabaseAdmin.from("admin_actions_log").insert({
+      admin_user_id: user.id,
+      action_type: "admin_user_edit",
+      target_user_id: userId,
+      details: {
+        action: "invited_admin",
+        invited_email: invitedUserEmail,
+        invited_name: finalInvitedUserName,
+      },
+    });
 
     // Return success
     return new Response(

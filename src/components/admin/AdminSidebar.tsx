@@ -16,7 +16,8 @@ import {
   HiMail, 
   HiLogout,
   HiShieldCheck,
-  HiUser 
+  HiUser,
+  HiUserGroup
 } from 'react-icons/hi';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -29,6 +30,7 @@ interface AdminSidebarProps {
   translations: {
     dashboard: string;
     users: string;
+    admins: string;
     payments: string;
     events: string;
     submissions: string;
@@ -111,6 +113,15 @@ export default function AdminSidebar({ translations, locale, adminName }: AdminS
             className="rtl:text-right"
           >
             {translations.users}
+          </SidebarItem>
+          
+          <SidebarItem 
+            href={addLocaleToPath('/admins')}
+            icon={HiUserGroup}
+            active={isActive('/admins')}
+            className="rtl:text-right"
+          >
+            {translations.admins}
           </SidebarItem>
           
           <SidebarItem 

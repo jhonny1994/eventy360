@@ -11,4 +11,10 @@ export { default as AdminSidebar } from './AdminSidebar';
 export * from './auth';
 
 // UI components
-export * from './ui'; 
+export * from './ui';
+
+// Admin UI components
+export { default as InviteAdminModal } from './InviteAdminModal';
+export { default as InviteAdminButton } from './InviteAdminButton';
+
+// Add other admin components as they are created 
