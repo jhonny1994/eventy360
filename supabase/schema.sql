@@ -2434,6 +2434,25 @@ $$;
 ALTER FUNCTION "public"."handle_event_deadline_changes"() OWNER TO "postgres";
 
 
+CREATE OR REPLACE FUNCTION "public"."handle_new_payment"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+BEGIN
+  INSERT INTO public.notification_queue (template_key, recipient_profile_id, payload_data, notification_type)
+  VALUES ('payment_received_pending_verification', NEW.user_id, jsonb_build_object(
+    'payment_id', NEW.id, 'amount', NEW.amount, 'reported_at', NEW.reported_at), 'immediate');
+  RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."handle_new_payment"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."handle_new_payment"() IS 'Handles notifications for newly reported payments.';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."handle_new_user"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
@@ -2518,207 +2537,82 @@ $$;
 ALTER FUNCTION "public"."handle_notification_insert"() OWNER TO "postgres";
 
 
-CREATE OR REPLACE FUNCTION "public"."handle_payment_notification"() RETURNS "trigger"
-    LANGUAGE "plpgsql"
-    AS $$
-BEGIN
-  -- Proceed if status changed
-  IF OLD.status != NEW.status THEN
-    -- For verified payments - queue notification email
-    IF NEW.status = 'verified' THEN
-      -- Queue only the payment verified notification (removed subscription_activated notification)
-      INSERT INTO notification_queue (
-        template_key,
-        recipient_profile_id,
-        status,
-        attempts,
-        payload_data,
-        notification_type
-      ) VALUES (
-        'payment_verified_notification',
-        NEW.user_id,
-        'pending',
-        0,
-        jsonb_build_object(
-          'payment_id', NEW.id,
-          'reference_number', COALESCE(NEW.reference_number, NEW.id::TEXT), -- Fix: Cast UUID to TEXT
-          'amount', NEW.amount,
-          'payment_method', NEW.payment_method_reported,
-          'billing_period', NEW.billing_period,
-          'reported_date', to_char(NEW.reported_at, 'YYYY-MM-DD'),
-          'verified_date', to_char(NEW.verified_at, 'YYYY-MM-DD'),
-          -- Will be populated in following trigger
-          'subscription_tier', 'pending',
-          'start_date', 'pending',
-          'end_date', 'pending'
-        ),
-        'immediate'
-      );
-    ELSIF NEW.status = 'rejected' THEN
-      -- Queue the payment rejected notification
-      INSERT INTO notification_queue (
-        template_key,
-        recipient_profile_id,
-        status,
-        attempts,
-        payload_data,
-        notification_type
-      ) VALUES (
-        'payment_rejected_notification',
-        NEW.user_id,
-        'pending',
-        0,
-        jsonb_build_object(
-          'payment_id', NEW.id,
-          'reference_number', COALESCE(NEW.reference_number, NEW.id::TEXT), -- Fix: Cast UUID to TEXT
-          'amount', NEW.amount,
-          'reported_date', to_char(NEW.reported_at, 'YYYY-MM-DD'),
-          'rejection_reason', COALESCE(NEW.rejection_reason, 'The payment could not be verified.'),
-          'support_email', 'support@eventy360.dz'
-        ),
-        'immediate'
-      );
-    END IF;
-  END IF;
-  
-  RETURN NEW;
-END;
-$$;
-
-
-ALTER FUNCTION "public"."handle_payment_notification"() OWNER TO "postgres";
-
-
-COMMENT ON FUNCTION "public"."handle_payment_notification"() IS 'Handles payment notification emails. Queues messages for verified and rejected payments.';
-
-
-
-CREATE OR REPLACE FUNCTION "public"."handle_payment_reported"() RETURNS "trigger"
-    LANGUAGE "plpgsql"
-    AS $$
-BEGIN
-  -- Queue notification email for payment pending verification
-  INSERT INTO notification_queue (
-    template_key,
-    recipient_profile_id,
-    status,
-    attempts,
-    payload_data,
-    notification_type
-  ) VALUES (
-    'payment_received_pending_verification',
-    NEW.user_id,
-    'pending',
-    0,
-    jsonb_build_object(
-      'payment_id', NEW.id,
-      'amount', NEW.amount,
-      'reported_at', NEW.reported_at,
-      'payment_method', NEW.payment_method_reported,
-      'billing_period', NEW.billing_period,
-      'reference_number', NEW.id  -- Using payment ID as reference number
-    ),
-    'immediate'  -- Process this immediately
-  );
-  
-  RETURN NEW;
-END;
-$$;
-
-
-ALTER FUNCTION "public"."handle_payment_reported"() OWNER TO "postgres";
-
-
-CREATE OR REPLACE FUNCTION "public"."handle_payment_verification"() RETURNS "trigger"
-    LANGUAGE "plpgsql"
+CREATE OR REPLACE FUNCTION "public"."handle_payment_status_change"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
 DECLARE
-  subscription_rec RECORD;
+  v_subscription_id UUID;
+  v_user_current_subscription RECORD;
+  v_new_end_date TIMESTAMPTZ;
+  v_calculated_interval INTERVAL;
+  v_user_type public.user_type_enum;
+  v_new_tier public.subscription_tier_enum;
+  v_subscription_details_for_email RECORD;
 BEGIN
-  -- Proceed if status changed
-  IF OLD.status != NEW.status THEN
-    -- For verified payments - queue notification email
-    IF NEW.status = 'verified' THEN
-      -- Try to get subscription details from the database
-      BEGIN
-        SELECT 
-          tier.name AS subscription_tier_name,
-          sub.start_date,
-          sub.end_date
-        INTO subscription_rec
-        FROM subscriptions sub
-        JOIN subscription_tiers tier ON sub.tier_id = tier.id
-        WHERE sub.user_id = NEW.user_id
-        ORDER BY sub.created_at DESC
-        LIMIT 1;
-      EXCEPTION WHEN OTHERS THEN
-        -- If not found, use default values
-        subscription_rec := ROW('Standard', CURRENT_DATE, (CURRENT_DATE + INTERVAL '1 year')::date);
-      END;
+  -- Handle VERIFIED payments
+  IF NEW.status = 'verified' THEN
     
-      -- Queue the payment verified notification
-      INSERT INTO notification_queue (
-        template_key,
-        recipient_profile_id,
-        status,
-        attempts,
-        payload_data,
-        notification_type
-      ) VALUES (
-        'payment_verified_notification',
-        NEW.user_id,
-        'pending',
-        0,
-        jsonb_build_object(
-          'payment_id', NEW.id,
-          'reference_number', COALESCE(NEW.reference_number, NEW.id),
-          'amount', NEW.amount,
-          'payment_method', NEW.payment_method_reported,
-          'billing_period', NEW.billing_period,
-          'reported_date', to_char(NEW.reported_at, 'YYYY-MM-DD'),
-          'verified_date', to_char(NEW.verified_at, 'YYYY-MM-DD'),
-          'subscription_tier', subscription_rec.subscription_tier_name,
-          'start_date', to_char(subscription_rec.start_date, 'YYYY-MM-DD'),
-          'end_date', to_char(subscription_rec.end_date, 'YYYY-MM-DD')
-        ),
-        'immediate'
-      );
-    ELSIF NEW.status = 'rejected' THEN
-      -- Queue the payment rejected notification
-      INSERT INTO notification_queue (
-        template_key,
-        recipient_profile_id,
-        status,
-        attempts,
-        payload_data,
-        notification_type
-      ) VALUES (
-        'payment_rejected_notification',
-        NEW.user_id,
-        'pending',
-        0,
-        jsonb_build_object(
-          'payment_id', NEW.id,
-          'reference_number', COALESCE(NEW.reference_number, NEW.id),
-          'amount', NEW.amount,
-          'reported_date', to_char(NEW.reported_at, 'YYYY-MM-DD'),
-          'rejection_reason', COALESCE(NEW.rejection_reason, 'The payment could not be verified.')
-          -- Removed support_email field completely
-        ),
-        'immediate'
-      );
+    -- === Subscription Logic ===
+    SELECT P.user_type INTO v_user_type FROM public.profiles P WHERE P.id = NEW.user_id;
+    IF v_user_type = 'researcher' THEN v_new_tier := 'paid_researcher';
+    ELSIF v_user_type = 'organizer' THEN v_new_tier := 'paid_organizer';
+    ELSE v_new_tier := 'free';
     END IF;
+
+    -- FIX: Use the billing_period_to_interval helper to respect what the user paid for.
+    v_calculated_interval := public.billing_period_to_interval(NEW.billing_period);
+    SELECT * INTO v_user_current_subscription FROM public.subscriptions WHERE user_id = NEW.user_id;
+
+    IF v_user_current_subscription IS NULL THEN
+      v_new_end_date := COALESCE(NEW.verified_at, timezone('utc'::text, now())) + v_calculated_interval;
+      INSERT INTO public.subscriptions (user_id, tier, status, start_date, end_date)
+      VALUES (NEW.user_id, v_new_tier, 'active', COALESCE(NEW.verified_at, timezone('utc'::text, now())), v_new_end_date)
+      RETURNING id INTO v_subscription_id;
+    ELSE
+      v_subscription_id := v_user_current_subscription.id;
+      IF v_user_current_subscription.status IN ('trial', 'expired') THEN
+        v_new_end_date := COALESCE(NEW.verified_at, timezone('utc'::text, now())) + v_calculated_interval;
+        UPDATE public.subscriptions SET tier = v_new_tier, status = 'active', start_date = COALESCE(NEW.verified_at, timezone('utc'::text, now())), end_date = v_new_end_date, trial_ends_at = NULL WHERE id = v_subscription_id;
+      ELSIF v_user_current_subscription.status = 'active' THEN
+        v_new_end_date := v_user_current_subscription.end_date + v_calculated_interval;
+        UPDATE public.subscriptions SET tier = v_new_tier, end_date = v_new_end_date WHERE id = v_subscription_id;
+      END IF;
+    END IF;
+    
+    UPDATE public.payments SET subscription_id = v_subscription_id WHERE id = NEW.id;
+    SELECT tier, start_date, end_date INTO v_subscription_details_for_email FROM public.subscriptions WHERE id = v_subscription_id;
+
+    -- === Notification & Logging Logic ===
+    INSERT INTO public.notification_queue (template_key, recipient_profile_id, payload_data, notification_type)
+    VALUES ('payment_verified_notification', NEW.user_id, jsonb_build_object(
+      'payment_id', NEW.id, 'reference_number', COALESCE(NEW.reference_number, NEW.id::TEXT), 'amount', NEW.amount,
+      'billing_period', NEW.billing_period, 'verified_date', to_char(NEW.verified_at, 'YYYY-MM-DD'),
+      'subscription_tier', v_subscription_details_for_email.tier, 'start_date', to_char(v_subscription_details_for_email.start_date, 'YYYY-MM-DD'),
+      'end_date', to_char(v_subscription_details_for_email.end_date, 'YYYY-MM-DD')), 'immediate');
+    
+    INSERT INTO public.admin_actions_log (action_type, admin_user_id, target_user_id, target_entity_id, target_entity_type)
+    VALUES ('updated_payment_status', NEW.admin_verifier_id, NEW.user_id, NEW.id, 'payment');
+
+  -- Handle REJECTED payments
+  ELSIF NEW.status = 'rejected' THEN
+    INSERT INTO public.notification_queue (template_key, recipient_profile_id, payload_data, notification_type)
+    VALUES ('payment_rejected_notification', NEW.user_id, jsonb_build_object(
+      'payment_id', NEW.id, 'reference_number', COALESCE(NEW.reference_number, NEW.id::TEXT), 'amount', NEW.amount,
+      'rejection_reason', COALESCE(NEW.admin_notes, 'The payment could not be verified.')), 'immediate');
+
+    INSERT INTO public.admin_actions_log (action_type, admin_user_id, target_user_id, target_entity_id, target_entity_type)
+    VALUES ('updated_payment_status', NEW.admin_verifier_id, NEW.user_id, NEW.id, 'payment');
   END IF;
-  
+
   RETURN NEW;
 END;
 $$;
 
 
-ALTER FUNCTION "public"."handle_payment_verification"() OWNER TO "postgres";
+ALTER FUNCTION "public"."handle_payment_status_change"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."handle_payment_verification"() IS 'Updates subscription status when a payment is verified. Called by on_payment_verified_update_subscription trigger.';
+COMMENT ON FUNCTION "public"."handle_payment_status_change"() IS 'The single source of truth for handling side effects of a payment status change. Manages subscriptions and notifications.';
 
 
 
@@ -2938,22 +2832,29 @@ DECLARE
 BEGIN
   -- Only proceed if status changed
   IF OLD.status IS DISTINCT FROM NEW.status THEN
-    -- Determine which template and action type to use based on the new status
+    -- Set the processed_at and processed_by fields
+    NEW.processed_at := NOW();
+    NEW.processed_by := auth.uid();
+    NEW.updated_at := NOW();
+    
+    -- Determine the action type based on the new status
     IF NEW.status = 'approved' THEN
-      template_key := 'user_verified_badge_awarded';
       action_type := 'awarded_badge';
       
       -- Update the profile's is_verified status to true
+      -- The trigger on profiles table will handle the notification
       UPDATE profiles
       SET is_verified = TRUE
       WHERE id = NEW.user_id;
+      
     ELSIF NEW.status = 'rejected' THEN
-      template_key := 'user_verified_badge_removed';
-      action_type := 'removed_badge';
-    END IF;
-    
-    -- Add to notification queue if template was determined
-    IF template_key IS NOT NULL THEN
+      -- Fix: Use a more accurate action_type for rejections
+      action_type := 'processed_verification_request';
+      -- Fix: Use a specific template for rejections
+      template_key := 'verification_request_rejected';
+      
+      -- For rejections, we need to send a notification here
+      -- since the profile trigger won't fire (is_verified doesn't change)
       INSERT INTO notification_queue (
         template_key,
         recipient_profile_id,
@@ -2968,15 +2869,14 @@ BEGIN
         'pending',
         0,
         jsonb_build_object(
-          'profile_id', NEW.user_id,
           'verification_request_id', NEW.id,
-          'verification_status', (NEW.status = 'approved'),
-          'timestamp', now(),
           'rejection_reason', COALESCE(NEW.rejection_reason, 'Your verification documents did not meet our requirements.')
         )
       );
-      
-      -- Log the admin action with more detailed context
+    END IF;
+    
+    -- Log the admin action only if an action type was determined
+    IF action_type IS NOT NULL THEN
       INSERT INTO admin_actions_log (
         action_type,
         admin_user_id,
@@ -3009,7 +2909,7 @@ $$;
 ALTER FUNCTION "public"."handle_verification_request_status_change"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."handle_verification_request_status_change"() IS 'Processes verification request status changes, properly casting action_type to admin_action_type enum.';
+COMMENT ON FUNCTION "public"."handle_verification_request_status_change"() IS 'Processes verification request status changes. For approvals, updates profile status and lets profile trigger handle notification. For rejections, sends notification directly.';
 
 
 
@@ -4474,90 +4374,25 @@ CREATE OR REPLACE FUNCTION "public"."verify_payment"("payment_id" "uuid", "verif
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
 DECLARE
-  v_payment RECORD;
   v_is_admin BOOLEAN;
-  v_user_id UUID := auth.uid();
-  v_details JSONB;
-  v_log_id BIGINT;
 BEGIN
-  -- Check if the user is an admin
-  SELECT (user_type = 'admin') INTO v_is_admin FROM profiles WHERE id = v_user_id;
-  
+  -- Check if user is an admin
+  SELECT (user_type = 'admin') INTO v_is_admin FROM public.profiles WHERE id = auth.uid();
   IF NOT v_is_admin THEN
-    RAISE EXCEPTION 'Permission denied: Only admins can verify payments';
+    RAISE EXCEPTION 'Permission denied';
   END IF;
-  
-  -- Get payment details
-  SELECT * INTO v_payment FROM payments WHERE id = payment_id;
-  
-  IF v_payment IS NULL THEN
-    RAISE EXCEPTION 'Payment not found with ID: %', payment_id;
-  END IF;
-  
-  -- Validate status change
-  IF v_payment.status != 'pending_verification' THEN
-    RAISE EXCEPTION 'Payment is not in pending_verification status. Current status: %', v_payment.status;
-  END IF;
-  
-  IF verify_status != 'verified' AND verify_status != 'rejected' THEN
-    RAISE EXCEPTION 'Invalid status. Expected "verified" or "rejected", got: %', verify_status;
-  END IF;
-  
-  -- If rejecting, ensure rejection reason is provided
-  IF verify_status = 'rejected' AND rejection_reason IS NULL THEN
-    RAISE EXCEPTION 'Rejection reason is required when rejecting a payment';
-  END IF;
-  
-  -- Build details for logging
-  v_details := jsonb_build_object(
-    'previous_status', v_payment.status,
-    'new_status', verify_status,
-    'payment_amount', v_payment.amount,
-    'billing_period', v_payment.billing_period,
-    'payment_method', v_payment.payment_method_reported,
-    'proof_document_path', v_payment.proof_document_path
-  );
-  
-  IF rejection_reason IS NOT NULL THEN
-    v_details := v_details || jsonb_build_object('rejection_reason', rejection_reason);
-  END IF;
-  
-  -- Update payment status
-  UPDATE payments SET
+
+  -- Update payment. The `on_payment_status_change` trigger will handle all business logic.
+  UPDATE public.payments
+  SET 
     status = verify_status,
-    admin_notes = COALESCE(p_admin_notes, payments.admin_notes),
-    admin_verifier_id = v_user_id,
+    admin_verifier_id = auth.uid(),
+    admin_notes = COALESCE(p_admin_notes, rejection_reason),
     verified_at = CASE WHEN verify_status = 'verified' THEN NOW() ELSE NULL END,
     updated_at = NOW()
   WHERE id = payment_id;
-  
-  -- Log the admin action
-  -- Fixed: Explicitly cast string literals to admin_action_type enum
-  INSERT INTO admin_actions_log (
-    admin_user_id,
-    action_type,
-    target_user_id,
-    target_entity_id,
-    target_entity_type,
-    details
-  ) VALUES (
-    v_user_id,
-    CASE 
-      WHEN verify_status = 'verified' THEN 'updated_payment_status'::admin_action_type
-      WHEN verify_status = 'rejected' THEN 'updated_payment_status'::admin_action_type
-    END,
-    v_payment.user_id,
-    payment_id,
-    'payment',
-    v_details
-  ) RETURNING id INTO v_log_id;
-  
-  RETURN json_build_object(
-    'success', true,
-    'message', 'Payment status updated to ' || verify_status,
-    'payment_id', payment_id,
-    'log_id', v_log_id
-  );
+
+  RETURN jsonb_build_object('success', true);
 END;
 $$;
 
@@ -5574,27 +5409,19 @@ CREATE OR REPLACE TRIGGER "notify_submission_status_change_trigger" AFTER UPDATE
 
 
 
-CREATE OR REPLACE TRIGGER "on_payment_verified" AFTER UPDATE ON "public"."payments" FOR EACH ROW WHEN ((("old"."status" IS DISTINCT FROM "new"."status") AND ("new"."status" = 'verified'::"public"."payment_status_enum"))) EXECUTE FUNCTION "public"."handle_payment_verification"();
+CREATE OR REPLACE TRIGGER "on_new_payment" AFTER INSERT ON "public"."payments" FOR EACH ROW EXECUTE FUNCTION "public"."handle_new_payment"();
 
 
 
-COMMENT ON TRIGGER "on_payment_verified" ON "public"."payments" IS 'Calls handle_payment_verification() after a payment status is updated to verified.';
+COMMENT ON TRIGGER "on_new_payment" ON "public"."payments" IS 'Fires the handler for new payments upon insert.';
 
 
 
-CREATE OR REPLACE TRIGGER "on_payment_verified_update_subscription" AFTER UPDATE OF "status" ON "public"."payments" FOR EACH ROW EXECUTE FUNCTION "public"."handle_payment_verification"();
+CREATE OR REPLACE TRIGGER "on_payment_status_change" AFTER UPDATE OF "status" ON "public"."payments" FOR EACH ROW WHEN (("old"."status" IS DISTINCT FROM "new"."status")) EXECUTE FUNCTION "public"."handle_payment_status_change"();
 
 
 
-CREATE OR REPLACE TRIGGER "payment_notification_trigger" AFTER UPDATE OF "status" ON "public"."payments" FOR EACH ROW EXECUTE FUNCTION "public"."handle_payment_notification"();
-
-
-
-CREATE OR REPLACE TRIGGER "payment_reported_trigger" AFTER INSERT ON "public"."payments" FOR EACH ROW EXECUTE FUNCTION "public"."handle_payment_reported"();
-
-
-
-CREATE OR REPLACE TRIGGER "payment_verification_trigger" AFTER UPDATE OF "status" ON "public"."payments" FOR EACH ROW EXECUTE FUNCTION "public"."handle_payment_verification"();
+COMMENT ON TRIGGER "on_payment_status_change" ON "public"."payments" IS 'Fires the consolidated handler function when a payment''s status is updated.';
 
 
 
@@ -6451,6 +6278,12 @@ GRANT ALL ON FUNCTION "public"."handle_event_deadline_changes"() TO "service_rol
 
 
 
+GRANT ALL ON FUNCTION "public"."handle_new_payment"() TO "anon";
+GRANT ALL ON FUNCTION "public"."handle_new_payment"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."handle_new_payment"() TO "service_role";
+
+
+
 GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "anon";
 GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "service_role";
@@ -6463,21 +6296,9 @@ GRANT ALL ON FUNCTION "public"."handle_notification_insert"() TO "service_role";
 
 
 
-GRANT ALL ON FUNCTION "public"."handle_payment_notification"() TO "anon";
-GRANT ALL ON FUNCTION "public"."handle_payment_notification"() TO "authenticated";
-GRANT ALL ON FUNCTION "public"."handle_payment_notification"() TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."handle_payment_reported"() TO "anon";
-GRANT ALL ON FUNCTION "public"."handle_payment_reported"() TO "authenticated";
-GRANT ALL ON FUNCTION "public"."handle_payment_reported"() TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."handle_payment_verification"() TO "anon";
-GRANT ALL ON FUNCTION "public"."handle_payment_verification"() TO "authenticated";
-GRANT ALL ON FUNCTION "public"."handle_payment_verification"() TO "service_role";
+GRANT ALL ON FUNCTION "public"."handle_payment_status_change"() TO "anon";
+GRANT ALL ON FUNCTION "public"."handle_payment_status_change"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."handle_payment_status_change"() TO "service_role";
 
 
 
