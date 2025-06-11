@@ -15,11 +15,11 @@ This document outlines the plan for implementing and enhancing the admin routes 
 - [x] Add translations to `ar.json` for Users route
 
 ### Admins Route (`/admins`)
-- [ ] Create basic list page with admin users
-- [ ] Implement search by name functionality
-- [ ] Add basic pagination
-- [ ] add admin invitation modal
-- [ ] Add translations to `ar.json` for Admins route
+- [x] Create basic list page with admin users
+- [x] Implement search by name functionality
+- [x] Add basic pagination
+- [x] add admin invitation modal
+- [x] Add translations to `ar.json` for Admins route
 
 ### Verifications Route (`/verifications`) - ✅ Exists
 - [x] List page with filtering
