@@ -1,26 +1,33 @@
-'use client';
+"use client";
 
-import { useState, useEffect, memo, useCallback, useMemo } from 'react';
-import { useForm, Controller, FieldErrors } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuth } from '@/components/providers/AuthProvider';
-import { useRouter } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
-import { Button, Label, TextInput, Textarea, Select, Alert, Spinner } from 'flowbite-react';
-import { HiInformationCircle } from 'react-icons/hi';
-import { toast } from 'react-hot-toast';
-import type { UserProfile } from '@/lib/schemas/profile';
+import { useState, useEffect, memo, useCallback, useMemo } from "react";
+import { useForm, Controller, FieldErrors } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
+import {
+  Button,
+  Label,
+  TextInput,
+  Textarea,
+  Select,
+  Alert,
+  Spinner,
+} from "flowbite-react";
+import { HiInformationCircle } from "react-icons/hi";
+import { toast } from "react-hot-toast";
+import type { UserProfile } from "@/lib/schemas/profile";
 import {
   getCompleteProfileFormSchema,
   type ProfileCompletionFormShape,
   institutionTypeEnumValues,
-  InstitutionType
-} from '@/lib/schemas/profile';
+  InstitutionType,
+} from "@/lib/schemas/profile";
 
 interface CompleteProfileFormProps {
   userProfile: UserProfile;
 }
-
 
 interface Wilaya {
   id: number;
@@ -35,40 +42,36 @@ interface Daira {
   name_other: string;
 }
 
-
 const getInitialValues = (profile: UserProfile): ProfileCompletionFormShape => {
-
   const commonOptionalValues = {
-    bio_ar: '',
-    profile_picture_url: '',
+    bio_ar: "",
+    profile_picture_url: "",
   };
-
 
   const commonRequiredValues = {
-    wilaya_id: '',
-    daira_id: '',
+    wilaya_id: "",
+    daira_id: "",
   };
 
-  if (profile.user_type === 'researcher') {
+  if (profile.user_type === "researcher") {
     return {
-      user_type: 'researcher' as const,
-      name: '',
-      institution: '',
-      academic_position: '',
+      user_type: "researcher" as const,
+      name: "",
+      institution: "",
+      academic_position: "",
       ...commonRequiredValues,
       ...commonOptionalValues,
     };
   } else {
     return {
-      user_type: 'organizer' as const,
-      organization_name_ar: '',
+      user_type: "organizer" as const,
+      organization_name_ar: "",
       institution_type: institutionTypeEnumValues[0],
       ...commonRequiredValues,
       ...commonOptionalValues,
     };
   }
 };
-
 
 interface ProfileDataPayload {
   profile_picture_url: string | null;
@@ -82,44 +85,48 @@ interface ProfileDataPayload {
   institution_type?: string;
 }
 
-
 const isResearcherError = (
   errors: FieldErrors<ProfileCompletionFormShape>,
   userType: string
-): errors is FieldErrors<Extract<ProfileCompletionFormShape, { user_type: 'researcher' }>> => {
-  return userType === 'researcher';
+): errors is FieldErrors<
+  Extract<ProfileCompletionFormShape, { user_type: "researcher" }>
+> => {
+  return userType === "researcher";
 };
 
 const isOrganizerError = (
   errors: FieldErrors<ProfileCompletionFormShape>,
   userType: string
-): errors is FieldErrors<Extract<ProfileCompletionFormShape, { user_type: 'organizer' }>> => {
-  return userType === 'organizer';
+): errors is FieldErrors<
+  Extract<ProfileCompletionFormShape, { user_type: "organizer" }>
+> => {
+  return userType === "organizer";
 };
 
-function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps) {
-  const t = useTranslations('Auth.CompleteProfileForm');
-  const tEnums = useTranslations('Enums');
-  const tValidation = useTranslations('Validations');
+function CompleteProfileFormComponent({
+  userProfile,
+}: CompleteProfileFormProps) {
+  const t = useTranslations("Auth.CompleteProfileForm");
+  const tEnums = useTranslations("Enums");
+  const tValidation = useTranslations("Validations");
   const router = useRouter();
   const { supabase } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [wilayas, setWilayas] = useState<Wilaya[]>([]);
-  const [allDairas, setAllDairas] = useState<Daira[]>([]);
+  const [dairas, setDairas] = useState<Daira[]>([]);
   const [locationDataLoaded, setLocationDataLoaded] = useState(false);
+  const [dairasLoading, setDairasLoading] = useState(false);
   const [formInitialized, setFormInitialized] = useState(false);
 
-
-  const schema = useMemo(() =>
-    getCompleteProfileFormSchema(tValidation, userProfile.user_type),
+  const schema = useMemo(
+    () => getCompleteProfileFormSchema(tValidation, userProfile.user_type),
     [tValidation, userProfile.user_type]
   );
 
-
-  const defaultValues = useMemo(() =>
-    getInitialValues(userProfile),
+  const defaultValues = useMemo(
+    () => getInitialValues(userProfile),
     [userProfile]
   );
 
@@ -134,9 +141,8 @@ function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps)
   } = useForm<ProfileCompletionFormShape>({
     resolver: zodResolver(schema),
     defaultValues,
-    mode: 'onBlur',
+    mode: "onBlur",
   });
-
 
   useEffect(() => {
     if (!formInitialized) {
@@ -145,168 +151,240 @@ function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps)
     }
   }, [formInitialized, reset, defaultValues]);
 
-
   useEffect(() => {
     let isMounted = true;
 
-    async function fetchLocationData() {
+    async function fetchWilayas() {
       if (!locationDataLoaded) {
         try {
-
           const { data: wilayasData, error: wilayasError } = await supabase
-            .from('wilayas')
-            .select('id, name_ar, name_other')
-            .order('id');
+            .from("wilayas")
+            .select("id, name_ar, name_other")
+            .order("id");
 
           if (wilayasError) throw wilayasError;
 
-
-          const { data: dairasData, error: dairasError } = await supabase
-            .from('dairas')
-            .select('id, wilaya_id, name_ar, name_other')
-            .order('id');
-
-          if (dairasError) throw dairasError;
-
-
           if (isMounted) {
             setWilayas(wilayasData || []);
-            setAllDairas(dairasData || []);
             setLocationDataLoaded(true);
           }
         } catch (error) {
-          console.error("Failed to fetch location data from Supabase:", error);
+          console.error("Failed to fetch wilayas data from Supabase:", error);
           if (isMounted) {
-            setFormError(t('locationDataFetchError') || "Failed to load location data");
+            setFormError(t("locationDataFetchError") || "Failed to load location data");
           }
         }
       }
     }
 
-    fetchLocationData();
-
+    fetchWilayas();
 
     return () => {
       isMounted = false;
     };
   }, [supabase, t, locationDataLoaded]);
 
-
-  const selectedWilayaId = watch('wilaya_id');
-
-
-  const filteredDairas = useMemo(() => {
-    if (!selectedWilayaId || !allDairas.length) return [];
-    return allDairas.filter(d => d.wilaya_id === parseInt(selectedWilayaId, 10));
-  }, [selectedWilayaId, allDairas]);
-
+  const selectedWilayaId = watch("wilaya_id");
 
   useEffect(() => {
+    let isMounted = true;
+    const fetchDairas = async () => {
+      if (selectedWilayaId) {
+        setDairasLoading(true);
+        setDairas([]); 
+        try {
+          const { data, error } = await supabase
+            .from('dairas')
+            .select('id, wilaya_id, name_ar, name_other')
+            .eq('wilaya_id', parseInt(selectedWilayaId, 10));
 
+          if (error) throw error;
+
+          if (isMounted) {
+            setDairas(data || []);
+          }
+        } catch (error) {
+          console.error("Failed to fetch dairas for wilaya:", selectedWilayaId, error);
+          if (isMounted) {
+            toast.error(t('dairaDataFetchError') || "Failed to load dairas for the selected wilaya.");
+          }
+        } finally {
+          if (isMounted) {
+            setDairasLoading(false);
+          }
+        }
+      } else {
+        setDairas([]);
+      }
+    };
+
+    fetchDairas();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedWilayaId, supabase, t]);
+
+  useEffect(() => {
     if (selectedWilayaId && formInitialized) {
-      setValue('daira_id', '');
+      setValue("daira_id", "");
     }
   }, [selectedWilayaId, setValue, formInitialized]);
 
+  const onSubmit = useCallback(
+    async (data: ProfileCompletionFormShape) => {
+      setIsLoading(true);
+      setFormError(null);
+      const toastId = toast.loading(t("loadingButton"));
 
-  const onSubmit = useCallback(async (data: ProfileCompletionFormShape) => {
-    setIsLoading(true);
-    setFormError(null);
-    const toastId = toast.loading(t('loadingButton'));
-
-    let profileDataPayload: ProfileDataPayload = {
-      profile_picture_url: data.profile_picture_url || null,
-      wilaya_id: data.wilaya_id ? parseInt(data.wilaya_id, 10) : null,
-      daira_id: data.daira_id ? parseInt(data.daira_id, 10) : null,
-    };
-
-    if (data.user_type === 'researcher') {
-      profileDataPayload = {
-        ...profileDataPayload,
-        name: data.name || '',
-        institution: data.institution || '',
-        academic_position: data.academic_position || '',
-        bio_translations: { ar: data.bio_ar || '' },
+      let profileDataPayload: ProfileDataPayload = {
+        profile_picture_url: data.profile_picture_url || null,
+        wilaya_id: data.wilaya_id ? parseInt(data.wilaya_id, 10) : null,
+        daira_id: data.daira_id ? parseInt(data.daira_id, 10) : null,
       };
-    } else if (data.user_type === 'organizer') {
-      profileDataPayload = {
-        ...profileDataPayload,
-        name_translations: { ar: data.organization_name_ar || '' },
-        institution_type: data.institution_type || '',
-        bio_translations: { ar: data.bio_ar || '' },
-      };
-    }
 
-    try {
-      const { error: rpcError } = await supabase.rpc('complete_my_profile', {
-        profile_data: profileDataPayload,
-      });
-
-      if (rpcError) {
-        throw rpcError;
+      if (data.user_type === "researcher") {
+        profileDataPayload = {
+          ...profileDataPayload,
+          name: data.name || "",
+          institution: data.institution || "",
+          academic_position: data.academic_position || "",
+          bio_translations: { ar: data.bio_ar || "" },
+        };
+      } else if (data.user_type === "organizer") {
+        profileDataPayload = {
+          ...profileDataPayload,
+          name_translations: { ar: data.organization_name_ar || "" },
+          institution_type: data.institution_type || "",
+          bio_translations: { ar: data.bio_ar || "" },
+        };
       }
 
-      toast.success(t('successToast'), { id: toastId });
-      router.push('/redirect');
-    } catch (error) {
-      console.error('Error completing profile:', error);
-      const errorMessage = error instanceof Error ? error.message : t('errorToast');
-      setFormError(errorMessage);
-      toast.error(errorMessage, { id: toastId });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [supabase, router, t]);
+      try {
+        const { error: rpcError } = await supabase.rpc("complete_my_profile", {
+          profile_data: profileDataPayload,
+        });
 
+        if (rpcError) {
+          throw rpcError;
+        }
+
+        toast.success(t("successToast"), { id: toastId });
+        router.push("/redirect");
+      } catch (error) {
+        console.error("Error completing profile:", error);
+        const errorMessage =
+          error instanceof Error ? error.message : t("errorToast");
+        setFormError(errorMessage);
+        toast.error(errorMessage, { id: toastId });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [supabase, router, t]
+  );
 
   const renderResearcherFields = useCallback(() => {
     const researcherErrors = isResearcherError(errors, userProfile.user_type)
       ? errors
-      : {} as FieldErrors<Extract<ProfileCompletionFormShape, { user_type: 'researcher' }>>;
+      : ({} as FieldErrors<
+          Extract<ProfileCompletionFormShape, { user_type: "researcher" }>
+        >);
 
     return (
       <>
         <div>
           <Label htmlFor="name" className="mb-1 block text-sm font-medium">
-            {t('researcherNameLabel')} <span className="text-red-500">*</span>
+            {t("researcherNameLabel")} <span className="text-red-500">*</span>
           </Label>
-          <TextInput id="name" {...register('name')} disabled={isLoading} color={researcherErrors.name ? 'failure' : 'gray'} />
-          {researcherErrors.name && <p className="mt-1 text-sm text-red-600">{tValidation('required')}</p>}
+          <TextInput
+            id="name"
+            {...register("name")}
+            disabled={isLoading}
+            color={researcherErrors.name ? "failure" : "gray"}
+          />
+          {researcherErrors.name && (
+            <p className="mt-1 text-sm text-red-600">
+              {tValidation("required")}
+            </p>
+          )}
         </div>
         <div>
-          <Label htmlFor="institution" className="mb-1 block text-sm font-medium">
-            {t('institutionLabel')} <span className="text-red-500">*</span>
+          <Label
+            htmlFor="institution"
+            className="mb-1 block text-sm font-medium"
+          >
+            {t("institutionLabel")} <span className="text-red-500">*</span>
           </Label>
-          <TextInput id="institution" {...register('institution')} disabled={isLoading} color={researcherErrors.institution ? 'failure' : 'gray'} />
-          {researcherErrors.institution && <p className="mt-1 text-sm text-red-600">{tValidation('required')}</p>}
+          <TextInput
+            id="institution"
+            {...register("institution")}
+            disabled={isLoading}
+            color={researcherErrors.institution ? "failure" : "gray"}
+          />
+          {researcherErrors.institution && (
+            <p className="mt-1 text-sm text-red-600">
+              {tValidation("required")}
+            </p>
+          )}
         </div>
         <div>
-          <Label htmlFor="academic_position" className="mb-1 block text-sm font-medium">{t('academicPositionLabel')}</Label>
-          <TextInput id="academic_position" {...register('academic_position')} disabled={isLoading} color={researcherErrors.academic_position ? 'failure' : 'gray'} />
-          {researcherErrors.academic_position && <p className="mt-1 text-sm text-red-600">{researcherErrors.academic_position.message}</p>}
+          <Label
+            htmlFor="academic_position"
+            className="mb-1 block text-sm font-medium"
+          >
+            {t("academicPositionLabel")}
+          </Label>
+          <TextInput
+            id="academic_position"
+            {...register("academic_position")}
+            disabled={isLoading}
+            color={researcherErrors.academic_position ? "failure" : "gray"}
+          />
+          {researcherErrors.academic_position && (
+            <p className="mt-1 text-sm text-red-600">
+              {researcherErrors.academic_position.message}
+            </p>
+          )}
         </div>
       </>
     );
   }, [isLoading, t, tValidation, register, errors, userProfile.user_type]);
 
-
   const renderOrganizerFields = useCallback(() => {
     const organizerErrors = isOrganizerError(errors, userProfile.user_type)
       ? errors
-      : {} as FieldErrors<Extract<ProfileCompletionFormShape, { user_type: 'organizer' }>>;
+      : ({} as FieldErrors<
+          Extract<ProfileCompletionFormShape, { user_type: "organizer" }>
+        >);
 
     return (
       <>
         <div>
-          <Label htmlFor="organization_name_ar" className="mb-1 block text-sm font-medium">
-            {t('organizationNameLabel')} <span className="text-red-500">*</span>
+          <Label
+            htmlFor="organization_name_ar"
+            className="mb-1 block text-sm font-medium"
+          >
+            {t("organizationNameLabel")} <span className="text-red-500">*</span>
           </Label>
-          <TextInput id="organization_name_ar" {...register('organization_name_ar')} disabled={isLoading} color={organizerErrors.organization_name_ar ? 'failure' : 'gray'} />
-          {organizerErrors.organization_name_ar && <p className="mt-1 text-sm text-red-600">{tValidation('required')}</p>}
+          <TextInput
+            id="organization_name_ar"
+            {...register("organization_name_ar")}
+            disabled={isLoading}
+            color={organizerErrors.organization_name_ar ? "failure" : "gray"}
+          />
+          {organizerErrors.organization_name_ar && (
+            <p className="mt-1 text-sm text-red-600">
+              {tValidation("required")}
+            </p>
+          )}
         </div>
         <div className="space-y-1">
-          <Label htmlFor="institution_type" className="mb-1 block text-sm font-medium">
-            {t('institutionTypeLabel')} <span className="text-red-500">*</span>
+          <Label
+            htmlFor="institution_type"
+            className="mb-1 block text-sm font-medium"
+          >
+            {t("institutionTypeLabel")} <span className="text-red-500">*</span>
           </Label>
           <Controller
             name="institution_type"
@@ -323,11 +401,11 @@ function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps)
                   }}
                   onBlur={field.onBlur}
                   disabled={isLoading}
-                  color={organizerErrors.institution_type ? 'failure' : 'gray'}
+                  color={organizerErrors.institution_type ? "failure" : "gray"}
                   className="w-full rounded-md focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-                  style={{ textAlign: 'right', paddingRight: '2.5rem' }}
+                  style={{ textAlign: "right", paddingRight: "2.5rem" }}
                 >
-                  {institutionTypeEnumValues.map(type => (
+                  {institutionTypeEnumValues.map((type) => (
                     <option key={type} value={type}>
                       {tEnums(`InstitutionType.${type}`)}
                     </option>
@@ -338,21 +416,35 @@ function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps)
           />
           {organizerErrors.institution_type && (
             <p className="mt-1 text-sm text-red-600">
-              {tValidation('required')}
+              {tValidation("required")}
             </p>
           )}
         </div>
       </>
     );
-  }, [isLoading, t, tEnums, tValidation, register, control, errors, userProfile.user_type]);
+  }, [
+    isLoading,
+    t,
+    tEnums,
+    tValidation,
+    register,
+    control,
+    errors,
+    userProfile.user_type,
+  ]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-card dark:bg-card-dark p-6 sm:p-8 rounded-lg shadow-xl">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-6 bg-card dark:bg-card-dark p-6 sm:p-8 rounded-lg shadow-xl"
+    >
       <h2 className="text-xl font-semibold text-center text-foreground mb-2">
-        {t('title')}
+        {t("title")}
       </h2>
       <p className="text-sm text-muted-foreground text-center mb-6">
-        {userProfile.user_type === 'researcher' ? t('subtitleResearcher') : t('subtitleOrganizer')}
+        {userProfile.user_type === "researcher"
+          ? t("subtitleResearcher")
+          : t("subtitleOrganizer")}
       </p>
 
       {formError && (
@@ -361,18 +453,30 @@ function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps)
         </Alert>
       )}
 
-      {userProfile.user_type === 'researcher' ? renderResearcherFields() : renderOrganizerFields()}
+      {userProfile.user_type === "researcher"
+        ? renderResearcherFields()
+        : renderOrganizerFields()}
 
       <div>
-        <Label htmlFor="bio_ar" className="mb-1 block text-sm font-medium">{t('bioLabel')}</Label>
-        <Textarea id="bio_ar" {...register('bio_ar')} rows={4} disabled={isLoading} color={errors.bio_ar ? 'failure' : 'gray'} />
-        {errors.bio_ar && <p className="mt-1 text-sm text-red-600">{errors.bio_ar.message}</p>}
+        <Label htmlFor="bio_ar" className="mb-1 block text-sm font-medium">
+          {t("bioLabel")}
+        </Label>
+        <Textarea
+          id="bio_ar"
+          {...register("bio_ar")}
+          rows={4}
+          disabled={isLoading}
+          color={errors.bio_ar ? "failure" : "gray"}
+        />
+        {errors.bio_ar && (
+          <p className="mt-1 text-sm text-red-600">{errors.bio_ar.message}</p>
+        )}
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="space-y-1 flex-1">
           <Label htmlFor="wilaya_id" className="mb-1 block text-sm font-medium">
-            {t('wilayaLabel')} <span className="text-red-500">*</span>
+            {t("wilayaLabel")} <span className="text-red-500">*</span>
           </Label>
           <Controller
             name="wilaya_id"
@@ -383,12 +487,12 @@ function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps)
                   id="wilaya_id"
                   {...field}
                   disabled={isLoading || !locationDataLoaded}
-                  color={errors.wilaya_id ? 'failure' : 'gray'}
+                  color={errors.wilaya_id ? "failure" : "gray"}
                   className="w-full rounded-md focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-                  style={{ textAlign: 'right', paddingRight: '2.5rem' }}
+                  style={{ textAlign: "right", paddingRight: "2.5rem" }}
                 >
-                  <option value="">{t('selectPlaceholder')}</option>
-                  {wilayas.map(wilaya => (
+                  <option value="">{t("selectPlaceholder")}</option>
+                  {wilayas.map((wilaya) => (
                     <option key={wilaya.id} value={wilaya.id.toString()}>
                       {wilaya.name_ar}
                     </option>
@@ -397,12 +501,16 @@ function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps)
               </div>
             )}
           />
-          {errors.wilaya_id && <p className="mt-1 text-sm text-red-600">{tValidation('required')}</p>}
+          {errors.wilaya_id && (
+            <p className="mt-1 text-sm text-red-600">
+              {tValidation("required")}
+            </p>
+          )}
         </div>
 
         <div className="space-y-1 flex-1">
           <Label htmlFor="daira_id" className="mb-1 block text-sm font-medium">
-            {t('dairaLabel')} <span className="text-red-500">*</span>
+            {t("dairaLabel")} <span className="text-red-500">*</span>
           </Label>
           <Controller
             name="daira_id"
@@ -412,13 +520,15 @@ function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps)
                 <Select
                   id="daira_id"
                   {...field}
-                  disabled={isLoading || !selectedWilayaId || !locationDataLoaded}
-                  color={errors.daira_id ? 'failure' : 'gray'}
+                  disabled={dairasLoading || !selectedWilayaId || !locationDataLoaded}
+                  color={errors.daira_id ? "failure" : "gray"}
                   className="w-full rounded-md focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-                  style={{ textAlign: 'right', paddingRight: '2.5rem' }}
+                  style={{ textAlign: "right", paddingRight: "2.5rem" }}
                 >
-                  <option value="">{t('selectPlaceholder')}</option>
-                  {filteredDairas.map(daira => (
+                  <option value="">
+                    {dairasLoading ? t('loadingDairas') : t('selectPlaceholder')}
+                  </option>
+                  {dairas.map(daira => (
                     <option key={daira.id} value={daira.id.toString()}>
                       {daira.name_ar}
                     </option>
@@ -427,7 +537,11 @@ function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps)
               </div>
             )}
           />
-          {errors.daira_id && <p className="mt-1 text-sm text-red-600">{tValidation('required')}</p>}
+          {errors.daira_id && (
+            <p className="mt-1 text-sm text-red-600">
+              {tValidation("required")}
+            </p>
+          )}
         </div>
       </div>
 
@@ -435,14 +549,15 @@ function CompleteProfileFormComponent({ userProfile }: CompleteProfileFormProps)
         {isLoading ? (
           <>
             <Spinner className="mr-2" size="sm" />
-            {t('loadingButton')}
+            {t("loadingButton")}
           </>
-        ) : t('submitButton')}
+        ) : (
+          t("submitButton")
+        )}
       </Button>
     </form>
   );
 }
 
-
 const CompleteProfileForm = memo(CompleteProfileFormComponent);
-export default CompleteProfileForm; 
+export default CompleteProfileForm;

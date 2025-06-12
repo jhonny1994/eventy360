@@ -1,10 +1,8 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { Select, Label, Spinner, Alert } from 'flowbite-react';
+import { useMemo } from 'react';
+import { Select, Label } from 'flowbite-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useAuth } from '@/components/providers/AuthProvider';
-import { HiExclamationCircle } from 'react-icons/hi';
 
 export interface Topic {
   id: string;
@@ -42,6 +40,8 @@ export interface TopicSelectorProps {
   disabled?: boolean;
   /** Fixed locale for the component (defaults to current locale) */
   locale?: string;
+  /** Array of topic objects to display */
+  topics: Topic[];
 }
 
 /**
@@ -59,54 +59,14 @@ export default function TopicSelector({
   error,
   id = 'topic-selector',
   disabled = false,
-  locale: fixedLocale
+  locale: fixedLocale,
+  topics = []
 }: TopicSelectorProps) {
   // Hooks for locale and translations
   const currentLocale = useLocale();
   const locale = fixedLocale || currentLocale;
   const isRtl = locale === 'ar';
   const t = useTranslations('AdminTopics');
-  
-  // State for topics data
-  const [topics, setTopics] = useState<Topic[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  
-  // Use Auth hook to get Supabase client
-  const { supabase } = useAuth();
-  
-  // Fetch topics from the database
-  useEffect(() => {
-    const fetchTopics = async () => {
-      setIsLoading(true);
-      setLoadError(null);
-      
-      try {
-        const { data, error } = await supabase
-          .from('topics')
-          .select('id, slug, name_translations, created_at')
-          .order('created_at', { ascending: false });
-        
-        if (error) throw error;
-        
-        // Properly type the data to match the Topic interface
-        const typedTopics: Topic[] = (data || []).map(topic => ({
-          id: topic.id,
-          slug: topic.slug,
-          name_translations: topic.name_translations as Topic['name_translations'],
-          created_at: topic.created_at
-        }));
-        
-        setTopics(typedTopics);
-      } catch {
-        setLoadError(t('fetchError') || 'Failed to load topics');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchTopics();
-  }, [supabase, t]);
   
   // Handle selection change
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -159,48 +119,37 @@ export default function TopicSelector({
         </div>
       )}
       
-      {isLoading ? (
-        <div className="flex items-center justify-center p-4 border rounded-md">
-          <Spinner size="sm" className="mr-2" />
-          <span className="text-sm text-gray-500">{t('loading') || 'Loading topics...'}</span>
-        </div>
-      ) : loadError ? (
-        <Alert color="failure" icon={HiExclamationCircle}>
-          {loadError}
-        </Alert>
-      ) : (
-        <Select
-          id={id}
-          multiple={multiple}
-          value={selectedValues}
-          onChange={handleChange}
-          disabled={disabled || isLoading}
-          required={required}
-          className="w-full"
-          dir={isRtl ? 'rtl' : 'ltr'}
-          style={isRtl ? { textAlign: 'right', paddingRight: '2.5rem' } : {}}
-        >
-          {placeholder && (
-            <option value="" disabled>
-              {placeholder}
-            </option>
-          )}
-          
-          {topics.map((topic) => (
-            <option key={topic.id} value={topic.id}>
-              {getTopicName(topic)}
-            </option>
-          ))}
-          
-          {topics.length === 0 && (
-            <option value="" disabled>
-              {t('noTopics') || 'No topics available'}
-            </option>
-          )}
-        </Select>
-      )}
+      <Select
+        id={id}
+        multiple={multiple}
+        value={selectedValues}
+        onChange={handleChange}
+        disabled={disabled}
+        required={required}
+        className="w-full"
+        dir={isRtl ? 'rtl' : 'ltr'}
+        style={isRtl ? { textAlign: 'right', paddingRight: '2.5rem' } : {}}
+      >
+        {placeholder && (
+          <option value="" disabled>
+            {placeholder}
+          </option>
+        )}
+        
+        {topics.map((topic) => (
+          <option key={topic.id} value={topic.id}>
+            {getTopicName(topic)}
+          </option>
+        ))}
+        
+        {topics.length === 0 && (
+          <option value="" disabled>
+            {t('noTopics') || 'No topics available'}
+          </option>
+        )}
+      </Select>
       
-      {error && !loadError && (
+      {error && (
         <p className="mt-1 text-sm text-red-600">{error}</p>
       )}
     </div>

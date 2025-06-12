@@ -202,8 +202,9 @@ function EditProfileFormComponent({
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [wilayas, setWilayas] = useState<Wilaya[]>([]);
-  const [allDairas, setAllDairas] = useState<Daira[]>([]);
+  const [dairas, setDairas] = useState<Daira[]>([]);
   const [locationDataLoaded, setLocationDataLoaded] = useState(false);
+  const [dairasLoading, setDairasLoading] = useState(false);
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -275,7 +276,7 @@ function EditProfileFormComponent({
 
   useEffect(() => {
     let isMounted = true;
-    async function fetchLocationData() {
+    async function fetchWilayas() {
       if (!locationDataLoaded) {
         try {
           const { data: wilayasData, error: wilayasError } = await supabase
@@ -284,57 +285,68 @@ function EditProfileFormComponent({
             .order("id");
           if (wilayasError) throw wilayasError;
 
-          const { data: dairasData, error: dairasError } = await supabase
-            .from("dairas")
-            .select("id, wilaya_id, name_ar, name_other")
-            .order("id");
-          if (dairasError) throw dairasError;
-
           if (isMounted) {
             setWilayas(wilayasData || []);
-            setAllDairas(dairasData || []);
             setLocationDataLoaded(true);
-            if (
-              defaultValuesForEdit.wilaya_id &&
-              defaultValuesForEdit.daira_id
-            ) {
-              setValue("daira_id", defaultValuesForEdit.daira_id, {
-                shouldDirty: false,
-                shouldValidate: false,
-              });
-            }
           }
         } catch (error) {
-          console.error("Failed to fetch location data:", error);
+          console.error("Failed to fetch wilayas data:", error);
           if (isMounted) setFormError(t("locationDataFetchError"));
         }
       }
     }
-    fetchLocationData();
+    fetchWilayas();
     return () => {
       isMounted = false;
     };
-  }, [supabase, t, locationDataLoaded, setValue, defaultValuesForEdit]);
+  }, [supabase, t, locationDataLoaded]);
 
   const selectedWilayaId = watch("wilaya_id");
 
-  const filteredDairas = useMemo(() => {
-    if (!selectedWilayaId || !allDairas.length) return [];
-    return allDairas.filter(
-      (d) => d.wilaya_id === parseInt(selectedWilayaId as string, 10)
-    );
-  }, [selectedWilayaId, allDairas]);
-
   useEffect(() => {
-    if (selectedWilayaId && isDirty) {
-      const currentDairaIsValid = filteredDairas.some(
-        (d) => d.id.toString() === watch("daira_id")
-      );
-      if (!currentDairaIsValid) {
-        setValue("daira_id", "", { shouldDirty: true });
+    let isMounted = true;
+    const fetchDairas = async () => {
+      if (selectedWilayaId) {
+        setDairasLoading(true);
+        setDairas([]);
+        try {
+          const { data, error } = await supabase
+            .from('dairas')
+            .select('id, wilaya_id, name_ar, name_other')
+            .eq('wilaya_id', parseInt(selectedWilayaId, 10));
+          if (error) throw error;
+          if (isMounted) {
+            setDairas(data || []);
+            // Check if the current daira is valid for the new wilaya
+            const currentDairaId = watch("daira_id");
+            const isDairaValid = data?.some(d => d.id.toString() === currentDairaId);
+            if (isDirty && !isDairaValid) {
+                setValue("daira_id", "", { shouldDirty: true });
+            }
+          }
+        } catch (error) {
+          console.error("Failed to fetch dairas for wilaya:", selectedWilayaId, error);
+          if (isMounted) {
+            toast.error(t('dairaDataFetchError') || "Failed to load dairas.");
+          }
+        } finally {
+          if (isMounted) {
+            setDairasLoading(false);
+          }
+        }
+      } else {
+        setDairas([]);
       }
+    };
+
+    if (locationDataLoaded) {
+      fetchDairas();
     }
-  }, [selectedWilayaId, filteredDairas, watch, setValue, isDirty]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedWilayaId, locationDataLoaded, supabase, t, watch, setValue, isDirty]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUploadError(null);
@@ -876,58 +888,71 @@ function EditProfileFormComponent({
                       name="wilaya_id"
                       control={control}
                       render={({ field }) => (
-                        <div className="relative">
-                          <Select 
-                            id="wilaya_id" 
-                            {...field}
-                            dir={locale === "ar" ? "rtl" : "ltr"}
-                            style={locale === "ar" ? { textAlign: 'right', paddingRight: '2.5rem' } : {}}
-                          >
-                            <option value="">{t("selectPlaceholder")}</option>
-                            {wilayas.map((wilaya) => (
-                              <option key={wilaya.id} value={wilaya.id.toString()}>
-                                {locale === "ar" ? wilaya.name_ar : wilaya.name_other}
-                              </option>
-                            ))}
-                          </Select>
-                        </div>
+                        <Select
+                          id="wilaya_id"
+                          {...field}
+                          disabled={isLoading || !locationDataLoaded}
+                          color={errors.wilaya_id ? "failure" : "gray"}
+                          className="w-full"
+                          style={{
+                            textAlign: locale === "ar" ? "right" : "left",
+                          }}
+                        >
+                          <option value="">{t("selectPlaceholder")}</option>
+                          {wilayas.map((wilaya) => (
+                            <option
+                              key={wilaya.id}
+                              value={wilaya.id.toString()}
+                            >
+                              {locale === "ar" ? wilaya.name_ar : wilaya.name_other}
+                            </option>
+                          ))}
+                        </Select>
                       )}
                     />
                     {errors.wilaya_id && (
-                      <p className="text-red-500 text-sm mt-1">
+                      <p className="mt-1 text-sm text-red-600">
                         {errors.wilaya_id.message}
                       </p>
                     )}
                   </div>
 
                   <div>
-                    <Label htmlFor="daira_id">
+                    <Label htmlFor="daira_id" className="mb-2 block">
                       {t("dairaLabel")}
                     </Label>
                     <Controller
                       name="daira_id"
                       control={control}
                       render={({ field }) => (
-                        <div className="relative">
-                          <Select
-                            id="daira_id"
-                            {...field}
-                            disabled={!selectedWilayaId || filteredDairas.length === 0}
-                            dir={locale === "ar" ? "rtl" : "ltr"}
-                            style={locale === "ar" ? { textAlign: 'right', paddingRight: '2.5rem' } : {}}
-                          >
-                            <option value="">{t("selectPlaceholder")}</option>
-                            {filteredDairas.map((daira) => (
-                              <option key={daira.id} value={daira.id.toString()}>
-                                {locale === "ar" ? daira.name_ar : daira.name_other}
-                              </option>
-                            ))}
-                          </Select>
-                        </div>
+                        <Select
+                          id="daira_id"
+                          {...field}
+                          disabled={dairasLoading || !selectedWilayaId || isLoading}
+                          color={errors.daira_id ? "failure" : "gray"}
+                          className="w-full"
+                          style={{
+                            textAlign: locale === "ar" ? "right" : "left",
+                          }}
+                        >
+                          <option value="">
+                            {dairasLoading ? t('loadingDairas') : t('selectPlaceholder')}
+                          </option>
+                          {dairas.map((daira) => (
+                            <option
+                              key={daira.id}
+                              value={daira.id.toString()}
+                            >
+                              {locale === "ar" ? daira.name_ar : daira.name_other}
+                            </option>
+                          ))}
+                        </Select>
                       )}
                     />
                     {errors.daira_id && (
-                      <p className="text-red-500 text-sm mt-1">{errors.daira_id.message}</p>
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.daira_id.message}
+                      </p>
                     )}
                   </div>
                 </div>

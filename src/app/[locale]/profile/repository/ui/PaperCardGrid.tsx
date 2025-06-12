@@ -11,35 +11,20 @@ type Paper = Database['public']['Functions']['discover_papers']['Returns'][0] & 
   total_records?: number;
   view_count?: number;
   download_count?: number;
+  // Enriched data
+  paper_title?: string;
+  event_name?: string;
+  wilaya_name?: string;
+  daira_name?: string;
+  topic_names?: string[];
 };
 
-// Types for location and topic data
-interface Wilaya {
-  id: number;
-  name_ar: string;
-  name_other: string;
-}
-
-interface Daira {
-  id: number;
-  name_ar: string;
-  name_other: string;
-  wilaya_id: number;
-}
-
-interface Topic {
-  id: string;
-  name_translations: Record<string, string>;
-  slug: string;
-}
+// Types for location and topic data are no longer needed here
 
 interface PaperCardGridProps {
   papers: Paper[];
   isLoading: boolean;
   locale: string;
-  wilayas: Wilaya[];
-  dairas: Daira[];
-  topics: Topic[];
 }
 
 /**
@@ -54,9 +39,6 @@ export default function PaperCardGrid({
   papers,
   isLoading,
   locale,
-  wilayas,
-  dairas,
-  topics
 }: PaperCardGridProps) {
   const isRtl = locale === 'ar';
   const t = useTranslations('ResearchRepository');
@@ -110,9 +92,6 @@ export default function PaperCardGrid({
           key={paper.id} 
           paper={paper} 
           locale={locale}
-          wilayas={wilayas}
-          dairas={dairas}
-          topics={topics}
         />
       ))}
     </div>

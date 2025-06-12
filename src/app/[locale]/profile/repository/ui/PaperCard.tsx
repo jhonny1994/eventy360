@@ -12,34 +12,19 @@ type Paper = Database['public']['Functions']['discover_papers']['Returns'][0] & 
   total_records?: number;
   view_count?: number;
   download_count?: number;
+  // Enriched data
+  paper_title?: string;
+  event_name?: string;
+  wilaya_name?: string;
+  daira_name?: string;
+  topic_names?: string[];
 };
 
-// Types for location and topic data
-interface Wilaya {
-  id: number;
-  name_ar: string;
-  name_other: string;
-}
-
-interface Daira {
-  id: number;
-  name_ar: string;
-  name_other: string;
-  wilaya_id: number;
-}
-
-interface Topic {
-  id: string;
-  name_translations: Record<string, string>;
-  slug: string;
-}
+// Types for location and topic data are no longer needed
 
 interface PaperCardProps {
   paper: Paper;
   locale: string;
-  wilayas: Wilaya[];
-  dairas: Daira[];
-  topics: Topic[];
 }
 
 /**
@@ -49,7 +34,7 @@ interface PaperCardProps {
  * - useTranslations: For i18n translations
  * - useLocale: For locale-aware date formatting
  */
-export default function PaperCard({ paper, locale, wilayas, dairas, topics }: PaperCardProps) {
+export default function PaperCard({ paper, locale }: PaperCardProps) {
   const isRtl = locale === 'ar';
   const t = useTranslations('ResearchRepository.paperCard');
   const currentLocale = useLocale();
@@ -64,60 +49,7 @@ export default function PaperCard({ paper, locale, wilayas, dairas, topics }: Pa
     });
   };
 
-  // Get paper title in the current locale or fallback to another available locale
-  const getPaperTitle = () => {
-    const titleTranslations = paper.paper_title_translations as Record<string, string>;
-    if (titleTranslations[locale]) {
-      return titleTranslations[locale];
-    }
-    // Fallback to any available translation
-    const availableLocale = Object.keys(titleTranslations).find(key => titleTranslations[key]);
-    return availableLocale ? titleTranslations[availableLocale] : t('untitled');
-  };
-
-  // Get event name in the current locale or fallback to another available locale
-  const getEventName = () => {
-    const eventNameTranslations = paper.event_name_translations as Record<string, string>;
-    if (eventNameTranslations[locale]) {
-      return eventNameTranslations[locale];
-    }
-    // Fallback to any available translation
-    const availableLocale = Object.keys(eventNameTranslations).find(key => eventNameTranslations[key]);
-    return availableLocale ? eventNameTranslations[availableLocale] : t('unknownEvent');
-  };
-
-  // Get wilaya name based on ID
-  const getWilayaName = (wilayaId: number) => {
-    const wilaya = wilayas.find(w => w.id === wilayaId);
-    if (wilaya) {
-      return locale === 'ar' ? wilaya.name_ar : wilaya.name_other;
-    }
-    return `${t('wilaya')} ${wilayaId}`;
-  };
-
-  // Get daira name based on ID
-  const getDairaName = (dairaId: number) => {
-    const daira = dairas.find(d => d.id === dairaId);
-    if (daira) {
-      return locale === 'ar' ? daira.name_ar : daira.name_other;
-    }
-    return `${t('daira')} ${dairaId}`;
-  };
-
-  // Get topic name based on ID
-  const getTopicName = (topicId: string) => {
-    const topic = topics.find(t => t.id === topicId);
-    if (topic) {
-      const nameTranslations = topic.name_translations as Record<string, string>;
-      if (nameTranslations[locale]) {
-        return nameTranslations[locale];
-      }
-      // Fallback to any available translation
-      const availableLocale = Object.keys(nameTranslations).find(key => nameTranslations[key]);
-      return availableLocale ? nameTranslations[availableLocale] : topic.slug;
-    }
-    return topicId;
-  };
+  // Name-getter functions are no longer needed here
 
   return (
     <Card className="h-full hover:shadow-lg transition-shadow duration-300 flex flex-col" dir={isRtl ? 'rtl' : 'ltr'}>
@@ -126,7 +58,7 @@ export default function PaperCard({ paper, locale, wilayas, dairas, topics }: Pa
         {/* Paper Title */}
         <div>
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white line-clamp-2 mb-1">
-            {getPaperTitle()}
+            {paper.paper_title ? paper.paper_title : t('paperCard.untitled')}
           </h3>
         </div>
 
@@ -148,16 +80,16 @@ export default function PaperCard({ paper, locale, wilayas, dairas, topics }: Pa
         <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
           <HiCalendar className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 flex-shrink-0`} />
           <span className="font-medium">{t('event')}:</span>
-          <span className={`${isRtl ? 'mr-2' : 'ml-2'} line-clamp-1`}>{getEventName()}</span>
+          <span className={`${isRtl ? 'mr-2' : 'ml-2'} line-clamp-1`}>{paper.event_name ? paper.event_name : t('paperCard.unknownEvent')}</span>
         </div>
 
         {/* Location */}
-        {paper.author_wilaya_id && (
+        {paper.wilaya_name && (
           <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
             <HiLocationMarker className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 flex-shrink-0`} />
             <span>
-              {getWilayaName(paper.author_wilaya_id)}
-              {paper.author_daira_id && `, ${getDairaName(paper.author_daira_id)}`}
+              {paper.wilaya_name}
+              {paper.daira_name && `, ${paper.daira_name}`}
             </span>
           </div>
         )}
@@ -170,16 +102,16 @@ export default function PaperCard({ paper, locale, wilayas, dairas, topics }: Pa
         </div>
 
         {/* Topics */}
-        {paper.event_topic_ids && paper.event_topic_ids.length > 0 && (
+        {paper.topic_names && paper.topic_names.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-2">
-            {paper.event_topic_ids.slice(0, 3).map((topicId, index) => (
+            {paper.topic_names.slice(0, 3).map((topicName, index) => (
               <Badge key={index} color="light" size="xs">
-                {getTopicName(topicId)}
+                {topicName}
               </Badge>
             ))}
-            {paper.event_topic_ids.length > 3 && (
+            {paper.topic_names.length > 3 && (
               <Badge color="light" size="xs">
-                +{paper.event_topic_ids.length - 3}
+                +{paper.topic_names.length - 3}
               </Badge>
             )}
           </div>

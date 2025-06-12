@@ -19,6 +19,12 @@ type Paper = Database['public']['Functions']['discover_papers']['Returns'][0] & 
   total_records?: number;
   view_count?: number;
   download_count?: number;
+  // Enriched data
+  paper_title?: string;
+  event_name?: string;
+  wilaya_name?: string;
+  daira_name?: string;
+  topic_names?: string[];
 };
 
 // Types for location and topic data
@@ -110,7 +116,7 @@ export default function RepositoryContainer({
   
   // Reference data for locations and topics
   const [wilayas, setWilayas] = useState<Wilaya[]>([]);
-  const [dairas, setDairas] = useState<Daira[]>([]);
+  // Dairas are now fetched on-demand based on paper results
   const [topics, setTopics] = useState<Topic[]>([]);
   const [isReferenceDataLoading, setIsReferenceDataLoading] = useState(true);
 
@@ -134,7 +140,7 @@ export default function RepositoryContainer({
     return researcherParam || null;
   }, [researcherParam]);
 
-  // Fetch reference data (wilayas, dairas, topics)
+  // Fetch reference data (wilayas, topics)
   useEffect(() => {
     const fetchReferenceData = async () => {
       setIsReferenceDataLoading(true);
@@ -148,16 +154,7 @@ export default function RepositoryContainer({
           
         if (wilayasError) throw wilayasError;
         setWilayas(wilayasData || []);
-        
-        // Fetch dairas
-        const { data: dairasData, error: dairasError } = await supabase
-          .from('dairas')
-          .select('id, name_ar, name_other, wilaya_id')
-          .order('id');
-          
-        if (dairasError) throw dairasError;
-        setDairas(dairasData || []);
-        
+
         // Fetch topics
         const { data: topicsData, error: topicsError } = await supabase
           .from('topics')
@@ -213,8 +210,62 @@ export default function RepositoryContainer({
       const typedData = rpcData as Paper[] | null;
       
       if (typedData && typedData.length > 0) {
+        // Step 1: Collect unique daira IDs from the fetched papers
+        const dairaIds = [...new Set(typedData.map(p => p.author_daira_id).filter(id => id !== null))] as number[];
+
+        // Step 2: Fetch only the required dairas
+        let dairas: Daira[] = [];
+        if (dairaIds.length > 0) {
+            const { data: dairasData, error: dairasError } = await supabase
+                .from('dairas')
+                .select('id, name_ar, name_other, wilaya_id')
+                .in('id', dairaIds);
+
+            if (dairasError) {
+                console.error("Failed to fetch specific dairas:", dairasError);
+                // Continue without daira names if this fails
+            } else {
+                dairas = dairasData || [];
+            }
+        }
+
+        // Step 3: Enrich papers with names and translated content
+        const enrichedPapers = typedData.map(paper => {
+          const titleTranslations = paper.paper_title_translations ? paper.paper_title_translations as Record<string, string> : {};
+          const eventNameTranslations = paper.event_name_translations ? paper.event_name_translations as Record<string, string> : {};
+          
+          const getTitle = () => {
+            return titleTranslations[locale] ? titleTranslations[locale] : t('paperCard.untitled');
+          };
+          
+          const getEventName = () => {
+            return eventNameTranslations[locale] ? eventNameTranslations[locale] : t('paperCard.unknownEvent');
+          };
+
+          const wilaya = wilayas.find(w => w.id === paper.author_wilaya_id);
+          const daira = dairas.find(d => d.id === paper.author_daira_id);
+          
+          const paperTopics = (paper.event_topic_ids ? paper.event_topic_ids : []).map(topicId => {
+              const topic = topics.find(t => t.id === topicId);
+              if (!topic) return topicId;
+              const nameTranslations = topic.name_translations ? topic.name_translations as Record<string, string> : {};
+              if (nameTranslations[locale]) return nameTranslations[locale];
+              const availableLocale = Object.keys(nameTranslations).find(key => nameTranslations[key]);
+              return availableLocale ? nameTranslations[availableLocale] : topic.slug;
+            });
+
+          return {
+            ...paper,
+            paper_title: getTitle(),
+            event_name: getEventName(),
+            wilaya_name: wilaya ? (locale === 'ar' ? wilaya.name_ar : wilaya.name_other) : undefined,
+            daira_name: daira ? (locale === 'ar' ? daira.name_ar : daira.name_other) : undefined,
+            topic_names: paperTopics
+          };
+        });
+
         // Fetch analytics data for the papers
-        const paperIds = typedData.map(paper => paper.id);
+        const paperIds = enrichedPapers.map(paper => paper.id);
         const { data: analyticsData, error: analyticsError } = await supabase.rpc(
           'get_papers_analytics',
           { p_submission_ids: paperIds }
@@ -222,19 +273,19 @@ export default function RepositoryContainer({
         
         if (!analyticsError && analyticsData) {
           // Merge analytics data with papers
-          const papersWithAnalytics = typedData.map(paper => {
+          const papersWithAnalytics = enrichedPapers.map(paper => {
             const analytics = analyticsData.find((a: PaperAnalytics) => a.submission_id === paper.id);
             return {
               ...paper,
-              view_count: analytics?.view_count || 0,
-              download_count: analytics?.download_count || 0
+              view_count: analytics ? analytics.view_count : 0,
+              download_count: analytics ? analytics.download_count : 0
             };
           });
           
           setPapers(papersWithAnalytics);
         } else {
           // If analytics fetch fails, still show papers without analytics
-          setPapers(typedData);
+          setPapers(enrichedPapers);
         }
         
         if (typeof typedData[0].total_records === 'number') {
@@ -267,7 +318,10 @@ export default function RepositoryContainer({
     page,
     pageSize,
     t,
-    profileLoading
+    profileLoading,
+    wilayas,
+    topics,
+    locale
   ]);
 
   // Fetch papers when dependencies change
@@ -393,6 +447,9 @@ export default function RepositoryContainer({
         startDate={startDate}
         endDate={endDate}
         onFiltersChange={handleFiltersChange}
+        wilayas={wilayas}
+        topics={topics}
+        isLoading={isReferenceDataLoading}
         locale={locale}
       />
 
@@ -400,9 +457,6 @@ export default function RepositoryContainer({
         papers={papers}
         isLoading={isLoading || isReferenceDataLoading}
         locale={locale}
-        wilayas={wilayas}
-        dairas={dairas}
-        topics={topics}
       />
 
       {!isLoading && totalPapers > 0 && (

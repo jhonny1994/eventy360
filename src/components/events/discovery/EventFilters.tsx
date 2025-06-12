@@ -14,6 +14,12 @@ interface Wilaya {
   name_other: string;
 }
 
+interface Topic {
+  id: string;
+  name_translations: Record<string, string>;
+  slug: string;
+}
+
 interface EventFiltersProps {
   selectedTopics: string[];
   selectedLocation: number | null;
@@ -65,6 +71,7 @@ export default function EventFilters({
   });
 
   const [wilayas, setWilayas] = useState<Wilaya[]>([]);
+  const [topics, setTopics] = useState<Topic[]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Load wilayas (provinces)
@@ -84,6 +91,25 @@ export default function EventFilters({
     };
 
     loadWilayas();
+  }, [supabase]);
+
+  // Load topics
+  useEffect(() => {
+    const loadTopics = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('topics')
+          .select('id, name_translations, slug')
+          .order('slug');
+
+        if (error) throw error;
+        setTopics(data || []);
+      } catch (error) {
+        console.error('Failed to load topic data:', error);
+      }
+    };
+
+    loadTopics();
   }, [supabase]);
 
   // Check if any filters are active
@@ -208,6 +234,7 @@ export default function EventFilters({
                 onChange={handleTopicsChange}
                 placeholder={t('selectTopics')}
                 locale={locale}
+                topics={topics}
               />
             </div>
             

@@ -30,6 +30,7 @@ import useTranslations from "@/hooks/useTranslations";
 import useLocale from "@/hooks/useLocale";
 import { Label, TextInput, Select } from "flowbite-react";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "react-hot-toast";
 
 import { CreateEventFormDataStatic as CreateEventFormData, eventTypeValues, eventFormatValues } from "@/lib/schemas/event";
 
@@ -75,14 +76,15 @@ export default function BasicInfoStep({ form }: BasicInfoStepProps) {
 
         if (error) throw error;
         setWilayas(data || []);
-      } catch  {
+      } catch {
+        toast.error(t('errors.failedToLoadWilayas'));
       } finally {
         setLoadingWilayas(false);
       }
     };
 
     loadWilayas();
-  }, [supabase]);
+  }, [supabase, t]);
 
   // Load dairas when wilaya changes
   useEffect(() => {
@@ -106,14 +108,15 @@ export default function BasicInfoStep({ form }: BasicInfoStepProps) {
         
         // Reset daira selection when wilaya changes
         setValue("daira_id", "");
-      } catch  {
+      } catch {
+        toast.error(t('errors.failedToLoadDairas'));
       } finally {
         setLoadingDairas(false);
       }
     };
 
     loadDairas();
-  }, [selectedWilayaId, setValue, supabase]);
+  }, [selectedWilayaId, setValue, supabase, t]);
 
   return (
     <div className="space-y-6">
@@ -252,9 +255,9 @@ export default function BasicInfoStep({ form }: BasicInfoStepProps) {
         >
           <option value="">
             {loadingDairas 
-              ? t("loading.loadingLocations") 
+              ? t("loadingDairas") 
               : !selectedWilayaId 
-              ? t("basicInfo.fields.wilaya.placeholder")
+              ? t("basicInfo.fields.daira.selectWilayaPlaceholder")
               : t("basicInfo.fields.daira.placeholder")
             }
           </option>

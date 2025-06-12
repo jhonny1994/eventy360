@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, Select, Label, Button, Datepicker } from 'flowbite-react';
 import { HiFilter, HiX } from 'react-icons/hi';
 import { useAuth } from '@/hooks/useAuth';
@@ -36,6 +36,9 @@ interface RepositoryFiltersProps {
     endDate?: string;
     researcher?: string | null;
   }) => void;
+  wilayas: Wilaya[];
+  topics: { id: string; name_translations: Record<string, string>; slug: string; }[];
+  isLoading: boolean;
   locale: string;
 }
 
@@ -55,6 +58,9 @@ export default function RepositoryFilters({
   startDate,
   endDate,
   onFiltersChange,
+  wilayas,
+  topics,
+  isLoading,
   locale
 }: RepositoryFiltersProps) {
   const isRtl = locale === 'ar';
@@ -72,44 +78,37 @@ export default function RepositoryFilters({
     endDate
   });
 
-  const [wilayas, setWilayas] = useState<Wilaya[]>([]);
   const [dairas, setDairas] = useState<Daira[]>([]);
+  const [dairasLoading, setDairasLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Filtered dairas based on selected wilaya
-  const filteredDairas = useMemo(() => {
-    if (!filters.location) return [];
-    return dairas.filter(daira => daira.wilaya_id === filters.location);
-  }, [dairas, filters.location]);
-
-  // Load wilayas and dairas
+  // Load dairas when wilaya (location) changes
   useEffect(() => {
-    const loadLocations = async () => {
+    const fetchDairas = async () => {
+      if (!filters.location) {
+        setDairas([]);
+        return;
+      }
+
+      setDairasLoading(true);
       try {
-        // Fetch wilayas
-        const { data: wilayasData, error: wilayasError } = await supabase
-          .from('wilayas')
-          .select('id, name_ar, name_other')
-          .order('id');
-
-        if (wilayasError) throw wilayasError;
-        setWilayas(wilayasData || []);
-
-        // Fetch dairas
-        const { data: dairasData, error: dairasError } = await supabase
+        const { data, error } = await supabase
           .from('dairas')
           .select('id, name_ar, name_other, wilaya_id')
-          .order('id');
+          .eq('wilaya_id', filters.location);
 
-        if (dairasError) throw dairasError;
-        setDairas(dairasData || []);
-      } catch {
-        // Silent error handling - UI will just show empty wilayas
+        if (error) throw error;
+        setDairas(data || []);
+      } catch (err) {
+        console.error('Error fetching dairas:', err);
+        // Silently fail, UI will show no dairas
+      } finally {
+        setDairasLoading(false);
       }
     };
 
-    loadLocations();
-  }, [supabase]);
+    fetchDairas();
+  }, [filters.location, supabase]);
 
   // Reset daira when wilaya changes
   useEffect(() => {
@@ -223,6 +222,7 @@ export default function RepositoryFilters({
                 onChange={handleTopicsChange}
                 placeholder={t('topicsPlaceholder')}
                 locale={locale}
+                topics={topics}
               />
             </div>
 
@@ -234,6 +234,7 @@ export default function RepositoryFilters({
                   id="location-filter"
                   value={filters.location || ''}
                   onChange={handleLocationChange}
+                  disabled={isLoading}
                   dir={isRtl ? 'rtl' : 'ltr'}
                   style={isRtl ? { textAlign: 'right', paddingRight: '2.5rem' } : {}}
                 >
@@ -255,12 +256,14 @@ export default function RepositoryFilters({
                   id="daira-filter"
                   value={filters.daira || ''}
                   onChange={handleDairaChange}
-                  disabled={!filters.location}
+                  disabled={!filters.location || dairasLoading}
                   dir={isRtl ? 'rtl' : 'ltr'}
                   style={isRtl ? { textAlign: 'right', paddingRight: '2.5rem' } : {}}
                 >
-                  <option value="">{t('dairaPlaceholder')}</option>
-                  {filteredDairas.map((daira) => (
+                  <option value="">
+                    {dairasLoading ? t('loadingDairas') : t('dairaPlaceholder')}
+                  </option>
+                  {dairas.map((daira) => (
                     <option key={daira.id} value={daira.id}>
                       {locale === 'ar' ? daira.name_ar : daira.name_other}
                     </option>
