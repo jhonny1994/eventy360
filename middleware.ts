@@ -15,6 +15,7 @@ const AUTH_SYSTEM_PATHS = [
 ];
 
 const UNAUTHENTICATED_USER_ACCESSIBLE_PATHS = [
+  "/",
   "/login",
   "/register",
   "/forgot-password",

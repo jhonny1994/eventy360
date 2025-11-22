@@ -67,7 +67,8 @@ export async function updateSession(
     error,
   } = await supabase.auth.getUser();
 
-  if (error) {
+  // Ignore "Auth session missing" error as it just means the user is not logged in
+  if (error && !error.message.includes("Auth session missing")) {
     console.error("Error fetching user in middleware:", error);
   }
 
