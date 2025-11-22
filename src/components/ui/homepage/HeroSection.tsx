@@ -55,7 +55,7 @@ const HeroSection = () => {
     <section 
       id="home" 
       ref={heroRef}
-      className="relative min-h-screen w-full overflow-hidden bg-gradient-to-r from-primary/5 to-secondary/5 dark:from-transparent dark:to-transparent"
+      className="relative min-h-screen w-full overflow-hidden bg-linear-to-r from-primary/5 to-secondary/5 dark:from-transparent dark:to-transparent"
       dir={isRTL ? "rtl" : "ltr"}
     >
       {/* Animated background with subtle patterns */}
@@ -64,7 +64,7 @@ const HeroSection = () => {
       {/* Main content container with split panel layout */}
       <div className="container relative z-10 mx-auto grid h-full min-h-screen items-center px-4 py-24 md:py-32 lg:grid-cols-2 lg:gap-8">
         {/* Left panel - Text content */}
-        <div className={`flex flex-col justify-center ${isRTL ? 'order-2' : 'order-1'} lg:order-none text-foreground dark:text-white`}>
+        <div className={`flex flex-col justify-center ${isRTL ? 'order-2' : 'order-1'} lg:order-0 text-foreground dark:text-white`}>
           <h1 className="mb-6 text-4xl font-bold leading-tight md:text-5xl lg:text-6xl">
             {t("Hero.headline")}
           </h1>
@@ -75,7 +75,7 @@ const HeroSection = () => {
         </div>
         
         {/* Right panel - SVG illustration */}
-        <div className={`hero-illustration relative mt-12 flex items-center justify-center ${isRTL ? 'order-1' : 'order-2'} lg:order-none lg:mt-0 transition-transform duration-500 ease-out will-change-transform`}>
+        <div className={`hero-illustration relative mt-12 flex items-center justify-center ${isRTL ? 'order-1' : 'order-2'} lg:order-0 lg:mt-0 transition-transform duration-500 ease-out will-change-transform`}>
           <div className="relative h-[300px] w-full max-w-[500px] md:h-[400px] lg:h-[450px]">
             <Image
               src="/illustrations/research.svg"

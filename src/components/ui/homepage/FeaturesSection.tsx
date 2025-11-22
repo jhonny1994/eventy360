@@ -97,7 +97,7 @@ const FeaturesSection = () => {
   return (
     <section 
       id="features" 
-      className="bg-gradient-to-r from-primary/5 to-secondary/5 dark:bg-transparent py-24"
+      className="bg-linear-to-r from-primary/5 to-secondary/5 dark:bg-transparent py-24"
     >
       <div className="container mx-auto px-4 text-center">
         <h2 className="mb-4 text-3xl font-bold md:text-4xl">{t("Features.headline")}</h2>
