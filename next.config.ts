@@ -27,4 +27,5 @@ const withNextIntl = createNextIntlPlugin(
 );
 
 // Chain the plugins together
-export default withFlowbiteReact(withNextIntl(withBundleAnalyzer(nextConfig)));
+// @ts-ignore
+export default withBundleAnalyzer(withFlowbiteReact(withNextIntl(nextConfig)));
