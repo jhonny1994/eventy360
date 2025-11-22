@@ -10,6 +10,8 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ToastProvider } from "@/components/providers/ToastProvider";
 import { GlobalBackgroundProvider } from "@/components/providers/GlobalBackgroundProvider";
 import SkipToContentLink from "@/components/ui/navigation/SkipToContentLink";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -91,6 +93,8 @@ export default async function RootLayout({
             </AuthProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
+        <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );

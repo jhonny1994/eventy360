@@ -1,6 +1,7 @@
 onlyBuiltDependencies:
   - '@swc/core'
   - '@tsparticles/engine'
+  - '@vercel/speed-insights'
   - sharp
   - supabase
   - unrs-resolver
