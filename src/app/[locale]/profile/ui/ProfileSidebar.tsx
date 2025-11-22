@@ -207,7 +207,7 @@ export default function ProfileSidebar({
                   ? 'translate-x-0' 
                   : `${isRtl ? 'translate-x-full' : '-translate-x-full'}`
               }`
-            : 'hidden md:block w-80 flex-shrink-0'
+            : 'hidden md:block w-80 shrink-0'
         } bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto`}
         dir={isRtl ? 'rtl' : 'ltr'}
       >
@@ -219,7 +219,7 @@ export default function ProfileSidebar({
           </div>
 
           {/* Navigation Links with improved spacing and active indicators */}
-          <nav className="flex-grow p-4 space-y-1.5">
+          <nav className="grow p-4 space-y-1.5">
             {navigationItems.map((item) => (
               <Link
                 key={item.href}
@@ -231,12 +231,12 @@ export default function ProfileSidebar({
                 } transition-colors duration-200`}
               >
                 <>
-                  <span className={`flex-shrink-0 ${isRtl ? 'ml-3' : 'mr-3'}`}>
+                  <span className={`shrink-0 ${isRtl ? 'ml-3' : 'mr-3'}`}>
                     <item.icon className="w-5 h-5" />
                   </span>
-                  <span className="flex-grow text-sm font-medium">{item.name}</span>
+                  <span className="grow text-sm font-medium">{item.name}</span>
                   {isActive(item.href) && (
-                    <span className="flex-shrink-0">
+                    <span className="shrink-0">
                       {isRtl ? <HiChevronLeft className="w-5 h-5" /> : <HiChevronRight className="w-5 h-5" />}
                     </span>
                   )}
@@ -322,21 +322,21 @@ export default function ProfileSidebar({
                 <li className="flex items-center">
                   {isRtl ? (
                     <>
-                      <span className="text-gray-500 dark:text-gray-400 flex-shrink-0 mr-3">
+                      <span className="text-gray-500 dark:text-gray-400 shrink-0 mr-3">
                         <HiUser size={16} />
                       </span>
-                      <span className="flex-grow text-sm text-right">
+                      <span className="grow text-sm text-right">
                         <span className="font-medium text-gray-900 dark:text-white">{translations.userTypeLabel}: </span>
                         <span className="text-gray-700 dark:text-gray-300">{profile.userType}</span>
                       </span>
                     </>
                   ) : (
                     <>
-                      <span className="flex-grow text-sm">
+                      <span className="grow text-sm">
                         <span className="font-medium text-gray-900 dark:text-white">{translations.userTypeLabel}: </span>
                         <span className="text-gray-700 dark:text-gray-300">{profile.userType}</span>
                       </span>
-                      <span className="text-gray-500 dark:text-gray-400 flex-shrink-0 ml-3">
+                      <span className="text-gray-500 dark:text-gray-400 shrink-0 ml-3">
                         <HiUser size={16} />
                       </span>
                     </>
@@ -347,10 +347,10 @@ export default function ProfileSidebar({
                 <li className="flex items-center">
                   {isRtl ? (
                     <>
-                      <span className={`flex-shrink-0 mr-3 ${profile.isVerified ? 'text-green-500 dark:text-green-400' : 'text-yellow-500 dark:text-yellow-400'}`}>
+                      <span className={`shrink-0 mr-3 ${profile.isVerified ? 'text-green-500 dark:text-green-400' : 'text-yellow-500 dark:text-yellow-400'}`}>
                         <HiOutlineShieldCheck size={16} />
                       </span>
-                      <span className="flex-grow text-sm text-right">
+                      <span className="grow text-sm text-right">
                         <span className="font-medium text-gray-900 dark:text-white">{translations.verificationLabel}: </span>
                         <span className={`${profile.isVerified ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
                           {profile.isVerified ? translations.verifiedBadge : translations.notVerifiedLabel}
@@ -359,13 +359,13 @@ export default function ProfileSidebar({
                     </>
                   ) : (
                     <>
-                      <span className="flex-grow text-sm">
+                      <span className="grow text-sm">
                         <span className="font-medium text-gray-900 dark:text-white">{translations.verificationLabel}: </span>
                         <span className={`${profile.isVerified ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
                           {profile.isVerified ? translations.verifiedBadge : translations.notVerifiedLabel}
                         </span>
                       </span>
-                      <span className={`flex-shrink-0 ml-3 ${profile.isVerified ? 'text-green-500 dark:text-green-400' : 'text-yellow-500 dark:text-yellow-400'}`}>
+                      <span className={`shrink-0 ml-3 ${profile.isVerified ? 'text-green-500 dark:text-green-400' : 'text-yellow-500 dark:text-yellow-400'}`}>
                         <HiOutlineShieldCheck size={16} />
                       </span>
                     </>
@@ -380,23 +380,23 @@ export default function ProfileSidebar({
                       {isRtl ? (
                         <>
                           {Icon && (
-                            <span className="text-gray-500 dark:text-gray-400 flex-shrink-0 mr-3">
+                            <span className="text-gray-500 dark:text-gray-400 shrink-0 mr-3">
                               <Icon size={16} />
                             </span>
                           )}
-                          <span className="flex-grow text-sm text-right">
+                          <span className="grow text-sm text-right">
                             <span className="font-medium text-gray-900 dark:text-white">{detail.label}: </span>
                             <span className="text-gray-700 dark:text-gray-300">{detail.value}</span>
                           </span>
                         </>
                       ) : (
                         <>
-                          <span className="flex-grow text-sm">
+                          <span className="grow text-sm">
                             <span className="font-medium text-gray-900 dark:text-white">{detail.label}: </span>
                             <span className="text-gray-700 dark:text-gray-300">{detail.value}</span>
                           </span>
                           {Icon && (
-                            <span className="text-gray-500 dark:text-gray-400 flex-shrink-0 ml-3">
+                            <span className="text-gray-500 dark:text-gray-400 shrink-0 ml-3">
                               <Icon size={16} />
                             </span>
                           )}

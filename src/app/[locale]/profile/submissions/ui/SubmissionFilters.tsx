@@ -52,7 +52,7 @@ export default function SubmissionFilters({ onFilterChange, statusOptions }: Sub
     <div className="mb-4 bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
       <div className="flex flex-col sm:flex-row gap-3">
         {/* Search input */}
-        <div className="relative flex-grow">
+        <div className="relative grow">
           <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
             <Search className="w-4 h-4 text-gray-500 dark:text-gray-400" />
           </div>

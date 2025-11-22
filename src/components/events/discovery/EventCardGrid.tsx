@@ -144,7 +144,7 @@ function EventCard({ event }: EventCardProps) {
 
         {/* Event Dates */}
         <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-          <HiCalendar className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 flex-shrink-0`} /> {/* Slightly larger icon */}
+          <HiCalendar className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 shrink-0`} /> {/* Slightly larger icon */}
           <span>{formatDate(event.event_date)}</span>
           {event.event_end_date && event.event_end_date !== event.event_date && (
             <span className={isRtl ? 'mr-2' : 'ml-2'}>
@@ -155,7 +155,7 @@ function EventCard({ event }: EventCardProps) {
 
         {/* Location */}
         <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-          <HiLocationMarker className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 flex-shrink-0`} /> {/* Slightly larger icon */}
+          <HiLocationMarker className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 shrink-0`} /> {/* Slightly larger icon */}
           <span>{event.wilaya_name}</span>
           {event.daira_name && (
             <span className={isRtl ? 'mr-1' : 'ml-1'}>، {event.daira_name}</span>
@@ -165,7 +165,7 @@ function EventCard({ event }: EventCardProps) {
         {/* Organizer */}
         <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
           {/* Using a generic icon or removing it for minimalism, let's use a subtle one or none */}
-          {/* <HiUserCircle className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 flex-shrink-0`} /> */}
+          {/* <HiUserCircle className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 shrink-0`} /> */}
           <span className="font-medium">{t('organizer')}:</span>
           <span className={isRtl ? 'mr-2' : 'ml-2'}>{event.organizer_name}</span>
         </div>
@@ -195,7 +195,7 @@ function EventCard({ event }: EventCardProps) {
         {/* Submission Deadline */}
         {event.abstract_submission_deadline && (
           <div className="flex items-center text-sm text-orange-600 dark:text-orange-400">
-            <HiClock className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 flex-shrink-0`} /> {/* Slightly larger icon */}
+            <HiClock className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 shrink-0`} /> {/* Slightly larger icon */}
             <span className="font-medium">{t('submissionDeadline')}:</span>
             <span className={isRtl ? 'mr-1' : 'ml-1'}>{formatDate(event.abstract_submission_deadline)}</span>
           </div>

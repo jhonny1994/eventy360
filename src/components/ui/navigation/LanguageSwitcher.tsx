@@ -74,6 +74,7 @@ export default function LanguageSwitcher() {
 
   // Handle client-side mounting for portal
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
 
     // Initial position update when mounting

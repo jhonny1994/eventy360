@@ -31,6 +31,7 @@ export default function SearchFilter({
 
   // Update search term state when the activeSearch prop changes
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSearchTerm(activeSearch || '');
   }, [activeSearch]);
 

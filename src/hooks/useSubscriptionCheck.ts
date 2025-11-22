@@ -80,6 +80,7 @@ export function useSubscriptionCheck(
       );
       if (middlewareHeader) {
         const content = middlewareHeader.getAttribute("content");
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMiddlewareResult(content as SubscriptionCheckResult);
 
         if (content === "passed") {
@@ -127,6 +128,7 @@ export function useSubscriptionCheck(
   useEffect(() => {
     if (middlewareResult === null && !loading) {
       const hasAccess = canAccessPremiumFeature();
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setHasAccess(hasAccess);
 
       if (!hasAccess && redirectOnFailure) {

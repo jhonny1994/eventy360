@@ -133,7 +133,7 @@ export default function SubmissionDetails({ submission }: SubmissionDetailsProps
       
       <div className="flex flex-col md:flex-row md:items-start gap-6">
         {/* Main submission details */}
-        <div className="flex-grow space-y-6">
+        <div className="grow space-y-6">
           {/* Title and status */}
           <div>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">

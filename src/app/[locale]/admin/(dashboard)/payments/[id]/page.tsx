@@ -138,7 +138,7 @@ export default async function PaymentDetailsPage({
               </div>
               
               <div className={`flex items-center mb-4 ${isRtl ? 'flex-row-reverse' : ''}`}>
-                <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0 border border-gray-300 dark:border-gray-600">
+                <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 shrink-0 border border-gray-300 dark:border-gray-600">
                   {payment.profile_picture_url ? (
                     <Image 
                       src={payment.profile_picture_url} 

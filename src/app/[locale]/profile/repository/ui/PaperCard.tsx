@@ -64,21 +64,21 @@ export default function PaperCard({ paper, locale }: PaperCardProps) {
 
         {/* Author */}
         <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-          <HiUser className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 flex-shrink-0`} />
+          <HiUser className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 shrink-0`} />
           <span className="font-medium">{t('by')}:</span>
           <span className={isRtl ? 'mr-2' : 'ml-2'}>{paper.author_name}</span>
         </div>
 
         {/* Institution */}
         <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-          <HiAcademicCap className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 flex-shrink-0`} />
+          <HiAcademicCap className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 shrink-0`} />
           <span className="font-medium">{t('from')}:</span>
           <span className={isRtl ? 'mr-2' : 'ml-2'}>{paper.author_institution}</span>
         </div>
 
         {/* Event */}
         <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-          <HiCalendar className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 flex-shrink-0`} />
+          <HiCalendar className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 shrink-0`} />
           <span className="font-medium">{t('event')}:</span>
           <span className={`${isRtl ? 'mr-2' : 'ml-2'} line-clamp-1`}>{paper.event_name ? paper.event_name : t('paperCard.unknownEvent')}</span>
         </div>
@@ -86,7 +86,7 @@ export default function PaperCard({ paper, locale }: PaperCardProps) {
         {/* Location */}
         {paper.wilaya_name && (
           <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-            <HiLocationMarker className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 flex-shrink-0`} />
+            <HiLocationMarker className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 shrink-0`} />
             <span>
               {paper.wilaya_name}
               {paper.daira_name && `, ${paper.daira_name}`}
@@ -96,7 +96,7 @@ export default function PaperCard({ paper, locale }: PaperCardProps) {
 
         {/* Submission Date */}
         <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-          <HiCalendar className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 flex-shrink-0`} />
+          <HiCalendar className={`${isRtl ? 'ml-2' : 'mr-2'} h-5 w-5 shrink-0`} />
           <span className="font-medium">{t('date')}:</span>
           <span className={isRtl ? 'mr-2' : 'ml-2'}>{formatDate(paper.submission_date)}</span>
         </div>

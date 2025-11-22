@@ -72,7 +72,8 @@ export default function TopicSelectionStep({ form }: TopicSelectionStepProps) {
 
         setTopics(topicsData);
         setFilteredTopics(topicsData);
-      } catch  {
+      } catch {
+        // ignore
       } finally {
         setLoading(false);
       }

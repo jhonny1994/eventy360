@@ -141,7 +141,8 @@ export default function PaymentHistoryDisplay({
         // Open the document in a new tab
         window.open(data.signedUrl, '_blank');
       }
-    } catch  {
+    } catch {
+      // ignore
     }
   };
   

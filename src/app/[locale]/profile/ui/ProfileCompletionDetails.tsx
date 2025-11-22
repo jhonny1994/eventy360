@@ -91,7 +91,7 @@ export default function ProfileCompletionDetails({
                         } border`}
                       >
                         <div
-                          className={`flex-shrink-0 p-1 rounded-full ${
+                          className={`shrink-0 p-1 rounded-full ${
                             isCompleted
                               ? 'bg-green-100 text-green-600 dark:bg-green-800 dark:text-green-300'
                               : 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
@@ -107,7 +107,7 @@ export default function ProfileCompletionDetails({
                             </svg>
                           )}
                         </div>
-                        <span className="font-medium flex-grow">{getStepDisplayName(step)}</span>
+                        <span className="font-medium grow">{getStepDisplayName(step)}</span>
                       </div>
                     );
                   })}

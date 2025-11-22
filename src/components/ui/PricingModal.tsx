@@ -41,9 +41,9 @@ const PriceCard: React.FC<{
 
   return (
     <Card className="w-full shadow-md hover:shadow-lg transition-shadow duration-200 flex flex-col">
-      <div className="p-4 flex flex-col items-center text-center flex-grow min-h-[160px]">
+      <div className="p-4 flex flex-col items-center text-center grow min-h-[160px]">
         <h4 className="text-xl font-semibold mb-2">{periodLabel}</h4>
-        <div className="flex flex-col justify-center flex-grow">
+        <div className="flex flex-col justify-center grow">
             {discount && 
                 <Badge color="success" className="mb-2 py-1 px-2 self-center"> 
                     {t('discountApplied', { discount: Math.round(discount * 100) })}

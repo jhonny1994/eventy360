@@ -114,7 +114,7 @@ export default async function VerificationDetailsPage({
               </div>
               
               <div className="flex items-center mb-4">
-                <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0 border border-gray-300 dark:border-gray-600">
+                <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 shrink-0 border border-gray-300 dark:border-gray-600">
                   {verificationRequest.profile_picture_url ? (
                     <Image 
                       src={verificationRequest.profile_picture_url} 

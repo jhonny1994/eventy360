@@ -177,7 +177,8 @@ export default function RecordPaymentForm() {
     try {
       const cacheKey = `eventy360_subscription_${userId}`;
       localStorage.removeItem(cacheKey);
-    } catch  {
+    } catch {
+      // ignore
     }
   };
 
@@ -254,7 +255,7 @@ export default function RecordPaymentForm() {
               placeholder={t('userSearchPlaceholder')}
               value={userSearchTerm}
               onChange={(e) => setUserSearchTerm(e.target.value)}
-              className="flex-grow"
+              className="grow"
               icon={HiSearch}
             />
             <Button 
@@ -277,7 +278,7 @@ export default function RecordPaymentForm() {
                     onClick={() => selectUser(user)}
                   >
                     <div className="flex items-center">
-                      <div className="flex-shrink-0">
+                      <div className="shrink-0">
                         {user.profile_picture_url ? (
                           <Image 
                             className="w-8 h-8 rounded-full" 

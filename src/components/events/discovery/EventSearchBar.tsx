@@ -80,7 +80,7 @@ export default function EventSearchBar({
           color="info"
           onClick={handleSearch}
           disabled={isLoading}
-          className={`${isRtl ? 'me-2' : 'ms-2'} flex-shrink-0`}
+          className={`${isRtl ? 'me-2' : 'ms-2'} shrink-0`}
         >
           {isLoading ? (
             <Spinner size="sm" className={isRtl ? 'ml-1' : 'mr-1'} />

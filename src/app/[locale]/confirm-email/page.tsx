@@ -17,20 +17,14 @@ export default function ConfirmEmailPage() {
   const { supabase, session, loading: authLoading } = useAuth();
   const router = useRouter();
 
-  const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isResending, setIsResending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [emailConfirmed, setEmailConfirmed] = useState(false);
+
+  const userEmail = session?.user?.email || null;
+  const emailConfirmed = !!session?.user?.email_confirmed_at;
 
   useEffect(() => {
-    if (!authLoading && session?.user) {
-      setUserEmail(session.user.email || null);
-      if (session.user.email_confirmed_at) {
-        setEmailConfirmed(true);
-      } else {
-        setEmailConfirmed(false);
-      }
-    } else if (!authLoading && !session) {
+    if (!authLoading && !session) {
       router.replace(`/${locale}/redirect`);
     }
   }, [session, authLoading, router, locale]);
@@ -87,7 +81,7 @@ export default function ConfirmEmailPage() {
     );
   }
 
-  const NoticeContent = () => {
+  const renderNoticeContent = () => {
     if (emailConfirmed) {
       return (
         <div className="flex flex-col items-center text-center">
@@ -180,7 +174,7 @@ export default function ConfirmEmailPage() {
             </Link>
           </div>
 
-          {userEmail ? <NoticeContent /> : (
+          {userEmail ? renderNoticeContent() : (
             <div className="flex flex-col items-center text-center">
               <Spinner size="lg" aria-label="Loading user information..." />
               <p className="mt-4 text-muted-foreground">{t('sessionError')}</p>

@@ -323,7 +323,7 @@ function TopicSubscriptionsContent() {
                     onClick={() => !isDisabled && handleToggleSubscription(topic.id)}
                   >
                     <div className="flex items-center" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-                      <div className="flex-shrink-0 w-8 flex justify-center">
+                      <div className="shrink-0 w-8 flex justify-center">
                     {isPending ? (
                           <div className="w-5 h-5 flex items-center justify-center">
                       <Spinner size="sm" />
@@ -358,7 +358,7 @@ function TopicSubscriptionsContent() {
                     </label>
                   </div>
                       {isSubscribed && !isPending && (
-                        <Badge color="blue" size="sm" className="flex-shrink-0">
+                        <Badge color="blue" size="sm" className="shrink-0">
                           {t('subscribed')}
                         </Badge>
                       )}

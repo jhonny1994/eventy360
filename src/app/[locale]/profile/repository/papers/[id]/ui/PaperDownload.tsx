@@ -90,7 +90,7 @@ export default function PaperDownload({ paper, locale }: PaperDownloadProps) {
       <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
           <div className="flex items-center space-x-3 rtl:space-x-reverse mb-3 sm:mb-0">
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               <HiDocumentDownload className="w-8 h-8 text-blue-500" />
             </div>
             <div>

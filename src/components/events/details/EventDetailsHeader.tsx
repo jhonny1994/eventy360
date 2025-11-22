@@ -71,7 +71,7 @@ export function EventDetailsHeader({ event, locale }: EventDetailsHeaderProps) {
         {event.organizer && (
           <div className="mb-6">
             <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0 relative">
+              <div className="shrink-0 relative">
                 {event.organizer.profile_picture_url ? (
                   <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-700">
                     <Image
@@ -121,7 +121,7 @@ export function EventDetailsHeader({ event, locale }: EventDetailsHeaderProps) {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
           {/* Created */}
           <div className="flex items-center space-x-3">
-            <div className="flex-shrink-0 flex items-center">
+            <div className="shrink-0 flex items-center">
               <Calendar className="w-5 h-5 text-gray-400" />
             </div>
             <div>
@@ -140,7 +140,7 @@ export function EventDetailsHeader({ event, locale }: EventDetailsHeaderProps) {
 
           {/* Event Type */}
           <div className="flex items-center space-x-3">
-            <div className="flex-shrink-0 flex items-center">
+            <div className="shrink-0 flex items-center">
               <Tag className="w-5 h-5 text-gray-400" />
             </div>
             <div>
@@ -157,7 +157,7 @@ export function EventDetailsHeader({ event, locale }: EventDetailsHeaderProps) {
 
           {/* Published Status */}
           <div className="flex items-center space-x-3">
-            <div className="flex-shrink-0 flex items-center">
+            <div className="shrink-0 flex items-center">
               <CheckCircle className="w-5 h-5 text-gray-400" />
             </div>
             <div>
@@ -170,7 +170,7 @@ export function EventDetailsHeader({ event, locale }: EventDetailsHeaderProps) {
 
           {/* Registration Fee */}
           <div className="flex items-center space-x-3">
-            <div className="flex-shrink-0 flex items-center">
+            <div className="shrink-0 flex items-center">
               <DollarSign className="w-5 h-5 text-gray-400" />
             </div>
             <div>
@@ -188,7 +188,7 @@ export function EventDetailsHeader({ event, locale }: EventDetailsHeaderProps) {
           {/* Add Participants if available */}
           {event.max_participants && (
             <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0 flex items-center">
+              <div className="shrink-0 flex items-center">
                 <Users className="w-5 h-5 text-gray-400" />
               </div>
               <div>

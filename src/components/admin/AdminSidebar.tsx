@@ -92,7 +92,7 @@ export default function AdminSidebar({ translations, locale, adminName }: AdminS
           {/* Admin profile section - non-clickable */}
           {adminName && (
             <div className="flex items-center px-3 py-2 text-base font-normal text-gray-900 rounded-lg dark:text-white mb-2 border-b border-gray-200 dark:border-gray-700">
-              <HiUser className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400" />
+              <HiUser className="shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400" />
               <span className="flex-1 ms-3 whitespace-nowrap rtl:text-right">{adminName}</span>
             </div>
           )}

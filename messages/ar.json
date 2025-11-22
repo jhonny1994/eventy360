@@ -25,6 +25,7 @@
     "submitting": "جاري الإرسال...",
     "loginSuccessToast": "تم تسجيل الدخول بنجاح! جاري التوجيه...",
     "loginFailed": "فشل تسجيل الدخول",
+    "notAdminError": "ليس لديك صلاحيات المسؤول للوصول إلى هذه الصفحة.",
     "billing_period_enum": {
       "monthly": "شهري",
       "quarterly": "ربع سنوي",
@@ -258,7 +259,8 @@
           "daira": {
             "label": "الدائرة",
             "placeholder": "اختر الدائرة",
-            "description": "حدد الدائرة التي سيقام فيها الملتقى"
+            "description": "حدد الدائرة التي سيقام فيها الملتقى",
+            "selectWilayaPlaceholder": "اختر الولاية أولاً"
           },
           "contactEmail": {
             "label": "البريد الإلكتروني للتواصل",
@@ -414,7 +416,8 @@
           "all": "جميع المجالات",
           "filter": "تصفية حسب المجال"
         },
-        "noTopics": "لا توجد مواضيع متاحة"
+        "noTopics": "لا توجد مواضيع متاحة",
+        "noResults": "لا توجد نتائج"
       },
       "subscription": {
         "limitReached": {
@@ -441,7 +444,9 @@
         "validation": "يرجى التحقق من البيانات المدخلة وإصلاح الأخطاء",
         "network": "خطأ في الاتصال. يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى",
         "unauthorized": "ليس لديك صلاحية لإنشاء ملتقيات. يرجى التحقق من نوع حسابك.",
-        "retry": "إعادة المحاولة"
+        "retry": "إعادة المحاولة",
+        "failedToLoadDairas": "فشل تحميل الدوائر",
+        "failedToLoadWilayas": "فشل تحميل الولايات"
       },
       "loading": {
         "creating": "جارٍ إنشاء الملتقى...",
@@ -467,7 +472,11 @@
         "verdictMustBeAfterAbstractResult": "يجب أن يكون إعلان القرار بعد نتائج مراجعة الملخصات",
         "revisionMustBeAfterVerdict": "الموعد النهائي لتقديم التعديلات يجب أن يكون بعد تاريخ إعلان القرار",
         "revisionMustBeBeforeEvent": "الموعد النهائي لتقديم التعديلات يجب أن يكون قبل تاريخ بدء الملتقى"
-      }
+      },
+      "loadingDairas": "جاري تحميل الدوائر...",
+      "mustBeLoggedIn": "يجب عليك تسجيل الدخول لإنشاء فعالية",
+      "submissionError": "حدث خطأ أثناء إرسال الفعالية",
+      "subscriptionLimitReached": "لقد وصلت إلى الحد الأقصى للاشتراك الخاص بك"
     },
     "discovery": {
       "title": "اكتشاف الملتقيات",
@@ -520,7 +529,8 @@
     "loading": "جارٍ تحميل الملتقيات...",
     "errors": {
       "title": "خطأ في تحميل الملتقيات",
-      "fetchFailed": "فشل في جلب الملتقيات من قاعدة البيانات. يرجى المحاولة مرة أخرى."
+      "fetchFailed": "فشل في جلب الملتقيات من قاعدة البيانات. يرجى المحاولة مرة أخرى.",
+      "profileFetchFailed": "فشل جلب الملف الشخصي"
     }
   },
   "EventDetails": {
@@ -619,13 +629,22 @@
         "updateFailed": "فشل في التحديث",
         "deleteSuccess": "تم الحذف بنجاح",
         "deleteFailed": "فشل في الحذف"
-      }
+      },
+      "addToCalendar": "إضافة إلى التقويم",
+      "saveEvent": "حفظ الفعالية",
+      "shareEvent": "مشاركة الفعالية",
+      "title": "إجراءات",
+      "viewWebsite": "زيارة الموقع"
     },
     "status": {
       "draft": "مسودة",
       "published": "منشور",
       "archived": "مؤرشف",
-      "cancelled": "ملغى"
+      "cancelled": "ملغى",
+      "eventDate": "تاريخ الفعالية",
+      "eventPassed": "انتهت الفعالية",
+      "eventUpcoming": "فعالية قادمة",
+      "title": "الحالة"
     },
     "visibility": {
       "public": "عامة",
@@ -654,7 +673,8 @@
         "remaining": "متبقي",
         "registrations": "التسجيلات",
         "views": "المشاهدات",
-        "visibility": "الرؤية"
+        "visibility": "الرؤية",
+        "title": "إحصائيات"
       },
       "statusHeader": "الحالة",
       "status": {
@@ -662,7 +682,8 @@
         "ongoing": "جارٍ",
         "completed": "مكتمل",
         "cancelled": "ملغى"
-      }
+      },
+      "unknown": "غير معروف"
     },
     "location": {
       "title": "موقع الانعقاد",
@@ -755,6 +776,26 @@
       "notFound": "الملتقى غير موجود",
       "accessDenied": "غير مسموح لك بعرض هذا الملتقى",
       "loadingFailed": "فشل في تحميل تفاصيل الملتقى"
+    },
+    "layout": {
+      "breadcrumbs": {
+        "events": "الفعاليات",
+        "profile": "الملف الشخصي"
+      },
+      "defaultTitle": "تفاصيل الفعالية",
+      "sidebar": {
+        "anonymousOrganizer": "منظم مجهول",
+        "copyLink": "نسخ الرابط",
+        "editEvent": "تعديل الفعالية",
+        "manageEvent": "إدارة الفعالية",
+        "organizer": "المنظم",
+        "quickActions": "إجراءات سريعة",
+        "shareDescription": "شارك هذه الفعالية مع أصدقائك وزملائك",
+        "shareEvent": "مشاركة الفعالية"
+      }
+    },
+    "subscription": {
+      "premiumFeatures": "ميزات مميزة"
     }
   },
   "HomePage": {
@@ -929,7 +970,8 @@
       "cancelButton": "إلغاء",
       "updateSuccess": "تم تحديث الملف الشخصي بنجاح",
       "uploadPolicyError": "خطأ في عملية الرفع بسبب محددات الأمان",
-      "locationTitle": "معلومات الموقع"
+      "locationTitle": "معلومات الموقع",
+      "authenticationError": "حدث خطأ في المصادقة. يرجى المحاولة مرة أخرى."
     }
   },
   "Validations": {
@@ -950,6 +992,7 @@
     "abstractResultMustBeAfterDeadline": "تاريخ نتائج مراجعة الملخصات يجب أن يكون بعد الموعد النهائي لتقديم الملخصات",
     "submissionDeadlineMustBeAfterAbstractResult": "الموعد النهائي لتقديم الأوراق يجب أن يكون بعد تاريخ نتائج مراجعة الملخصات",
     "verdictMustBeAfterSubmission": "تاريخ إعلان قرار قبول الأوراق يجب أن يكون بعد الموعد النهائي لتقديمها",
+    "verdictMustBeBeforeEvent": "تاريخ إعلان القرار يجب أن يكون قبل بداية الملتقى",
     "fullPaperMustBeAfterVerdict": "الموعد النهائي لتقديم النسخة النهائية من الورقة يجب أن يكون بعد تاريخ إعلان القرار",
     "fullPaperSubmissionMustBeAfterAbstractResult": "الموعد النهائي لتقديم الأوراق الكاملة يجب أن يكون بعد تاريخ نتائج مراجعة الملخصات",
     "fullPaperSubmissionMustBeBeforeEvent": "الموعد النهائي لتقديم الأوراق الكاملة يجب أن يكون قبل تاريخ بدء الملتقى",
@@ -958,7 +1001,17 @@
     "invalidEnumValue": "يُرجى اختيار قيمة صالحة من القائمة",
     "fileTypeInvalid": "نوع الملف غير مدعوم. الأنواع المدعومة: {types}",
     "fileSizeTooLarge": "حجم الملف يتجاوز الحد المسموح به. الحد الأقصى هو {maxSize} ميغابايت.",
-    "minLength": "يجب أن يحتوي هذا الحقل على {min} أحرف على الأقل"
+    "minLength": "يجب أن يحتوي هذا الحقل على {min} أحرف على الأقل",
+    "profilePicture": {
+      "fileSizeTooLarge": "حجم الملف كبير جداً",
+      "invalidFileType": "نوع الملف غير صالح"
+    }
+  },
+  "Status": {
+    "pending": "قيد الانتظار",
+    "approved": "مقبول",
+    "rejected": "مرفوض",
+    "unknown": "غير معروف"
   },
   "AriaLabels": {
     "submittingResetRequest": "جارٍ إرسال طلب إعادة تعيين كلمة المرور...",
@@ -1093,7 +1146,8 @@
       "downloading": "جارٍ التحميل...",
       "downloadError": "فشل تحميل المستند",
       "documentNotFound": "لم يتم العثور على المستند",
-      "uploadedDocument": "المستند المرفوع"
+      "uploadedDocument": "المستند المرفوع",
+      "uploadPolicyError": "خطأ في سياسة الرفع"
     },
     "VerificationSection": {
       "verificationStatusError": "فشل التحقق من حالة التوثيق",
@@ -1141,7 +1195,8 @@
       "participated_in_event": "المشاركة في ملتقى",
       "bookmarked_event": "حفظ ملتقى في المفضلة",
       "created_event": "إنشاء ملتقى"
-    }
+    },
+    "subscriptionRequired": "الاشتراك مطلوب للوصول إلى هذه الميزة."
   },
   "Enums": {
     "user_type_enum": {
@@ -1493,6 +1548,26 @@
       "researcher": "باحث",
       "organizer": "منظّم",
       "admin": "مسؤول"
+    },
+    "RecordPaymentForm": {
+      "adminNotesLabel": "ملاحظات المسؤول",
+      "adminNotesPlaceholder": "أضف أي ملاحظات إضافية هنا...",
+      "amountLabel": "المبلغ",
+      "amountPlaceholder": "أدخل المبلغ",
+      "billingPeriodLabel": "فترة الفوترة",
+      "genericError": "حدث خطأ أثناء تسجيل الدفع",
+      "noUsersFound": "لم يتم العثور على مستخدمين",
+      "paymentMethodLabel": "طريقة الدفع",
+      "paymentRecorded": "تم تسجيل الدفع بنجاح",
+      "resetButton": "إعادة تعيين",
+      "search": "بحث",
+      "selectUserRequired": "يرجى اختيار مستخدم",
+      "submitButton": "تسجيل الدفع",
+      "title": "تسجيل دفعة جديدة",
+      "userSearchEmpty": "لا توجد نتائج",
+      "userSearchError": "خطأ في البحث عن المستخدمين",
+      "userSearchLabel": "البحث عن مستخدم",
+      "userSearchPlaceholder": "ابحث بالاسم أو البريد الإلكتروني..."
     }
   },
   "PaymentInstructions": {
@@ -1661,7 +1736,8 @@
       "invalidInviteMessage": "رابط الدعوة الذي استخدمته غير صالح أو انتهت صلاحيته. يرجى التواصل مع المسؤول لطلب دعوة جديدة.",
       "accountSetupSuccessTitle": "اكتمل إعداد الحساب بنجاح!",
       "accountSetupSuccessBody": "تم إعداد حساب المسؤول الخاص بك. سيتم الآن توجيهك لصفحة تسجيل الدخول لاستخدام بيانات الاعتماد الجديدة.",
-      "termsHint": "بالنقر على 'تعيين كلمة المرور والإنهاء'، فإنك توافق على شروط الخدمة الخاصة بالمسؤولين."
+      "termsHint": "بالنقر على 'تعيين كلمة المرور والإنهاء'، فإنك توافق على شروط الخدمة الخاصة بالمسؤولين.",
+      "setupFailed": "فشل إعداد الحساب"
     },
     "CallbackPage": {
       "processingAuthentication": "جارٍ معالجة المصادقة",
@@ -1672,7 +1748,8 @@
       "errorTitle": "حدث خطأ",
       "adminLoginPageName": "صفحة دخول المسؤولين",
       "unexpectedState": "حالة غير متوقعة. يرجى المحاولة مرة أخرى.",
-      "unexpectedErrorTitle": "خطأ غير متوقع في معالجة الرابط"
+      "unexpectedErrorTitle": "خطأ غير متوقع في معالجة الرابط",
+      "genericErrorDescription": "حدث خطأ أثناء معالجة طلب تسجيل الدخول."
     }
   },
   "AdminDashboard": {
@@ -2257,7 +2334,24 @@
     "makeDecision": "اتخاذ القرار",
     "acceptPaper": "قبول البحث",
     "rejectPaper": "رفض البحث",
-    "requestAnotherRevision": "طلب تعديلات أخرى"
+    "requestAnotherRevision": "طلب تعديلات أخرى",
+    "approveAbstract": "قبول الملخص",
+    "downloadAbstractFile": "تحميل ملف الملخص",
+    "errorUpdatingSubmission": "خطأ في تحديث التقديم",
+    "feedbackRequiredForRejection": "التعليقات مطلوبة للرفض",
+    "fullPaper": "الورقة الكاملة",
+    "pleaseSelectDecision": "يرجى اختيار قرار",
+    "previousFeedback": "التعليقات السابقة",
+    "processing": "جاري المعالجة...",
+    "provideFeedbackPlaceholder": "قدم تعليقات للمؤلف...",
+    "rejectAbstract": "رفض الملخص",
+    "reviewDecision": "قرار المراجعة",
+    "reviewFeedback": "تعليقات المراجعة",
+    "submitFullPaperDescription": "يرجى تقديم الورقة الكاملة للمراجعة النهائية.",
+    "submitFullPaperTitle": "تقديم الورقة الكاملة",
+    "submitReview": "إرسال المراجعة",
+    "submitRevisionTitle": "تقديم نسخة منقحة",
+    "unknownAuthor": "مؤلف غير معروف"
   },
   "ResearchRepository": {
     "title": "مستودع الأبحاث",
@@ -2314,7 +2408,11 @@
       "wilaya": "ولاية",
       "daira": "دائرة",
       "untitled": "بدون عنوان",
-      "unknownEvent": "ملتقى غير معروف"
+      "unknownEvent": "ملتقى غير معروف",
+      "paperCard": {
+        "unknownEvent": "فعالية غير معروفة",
+        "untitled": "بدون عنوان"
+      }
     },
     "paperDetails": {
       "title": "تفاصيل البحث",
@@ -2348,7 +2446,9 @@
       "loading": "جاري تحميل البيانات...",
       "metadata": "البيانات الوصفية",
       "viewEvent": "عرض الملتقى",
-      "downloadDisclaimer": "عند التحميل، يرجى مراعاة حقوق الملكية الفكرية واحترام حقوق المؤلف."
+      "downloadDisclaimer": "عند التحميل، يرجى مراعاة حقوق الملكية الفكرية واحترام حقوق المؤلف.",
+      "premiumFeature": "ميزة مميزة",
+      "subscriptionRequired": "الاشتراك مطلوب"
     },
     "analytics": {
       "title": "إحصائيات البحث",

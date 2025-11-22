@@ -85,7 +85,8 @@ export default function ApproveRejectActions({
       const cacheKey = `eventy360_subscription_${userId}`;
       try {
         localStorage.removeItem(cacheKey);
-      } catch  {
+      } catch {
+        // ignore
       }
     }
 

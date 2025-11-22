@@ -39,13 +39,13 @@ export default function ProfileCompletionCard({
     <div className="flex items-start w-full">
       {/* Icon section */}
       <div
-        className={`flex-shrink-0 p-3 rounded-full ${completionColorClass} ${isRtl ? 'ml-4' : 'mr-4'}`}
+        className={`shrink-0 p-3 rounded-full ${completionColorClass} ${isRtl ? 'ml-4' : 'mr-4'}`}
       >
         <HiOutlineUser className="h-6 w-6" />
       </div>
       
       {/* Content section */}
-      <div className="flex-grow">
+      <div className="grow">
         <div>
           <h3 className="text-lg font-medium">{translations.profileCompletion}</h3>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">

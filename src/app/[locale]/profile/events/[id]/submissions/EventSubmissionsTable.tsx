@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import useTranslations from '@/hooks/useTranslations';
 import useLocale from '@/hooks/useLocale';
 import Link from 'next/link';
-import { Badge, Button, Select, TextInput, Spinner } from 'flowbite-react';
+import { Badge, Button, Select, TextInput } from 'flowbite-react';
 import { HiSearch, HiFilter, HiExternalLink, HiDocumentText } from 'react-icons/hi';
 
 /**
@@ -90,9 +90,7 @@ export default function EventSubmissionsTable({
   // States for filtering and pagination
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [filteredSubmissions, setFilteredSubmissions] = useState<Submission[]>(submissions);
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
   const itemsPerPage = 10;
 
   // Helper for consistent text alignment classes based on RTL
@@ -129,11 +127,8 @@ export default function EventSubmissionsTable({
   };
 
   // Filter submissions based on search term and status filter
-  useEffect(() => {
-    setIsLoading(true);
-    
-    // Apply filters
-    const filtered = submissions.filter(submission => {
+  const filteredSubmissions = useMemo(() => {
+    return submissions.filter(submission => {
       const title = getTitle(submission.title_translations).toLowerCase();
       const searchMatch = searchTerm === '' || 
                           title.includes(searchTerm.toLowerCase()) ||
@@ -144,11 +139,13 @@ export default function EventSubmissionsTable({
       
       return searchMatch && statusMatch;
     });
-    
-    setFilteredSubmissions(filtered);
-    setCurrentPage(1); // Reset to first page when filters change
-    setIsLoading(false);
-  }, [searchTerm, statusFilter, submissions, getTitle]);
+  }, [submissions, searchTerm, statusFilter, getTitle]);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter]);
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredSubmissions.length / itemsPerPage);
@@ -169,7 +166,7 @@ export default function EventSubmissionsTable({
     <div className="space-y-4" dir={isRtl ? 'rtl' : 'ltr'}>
       {/* Filters */}
       <div className={`flex flex-col md:flex-row gap-4 ${isRtl ? 'md:flex-row-reverse' : ''}`}>
-        <div className={`relative flex-grow ${isRtl ? 'md:ml-4' : 'md:mr-4'}`}>
+        <div className={`relative grow ${isRtl ? 'md:ml-4' : 'md:mr-4'}`}>
           <div className={`absolute inset-y-0 ${isRtl ? 'right-0 pr-3' : 'left-0 pl-3'} flex items-center pointer-events-none`}>
             <HiSearch className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </div>
@@ -205,14 +202,8 @@ export default function EventSubmissionsTable({
         {t('showingResults', { count: filteredSubmissions.length })}
       </div>
       
-      {isLoading ? (
-        <div className="flex justify-center items-center p-8">
-          <Spinner size="xl" />
-        </div>
-      ) : (
-        <>
-          {/* Table */}
-          <div className="overflow-x-auto relative shadow-md sm:rounded-lg">
+      {/* Table */}
+      <div className="overflow-x-auto relative shadow-md sm:rounded-lg">
             <table className="w-full text-sm text-gray-500 dark:text-gray-400" dir={isRtl ? 'rtl' : 'ltr'} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr className={isRtl ? 'text-right' : 'text-left'}>
@@ -325,8 +316,6 @@ export default function EventSubmissionsTable({
               </Button>
             </div>
           )}
-        </>
-      )}
     </div>
   );
 } 

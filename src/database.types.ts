@@ -7,6 +7,11 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "12.2.3 (519615d)"
+  }
   public: {
     Tables: {
       admin_actions_log: {
@@ -16,7 +21,7 @@ export type Database = {
           created_at: string
           details: Json | null
           id: number
-          ip_address: unknown | null
+          ip_address: unknown
           target_entity_id: string | null
           target_entity_type: string | null
           target_user_id: string | null
@@ -27,7 +32,7 @@ export type Database = {
           created_at?: string
           details?: Json | null
           id?: number
-          ip_address?: unknown | null
+          ip_address?: unknown
           target_entity_id?: string | null
           target_entity_type?: string | null
           target_user_id?: string | null
@@ -38,7 +43,7 @@ export type Database = {
           created_at?: string
           details?: Json | null
           id?: number
-          ip_address?: unknown | null
+          ip_address?: unknown
           target_entity_id?: string | null
           target_entity_type?: string | null
           target_user_id?: string | null
@@ -1288,7 +1293,7 @@ export type Database = {
         Returns: boolean
       }
       add_author_revision_notes: {
-        Args: { p_submission_id: string; p_version_id: string; p_notes: string }
+        Args: { p_notes: string; p_submission_id: string; p_version_id: string }
         Returns: boolean
       }
       billing_period_to_interval: {
@@ -1299,14 +1304,8 @@ export type Database = {
         Args: { p_event_id: string }
         Returns: Json
       }
-      check_subscriptions_expiry: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      complete_my_profile: {
-        Args: { profile_data: Json }
-        Returns: undefined
-      }
+      check_subscriptions_expiry: { Args: never; Returns: undefined }
+      complete_my_profile: { Args: { profile_data: Json }; Returns: undefined }
       complete_submission: {
         Args: { p_submission_id: string }
         Returns: boolean
@@ -1315,141 +1314,138 @@ export type Database = {
         Args: { p_invited_user_email: string; p_magic_link: string }
         Returns: undefined
       }
-      create_deadline_notifications: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      create_deadline_notifications: { Args: never; Returns: undefined }
       discover_events: {
         Args: {
-          search_query?: string
-          topic_ids?: string[]
-          wilaya_id_param?: number
           daira_id_param?: number
-          start_date?: string
           end_date?: string
-          event_status_filter?: Database["public"]["Enums"]["event_status_enum"][]
           event_format_filter?: Database["public"]["Enums"]["event_format_enum"][]
-          p_organizer_id?: string
+          event_status_filter?: Database["public"]["Enums"]["event_status_enum"][]
           limit_count?: number
           offset_count?: number
+          p_organizer_id?: string
+          search_query?: string
+          start_date?: string
+          topic_ids?: string[]
+          wilaya_id_param?: number
         }
         Returns: {
-          id: string
-          event_name: string
-          event_subtitle: string
+          abstract_submission_deadline: string
+          daira_name: string
           event_date: string
           event_end_date: string
-          wilaya_name: string
-          daira_name: string
-          organizer_name: string
-          topics: string[]
-          status: Database["public"]["Enums"]["event_status_enum"]
+          event_name: string
+          event_subtitle: string
           format: Database["public"]["Enums"]["event_format_enum"]
+          id: string
           logo_url: string
-          abstract_submission_deadline: string
+          organizer_name: string
           rank: number
+          status: Database["public"]["Enums"]["event_status_enum"]
+          topics: string[]
           total_records: number
+          wilaya_name: string
         }[]
       }
       discover_papers: {
         Args: {
-          search_query?: string
-          topic_ids?: string[]
-          wilaya_id_param?: number
-          daira_id_param?: number
-          start_date?: string
-          end_date?: string
           author_name_filter?: string
-          organizer_id?: string
+          daira_id_param?: number
+          end_date?: string
           limit_count?: number
           offset_count?: number
+          organizer_id?: string
+          search_query?: string
+          start_date?: string
+          topic_ids?: string[]
+          wilaya_id_param?: number
         }
         Returns: {
-          id: string
-          paper_title_translations: Json
-          paper_abstract_translations: Json
+          author_daira_id: number
+          author_id: string
+          author_institution: string
+          author_name: string
+          author_wilaya_id: number
+          event_date: string
           event_id: string
           event_name_translations: Json
-          event_date: string
-          author_id: string
-          author_name: string
-          author_institution: string
-          full_paper_file_url: string
-          full_paper_file_metadata: Json
-          submission_date: string
-          author_wilaya_id: number
-          author_daira_id: number
           event_topic_ids: string[]
+          full_paper_file_metadata: Json
+          full_paper_file_url: string
+          id: string
+          paper_abstract_translations: Json
+          paper_title_translations: Json
           rank: number
+          submission_date: string
           total_records: number
         }[]
       }
       filter_events_by_date_range: {
         Args: {
-          start_date?: string
           end_date?: string
           limit_count?: number
           offset_count?: number
+          start_date?: string
         }
         Returns: {
-          id: string
-          event_name: string
-          event_subtitle: string
+          abstract_submission_deadline: string
+          daira_name: string
           event_date: string
           event_end_date: string
-          wilaya_name: string
-          daira_name: string
-          organizer_name: string
-          topics: string[]
-          status: Database["public"]["Enums"]["event_status_enum"]
+          event_name: string
+          event_subtitle: string
           format: Database["public"]["Enums"]["event_format_enum"]
+          id: string
           logo_url: string
-          abstract_submission_deadline: string
+          organizer_name: string
+          status: Database["public"]["Enums"]["event_status_enum"]
+          topics: string[]
+          wilaya_name: string
         }[]
       }
       filter_events_by_location: {
         Args: {
-          wilaya_id_param: number
           daira_id_param?: number
           limit_count?: number
           offset_count?: number
+          wilaya_id_param: number
         }
         Returns: {
-          id: string
-          event_name: string
-          event_subtitle: string
+          abstract_submission_deadline: string
+          daira_name: string
           event_date: string
           event_end_date: string
-          wilaya_name: string
-          daira_name: string
-          organizer_name: string
-          topics: string[]
-          status: Database["public"]["Enums"]["event_status_enum"]
+          event_name: string
+          event_subtitle: string
           format: Database["public"]["Enums"]["event_format_enum"]
+          id: string
           logo_url: string
-          abstract_submission_deadline: string
+          organizer_name: string
+          status: Database["public"]["Enums"]["event_status_enum"]
+          topics: string[]
+          wilaya_name: string
         }[]
       }
       filter_events_by_topic: {
         Args: {
-          topic_ids: string[]
           limit_count?: number
           offset_count?: number
+          topic_ids: string[]
         }
         Returns: {
-          id: string
-          event_name: string
-          event_subtitle: string
+          abstract_submission_deadline: string
+          daira_name: string
           event_date: string
           event_end_date: string
-          wilaya_name: string
-          daira_name: string
-          organizer_name: string
-          topics: string[]
-          status: Database["public"]["Enums"]["event_status_enum"]
+          event_name: string
+          event_subtitle: string
           format: Database["public"]["Enums"]["event_format_enum"]
+          id: string
           logo_url: string
-          abstract_submission_deadline: string
+          organizer_name: string
+          status: Database["public"]["Enums"]["event_status_enum"]
+          topics: string[]
+          wilaya_name: string
         }[]
       }
       get_daira_name: {
@@ -1459,108 +1455,102 @@ export type Database = {
       get_event_submission_stats: {
         Args: { event_id: string }
         Returns: {
-          total_submissions: number
-          abstract_submitted: number
           abstract_accepted: number
           abstract_rejected: number
-          full_paper_submitted: number
+          abstract_submitted: number
+          completed: number
           full_paper_accepted: number
           full_paper_rejected: number
+          full_paper_submitted: number
           revision_requested: number
-          completed: number
+          total_submissions: number
         }[]
       }
       get_events_by_status: {
         Args: {
-          status_filter: Database["public"]["Enums"]["event_status_enum"]
           limit_count?: number
           offset_count?: number
+          status_filter: Database["public"]["Enums"]["event_status_enum"]
         }
         Returns: {
-          id: string
-          event_name: string
-          event_subtitle: string
+          abstract_submission_deadline: string
+          daira_name: string
           event_date: string
           event_end_date: string
-          wilaya_name: string
-          daira_name: string
-          organizer_name: string
-          topics: string[]
-          status: Database["public"]["Enums"]["event_status_enum"]
+          event_name: string
+          event_subtitle: string
           format: Database["public"]["Enums"]["event_format_enum"]
+          id: string
           logo_url: string
-          abstract_submission_deadline: string
+          organizer_name: string
+          status: Database["public"]["Enums"]["event_status_enum"]
+          topics: string[]
+          wilaya_name: string
         }[]
       }
       get_featured_events: {
         Args: { limit_count?: number }
         Returns: {
-          id: string
-          event_name: string
-          event_subtitle: string
+          abstract_submission_deadline: string
+          daira_name: string
           event_date: string
           event_end_date: string
-          wilaya_name: string
-          daira_name: string
-          organizer_name: string
-          topics: string[]
-          status: Database["public"]["Enums"]["event_status_enum"]
+          event_name: string
+          event_subtitle: string
           format: Database["public"]["Enums"]["event_format_enum"]
+          id: string
           logo_url: string
-          abstract_submission_deadline: string
+          organizer_name: string
+          status: Database["public"]["Enums"]["event_status_enum"]
+          topics: string[]
+          wilaya_name: string
         }[]
       }
       get_feedback_for_version: {
         Args: { p_version_id: string }
         Returns: {
+          created_at: string
+          feedback_content: string
           id: string
-          submission_version_id: string
+          provider_name: string
           providing_user_id: string
           role_at_submission: Database["public"]["Enums"]["user_type_enum"]
-          feedback_content: string
-          created_at: string
+          submission_version_id: string
           updated_at: string
-          provider_name: string
         }[]
       }
       get_paper_analytics: {
         Args: { p_submission_id: string }
         Returns: {
-          view_count: number
           download_count: number
-          last_viewed_at: string
           last_downloaded_at: string
+          last_viewed_at: string
+          view_count: number
         }[]
       }
       get_paper_analytics_over_time: {
         Args: {
-          p_submission_id: string
-          p_start_date?: string
           p_end_date?: string
           p_interval?: string
+          p_start_date?: string
+          p_submission_id: string
         }
         Returns: {
           date: string
-          views: number
           downloads: number
+          views: number
         }[]
       }
       get_papers_analytics: {
         Args: { p_submission_ids: string[] }
         Returns: {
+          download_count: number
           submission_id: string
           view_count: number
-          download_count: number
         }[]
       }
-      get_payment_details: {
-        Args: { payment_id: string }
-        Returns: Json
-      }
-      get_payments_with_user_details: {
-        Args: Record<PropertyKey, never>
-        Returns: Json[]
-      }
+      get_payment_details: { Args: { payment_id: string }; Returns: Json }
+      get_payments_with_user_details: { Args: never; Returns: Json[] }
       get_public_events: {
         Args: { p_limit?: number; p_offset?: number }
         Returns: {
@@ -1598,6 +1588,12 @@ export type Database = {
           who_organizes_translations: Json
           wilaya_id: number
         }[]
+        SetofOptions: {
+          from: "*"
+          to: "events"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       get_subscription_details: {
         Args: { target_user_id?: string }
@@ -1605,149 +1601,131 @@ export type Database = {
       }
       get_subscription_pricing: {
         Args: {
-          user_type: Database["public"]["Enums"]["user_type_enum"]
           billing_period: Database["public"]["Enums"]["billing_period_enum"]
+          user_type: Database["public"]["Enums"]["user_type_enum"]
         }
         Returns: Json
       }
       get_wilaya_name: {
-        Args: { p_wilaya_id: number; p_locale?: string }
+        Args: { p_locale?: string; p_wilaya_id: number }
         Returns: string
       }
       handle_submission_feedback: {
         Args: {
-          p_submission_id: string
-          p_feedback_content: string
           p_decision_status: string
+          p_feedback_content: string
+          p_submission_id: string
         }
         Returns: undefined
       }
-      is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      jsonb_values_to_text: {
-        Args: { data: Json }
-        Returns: string
-      }
-      purge_expired_deletions: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      is_admin: { Args: never; Returns: boolean }
+      jsonb_values_to_text: { Args: { data: Json }; Returns: string }
+      purge_expired_deletions: { Args: never; Returns: undefined }
       queue_trial_expiry_notification: {
         Args: {
-          profile_id: string
           days_remaining: number
+          profile_id: string
           template_key: string
         }
         Returns: undefined
       }
       record_manual_payment: {
         Args: {
-          target_user_id: string
+          admin_notes?: string
           amount: number
           billing_period: Database["public"]["Enums"]["billing_period_enum"]
           payment_method?: Database["public"]["Enums"]["payment_method_enum"]
-          admin_notes?: string
+          target_user_id: string
         }
         Returns: Json
       }
-      restore_event: {
-        Args: { p_event_id: string }
-        Returns: boolean
-      }
+      restore_event: { Args: { p_event_id: string }; Returns: boolean }
       restore_submission: {
         Args: { p_submission_id: string }
         Returns: boolean
       }
       review_abstract: {
         Args: {
-          p_submission_id: string
-          p_status: Database["public"]["Enums"]["submission_status_enum"]
           p_feedback: string
+          p_status: Database["public"]["Enums"]["submission_status_enum"]
+          p_submission_id: string
         }
         Returns: boolean
       }
       review_full_paper: {
         Args: {
-          p_submission_id: string
-          p_status: Database["public"]["Enums"]["submission_status_enum"]
           p_feedback: string
+          p_status: Database["public"]["Enums"]["submission_status_enum"]
+          p_submission_id: string
         }
         Returns: boolean
       }
       search_events: {
         Args: {
-          search_query: string
           limit_count?: number
           offset_count?: number
+          search_query: string
         }
         Returns: {
-          id: string
-          event_name: string
-          event_subtitle: string
+          abstract_submission_deadline: string
+          daira_name: string
           event_date: string
           event_end_date: string
-          wilaya_name: string
-          daira_name: string
-          organizer_name: string
-          topics: string[]
-          status: Database["public"]["Enums"]["event_status_enum"]
+          event_name: string
+          event_subtitle: string
           format: Database["public"]["Enums"]["event_format_enum"]
+          id: string
           logo_url: string
-          abstract_submission_deadline: string
+          organizer_name: string
           rank: number
+          status: Database["public"]["Enums"]["event_status_enum"]
+          topics: string[]
+          wilaya_name: string
         }[]
       }
-      soft_delete_event: {
-        Args: { p_event_id: string }
-        Returns: boolean
-      }
+      soft_delete_event: { Args: { p_event_id: string }; Returns: boolean }
       soft_delete_submission: {
         Args: { p_submission_id: string }
         Returns: boolean
       }
       submit_abstract: {
         Args: {
+          p_abstract_file_metadata: Json
+          p_abstract_file_url: string
+          p_abstract_translations: Json
           p_event_id: string
           p_title_translations: Json
-          p_abstract_translations: Json
-          p_abstract_file_url: string
-          p_abstract_file_metadata: Json
         }
         Returns: string
       }
       submit_full_paper: {
         Args: {
-          p_submission_id: string
-          p_full_paper_file_url: string
           p_full_paper_file_metadata: Json
+          p_full_paper_file_url: string
+          p_submission_id: string
         }
         Returns: string
       }
       submit_revision: {
         Args: {
-          p_submission_id: string
-          p_full_paper_file_url: string
           p_full_paper_file_metadata: Json
+          p_full_paper_file_url: string
           p_revision_notes?: string
+          p_submission_id: string
         }
         Returns: string
       }
       track_paper_activity: {
-        Args: { p_submission_id: string; p_action_type: string }
+        Args: { p_action_type: string; p_submission_id: string }
         Returns: string
       }
-      update_event_status_based_on_date: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      update_event_status_based_on_date: { Args: never; Returns: undefined }
       verify_payment: {
         Args: {
-          payment_id: string
-          verify_status: Database["public"]["Enums"]["payment_status_enum"]
           p_admin_notes?: string
+          payment_id: string
           rejection_reason?: string
+          verify_status: Database["public"]["Enums"]["payment_status_enum"]
         }
         Returns: Json
       }
@@ -1820,21 +1798,25 @@ export type Database = {
   }
 }
 
-type DefaultSchema = Database[Extract<keyof Database, "public">]
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
@@ -1852,14 +1834,16 @@ export type Tables<
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
@@ -1875,14 +1859,16 @@ export type TablesInsert<
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
@@ -1898,14 +1884,16 @@ export type TablesUpdate<
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
@@ -1913,14 +1901,16 @@ export type Enums<
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
-> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never

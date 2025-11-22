@@ -68,10 +68,10 @@ const PricingCard = ({
         })}
       </p>
 
-      <ul className="flex-grow mb-8 space-y-4 text-start">
+      <ul className="grow mb-8 space-y-4 text-start">
         {features.map((feature, index) => (
           <li key={index} className="flex items-center">
-            <Check className="me-3 h-5 w-5 flex-shrink-0 text-primary" />
+            <Check className="me-3 h-5 w-5 shrink-0 text-primary" />
             <span>{feature}</span>
           </li>
         ))}

@@ -50,7 +50,7 @@ const FeatureCard = memo(({ icon, title, description }: FeatureCardProps) => (
       {icon}
     </div>
     <h3 className="mb-2 text-xl font-bold">{title}</h3>
-    <p className="flex-grow text-foreground/80">{description}</p>
+    <p className="grow text-foreground/80">{description}</p>
   </motion.div>
 ));
 

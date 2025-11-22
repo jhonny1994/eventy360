@@ -15,7 +15,7 @@ export default function PageHeader({ title, description, actions }: PageHeaderPr
           <p className="mt-1 text-gray-600 dark:text-gray-400">{description}</p>
         )}
       </div>
-      {actions && <div className="flex-shrink-0">{actions}</div>}
+      {actions && <div className="shrink-0">{actions}</div>}
     </div>
   );
 } 

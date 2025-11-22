@@ -29,7 +29,9 @@ export default function BackButton({
     if (!label) {
       buttonLabel = t('defaultLabel');
     }
-  } catch {}
+  } catch {
+    // ignore
+  }
   
   return (
     <Link href={href} className="inline-block">

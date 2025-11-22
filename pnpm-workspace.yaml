@@ -1,0 +1,6 @@
+onlyBuiltDependencies:
+  - '@swc/core'
+  - '@tsparticles/engine'
+  - sharp
+  - supabase
+  - unrs-resolver

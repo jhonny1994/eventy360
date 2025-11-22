@@ -163,7 +163,7 @@ export default function ProfileSidebarClient({ profile, locale, translations }: 
   return (
     <>
       <aside
-        className={`h-screen bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 overflow-hidden flex-shrink-0 ${expanded ? 'w-84' : 'w-20'}`}
+        className={`h-screen bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 overflow-hidden shrink-0 ${expanded ? 'w-84' : 'w-20'}`}
         dir={isRTL ? 'rtl' : 'ltr'}
       >
         <div className="flex flex-col h-full">
@@ -219,7 +219,7 @@ export default function ProfileSidebarClient({ profile, locale, translations }: 
             <div className="w-full space-y-3 mb-auto">
               {/* Add user type as a detail item */}
               <div className="flex items-center gap-3 text-sm">
-                <HiIdentification className="flex-shrink-0 h-5 w-5 text-gray-500 dark:text-gray-400" />
+                <HiIdentification className="shrink-0 h-5 w-5 text-gray-500 dark:text-gray-400" />
                 <div>
                   <p className="text-xs text-gray-500 dark:text-gray-400">{translations.userTypeLabel}</p>
                   <p className="text-gray-900 dark:text-white">{profile.userType}</p>
@@ -228,7 +228,7 @@ export default function ProfileSidebarClient({ profile, locale, translations }: 
 
               {/* Add verification status as a detail item (always shown) */}
               <div className="flex items-center gap-3 text-sm">
-                <HiCheckCircle className={`flex-shrink-0 h-5 w-5 ${profile.isVerified ? 'text-green-500 dark:text-green-400' : 'text-gray-400 dark:text-gray-500'}`} />
+                <HiCheckCircle className={`shrink-0 h-5 w-5 ${profile.isVerified ? 'text-green-500 dark:text-green-400' : 'text-gray-400 dark:text-gray-500'}`} />
                 <div>
                   <p className="text-xs text-gray-500 dark:text-gray-400">{translations.verificationLabel}</p>
                   <p className={profile.isVerified ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}>
@@ -242,7 +242,7 @@ export default function ProfileSidebarClient({ profile, locale, translations }: 
                 const Icon = iconMap[detail.icon];
                 return (
                   <div key={index} className="flex items-center gap-3 text-sm">
-                    <Icon className="flex-shrink-0 h-5 w-5 text-gray-500 dark:text-gray-400" />
+                    <Icon className="shrink-0 h-5 w-5 text-gray-500 dark:text-gray-400" />
                     <div>
                       <p className="text-xs text-gray-500 dark:text-gray-400">{detail.label}</p>
                       <p className="text-gray-900 dark:text-white">{detail.value}</p>
