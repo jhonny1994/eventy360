@@ -8,7 +8,7 @@ import {
   HiDocumentDuplicate,
   HiShieldCheck
 } from "react-icons/hi";
-import { createServerSupabaseClient } from "@/utils/supabase/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 // Define enum types based on your database schema
 enum UserType {

@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { createServerSupabaseClient } from "@/utils/supabase/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export default async function AdminIndexPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

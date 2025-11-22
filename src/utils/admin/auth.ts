@@ -2,7 +2,7 @@
  * Utility functions for admin authentication and access control
  */
 import { redirect } from "next/navigation";
-import { createServerSupabaseClient } from "@/utils/supabase/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 /**
  * Middleware to require admin authentication for protected routes

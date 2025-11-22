@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { Card, Alert, Badge } from 'flowbite-react';
 import { HiUser, HiCalendar, HiClock, HiDocumentText, HiOfficeBuilding } from 'react-icons/hi';
-import { createServerSupabaseClient } from '@/utils/supabase/server';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { requireAdmin } from '@/utils/admin/auth';
 import Image from 'next/image';
 import { formatDate } from '@/utils/admin/format';

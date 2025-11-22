@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { createServerSupabaseClient } from "@/utils/supabase/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import ProfilePageHeader from "../ui/ProfilePageHeader";
 import ProfileCard from "../ui/ProfileCard";
 import SubmissionsList from "./ui/SubmissionsList";

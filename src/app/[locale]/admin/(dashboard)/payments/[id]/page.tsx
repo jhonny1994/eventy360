@@ -1,13 +1,13 @@
 import { getTranslations } from 'next-intl/server';
 import { Card, Alert, Badge } from 'flowbite-react';
 import { HiUser, HiCalendar, HiClock, HiDocumentText, HiCurrencyDollar, HiCreditCard, HiExclamationCircle } from 'react-icons/hi';
-import { createServerSupabaseClient } from '@/utils/supabase/server';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { requireAdmin } from '@/utils/admin/auth';
 import Image from 'next/image';
 import { formatDate } from '@/utils/admin/format';
 import { StatusBadge, ApproveRejectActions, DocumentPreview, DownloadDocumentButton, BackButton } from '@/components/admin/ui';
 import { PaymentDetailsType, PaymentStatusTranslations, mapToStatusBadgeTranslations } from '@/types/payments';
-import { callRpcFunction } from '@/lib/hooks/useRpcFunction';
+import { callRpcFunction } from '@/lib/supabase/rpc';
 
 /**
  * Admin page for viewing and verifying payment details

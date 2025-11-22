@@ -1,6 +1,6 @@
 'use server';
 
-import { createServerSupabaseClient } from '@/utils/supabase/server';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 import {
   AbstractSubmissionFormData,
   FullPaperSubmissionFormData,

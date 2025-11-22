@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import dynamic from 'next/dynamic';
 import Navbar from "@/components/ui/navigation/Navbar";
 import HeroSection from "@/components/ui/homepage/HeroSection";
+import { getAppSettings } from "@/lib/appConfig";
 
 const PathwaySection = dynamic(() => import('@/components/ui/homepage/PathwaySection'));
 const ClientFeaturesSection = dynamic(() => import('@/components/ui/homepage/ClientFeaturesSection'));
@@ -49,7 +50,9 @@ export const metadata: Metadata = {
  * - Call-to-action section
  * - Footer with site information
  */
-export default function HomePage() {
+export default async function HomePage() {
+  const settings = await getAppSettings();
+
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden w-full max-w-[100vw]">
       <Navbar />
@@ -64,7 +67,7 @@ export default function HomePage() {
         <ClientFeaturesSection />
 
         {/* Pricing plans section */}
-        <PricingSection />
+        <PricingSection settings={settings} />
 
         {/* Call-to-action section */}
         <CTASection />

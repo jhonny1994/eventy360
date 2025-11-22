@@ -1,13 +1,13 @@
 import { getTranslations } from "next-intl/server";
 import { Card } from "flowbite-react";
 import { HiSearch, HiUser } from "react-icons/hi";
-import { createServerSupabaseClient } from "@/utils/supabase/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/utils/admin/auth";
 import { formatDate } from "@/utils/admin/format";
 import Image from "next/image";
 import { StatusBadge, PaginationClient, DetailLinkButton } from "@/components/admin/ui";
 import { PaymentWithUserDetailsType, mapToStatusBadgeTranslations } from "@/types/payments";
-import { callRpcFunction } from "@/lib/hooks/useRpcFunction";
+import { callRpcFunction } from "@/lib/supabase/rpc";
 import StatusFilter from './StatusFilter';
 
 enum PaymentStatus {

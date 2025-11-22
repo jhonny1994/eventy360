@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from "@/utils/supabase/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
 
 export interface ResearcherStats {

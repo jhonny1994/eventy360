@@ -1,6 +1,6 @@
 'use server';
 
-import { createServerSupabaseClient } from '@/utils/supabase/server';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { getTranslations } from 'next-intl/server';
 import { unstable_noStore as noStore } from 'next/cache';
 import { Database } from '@/database.types';

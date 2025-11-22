@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import ProfilePageHeader from '@/app/[locale]/profile/ui/ProfilePageHeader';
 import PaperDetailsContent from './ui/PaperDetailsContent';
 import Link from 'next/link';
-import { createServerSupabaseClient } from '@/utils/supabase/server';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { type UserSubscriptionData } from '@/hooks/useSubscription';
 
 interface PageProps {

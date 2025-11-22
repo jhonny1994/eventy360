@@ -59,4 +59,4 @@ export function createMiddlewareClient(request: NextRequest): SupabaseClient<Dat
  */
 export function clearMiddlewareClientCache(): void {
   middlewareClientCache.clear();
-} 
+}

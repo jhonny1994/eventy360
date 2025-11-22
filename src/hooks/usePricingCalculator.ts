@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from 'react';
-import type { AppSettings } from '@/types/pricing';
+import type { AppSettings } from '@/lib/appConfig';
 
 export type BillingPeriod = 'monthly' | 'quarterly' | 'biannual' | 'annual';
 
@@ -23,14 +23,14 @@ export const usePricingCalculator = (settings: AppSettings | null) => {
       };
     }
 
-    const baseResearcher = settings.base_price_researcher_monthly;
-    const baseOrganizer = settings.base_price_organizer_monthly;
+    const baseResearcher = settings.base_price_researcher_monthly ?? 0;
+    const baseOrganizer = settings.base_price_organizer_monthly ?? 0;
 
     const discounts = {
       monthly: 0,
-      quarterly: settings.discount_quarterly,
-      biannual: settings.discount_biannual,
-      annual: settings.discount_annual,
+      quarterly: settings.discount_quarterly ?? 0,
+      biannual: settings.discount_biannual ?? 0,
+      annual: settings.discount_annual ?? 0,
     };
 
     const multiplier = periodMultipliers[billingPeriod];

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createMiddlewareClient } from '@/utils/supabase/middleware-client';
+import { createMiddlewareClient } from '@/lib/supabase/middleware-client';
 import { routing } from '@/i18n/routing';
 import type { UserSubscriptionData } from '@/hooks/useSubscription';
 import { type CookieOptions } from "@supabase/ssr";

@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { createCallbackClient } from '@/utils/supabase/callback-client';
+import { createCallbackClient } from '@/lib/supabase/callback-client';
 
 export async function GET(request: NextRequest, props: { params: Promise<{ locale: string }> }) {
   const params = await props.params;

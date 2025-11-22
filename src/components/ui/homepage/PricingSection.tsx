@@ -5,16 +5,19 @@ import { useTheme } from "next-themes";
 import { usePricingCalculator } from "@/hooks/usePricingCalculator";
 import BillingCycleToggle from "./BillingCycleToggle";
 import PricingCard from "./PricingCard";
-import { useAppSettings } from "@/hooks/useAppSettings";
+import type { AppSettings } from "@/lib/appConfig";
+
+interface PricingSectionProps {
+  settings: AppSettings | null;
+}
 
 /**
  * PricingSection - Section displaying pricing information
  * Uses a solid background in light mode and transparent in dark mode
  */
-const PricingSection = () => {
+const PricingSection = ({ settings }: PricingSectionProps) => {
   const t = useTranslations("Homepage.Pricing");
   const { resolvedTheme } = useTheme();
-  const { settings, loading, error } = useAppSettings();
   const { billingPeriod, setBillingPeriod, calculatedPrices } = usePricingCalculator(settings);
 
   const isDark = resolvedTheme === "dark";
@@ -24,27 +27,11 @@ const PricingSection = () => {
   const researcherFeatures = t.raw("researcher.features") as string[];
   const organizerFeatures = t.raw("organizer.features") as string[];
 
-  if (loading) {
-    return (
-      <section id="pricing" className="py-24">
-        <div className="container mx-auto animate-pulse px-4 text-center">
-          <div className="mb-4 h-10 w-1/2 rounded-lg bg-neutral-mid/20 mx-auto" />
-          <div className="mb-12 h-6 w-3/4 rounded-lg bg-neutral-mid/20 mx-auto" />
-          <div className="h-12 w-64 rounded-lg bg-neutral-mid/20 mx-auto mb-16" />
-          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 lg:grid-cols-2">
-            <div className="h-[500px] w-full rounded-2xl bg-neutral-mid/20" />
-            <div className="h-[500px] w-full rounded-2xl bg-neutral-mid/20" />
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (error) {
+  if (!settings) {
     return (
       <section id="pricing" className="py-24">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-xl text-red-500">Error: {error}</h2>
+          <h2 className="text-xl text-red-500">Unable to load pricing information.</h2>
         </div>
       </section>
     );

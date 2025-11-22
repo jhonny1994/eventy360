@@ -8,8 +8,6 @@ const config = {
   content: [
     "./node_modules/flowbite/**/*.js",
     './src/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
   ],
   theme: {
     extend: {

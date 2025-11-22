@@ -27,5 +27,5 @@ const withNextIntl = createNextIntlPlugin(
 );
 
 // Chain the plugins together
-// @ts-ignore
+// @ts-expect-error - Plugin types may not perfectly align, but functionality works correctly
 export default withBundleAnalyzer(withFlowbiteReact(withNextIntl(nextConfig)));

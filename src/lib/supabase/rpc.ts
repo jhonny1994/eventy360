@@ -27,4 +27,4 @@ export async function callRpcFunction<T>(
     data: response.data as T | null,
     error: response.error
   };
-} 
+}

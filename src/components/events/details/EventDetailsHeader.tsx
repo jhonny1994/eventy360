@@ -149,7 +149,7 @@ export function EventDetailsHeader({ event, locale }: EventDetailsHeaderProps) {
               </h3>
               <p className="text-sm text-gray-600 mt-1">
                 {event.event_type
-                  ? tEnums(`EventFormat.${event.event_type}`)
+                  ? tEnums(`EventType.${event.event_type}`)
                   : t("unknown")}
               </p>
             </div>

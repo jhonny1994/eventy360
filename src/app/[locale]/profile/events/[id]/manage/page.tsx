@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
-import { createServerSupabaseClient } from '@/utils/supabase/server'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { getTranslations } from 'next-intl/server'
 import { Button } from 'flowbite-react'
 import Link from 'next/link'

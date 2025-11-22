@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { createServerSupabaseClient } from "@/utils/supabase/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { Card } from "flowbite-react";
 import { HiSearch } from "react-icons/hi";
 import { getTranslations } from "next-intl/server";

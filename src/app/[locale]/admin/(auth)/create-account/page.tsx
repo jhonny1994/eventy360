@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { AdminCreateAccountForm, AuthCard, AuthLayout } from '@/components/admin/auth';
-import { createServerSupabaseClient } from '@/utils/supabase/server';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 
 export default async function AdminCreateAccountPage({ params }: { params: Promise<{ locale: string }> }) {

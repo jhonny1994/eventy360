@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from '@/utils/supabase/server';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 // Define a more specific type for the data returned by the select query
 interface AppSettingsData {

@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Card } from "flowbite-react";
-import { createServerSupabaseClient } from "@/utils/supabase/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/utils/admin/auth";
 import EventStatusFilter from "./EventStatusFilter";
 import { Database } from "@/database.types";

@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from '@/utils/supabase/server';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import TopicSubscriptionsCard from '../ui/TopicSubscriptionsCard';

@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation'
-import { createServerSupabaseClient } from '@/utils/supabase/server'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { getTranslations } from 'next-intl/server'
 import ProfileCard from '@/app/[locale]/profile/ui/ProfileCard'
 import ProfilePageHeader from '@/app/[locale]/profile/ui/ProfilePageHeader'

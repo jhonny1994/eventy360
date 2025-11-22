@@ -1,13 +1,13 @@
 import { getTranslations } from "next-intl/server";
 import { Card } from "flowbite-react";
-import { createServerSupabaseClient } from "@/utils/supabase/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/utils/admin/auth";
 import { formatDate } from "@/utils/admin/format";
 import { PaginationClient } from "@/components/admin/ui";
-import SearchFilter from "./SearchFilter";
 import TopicActionButtons from "./TopicActionButtons";
 import TopicUsageCount from "./TopicUsageCount";
 import { revalidatePath } from "next/cache";
+import TopicsSearchFilter from "./TopicsSearchFilter";
 
 // Topic interface to properly type the data
 interface Topic {
@@ -148,7 +148,7 @@ export default async function AdminTopicsPage({
         </div>
         
         <div className="w-full sm:w-auto sm:min-w-[300px]">
-          <SearchFilter
+          <TopicsSearchFilter
             activeSearch={search || null}
             locale={locale}
             pageSize={pageSize}

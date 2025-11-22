@@ -3,7 +3,7 @@
  * Functions for handling redirects and navigation in admin auth flows
  */
 import { redirect } from "next/navigation";
-import { createServerSupabaseClient } from "@/utils/supabase/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 /**
  * Redirects authenticated admin users to dashboard

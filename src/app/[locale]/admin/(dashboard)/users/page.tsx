@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Card } from "flowbite-react";
 import { HiSearch, HiUser, HiCheck, HiX, HiTicket } from "react-icons/hi";
-import { createServerSupabaseClient } from "@/utils/supabase/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/utils/admin/auth";
 import Image from "next/image";
 import { PaginationClient, DetailLinkButton } from "@/components/admin/ui";

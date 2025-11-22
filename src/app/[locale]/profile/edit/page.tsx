@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from '@/utils/supabase/server';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { redirect } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
 import EditProfileFormComponent from '../ui/EditProfileForm';

@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { updateSession } from "@/utils/supabase/middleware";
+import { updateSession } from "@/lib/supabase/middleware";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { type CookieOptions } from "@supabase/ssr";
-import { createMiddlewareClient } from "@/utils/supabase/middleware-client";
+import { createMiddlewareClient } from "@/lib/supabase/middleware-client";
 import { applySubscriptionGuard } from "@/middleware/applySubscriptionGuard";
 import { SubscriptionRestriction } from "@/middleware/subscriptionMiddleware";
 
