@@ -432,6 +432,6 @@ function copyAllCookies(source: NextResponse, destination: NextResponse) {
 
 export const config = {
   matcher: [
-    "/((?!api|trpc|_next/static|_next/image|favicon.ico|healthz|readyz|robots.txt).*)",
+    "/((?!api|trpc|_next/static|_next/image|favicon.ico|healthz|readyz|robots.txt|illustrations|png|.*\\.(?:svg|png|jpg|jpeg|gif|webp|json|webmanifest)$).*)",
   ],
 }; 
