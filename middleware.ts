@@ -44,7 +44,7 @@ export async function middleware(request: NextRequest) {
   const pathMatch = pathname.match(localePattern);
   const currentLocale = pathMatch ? pathMatch[1] : routing.defaultLocale;
   
-  if (pathMatch && pathMatch[2]) {
+  if (pathMatch) {
     pathWithoutLocale = pathMatch[2] || "/";
   }
   if (!pathWithoutLocale.startsWith("/")) {
