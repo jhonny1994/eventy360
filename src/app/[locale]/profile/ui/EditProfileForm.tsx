@@ -289,8 +289,7 @@ function EditProfileFormComponent({
             setWilayas(wilayasData || []);
             setLocationDataLoaded(true);
           }
-        } catch (error) {
-          console.error("Failed to fetch wilayas data:", error);
+        } catch {
           if (isMounted) setFormError(t("locationDataFetchError"));
         }
       }
@@ -321,11 +320,10 @@ function EditProfileFormComponent({
             const currentDairaId = watch("daira_id");
             const isDairaValid = data?.some(d => d.id.toString() === currentDairaId);
             if (isDirty && !isDairaValid) {
-                setValue("daira_id", "", { shouldDirty: true });
+              setValue("daira_id", "", { shouldDirty: true });
             }
           }
-        } catch (error) {
-          console.error("Failed to fetch dairas for wilaya:", selectedWilayaId, error);
+        } catch {
           if (isMounted) {
             toast.error(t('dairaDataFetchError') || "Failed to load dairas.");
           }
@@ -424,8 +422,6 @@ function EditProfileFormComponent({
         | null,
       tToasts: ReturnType<typeof useTranslations>
     ): string => {
-      console.error("Supabase operation failed:", error);
-
       if (!error || typeof error !== "object") {
         return tToasts("updateErrorGeneric");
       }
@@ -620,25 +616,8 @@ function EditProfileFormComponent({
             .invoke("clean-orphan-avatars", {
               body: { newAvatarPath: filePath },
             })
-            .then((response) => {
-              if (response.error) {
-                console.error(
-                  "Error invoking clean-orphan-avatars function:",
-                  response.error
-                );
-              } else {
-                console.log(
-                  "Clean-orphan-avatars function invoked successfully.",
-                  response.data
-                );
-              }
-            })
-            .catch((err) => {
-              console.error(
-                "Exception invoking clean-orphan-avatars function:",
-                err
-              );
-            });
+            .then(() => { })
+            .catch(() => { });
         }
       }
     },
@@ -680,7 +659,7 @@ function EditProfileFormComponent({
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
               {tEdit("profilePictureLabel")}
             </h3>
-            
+
             {/* Profile picture preview */}
             {previewUrl && (
               <div className="my-4 flex justify-center">
@@ -703,19 +682,14 @@ function EditProfileFormComponent({
                           avatarProvidedClassName || "rounded-full object-cover"
                         }
                         priority
-                        onError={() => {
-                          console.warn(
-                            "Failed to load image preview from URL:",
-                            previewUrl
-                          );
-                        }}
+                        onError={() => { }}
                       />
                     );
                   }}
                 />
               </div>
             )}
-            
+
             <FileInput
               id="profilePictureFile"
               onChange={handleFileChange}
@@ -725,13 +699,13 @@ function EditProfileFormComponent({
             <HelperText className="mt-1">
               {tEdit("profilePictureHelperText")}
             </HelperText>
-            
+
             {uploadError && (
               <Alert color="failure" className="mt-3 text-sm">
                 {uploadError}
               </Alert>
             )}
-            
+
             {uploading && (
               <div className="flex items-center space-x-2 mt-3">
                 <Spinner size="sm" aria-label={tEdit("uploadingSpinnerLabel")} />
@@ -740,16 +714,16 @@ function EditProfileFormComponent({
             )}
           </div>
         </div>
-        
+
         {/* Right column - Profile information */}
         <div className="lg:col-span-2">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-              {userProfileData.user_type === "researcher" 
-                ? t("subtitleResearcher") 
+              {userProfileData.user_type === "researcher"
+                ? t("subtitleResearcher")
                 : t("subtitleOrganizer")}
             </h3>
-            
+
             <div className="space-y-6">
               {userProfileData.user_type === "researcher" && (
                 <>
@@ -832,8 +806,8 @@ function EditProfileFormComponent({
                       control={control}
                       render={({ field }) => (
                         <div className="relative">
-                          <Select 
-                            id="institution_type" 
+                          <Select
+                            id="institution_type"
                             {...field}
                             dir={locale === "ar" ? "rtl" : "ltr"}
                             style={locale === "ar" ? { textAlign: 'right', paddingRight: '2.5rem' } : {}}
@@ -878,7 +852,7 @@ function EditProfileFormComponent({
                 <h4 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-4">
                   {t("locationTitle") || "Location Information"}
                 </h4>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="wilaya_id">
@@ -983,7 +957,7 @@ function EditProfileFormComponent({
             </Button>
             <Button
               type="button"
-              onClick={() => router.push(`/${locale}/profile`)}
+              onClick={() => router.push('/profile')}
               disabled={isLoading}
               className="w-full sm:w-auto"
               color="light"
@@ -995,7 +969,7 @@ function EditProfileFormComponent({
           <>
             <Button
               type="button"
-              onClick={() => router.push(`/${locale}/profile`)}
+              onClick={() => router.push('/profile')}
               disabled={isLoading}
               className="w-full sm:w-auto"
               color="light"

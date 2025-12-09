@@ -5,7 +5,7 @@ import { Database } from '@/database.types';
 export interface FeedbackItem {
   id: string;
   providing_user_id: string | null;
-  role_at_submission: 'researcher' | 'organizer' | 'admin'; 
+  role_at_submission: 'researcher' | 'organizer' | 'admin';
   feedback_content: string;
   created_at: string;
   provider_name?: string;
@@ -20,12 +20,11 @@ export async function getFeedbackForVersion(
 ): Promise<FeedbackItem[] | null> {
   const { data, error } = await supabase
     .rpc('get_feedback_for_version', { p_version_id: versionId });
-  
+
   if (error) {
-    console.error('Error fetching feedback:', error);
     return null;
   }
-  
+
   return data as FeedbackItem[];
 }
 
@@ -45,12 +44,11 @@ export async function createFeedback(
       feedback_content: feedback,
       role_at_submission: role
     });
-  
+
   if (error) {
-    console.error('Error creating feedback:', error);
     return false;
   }
-  
+
   return true;
 }
 
@@ -70,12 +68,11 @@ export async function addAuthorRevisionNotes(
       p_version_id: versionId,
       p_notes: notes
     });
-  
+
   if (error) {
-    console.error('Error adding revision notes:', error);
     return false;
   }
-  
+
   return true;
 }
 
@@ -90,15 +87,14 @@ export async function getLatestFeedback(
 ): Promise<FeedbackItem | null> {
   const query = supabase
     .rpc('get_feedback_for_version', { p_version_id: versionId });
-  
+
   // If role is specified, filter by role
   const { data, error } = await query;
-  
+
   if (error) {
-    console.error('Error fetching latest feedback:', error);
     return null;
   }
-  
+
   if (!data || data.length === 0) {
     return null;
   }
@@ -108,6 +104,6 @@ export async function getLatestFeedback(
     const filteredData = data.filter(item => item.role_at_submission === role);
     return filteredData.length > 0 ? filteredData[0] as FeedbackItem : null;
   }
-  
+
   return data[0] as FeedbackItem;
 } 

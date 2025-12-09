@@ -98,7 +98,6 @@ export default async function ProfileLayout({
 
   // Handle errors and redirects
   if (profileError || !profileData) {
-    console.error("Error fetching profile:", profileError);
     redirect(`/${locale}/profile/setup`);
   }
 
@@ -130,17 +129,17 @@ export default async function ProfileLayout({
 
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden">
+    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Sidebar */}
-      <ProfileSidebar 
-        profile={profile} 
-        locale={locale} 
+      <ProfileSidebar
+        profile={profile}
+        locale={locale}
         translations={translations}
         userType={profileData.user_type}
       />
 
       {/* Main content */}
-      <main className="flex-1 overflow-y-auto pt-16 sm:pt-14 pb-8 px-4 md:p-6 md:pt-14">
+      <main className="flex-1 pt-16 sm:pt-14 pb-8 px-4 md:p-6 md:pt-14 md:ms-80">
         <div className="container mx-auto max-w-7xl">
           {children}
         </div>
@@ -151,7 +150,7 @@ export default async function ProfileLayout({
 
 // Helper function to prepare profile info for sidebar
 function prepareProfileInfo(
-  profileData: DatabaseProfileData, 
+  profileData: DatabaseProfileData,
   email: string,
   locale: string,
   t: (key: string) => string,
@@ -163,7 +162,7 @@ function prepareProfileInfo(
   // Add appropriate fields based on user type
   if (profileData.user_type === 'researcher' && profileData.researcher_profiles) {
     const researcher = profileData.researcher_profiles;
-    
+
     if (researcher.institution) {
       details.push({
         icon: 'HiOfficeBuilding',
@@ -171,7 +170,7 @@ function prepareProfileInfo(
         value: researcher.institution,
       });
     }
-    
+
     if (researcher.academic_position) {
       details.push({
         icon: 'HiAcademicCap',
@@ -197,7 +196,7 @@ function prepareProfileInfo(
     }
   } else if (profileData.user_type === 'organizer' && profileData.organizer_profiles) {
     const organizer = profileData.organizer_profiles;
-    
+
     if (organizer.institution_type) {
       details.push({
         icon: 'HiIdentification',
@@ -223,7 +222,7 @@ function prepareProfileInfo(
     }
   } else if (profileData.user_type === 'admin' && profileData.admin_profiles) {
     const admin = profileData.admin_profiles;
-    
+
     if (admin.role) {
       details.push({
         icon: 'HiIdentification',
@@ -232,14 +231,14 @@ function prepareProfileInfo(
       });
     }
   }
-  
+
   // Format and add the joined date
   const joinedDate = new Date(profileData.created_at).toLocaleDateString(locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   });
-  
+
   details.push({
     icon: 'HiCalendar',
     label: t('common.joinedLabel'),
@@ -253,21 +252,21 @@ function prepareProfileInfo(
 
   if (profileData.user_type === 'researcher' && profileData.researcher_profiles) {
     name = profileData.researcher_profiles.name || email;
-    
+
     // Handle bio translations - interpret JSON data correctly
     const bioTranslations = profileData.researcher_profiles.bio_translations as Record<string, string>;
     bio = bioTranslations?.[currentLang] || bioTranslations?.['ar'] || '';
-    
+
     profilePictureUrl = profileData.researcher_profiles.profile_picture_url;
   } else if (profileData.user_type === 'organizer' && profileData.organizer_profiles) {
     // Handle name translations - interpret JSON data correctly
     const nameTranslations = profileData.organizer_profiles.name_translations as Record<string, string>;
     name = nameTranslations?.[currentLang] || nameTranslations?.['ar'] || email;
-    
+
     // Handle bio translations - interpret JSON data correctly
     const bioTranslations = profileData.organizer_profiles.bio_translations as Record<string, string>;
     bio = bioTranslations?.[currentLang] || bioTranslations?.['ar'] || '';
-    
+
     profilePictureUrl = profileData.organizer_profiles.profile_picture_url;
   }
 

@@ -32,7 +32,7 @@ export interface AppSettings extends AppSettingsData {
 
 export async function getAppSettings(): Promise<AppSettings | null> {
   const supabase = await createServerSupabaseClient();
-  
+
   const { data, error } = await supabase
     .from('app_settings')
     .select('bank_name, account_holder, account_number_rib, payment_email, base_price_researcher_monthly, base_price_organizer_monthly, discount_quarterly, discount_biannual, discount_annual')
@@ -40,12 +40,10 @@ export async function getAppSettings(): Promise<AppSettings | null> {
     .maybeSingle<AppSettingsData>(); // Specify the type for maybeSingle
 
   if (error) {
-    console.error('Error fetching app settings:', error.message);
     return null;
   }
 
   if (!data) {
-    console.warn('App settings not found in the database.');
     return null;
   }
 
@@ -81,7 +79,7 @@ export async function getAppSettings(): Promise<AppSettings | null> {
   calculated_prices.organizer.quarterly = Math.round(bop_monthly * 3 * (1 - dq));
   calculated_prices.organizer.biannual = Math.round(bop_monthly * 6 * (1 - db));
   calculated_prices.organizer.annual = Math.round(bop_monthly * 12 * (1 - da));
-  
+
   return {
     ...data, // Spreads the original AppSettingsData
     calculated_prices, // Adds the calculated prices

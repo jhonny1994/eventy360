@@ -24,10 +24,10 @@ export default function TopicUsageCount({ topicId }: TopicUsageCountProps) {
   useEffect(() => {
     const fetchUsageData = async () => {
       setIsLoading(true);
-      
+
       try {
         const result = await getTopicUsage(supabase, topicId);
-        
+
         if (result.success) {
           setUsageData({
             eventCount: result.eventCount,
@@ -36,8 +36,7 @@ export default function TopicUsageCount({ topicId }: TopicUsageCountProps) {
         } else {
           setError(result.error || t('errors.usageFetchFailed'));
         }
-      } catch (err) {
-        console.error('Error fetching topic usage:', err);
+      } catch {
         setError(t('errors.unexpected'));
       } finally {
         setIsLoading(false);
@@ -68,13 +67,13 @@ export default function TopicUsageCount({ topicId }: TopicUsageCountProps) {
   }
 
   const totalUsage = usageData.eventCount + usageData.subscriptionCount;
-  
+
   return (
     <div className="flex items-center gap-2">
       <Badge color={totalUsage > 0 ? "info" : "gray"} className="font-medium">
         {totalUsage}
       </Badge>
-      
+
       <Tooltip content={
         <div>
           <div>{t('table.eventCount', { eventCount: usageData.eventCount })}</div>

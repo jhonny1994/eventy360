@@ -21,18 +21,18 @@ export async function updateSession(
   response?: NextResponse
 ): Promise<{ response: NextResponse; user: User | null }> {
   let supabaseResponse = response ?? NextResponse.next({ request });
-  
+
   // Generate a cache key based on auth cookies
   const authCookies = request.cookies.getAll()
     .filter(cookie => cookie.name.includes('supabase') || cookie.name.includes('sb-'))
     .map(cookie => `${cookie.name}=${cookie.value}`)
     .join(';');
-  
+
   const cacheKey = authCookies || 'default-middleware-client';
-  
+
   // Get cached client or create a new one
   let supabase: SupabaseClient<Database>;
-  
+
   if (middlewareClientCache.has(cacheKey)) {
     supabase = middlewareClientCache.get(cacheKey) as SupabaseClient<Database>;
   } else {
@@ -57,20 +57,17 @@ export async function updateSession(
         },
       }
     );
-    
+
     // Cache the client for future use
     middlewareClientCache.set(cacheKey, supabase);
   }
 
   const {
     data: { user },
-    error,
   } = await supabase.auth.getUser();
 
   // Ignore "Auth session missing" error as it just means the user is not logged in
-  if (error && !error.message.includes("Auth session missing")) {
-    console.error("Error fetching user in middleware:", error);
-  }
+  // Other errors are silently ignored as the user object will be null
 
   return { response: supabaseResponse, user };
 }

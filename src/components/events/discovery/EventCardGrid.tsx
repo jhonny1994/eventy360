@@ -28,8 +28,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { Database } from '@/database.types';
 import { BookmarkButton } from '@/components/ui/BookmarkButton';
-import { useEffect, useState } from 'react';
-import { isEventBookmarked } from '@/app/[locale]/profile/bookmarks/actions';
+import { useEffect, useState, useRef } from 'react';
+import { getBookmarkStatuses } from '@/app/[locale]/profile/bookmarks/actions';
 import { useUserProfile } from '@/hooks/useUserProfile';
 
 type Event = Database['public']['Functions']['discover_events']['Returns'][0];
@@ -41,39 +41,26 @@ interface EventCardGridProps {
 
 interface EventCardProps {
   event: Event;
+  isBookmarked: boolean;
+  isCheckingBookmark: boolean;
+  isOrganizer: boolean;
 }
 
 /**
  * Individual event card component
  * Displays event information in a clean, accessible format
  */
-function EventCard({ event }: EventCardProps) {
+function EventCard({ event, isBookmarked, isCheckingBookmark, isOrganizer }: EventCardProps) {
   const t = useTranslations('Events.card');
   const tEnums = useTranslations('Enums');
   const actualLocale = useLocale(); // Use the standardized hook
   const isRtl = actualLocale === 'ar';
-  const [bookmarked, setBookmarked] = useState(false);
-  const [checkingBookmarkStatus, setCheckingBookmarkStatus] = useState(true);
-  const { profile } = useUserProfile();
-  
-  // Check if user is an organizer
-  const isOrganizer = profile?.baseProfile?.user_type === 'organizer';
+  const [bookmarked, setBookmarked] = useState(isBookmarked);
 
-  // Check if the event is bookmarked on component mount
+  // Sync local state with props when they change
   useEffect(() => {
-    async function checkBookmarkStatus() {
-      try {
-        const status = await isEventBookmarked(event.id);
-        setBookmarked(status);
-      } catch (error) {
-        console.error('Error checking bookmark status:', error);
-      } finally {
-        setCheckingBookmarkStatus(false);
-      }
-    }
-    
-    checkBookmarkStatus();
-  }, [event.id]);
+    setBookmarked(isBookmarked);
+  }, [isBookmarked]);
 
   // Format dates for display
   const formatDate = (dateString: string) => {
@@ -84,7 +71,7 @@ function EventCard({ event }: EventCardProps) {
       day: 'numeric'
     });
   };
-  
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'published': return 'info';
@@ -133,7 +120,7 @@ function EventCard({ event }: EventCardProps) {
             </p>
           )}
           <div className="mt-2">
-            <Badge 
+            <Badge
               color={getStatusColor(event.status)}
               size="sm"
             >
@@ -214,13 +201,13 @@ function EventCard({ event }: EventCardProps) {
         </div>
         {/* Only show bookmark button if user is NOT an organizer */}
         {!isOrganizer && (
-          <BookmarkButton 
+          <BookmarkButton
             eventId={event.id}
             initialBookmarked={bookmarked}
             size="sm"
             color="light"
             iconOnly
-            disabled={checkingBookmarkStatus}
+            disabled={isCheckingBookmark}
           />
         )}
       </div>
@@ -248,7 +235,47 @@ export default function EventCardGrid({
   const actualLocale = useLocale(); // Use the standardized hook
   const isRtl = actualLocale === 'ar';
   const t = useTranslations('Events.discovery');
-  
+  const { profile } = useUserProfile();
+  const [bookmarkStatuses, setBookmarkStatuses] = useState<Record<string, boolean>>({});
+  const [isCheckingBookmarks, setIsCheckingBookmarks] = useState(true);
+  const hasFetchedRef = useRef('');
+
+  // Check if user is an organizer (computed once at grid level)
+  const isOrganizer = profile?.baseProfile?.user_type === 'organizer';
+
+  // Create a stable reference for the effect dependency
+  const eventIdsKey = events.map(e => e.id).join(',');
+
+  // Batch fetch bookmark statuses for all events once
+  useEffect(() => {
+    // Skip if already fetching or no events
+    if (events.length === 0) {
+      setIsCheckingBookmarks(false);
+      return;
+    }
+
+    // Only fetch once per unique set of event IDs
+    if (hasFetchedRef.current === eventIdsKey) {
+      return;
+    }
+
+    async function fetchBookmarkStatuses() {
+      hasFetchedRef.current = eventIdsKey;
+      setIsCheckingBookmarks(true);
+      try {
+        const eventIds = events.map(e => e.id);
+        const statuses = await getBookmarkStatuses(eventIds);
+        setBookmarkStatuses(statuses);
+      } catch {
+        // Silent fail - bookmarks still work
+      } finally {
+        setIsCheckingBookmarks(false);
+      }
+    }
+
+    fetchBookmarkStatuses();
+  }, [eventIdsKey]); // Use stable string key instead of events array
+
   if (isLoading && events.length === 0) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6"> {/* Adjusted grid */}
@@ -288,12 +315,18 @@ export default function EventCardGrid({
   }
 
   return (
-    <div 
+    <div
       className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6"
       dir={isRtl ? 'rtl' : 'ltr'}
     >
       {events.map((event) => (
-        <EventCard key={event.id} event={event} />
+        <EventCard
+          key={event.id}
+          event={event}
+          isBookmarked={bookmarkStatuses[event.id] || false}
+          isCheckingBookmark={isCheckingBookmarks}
+          isOrganizer={isOrganizer}
+        />
       ))}
     </div>
   );

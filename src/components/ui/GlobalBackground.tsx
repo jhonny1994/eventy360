@@ -28,8 +28,8 @@ const GlobalBackground = () => {
       });
       setInit(true);
     };
-    
-    initEngine().catch(console.error);
+
+    initEngine().catch(() => { });
 
     // Target the global background element for portal rendering
     const targetElement = document.getElementById("global-background");
@@ -136,12 +136,12 @@ const GlobalBackground = () => {
     <>
       {/* Static background color */}
       <div className={`absolute inset-0 ${theme === "dark" ? "bg-[#111827]" : "bg-[#f9fafb]"}`}></div>
-      
+
       {/* Particles container */}
       <div className="absolute inset-0 overflow-hidden max-w-full">
         <Particles
           id="tsparticles-global"
-          particlesLoaded={async () => {}}
+          particlesLoaded={async () => { }}
           options={options}
           className="absolute inset-0 h-full w-full"
         />
@@ -150,4 +150,4 @@ const GlobalBackground = () => {
   );
 };
 
-export default GlobalBackground; 
+export default GlobalBackground;

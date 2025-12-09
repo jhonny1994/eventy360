@@ -23,9 +23,9 @@ export async function toggleBookmark(
   // Verify user is authenticated
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    return { 
-      success: false, 
-      message: t('notAuthenticated'), 
+    return {
+      success: false,
+      message: t('notAuthenticated'),
       error: 'not_authenticated',
       isBookmarked: false
     };
@@ -41,10 +41,9 @@ export async function toggleBookmark(
       .maybeSingle();
 
     if (fetchError) {
-      console.error('Error fetching bookmark:', fetchError);
-      return { 
-        success: false, 
-        message: t('fetchError'), 
+      return {
+        success: false,
+        message: t('fetchError'),
         error: fetchError.message,
         isBookmarked: false
       };
@@ -59,10 +58,9 @@ export async function toggleBookmark(
         .eq('event_id', eventId);
 
       if (deleteError) {
-        console.error('Error removing bookmark:', deleteError);
-        return { 
-          success: false, 
-          message: t('removeError'), 
+        return {
+          success: false,
+          message: t('removeError'),
           error: deleteError.message,
           isBookmarked: true // Still bookmarked since deletion failed
         };
@@ -82,10 +80,9 @@ export async function toggleBookmark(
         });
 
       if (insertError) {
-        console.error('Error adding bookmark:', insertError);
-        return { 
-          success: false, 
-          message: t('addError'), 
+        return {
+          success: false,
+          message: t('addError'),
           error: insertError.message,
           isBookmarked: false
         };
@@ -98,7 +95,6 @@ export async function toggleBookmark(
       };
     }
   } catch (error) {
-    console.error('Unexpected error:', error);
     return {
       success: false,
       message: t('unexpectedError'),
@@ -135,16 +131,61 @@ export async function isEventBookmarked(
       .maybeSingle();
 
     if (error) {
-      console.error('Error checking bookmark status:', error);
       return false;
     }
 
     return !!data;
-  } catch (error) {
-    console.error('Unexpected error checking bookmark status:', error);
+  } catch {
     return false;
   }
 }
+
+/**
+ * Check bookmark statuses for multiple events at once
+ * This is more efficient than calling isEventBookmarked per event
+ * 
+ * @param eventIds Array of event IDs to check
+ * @returns Map of event ID to bookmark status
+ */
+export async function getBookmarkStatuses(
+  eventIds: string[]
+): Promise<Record<string, boolean>> {
+  if (eventIds.length === 0) {
+    return {};
+  }
+
+  noStore(); // Disable caching to ensure fresh data
+  const supabase = await createServerSupabaseClient();
+
+  // Verify user is authenticated
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    // Return all as not bookmarked if not authenticated
+    return eventIds.reduce((acc, id) => ({ ...acc, [id]: false }), {});
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('bookmarks')
+      .select('event_id')
+      .eq('profile_id', user.id)
+      .in('event_id', eventIds);
+
+    if (error) {
+      return eventIds.reduce((acc, id) => ({ ...acc, [id]: false }), {});
+    }
+
+    // Create a map of event ID to bookmark status
+    const bookmarkedIds = new Set(data?.map(b => b.event_id) || []);
+    return eventIds.reduce((acc, id) => ({
+      ...acc,
+      [id]: bookmarkedIds.has(id)
+    }), {});
+  } catch {
+    return eventIds.reduce((acc, id) => ({ ...acc, [id]: false }), {});
+  }
+}
+
 
 /**
  * Get all bookmarked events for the current user
@@ -158,7 +199,7 @@ export async function getBookmarkedEvents(
   noStore(); // Disable caching to ensure fresh data
   const supabase = await createServerSupabaseClient();
   const t = await getTranslations({ locale, namespace: 'Bookmarks' });
-  
+
   // Verify user is authenticated
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
@@ -184,7 +225,6 @@ export async function getBookmarkedEvents(
       .eq('profile_id', user.id);
 
     if (bookmarksError) {
-      console.error('Error fetching bookmarks:', bookmarksError);
       return { events: [], error: t('fetchError') };
     }
 
@@ -214,15 +254,13 @@ export async function getBookmarkedEvents(
       .in('id', eventIds);
 
     if (eventsError) {
-      console.error('Error fetching events:', eventsError);
       return { events: [], error: t('fetchError') };
     }
-    
+
     return { events: events || [] };
-  } catch (error) {
-    console.error('Unexpected error fetching bookmarked events:', error);
-    return { 
-      events: [], 
+  } catch {
+    return {
+      events: [],
       error: t('unexpectedError')
     };
   }

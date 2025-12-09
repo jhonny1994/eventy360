@@ -61,7 +61,7 @@ export default function VerificationSection({
   const [error, setError] = useState<string | null>(null);
   const appLocale = useLocale();
   const isRtl = appLocale === 'ar';
-  
+
   const { supabase } = useAuth();
 
   // Check if user has a pending verification request
@@ -73,21 +73,20 @@ export default function VerificationSection({
           .select('id, status') // Keep this selection
           .eq('user_id', userId)
           .eq('status', 'pending'); // Removed .single()
-          
+
         if (apiError) { // No need to check for PGRST116 specifically if not using .single()
           throw apiError;
         }
-        
+
         // If data is an array, check if it's not empty
         setHasPendingRequest(Array.isArray(data) && data.length > 0);
-      } catch (err) {
-        console.error('Error checking pending verification request:', err);
+      } catch {
         setError(translations.verificationStatusError || 'Failed to check verification status');
       } finally {
         setIsLoading(false);
       }
     };
-    
+
     if (!isVerified) {
       checkPendingRequest();
     } else {
@@ -154,7 +153,7 @@ export default function VerificationSection({
               {translations.verificationDescription.notVerified}
             </p>
           </div>
-          <VerificationDocumentUploader 
+          <VerificationDocumentUploader
             isVerified={isVerified}
             hasPendingRequest={hasPendingRequest}
             onUploadSuccess={handleUploadSuccess}

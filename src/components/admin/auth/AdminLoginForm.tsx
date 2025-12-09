@@ -13,13 +13,9 @@ import {
 } from "react-icons/hi";
 import { useTranslations } from "next-intl";
 import { useRouter, useParams } from "next/navigation";
-import { getLoginSchema, handleAdminLogin } from "@/utils/admin/auth-forms";
+import { getLoginSchema, type LoginFormData } from "@/lib/schemas/auth";
+import { handleAdminLogin } from "@/utils/admin/auth-forms";
 import { useAuth } from "@/components/providers/AuthProvider";
-
-type LoginFormValues = {
-  email: string;
-  password: string;
-};
 
 interface AdminLoginFormProps {
   redirectPath?: string;
@@ -41,21 +37,13 @@ export default function AdminLoginForm({ redirectPath }: AdminLoginFormProps) {
   const [authError, setAuthError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Create a translation function with the specific signature expected by getLoginSchema
-  const validationTranslator = (
-    key: string,
-    values?: Record<string, unknown>
-  ) => {
-    return tValidations(key, values as Record<string, string | number | Date>);
-  };
-
-  const loginSchema = getLoginSchema(validationTranslator);
+  const loginSchema = getLoginSchema(tValidations);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormValues>({
+  } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
@@ -63,7 +51,7 @@ export default function AdminLoginForm({ redirectPath }: AdminLoginFormProps) {
     },
   });
 
-  const onSubmit = async (data: LoginFormValues) => {
+  const onSubmit = async (data: LoginFormData) => {
     setIsSubmitting(true);
     setAuthError(null);
 

@@ -8,7 +8,7 @@ import { HiInformationCircle, HiEye, HiEyeOff, HiOutlineUser, HiCheckCircle } fr
 import useTranslations from '@/hooks/useTranslations';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import { getAdminCreateAccountSchema } from '@/utils/admin/auth-forms';
+import { getAdminCreateAccountSchema, type AdminCreateAccountFormData } from '@/lib/schemas/auth';
 import { AuthError, AuthLoadingState } from '@/components/admin/auth';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
@@ -23,11 +23,6 @@ interface SupabaseUser {
   };
 }
 
-type CreateAccountFormValues = {
-  password: string;
-  confirmPassword: string;
-};
-
 /**
  * Standardized admin account creation form component with validation and error handling
  * Used during the admin invite flow to set up an initial admin account
@@ -38,7 +33,7 @@ export default function AdminCreateAccountForm() {
   const locale = params.locale as string || 'ar';
   const tValidations = useTranslations('Validations');
   const tForm = useTranslations('AdminAuth.CreateAccountForm');
-  
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -49,21 +44,16 @@ export default function AdminCreateAccountForm() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userFullName, setUserFullName] = useState<string | null>(null);
   const [submissionCompletedSuccessfully, setSubmissionCompletedSuccessfully] = useState(false);
-  
+
   const { supabase } = useAuth();
 
-  // Create a translation function with the specific signature expected by getLoginSchema
-  const validationTranslator = (key: string, values?: Record<string, unknown>) => {
-    return tValidations(key, values as Record<string, string | number | Date>);
-  };
+  const createAccountSchema = getAdminCreateAccountSchema(tValidations);
 
-  const createAccountSchema = getAdminCreateAccountSchema(validationTranslator);
-  
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<CreateAccountFormValues>({
+  } = useForm<AdminCreateAccountFormData>({
     resolver: zodResolver(createAccountSchema),
     defaultValues: {
       password: '',
@@ -89,7 +79,7 @@ export default function AdminCreateAccountForm() {
         setIsInviteValid(false);
         // Only show this toast if there isn't a more specific form error already displayed
         // and if the submission process hasn't already started showing its own toasts.
-        if (!formError) { 
+        if (!formError) {
           toastState.id = toast.error(tForm("invalidInviteNoUser"), {
             duration: 6000, // Longer duration for important initial error
             id: "invalid-invite-toast",
@@ -99,14 +89,14 @@ export default function AdminCreateAccountForm() {
         setIsInviteValid(true);
         setUserEmail(sessionUser.email || null);
         setUserFullName(sessionUser.user_metadata?.full_name || null);
-        
+
         // Check if this admin profile is already set up - this is a security check
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('is_extended_profile_complete')
           .eq('id', sessionUser.id)
           .single();
-          
+
         if (!profileError && profile && profile.is_extended_profile_complete) {
           setIsInviteValid(false);
           setFormError(tForm("alreadySetupError") || "This admin account is already set up. Please use login instead.");
@@ -115,7 +105,7 @@ export default function AdminCreateAccountForm() {
             id: "already-setup-error",
           });
         }
-        
+
         // If a user session IS established, it means the invite token was likely valid.
         // We can dismiss any lingering generic invite error toast if one was somehow shown.
         toast.dismiss("invalid-invite-toast");
@@ -131,14 +121,14 @@ export default function AdminCreateAccountForm() {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         processAuthState(user as SupabaseUser | null);
-      } catch  {
+      } catch {
         setIsInviteValid(false);
         setIsCheckingInvite(false);
       }
     };
 
     checkInvite();
-    
+
     // Cleanup function to dismiss any lingering toasts
     return () => {
       if (toastState.id) {
@@ -147,13 +137,13 @@ export default function AdminCreateAccountForm() {
     };
   }, [supabase, tForm, formError, submissionCompletedSuccessfully]);
 
-  const onSubmit = async (data: CreateAccountFormValues) => {
+  const onSubmit = async (data: AdminCreateAccountFormData) => {
     setFormError(null);
     setIsSubmitting(true);
-    
+
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (!user) {
         setFormError(tForm('sessionExpiredUserNotFound'));
         setIsSubmitting(false);
@@ -197,24 +187,24 @@ export default function AdminCreateAccountForm() {
         .eq('id', user.id);
 
       if (generalProfileError) {
-        console.warn(`${tForm('generalProfileUpdateFailedWarning')}: ${generalProfileError.message}`);
+        // General profile update failed, but we continue with the login redirect
       }
 
       // Mark submission as successful to prevent further error checks during sign-out phase
       setSubmissionCompletedSuccessfully(true);
-      
+
       // Complete setup by signing out and redirecting
       setIsSuccess(true);
-      
+
       // Show success toast
       toast.success(tForm('accountSetupSuccessToast'));
-      
+
       // Redirect after 2 seconds to login page with locale
       setTimeout(() => {
         router.push(`/${locale}/admin/login`);
       }, 2000);
-      
-    } catch  {
+
+    } catch {
       setFormError(tForm('unexpectedError'));
       setIsSubmitting(false);
     }
@@ -236,10 +226,10 @@ export default function AdminCreateAccountForm() {
   // Show error message if invite is invalid
   if (!isInviteValid) {
     return (
-      <AuthError 
-        error={formError || tForm('invalidInviteNoUser')} 
+      <AuthError
+        error={formError || tForm('invalidInviteNoUser')}
         title={tForm('invalidInviteTitle')}
-        description={tForm('invalidInviteMessage')} 
+        description={tForm('invalidInviteMessage')}
         showRetry={false}
       />
     );
@@ -344,10 +334,10 @@ export default function AdminCreateAccountForm() {
         )}
       </div>
       <p className="text-xs text-gray-500">{tForm('termsHint')}</p>
-      <Button 
-        type="submit" 
-        color="primary" 
-        className="w-full" 
+      <Button
+        type="submit"
+        color="primary"
+        className="w-full"
         disabled={isSubmitting}
       >
         {isSubmitting ? tForm('submittingButton') : tForm('submitButton')}
@@ -358,7 +348,7 @@ export default function AdminCreateAccountForm() {
         <Link
           href={`/${locale}/admin/login`}
           className="text-primary hover:underline"
-          >
+        >
           {tForm('loginLink')}
         </Link>
       </div>

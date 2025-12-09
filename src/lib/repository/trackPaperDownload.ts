@@ -17,17 +17,12 @@ export async function trackPaperDownload(
     throw new Error('Missing submission ID');
   }
 
-  try {
-    const { error } = await supabase.rpc('track_paper_activity', {
-      p_submission_id: submissionId,
-      p_action_type: 'download'
-    });
+  const { error } = await supabase.rpc('track_paper_activity', {
+    p_submission_id: submissionId,
+    p_action_type: 'download'
+  });
 
-    if (error) {
-      throw error;
-    }
-  } catch (error) {
-    console.error('Error tracking paper download:', error);
+  if (error) {
     throw error;
   }
-} 
+}

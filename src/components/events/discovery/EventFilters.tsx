@@ -85,8 +85,8 @@ export default function EventFilters({
 
         if (error) throw error;
         setWilayas(data || []);
-      } catch (error) {
-        console.error('Failed to load wilaya data:', error);
+      } catch {
+        // Silent fail - filters still work without wilaya data
       }
     };
 
@@ -104,8 +104,8 @@ export default function EventFilters({
 
         if (error) throw error;
         setTopics(data || []);
-      } catch (error) {
-        console.error('Failed to load topic data:', error);
+      } catch {
+        // Silent fail - filters still work without topic data
       }
     };
 
@@ -188,14 +188,16 @@ export default function EventFilters({
           </h3>
           {hasActiveFilters && (
             <span className={`${isRtl ? 'mr-2' : 'ml-2'} bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300`}>
-              {t('activeCount', { count: (
-                selectedTopics.length +
-                (selectedLocation ? 1 : 0) +
-                selectedStatus.length +
-                selectedFormat.length +
-                (startDate ? 1 : 0) +
-                (endDate ? 1 : 0)
-              )})}
+              {t('activeCount', {
+                count: (
+                  selectedTopics.length +
+                  (selectedLocation ? 1 : 0) +
+                  selectedStatus.length +
+                  selectedFormat.length +
+                  (startDate ? 1 : 0) +
+                  (endDate ? 1 : 0)
+                )
+              })}
             </span>
           )}
         </div>
@@ -237,7 +239,7 @@ export default function EventFilters({
                 topics={topics}
               />
             </div>
-            
+
             {/* Location Filter */}
             <div>
               <Label htmlFor="location-filter">{t('location')}</Label>
@@ -281,7 +283,7 @@ export default function EventFilters({
                 </Select>
               </div>
             </div>
-            
+
             {/* Format Filter */}
             <div>
               <Label htmlFor="format-filter">{t('format')}</Label>
@@ -301,17 +303,17 @@ export default function EventFilters({
                 </Select>
               </div>
             </div>
-            
+
             {/* Start Date Filter */}
             <div>
               <Label htmlFor="start-date-filter">{t('startDate')}</Label>
               <Datepicker
                 id="start-date-filter"
                 value={filters.startDate ? new Date(filters.startDate) : undefined}
-                onChange={(date: Date | null) => 
-                  setFilters(prev => ({ 
-                    ...prev, 
-                    startDate: date ? date.toISOString().split('T')[0] : '' 
+                onChange={(date: Date | null) =>
+                  setFilters(prev => ({
+                    ...prev,
+                    startDate: date ? date.toISOString().split('T')[0] : ''
                   }))
                 }
                 placeholder={t('selectStartDate')}
@@ -325,10 +327,10 @@ export default function EventFilters({
               <Datepicker
                 id="end-date-filter"
                 value={filters.endDate ? new Date(filters.endDate) : undefined}
-                onChange={(date: Date | null) => 
-                  setFilters(prev => ({ 
-                    ...prev, 
-                    endDate: date ? date.toISOString().split('T')[0] : '' 
+                onChange={(date: Date | null) =>
+                  setFilters(prev => ({
+                    ...prev,
+                    endDate: date ? date.toISOString().split('T')[0] : ''
                   }))
                 }
                 placeholder={t('selectEndDate')}

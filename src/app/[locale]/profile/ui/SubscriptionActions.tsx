@@ -35,10 +35,10 @@ export default function SubscriptionActions({
     period: "monthly" | "quarterly" | "biannual" | "annual";
     amount: number;
   } | null>(null);
-  
+
   // Use the subscription hook to get subscription data
   const { subscriptionData } = useSubscription(userId);
-  
+
   // Extract subscription details from the hook data
   const subscription = subscriptionData?.subscription;
 
@@ -80,7 +80,6 @@ export default function SubscriptionActions({
     setSelectedPlan({ tier, period, amount });
     setShowPricingModal(false);
     setShowPaymentModal(true);
-    console.log("Plan selected:", { tier, period, amount });
   };
 
   return (
@@ -88,15 +87,14 @@ export default function SubscriptionActions({
       {showUpgradeButton && (
         <Button
           onClick={() => setShowPricingModal(true)}
-          className={`text-white font-medium rounded-lg py-2 px-4 transition-colors duration-200 w-full ${
-            subscription?.status === "expired" ||
-            (subscription?.tier === "trial" &&
-              (subscription.trial_ends_at
-                ? new Date(subscription.trial_ends_at)
-                : new Date(0)) < new Date())
+          className={`text-white font-medium rounded-lg py-2 px-4 transition-colors duration-200 w-full ${subscription?.status === "expired" ||
+              (subscription?.tier === "trial" &&
+                (subscription.trial_ends_at
+                  ? new Date(subscription.trial_ends_at)
+                  : new Date(0)) < new Date())
               ? "bg-orange-500 hover:bg-orange-600"
               : "bg-blue-600 hover:bg-blue-700"
-          }`}
+            }`}
         >
           {buttonText}
         </Button>
@@ -123,4 +121,3 @@ export default function SubscriptionActions({
     </>
   );
 }
- 

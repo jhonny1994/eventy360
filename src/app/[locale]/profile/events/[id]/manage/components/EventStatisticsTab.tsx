@@ -58,15 +58,15 @@ export default function EventStatisticsTab({ eventId, locale }: EventStatisticsT
     async function fetchStats() {
       setLoading(true);
       setError(null);
-      
+
       try {
         const { data, error } = await supabase
           .rpc('get_event_submission_stats', { event_id: eventId });
-        
+
         if (error) {
           throw error;
         }
-        
+
         if (data && data.length > 0) {
           setStats(data[0] as SubmissionStats);
         } else {
@@ -83,13 +83,12 @@ export default function EventStatisticsTab({ eventId, locale }: EventStatisticsT
           });
         }
       } catch (err) {
-        console.error('Error fetching stats:', err);
         setError(err instanceof Error ? err.message : t('fetchError'));
       } finally {
         setLoading(false);
       }
     }
-    
+
     fetchStats();
   }, [eventId, supabase, t]);
 

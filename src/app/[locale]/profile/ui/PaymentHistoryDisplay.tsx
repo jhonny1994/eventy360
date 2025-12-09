@@ -48,8 +48,7 @@ export default function PaymentHistoryDisplay({ userId }: PaymentHistoryDisplayP
         .order('created_at', { ascending: false });
 
       if (dbError) {
-        console.error('Error fetching payment history:', dbError);
-        setError(t('errorFetching')); // New translation key
+        setError(t('errorFetching'));
         setPayments([]);
       } else {
         setPayments(data || []);
@@ -82,26 +81,26 @@ export default function PaymentHistoryDisplay({ userId }: PaymentHistoryDisplayP
               <Table hoverable dir={isRtl ? 'rtl' : 'ltr'}>
                 <TableHead>
                   <TableRow className={isRtl ? 'text-right' : 'text-left'}>
-                    <TableHeadCell style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{t('headerDate')}</TableHeadCell>
-                    <TableHeadCell style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{t('headerAmount')}</TableHeadCell>
-                    <TableHeadCell style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{t('headerPeriod')}</TableHeadCell>
-                    <TableHeadCell style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{t('headerStatus')}</TableHeadCell>
-                    <TableHeadCell style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{t('headerReference')}</TableHeadCell>
+                    <TableHeadCell style={isRtl ? { textAlign: 'right' } : { textAlign: 'left' }}>{t('headerDate')}</TableHeadCell>
+                    <TableHeadCell style={isRtl ? { textAlign: 'right' } : { textAlign: 'left' }}>{t('headerAmount')}</TableHeadCell>
+                    <TableHeadCell style={isRtl ? { textAlign: 'right' } : { textAlign: 'left' }}>{t('headerPeriod')}</TableHeadCell>
+                    <TableHeadCell style={isRtl ? { textAlign: 'right' } : { textAlign: 'left' }}>{t('headerStatus')}</TableHeadCell>
+                    <TableHeadCell style={isRtl ? { textAlign: 'right' } : { textAlign: 'left' }}>{t('headerReference')}</TableHeadCell>
                   </TableRow>
                 </TableHead>
                 <TableBody className="divide-y">
                   {payments.map((payment) => (
-                    <TableRow 
-                      key={payment.id} 
+                    <TableRow
+                      key={payment.id}
                       className={`bg-white dark:border-gray-700 dark:bg-gray-800 ${isRtl ? 'text-right' : 'text-left'}`}
                     >
-                      <TableCell style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}} className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                      <TableCell style={isRtl ? { textAlign: 'right' } : { textAlign: 'left' }} className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                         {new Date(payment.created_at).toLocaleDateString(locale === 'ar' ? 'ar-DZ' : 'en-US')}
                       </TableCell>
-                      <TableCell style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{/* TODO: Format currency */}{payment.amount}</TableCell>
-                      <TableCell style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{payment.billing_period}</TableCell>
-                      <TableCell style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{/* TODO: Translate status */}{payment.status}</TableCell>
-                      <TableCell style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>{payment.id}</TableCell>
+                      <TableCell style={isRtl ? { textAlign: 'right' } : { textAlign: 'left' }}>{/* TODO: Format currency */}{payment.amount}</TableCell>
+                      <TableCell style={isRtl ? { textAlign: 'right' } : { textAlign: 'left' }}>{payment.billing_period}</TableCell>
+                      <TableCell style={isRtl ? { textAlign: 'right' } : { textAlign: 'left' }}>{/* TODO: Translate status */}{payment.status}</TableCell>
+                      <TableCell style={isRtl ? { textAlign: 'right' } : { textAlign: 'left' }}>{payment.id}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

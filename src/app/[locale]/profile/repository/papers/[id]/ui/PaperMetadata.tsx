@@ -27,11 +27,11 @@ export default function PaperMetadata({ paper, eventName, locale }: PaperMetadat
   const [topicNames, setTopicNames] = useState<string[]>([]);
   const [error, setError] = useState<Error | null>(null);
   const [isDataFetched, setIsDataFetched] = useState(false);
-  
+
   useEffect(() => {
     const fetchLocationData = async () => {
       setError(null);
-      
+
       try {
         // Fetch wilaya name if author_wilaya_id exists
         if (paper.author_wilaya_id) {
@@ -39,22 +39,22 @@ export default function PaperMetadata({ paper, eventName, locale }: PaperMetadat
             p_wilaya_id: paper.author_wilaya_id,
             p_locale: locale
           });
-          
+
           if (wilayaError) throw wilayaError;
           setWilayaName(wilayaData);
         }
-        
+
         // Fetch daira name if author_daira_id exists
         if (paper.author_daira_id) {
           const { data: dairaData, error: dairaError } = await supabase.rpc('get_daira_name', {
             p_daira_id: paper.author_daira_id,
             p_locale: locale
           });
-          
+
           if (dairaError) throw dairaError;
           setDairaName(dairaData);
         }
-        
+
         // Fetch topic names if event_topic_ids exists
         if (paper.event_topic_ids && paper.event_topic_ids.length > 0) {
           // Fetch topics data from the topics table
@@ -62,57 +62,55 @@ export default function PaperMetadata({ paper, eventName, locale }: PaperMetadat
             .from('topics')
             .select('id, name_translations')
             .in('id', paper.event_topic_ids);
-          
+
           if (topicsError) throw topicsError;
-          
+
           if (topicsData && topicsData.length > 0) {
             // Extract topic names from the translated fields based on locale
             const names = topicsData.map(topic => {
               const nameTranslations = topic.name_translations as Record<string, string>;
-              return nameTranslations[locale] || 
-                     Object.values(nameTranslations)[0] || 
-                     t('topic');
+              return nameTranslations[locale] ||
+                Object.values(nameTranslations)[0] ||
+                t('topic');
             });
-            
+
             setTopicNames(names);
           }
         }
 
         setIsDataFetched(true);
       } catch (err) {
-        console.error('Error fetching metadata:', err);
         setError(err as Error);
         setIsDataFetched(true); // Still mark as fetched so UI can render with error state
       }
     };
-    
+
     fetchLocationData();
   }, [paper.author_wilaya_id, paper.author_daira_id, paper.event_topic_ids, locale, supabase, t]);
-  
+
   const getFormattedDate = (dateString: string | null) => {
     if (!dateString) return null;
-    
+
     return new Date(dateString).toLocaleDateString(
       locale === 'ar' ? 'ar-DZ' : 'en-US',
       { year: 'numeric', month: 'long', day: 'numeric' }
     );
   };
-  
+
   // Format the submission date
   const submissionDate = getFormattedDate(paper.submission_date);
-  
+
   // If data is still being fetched, don't render the component yet
   // This helps prevent partial loading states and lets the parent component 
   // handle the overall loading state
   if (!isDataFetched) {
     return null;
   }
-  
+
   if (error) {
-    console.error('Error in PaperMetadata:', error);
-    // Continue rendering with available data, just log the error
+    // Continue rendering with available data
   }
-  
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {/* Author */}
@@ -156,7 +154,7 @@ export default function PaperMetadata({ paper, eventName, locale }: PaperMetadat
             <h3 className="text-sm font-medium text-gray-900">{t('event')}</h3>
           </div>
           <div className="ml-7 rtl:mr-7 rtl:ml-0">
-            <Link 
+            <Link
               href={`/${locale}/profile/events/${paper.event_id}`}
               className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
             >
@@ -199,9 +197,9 @@ export default function PaperMetadata({ paper, eventName, locale }: PaperMetadat
           <div className="flex items-center mb-1">
             <HiEye className="w-5 h-5 text-gray-400 mr-2 rtl:ml-2 rtl:mr-0" />
             <h3 className="text-sm font-medium text-gray-900">{t('views')}</h3>
-            </div>
+          </div>
           <p className="text-sm text-gray-600 ml-7 rtl:mr-7 rtl:ml-0">{paper.view_count}</p>
-            </div>
+        </div>
       )}
 
       {/* Downloads */}

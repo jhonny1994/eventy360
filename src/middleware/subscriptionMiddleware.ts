@@ -53,18 +53,18 @@ export async function subscriptionMiddleware(
   config: SubscriptionMiddlewareConfig
 ): Promise<NextResponse> {
   const { pathname } = request.nextUrl;
-  
+
   // Extract locale information
   const localePattern = new RegExp(`^/(${routing.locales.join("|")})(.*)`);
   const pathMatch = pathname.match(localePattern);
   const currentLocale = pathMatch ? pathMatch[1] : routing.defaultLocale;
-  
+
   // Create middleware client using the singleton pattern
   const supabaseMiddlewareClient = createMiddlewareClient(request);
-  
+
   // Get user session
   const { data: { user } } = await supabaseMiddlewareClient.auth.getUser();
-  
+
   if (!user) {
     // If no user, redirect to login
     if (config.redirectOnFailure !== false) {
@@ -73,7 +73,7 @@ export async function subscriptionMiddleware(
       copyAllCookies(response, redirectResponse);
       return redirectResponse;
     }
-    
+
     // Add header for client-side handling
     return NextResponse.next({
       request: {
@@ -84,16 +84,15 @@ export async function subscriptionMiddleware(
       }
     });
   }
-  
+
   try {
     // Get subscription details using RPC function
-    const { data: subscriptionData, error: subscriptionError } = 
-      await supabaseMiddlewareClient.rpc('get_subscription_details') as 
+    const { data: subscriptionData, error: subscriptionError } =
+      await supabaseMiddlewareClient.rpc('get_subscription_details') as
       { data: UserSubscriptionData | null, error: Error | null };
-    
+
     if (subscriptionError || !subscriptionData) {
-      console.error('Error getting subscription data:', subscriptionError);
-      
+
       // Handle subscription query error
       if (config.redirectOnFailure !== false) {
         const redirectPath = config.redirectPath || `/${currentLocale}/profile?tab=subscription`;
@@ -102,7 +101,7 @@ export async function subscriptionMiddleware(
         copyAllCookies(response, redirectResponse);
         return redirectResponse;
       }
-      
+
       return NextResponse.next({
         request: {
           headers: new Headers({
@@ -112,38 +111,38 @@ export async function subscriptionMiddleware(
         }
       });
     }
-    
+
     // Check if user has required subscription
     let hasRequiredSubscription = false;
-    
+
     if (subscriptionData.has_subscription && subscriptionData.subscription?.is_active) {
       const { tier, status } = subscriptionData.subscription;
-      
+
       switch (config.restriction) {
         case SubscriptionRestriction.REQUIRE_PAID:
-          hasRequiredSubscription = 
+          hasRequiredSubscription =
             ['paid_researcher', 'paid_organizer'].includes(tier) && status === 'active';
           break;
-          
+
         case SubscriptionRestriction.REQUIRE_RESEARCHER:
           hasRequiredSubscription = tier === 'paid_researcher' && status === 'active';
           break;
-          
+
         case SubscriptionRestriction.REQUIRE_ORGANIZER:
           hasRequiredSubscription = tier === 'paid_organizer' && status === 'active';
           break;
-          
+
         case SubscriptionRestriction.ACCEPT_TRIAL:
-          hasRequiredSubscription = 
+          hasRequiredSubscription =
             (['paid_researcher', 'paid_organizer'].includes(tier) && status === 'active') ||
             (status === 'trial');
           break;
-          
+
         default:
           hasRequiredSubscription = false;
       }
     }
-    
+
     if (!hasRequiredSubscription) {
       // User does not have required subscription
       if (config.redirectOnFailure !== false) {
@@ -153,7 +152,7 @@ export async function subscriptionMiddleware(
         copyAllCookies(response, redirectResponse);
         return redirectResponse;
       }
-      
+
       // Add header for client-side handling
       return NextResponse.next({
         request: {
@@ -164,7 +163,7 @@ export async function subscriptionMiddleware(
         }
       });
     }
-    
+
     // User has required subscription, continue
     return NextResponse.next({
       request: {
@@ -174,10 +173,10 @@ export async function subscriptionMiddleware(
         })
       }
     });
-    
-  } catch (error) {
-    console.error('Subscription middleware error:', error);
-    
+
+  } catch {
+    // Subscription middleware error - redirect to subscription page
+
     // Handle unexpected errors
     if (config.redirectOnFailure !== false) {
       const redirectPath = config.redirectPath || `/${currentLocale}/profile?tab=subscription`;
@@ -186,7 +185,7 @@ export async function subscriptionMiddleware(
       copyAllCookies(response, redirectResponse);
       return redirectResponse;
     }
-    
+
     return NextResponse.next({
       request: {
         headers: new Headers({

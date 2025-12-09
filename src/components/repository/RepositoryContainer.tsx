@@ -113,7 +113,7 @@ export default function RepositoryContainer({
   const [totalPapers, setTotalPapers] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Reference data for locations and topics
   const [wilayas, setWilayas] = useState<Wilaya[]>([]);
   // Dairas are now fetched on-demand based on paper results
@@ -144,14 +144,14 @@ export default function RepositoryContainer({
   useEffect(() => {
     const fetchReferenceData = async () => {
       setIsReferenceDataLoading(true);
-      
+
       try {
         // Fetch wilayas
         const { data: wilayasData, error: wilayasError } = await supabase
           .from('wilayas')
           .select('id, name_ar, name_other')
           .order('id');
-          
+
         if (wilayasError) throw wilayasError;
         setWilayas(wilayasData || []);
 
@@ -160,18 +160,17 @@ export default function RepositoryContainer({
           .from('topics')
           .select('id, name_translations, slug')
           .order('slug');
-          
+
         if (topicsError) throw topicsError;
         setTopics(topicsData || []);
-        
-      } catch (err) {
-        console.error('Error fetching reference data:', err);
+
+      } catch {
         // We don't set the main error state here as it's not critical for the main functionality
       } finally {
         setIsReferenceDataLoading(false);
       }
     };
-    
+
     fetchReferenceData();
   }, [supabase]);
 
@@ -182,7 +181,7 @@ export default function RepositoryContainer({
     }
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const offset = (page - 1) * pageSize;
 
@@ -190,7 +189,7 @@ export default function RepositoryContainer({
         search_query: search || undefined,
         topic_ids: selectedTopics.length > 0 ? selectedTopics : undefined,
         wilaya_id_param: selectedLocation || undefined,
-        daira_id_param: selectedDaira || undefined, 
+        daira_id_param: selectedDaira || undefined,
         start_date: startDate || undefined,
         end_date: endDate || undefined,
         author_name_filter: selectedResearcher || undefined,
@@ -208,7 +207,7 @@ export default function RepositoryContainer({
 
       // Cast rpcData to Paper[] before using it
       const typedData = rpcData as Paper[] | null;
-      
+
       if (typedData && typedData.length > 0) {
         // Step 1: Collect unique daira IDs from the fetched papers
         const dairaIds = [...new Set(typedData.map(p => p.author_daira_id).filter(id => id !== null))] as number[];
@@ -216,43 +215,42 @@ export default function RepositoryContainer({
         // Step 2: Fetch only the required dairas
         let dairas: Daira[] = [];
         if (dairaIds.length > 0) {
-            const { data: dairasData, error: dairasError } = await supabase
-                .from('dairas')
-                .select('id, name_ar, name_other, wilaya_id')
-                .in('id', dairaIds);
+          const { data: dairasData, error: dairasError } = await supabase
+            .from('dairas')
+            .select('id, name_ar, name_other, wilaya_id')
+            .in('id', dairaIds);
 
-            if (dairasError) {
-                console.error("Failed to fetch specific dairas:", dairasError);
-                // Continue without daira names if this fails
-            } else {
-                dairas = dairasData || [];
-            }
+          if (dairasError) {
+            // Continue without daira names if this fails
+          } else {
+            dairas = dairasData || [];
+          }
         }
 
         // Step 3: Enrich papers with names and translated content
         const enrichedPapers = typedData.map(paper => {
           const titleTranslations = paper.paper_title_translations ? paper.paper_title_translations as Record<string, string> : {};
           const eventNameTranslations = paper.event_name_translations ? paper.event_name_translations as Record<string, string> : {};
-          
+
           const getTitle = () => {
             return titleTranslations[locale] ? titleTranslations[locale] : t('paperCard.untitled');
           };
-          
+
           const getEventName = () => {
             return eventNameTranslations[locale] ? eventNameTranslations[locale] : t('paperCard.unknownEvent');
           };
 
           const wilaya = wilayas.find(w => w.id === paper.author_wilaya_id);
           const daira = dairas.find(d => d.id === paper.author_daira_id);
-          
+
           const paperTopics = (paper.event_topic_ids ? paper.event_topic_ids : []).map(topicId => {
-              const topic = topics.find(t => t.id === topicId);
-              if (!topic) return topicId;
-              const nameTranslations = topic.name_translations ? topic.name_translations as Record<string, string> : {};
-              if (nameTranslations[locale]) return nameTranslations[locale];
-              const availableLocale = Object.keys(nameTranslations).find(key => nameTranslations[key]);
-              return availableLocale ? nameTranslations[availableLocale] : topic.slug;
-            });
+            const topic = topics.find(t => t.id === topicId);
+            if (!topic) return topicId;
+            const nameTranslations = topic.name_translations ? topic.name_translations as Record<string, string> : {};
+            if (nameTranslations[locale]) return nameTranslations[locale];
+            const availableLocale = Object.keys(nameTranslations).find(key => nameTranslations[key]);
+            return availableLocale ? nameTranslations[availableLocale] : topic.slug;
+          });
 
           return {
             ...paper,
@@ -270,7 +268,7 @@ export default function RepositoryContainer({
           'get_papers_analytics',
           { p_submission_ids: paperIds }
         );
-        
+
         if (!analyticsError && analyticsData) {
           // Merge analytics data with papers
           const papersWithAnalytics = enrichedPapers.map(paper => {
@@ -281,13 +279,13 @@ export default function RepositoryContainer({
               download_count: analytics ? analytics.download_count : 0
             };
           });
-          
+
           setPapers(papersWithAnalytics);
         } else {
           // If analytics fetch fails, still show papers without analytics
           setPapers(enrichedPapers);
         }
-        
+
         if (typeof typedData[0].total_records === 'number') {
           setTotalPapers(typedData[0].total_records);
         } else {
@@ -297,7 +295,7 @@ export default function RepositoryContainer({
         setPapers([]);
         setTotalPapers(0);
       }
-      
+
     } catch (err) {
       setError(err instanceof Error ? err.message : t('errors.fetchFailed'));
       setPapers([]);
@@ -358,48 +356,48 @@ export default function RepositoryContainer({
     researcher?: string | null;
   }) => {
     const params = new URLSearchParams(urlSearchParams.toString());
-    
+
     // Update topic filter
     if (filters.topics && filters.topics.length > 0) {
       params.set('topics', filters.topics.join(','));
     } else {
       params.delete('topics');
     }
-    
+
     // Update location filter
     if (filters.location) {
       params.set('location', filters.location.toString());
     } else {
       params.delete('location');
     }
-    
+
     // Update daira filter
     if (filters.daira) {
       params.set('daira', filters.daira.toString());
     } else {
       params.delete('daira');
     }
-    
+
     // Update date filters
     if (filters.startDate) {
       params.set('start_date', filters.startDate);
     } else {
       params.delete('start_date');
     }
-    
+
     if (filters.endDate) {
       params.set('end_date', filters.endDate);
     } else {
       params.delete('end_date');
     }
-    
+
     // Update researcher filter
     if (filters.researcher) {
       params.set('researcher', filters.researcher);
     } else {
       params.delete('researcher');
     }
-    
+
     params.delete('page'); // Reset to first page
     router.push(`/${locale}/profile/repository?${params.toString()}`);
   }, [urlSearchParams, router, locale]);

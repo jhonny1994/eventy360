@@ -10,10 +10,10 @@ import { BookmarkCheck } from "lucide-react";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Bookmarks");
-  
+
   return {
-    title: t("title"), 
-    description: t("emptyStateDescription"), 
+    title: t("title"),
+    description: t("emptyStateDescription"),
   };
 }
 
@@ -24,7 +24,7 @@ export default async function BookmarksPage({ params }: { params: Promise<{ loca
 
   // Check authentication
   const { data: { user }, error: authError } = await supabase.auth.getUser();
-  
+
   if (authError || !user) {
     redirect(`/${locale}/auth/signin`);
   }
@@ -49,7 +49,7 @@ export default async function BookmarksPage({ params }: { params: Promise<{ loca
   const { events, error } = await getBookmarkedEvents(locale);
 
   if (error) {
-    console.error("Error fetching bookmarked events:", error);
+    // Continue with empty bookmarks
   }
 
   return (
@@ -69,9 +69,9 @@ export default async function BookmarksPage({ params }: { params: Promise<{ loca
 
       <ProfileCard locale={locale}>
         <div className="min-h-[300px]">
-          <EventCardGrid 
-            events={events || []} 
-            isLoading={false} 
+          <EventCardGrid
+            events={events || []}
+            isLoading={false}
           />
         </div>
       </ProfileCard>

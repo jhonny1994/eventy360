@@ -39,8 +39,8 @@ interface AbstractReviewFormProps {
 
 type ReviewDecision = 'approve' | 'reject' | '';
 
-export default function AbstractReviewForm({ 
-  submissionId, 
+export default function AbstractReviewForm({
+  submissionId,
   eventId
 }: AbstractReviewFormProps) {
   const t = useTranslations('Submissions');
@@ -63,19 +63,19 @@ export default function AbstractReviewForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!decision) {
       setError(t('pleaseSelectDecision'));
       return;
     }
-    
+
     setIsSubmitting(true);
     setError(null);
-    
+
     try {
       // Update the submission status
       const newStatus = decision === 'approve' ? 'abstract_approved' : 'abstract_rejected';
-      
+
       const { error: updateError } = await supabase
         .from('submissions')
         .update({
@@ -84,48 +84,47 @@ export default function AbstractReviewForm({
           updated_at: new Date().toISOString()
         })
         .eq('id', submissionId);
-        
+
       if (updateError) {
         throw updateError;
       }
-      
+
       // Redirect back to submission details
       router.push(`/${locale}/profile/events/${eventId}/submissions/${submissionId}`);
       router.refresh(); // Refresh the page to show updated data
-    } catch (err) {
-      console.error('Error updating submission:', err);
+    } catch {
       setError(t('errorUpdatingSubmission'));
     } finally {
       setIsSubmitting(false);
     }
   };
-  
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Decision selection */}
       <div className="space-y-2">
         <Label htmlFor="decision">{t('reviewDecision')}</Label>
-        
+
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-2">
-            <Radio 
-              id="approve" 
-              name="decision" 
-              value="approve" 
-              checked={decision === 'approve'} 
+            <Radio
+              id="approve"
+              name="decision"
+              value="approve"
+              checked={decision === 'approve'}
               onChange={handleDecisionChange}
             />
             <Label htmlFor="approve" className="font-medium text-gray-900 dark:text-white">
               {t('approveAbstract')}
             </Label>
           </div>
-          
+
           <div className="flex items-center gap-2">
-            <Radio 
-              id="reject" 
-              name="decision" 
-              value="reject" 
-              checked={decision === 'reject'} 
+            <Radio
+              id="reject"
+              name="decision"
+              value="reject"
+              checked={decision === 'reject'}
               onChange={handleDecisionChange}
             />
             <Label htmlFor="reject" className="font-medium text-gray-900 dark:text-white">
@@ -134,7 +133,7 @@ export default function AbstractReviewForm({
           </div>
         </div>
       </div>
-      
+
       {/* Feedback textarea */}
       <div className="space-y-2">
         <Label htmlFor="feedback">{t('reviewFeedback')}</Label>
@@ -154,14 +153,14 @@ export default function AbstractReviewForm({
           </p>
         )}
       </div>
-      
+
       {/* Error message */}
       {error && (
         <div className="p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400">
           {error}
         </div>
       )}
-      
+
       {/* Action buttons */}
       <div className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
         <Button
@@ -171,7 +170,7 @@ export default function AbstractReviewForm({
         >
           {t('cancel')}
         </Button>
-        
+
         <Button
           type="submit"
           color="blue"

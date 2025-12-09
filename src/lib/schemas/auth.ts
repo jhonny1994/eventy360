@@ -25,10 +25,16 @@ const BaseResetPasswordSchema = z.object({
   confirmPassword: z.string(),
 });
 
+const BaseAdminCreateAccountSchema = z.object({
+  password: z.string().min(8),
+  confirmPassword: z.string(),
+});
+
 export type LoginFormData = z.infer<typeof BaseLoginSchema>;
 export type RegisterFormData = z.infer<typeof BaseRegisterSchema>;
 export type ForgotPasswordFormData = z.infer<typeof BaseForgotPasswordSchema>;
 export type ResetPasswordFormData = z.infer<typeof BaseResetPasswordSchema>;
+export type AdminCreateAccountFormData = z.infer<typeof BaseAdminCreateAccountSchema>;
 
 type TFunction = ReturnType<typeof useTranslations<string>>;
 
@@ -99,3 +105,25 @@ export const getResetPasswordSchema = (t: TFunction) => {
     }
   );
 };
+
+/**
+ * Generates the Admin Create Account schema with translated error messages.
+ * Used for admin invite flow where admins set their initial password.
+ * @param t - The translation function from `useTranslations` (scoped to 'Validations').
+ * @returns The Zod schema for admin account creation.
+ */
+export const getAdminCreateAccountSchema = (t: TFunction) => {
+  const schema = BaseAdminCreateAccountSchema.extend({
+    password: z.string().min(8, { message: t("passwordMinLength") }),
+    confirmPassword: z.string(),
+  });
+
+  return schema.refine(
+    (data: AdminCreateAccountFormData) => data.password === data.confirmPassword,
+    {
+      message: t("passwordsDoNotMatch"),
+      path: ["confirmPassword"],
+    }
+  );
+};
+

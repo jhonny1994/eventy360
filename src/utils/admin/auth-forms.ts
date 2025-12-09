@@ -1,40 +1,13 @@
-import { z } from 'zod';
 import { toast } from 'react-hot-toast';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/database.types';
 
 /**
- * Form validation schemas for admin authentication
+ * Admin authentication utilities
+ * 
+ * Note: Schema definitions have been centralized in @/lib/schemas/auth.ts
+ * This file now only contains admin-specific authentication helper functions
  */
-
-/**
- * Creates a login form schema with translations
- * @param t - Translation function from useTranslations('Validations')
- * @returns Zod schema for login form
- */
-export const getLoginSchema = (t: (key: string, values?: Record<string, unknown>) => string) => {
-  return z.object({
-    email: z.string().email(t('email')),
-    password: z.string().min(1, t('passwordRequired')),
-  });
-};
-
-/**
- * Creates an admin account creation form schema with translations
- * @param t - Translation function from useTranslations('Validations')
- * @returns Zod schema for admin account creation form
- */
-export const getAdminCreateAccountSchema = (t: (key: string, values?: Record<string, unknown>) => string) => {
-  return z
-    .object({
-      password: z.string().min(8, t('passwordMinLength')),
-      confirmPassword: z.string().min(8, t('passwordMinLength')),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-      message: t('passwordsDoNotMatch'),
-      path: ['confirmPassword'],
-    });
-};
 
 /**
  * Helper function for handling admin login

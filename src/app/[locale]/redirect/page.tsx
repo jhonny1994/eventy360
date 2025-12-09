@@ -15,14 +15,14 @@ export default function RedirectPage() {
   const { user, loading: authLoading, supabase } = useAuth();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [isCheckingProfile, setIsCheckingProfile] = useState(false);
-  
+
   // Get auth_action from URL if present (for email confirmation)
   const authAction = searchParams?.get('auth_action');
   const isEmailConfirmed = authAction === 'email_confirmed';
-  
+
   // Determine message based on URL parameters
   const message = isEmailConfirmed ? t('emailConfirmedRedirecting') : t('redirecting');
-  
+
   useEffect(() => {
     // Don't redirect while still loading auth state
     if (authLoading || isCheckingProfile) {
@@ -55,9 +55,9 @@ export default function RedirectPage() {
               .select('is_extended_profile_complete')
               .eq('id', user.id)
               .single();
-            
+
             if (error) throw error;
-            
+
             if (data && data.is_extended_profile_complete) {
               // Profile is complete, go directly to profile page
               router.push(`/${locale}/profile`);
@@ -65,10 +65,9 @@ export default function RedirectPage() {
               // Profile needs completion
               router.push(`/${locale}/complete-profile`);
             }
-          } catch (err) {
-            console.error('Error checking profile:', err);
+          } catch {
             // If error occurs, default to complete-profile
-          router.push(`/${locale}/complete-profile`);
+            router.push(`/${locale}/complete-profile`);
           } finally {
             setIsCheckingProfile(false);
           }
@@ -78,14 +77,14 @@ export default function RedirectPage() {
         router.push(`/${locale}/login`);
       }
     }, 1500); // Wait 1.5 seconds before redirecting
-    
+
     // Cleanup on unmount
     return () => {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
     };
-  }, [user, authLoading, router, isEmailConfirmed, authAction, locale, supabase, isCheckingProfile]);
+  }, [user, authLoading, router, isEmailConfirmed, authAction, locale, supabase]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
@@ -93,8 +92,8 @@ export default function RedirectPage() {
         <Spinner size="xl" className="mx-auto mb-4" />
         <h1 className="text-xl font-semibold mb-2">{message}</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          {isEmailConfirmed 
-            ? t('emailConfirmedRedirectingDescription') 
+          {isEmailConfirmed
+            ? t('emailConfirmedRedirectingDescription')
             : t('redirectingToLogin')}
         </p>
       </div>

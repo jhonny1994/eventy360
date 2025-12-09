@@ -23,78 +23,75 @@ export default function DeleteTopicConfirmation({
 }: DeleteTopicConfirmationProps) {
   const t = useTranslations('AdminTopics');
   const { supabase } = useAuth();
-  
+
   // State for loading and errors
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   // State for usage counts
   const [isLoadingUsage, setIsLoadingUsage] = useState(false);
   const [usageData, setUsageData] = useState<{
     eventCount: number;
     subscriptionCount: number;
   } | null>(null);
-  
+
   // Function to load topic usage data
   const loadUsageData = useCallback(async () => {
     setIsLoadingUsage(true);
-    
+
     try {
       const result = await getTopicUsage(supabase, topic.id);
-      
+
       if (result.success) {
         setUsageData({
           eventCount: result.eventCount,
           subscriptionCount: result.subscriptionCount
         });
       } else {
-        console.error('Error fetching topic usage:', result.error);
         // Still continue, but without usage data
         setUsageData({ eventCount: 0, subscriptionCount: 0 });
       }
-    } catch (err) {
-      console.error('Unexpected error fetching topic usage:', err);
+    } catch {
       setUsageData({ eventCount: 0, subscriptionCount: 0 });
     } finally {
       setIsLoadingUsage(false);
     }
   }, [topic.id, supabase]);
-  
+
   // Load usage data when modal is shown
   useEffect(() => {
     if (show && topic.id) {
       loadUsageData();
     }
   }, [show, topic.id, loadUsageData]);
-  
+
   // Function to handle topic deletion
   const handleDelete = async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const result = await deleteTopic(supabase, topic.id, {
         name: topic.name_translations.ar || 'Unknown',
         slug: topic.slug
       });
-      
+
       if (result.success) {
         onSuccess();
         onClose();
       } else {
         setError(result.error || t('errors.deleteFailed'));
       }
-    } catch (err) {
-      console.error('Error deleting topic:', err);
+    } catch {
       setError(t('errors.unexpected'));
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   // Check if topic is in use
   const isInUse = usageData && (usageData.eventCount > 0 || usageData.subscriptionCount > 0);
-  
+
   return (
     <Modal show={show} onClose={onClose} size="md" popup>
       <ModalHeader>
@@ -107,12 +104,12 @@ export default function DeleteTopicConfirmation({
               {error}
             </Alert>
           )}
-          
+
           <div className="text-base leading-relaxed text-gray-600 dark:text-gray-400">
             <p className="mb-4">
               {t('delete.confirmMessage')}
             </p>
-            
+
             {isLoadingUsage ? (
               <div className="flex items-center justify-center p-4">
                 <Spinner size="sm" className="mr-2" />
@@ -121,28 +118,28 @@ export default function DeleteTopicConfirmation({
             ) : isInUse ? (
               <Alert color="warning" icon={HiExclamationCircle} className="mb-4">
                 <p>
-                  {t('delete.inUseWarning', { 
-                    eventCount: usageData?.eventCount || 0, 
-                    subscriptionCount: usageData?.subscriptionCount || 0 
+                  {t('delete.inUseWarning', {
+                    eventCount: usageData?.eventCount || 0,
+                    subscriptionCount: usageData?.subscriptionCount || 0
                   })}
                 </p>
               </Alert>
             ) : null}
-            
+
             <div className="mb-2 font-semibold">
-              {t('table.name')}: 
+              {t('table.name')}:
               <span className="font-normal ml-2">
                 {topic.name_translations.ar || topic.name_translations.en || t('table.untitled')}
               </span>
             </div>
-            
+
             <div className="mb-2 font-semibold">
-              {t('table.slug')}: 
+              {t('table.slug')}:
               <span className="font-normal ml-2">
                 {topic.slug}
               </span>
             </div>
-            
+
             {!isLoadingUsage && usageData && (
               <div className="mt-4 pt-4 border-t border-gray-200">
                 <div className="mb-2 font-semibold">
@@ -159,7 +156,7 @@ export default function DeleteTopicConfirmation({
               </div>
             )}
           </div>
-          
+
           <div className="flex justify-end gap-4">
             <Button
               color="light"

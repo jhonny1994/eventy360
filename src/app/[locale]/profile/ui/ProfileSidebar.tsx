@@ -5,13 +5,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Avatar, Button } from 'flowbite-react';
-import { 
-  HiUser, 
-  HiHome, 
-  HiLockClosed, 
-  HiCreditCard, 
+import {
+  HiUser,
+  HiHome,
+  HiLockClosed,
+  HiCreditCard,
   HiOutlineShieldCheck,
-  HiMenuAlt2, 
+  HiMenuAlt2,
   HiX,
   HiChevronRight,
   HiChevronLeft,
@@ -82,7 +82,7 @@ interface TranslationStrings {
   userTypeLabel: string;
   verificationLabel: string;
   notVerifiedLabel: string;
-  
+
   // New navigation translations
   dashboard: string;
   profile: string;
@@ -118,9 +118,9 @@ interface ProfileSidebarProps {
  * @param locale - Current locale
  * @param translations - Translation strings
  */
-export default function ProfileSidebar({ 
-  profile, 
-  locale, 
+export default function ProfileSidebar({
+  profile,
+  locale,
   translations,
   userType
 }: ProfileSidebarProps) {
@@ -149,7 +149,7 @@ export default function ProfileSidebar({
     await supabase.auth.signOut();
     window.location.href = `/${locale}/login`;
   };
-  
+
   // Toggle sidebar for mobile view
   const toggleSidebar = () => {
     setIsMobileSidebarOpen(!isMobileSidebarOpen);
@@ -200,15 +200,13 @@ export default function ProfileSidebar({
       )}
       {/* Sidebar - mobile (overlay) or desktop (fixed) */}
       <aside
-        className={`${
-          isMobile
-            ? `fixed inset-y-0 ${isRtl ? 'right-0' : 'left-0'} z-40 w-80 transition-transform duration-300 ease-in-out ${
-                isMobileSidebarOpen 
-                  ? 'translate-x-0' 
-                  : `${isRtl ? 'translate-x-full' : '-translate-x-full'}`
-              }`
-            : 'hidden md:block w-80 shrink-0'
-        } bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto`}
+        className={`${isMobile
+          ? `fixed inset-y-0 ${isRtl ? 'right-0' : 'left-0'} z-40 w-80 transition-transform duration-300 ease-in-out ${isMobileSidebarOpen
+            ? 'translate-x-0'
+            : `${isRtl ? 'translate-x-full' : '-translate-x-full'}`
+          }`
+          : `hidden md:flex md:flex-col md:fixed md:inset-y-0 ${isRtl ? 'md:right-0' : 'md:left-0'} md:w-80 md:z-30`
+          } bg-white dark:bg-gray-800 ${isRtl ? 'border-l' : 'border-r'} border-gray-200 dark:border-gray-700 overflow-y-auto`}
         dir={isRtl ? 'rtl' : 'ltr'}
       >
         {/* Sidebar content with better spacing and structure */}
@@ -224,11 +222,10 @@ export default function ProfileSidebar({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`group flex items-center px-4 py-2.5 rounded-lg ${
-                  isActive(item.href)
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300'
-                    : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700/30'
-                } transition-colors duration-200`}
+                className={`group flex items-center px-4 py-2.5 rounded-lg ${isActive(item.href)
+                  ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300'
+                  : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700/30'
+                  } transition-colors duration-200`}
               >
                 <>
                   <span className={`shrink-0 ${isRtl ? 'ml-3' : 'mr-3'}`}>
@@ -313,7 +310,7 @@ export default function ProfileSidebar({
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 line-clamp-1">
             {profile.name}
           </h3>
-          
+
           {/* Profile details including user type and verification status */}
           {isExpanded && (
             <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-2">

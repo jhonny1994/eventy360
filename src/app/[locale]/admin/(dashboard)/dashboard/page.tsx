@@ -87,7 +87,7 @@ export default async function AdminDashboardPage() {
     <div className="w-full">
       {/* Dashboard Header */}
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
           {t("title")}
         </h1>
         <Badge color="purple" size="lg" className="px-3 py-1.5">

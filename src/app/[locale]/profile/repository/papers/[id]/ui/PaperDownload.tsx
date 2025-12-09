@@ -34,13 +34,12 @@ export default function PaperDownload({ paper, locale }: PaperDownloadProps) {
     const timer = setTimeout(() => {
       setIsReady(true);
     }, 50);
-    
+
     return () => clearTimeout(timer);
   }, []);
-  
+
   // Handle errors from the download button
   const handleError = (err: Error) => {
-    console.error('Download error:', err);
     setError(err.message);
   };
 
@@ -48,7 +47,7 @@ export default function PaperDownload({ paper, locale }: PaperDownloadProps) {
   if (!isReady) {
     return null;
   }
-  
+
   if (!paper.full_paper_file_url) {
     return (
       <Alert color="warning" icon={HiExclamationCircle} className={isRtl ? 'text-right' : 'text-left'}>
@@ -56,7 +55,7 @@ export default function PaperDownload({ paper, locale }: PaperDownloadProps) {
       </Alert>
     );
   }
-  
+
   // Get file metadata
   interface FileMetadata {
     name?: string;
@@ -64,21 +63,21 @@ export default function PaperDownload({ paper, locale }: PaperDownloadProps) {
     contentType?: string;
     [key: string]: unknown;
   }
-  
+
   const fileMetadata = paper.full_paper_file_metadata as FileMetadata | null;
-  
+
   // Format file size if available
   const formatFileSize = (bytes?: number): string => {
     if (!bytes) return '';
-    
+
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
-  
+
   const fileSize = formatFileSize(fileMetadata?.size);
   const fileName = fileMetadata?.name || t('paperFile');
-  
+
   return (
     <div className="space-y-4">
       {error && (
@@ -86,7 +85,7 @@ export default function PaperDownload({ paper, locale }: PaperDownloadProps) {
           {error}
         </Alert>
       )}
-      
+
       <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
           <div className="flex items-center space-x-3 rtl:space-x-reverse mb-3 sm:mb-0">
@@ -102,21 +101,21 @@ export default function PaperDownload({ paper, locale }: PaperDownloadProps) {
               )}
             </div>
           </div>
-          
-        <PaperDownloadButton
-          submissionId={paper.id}
-          fileUrl={paper.full_paper_file_url}
-          fileMetadata={fileMetadata}
-          locale={locale}
+
+          <PaperDownloadButton
+            submissionId={paper.id}
+            fileUrl={paper.full_paper_file_url}
+            fileMetadata={fileMetadata}
+            locale={locale}
             showFileName={false}
-          color="info"
+            color="info"
             size="lg"
             className="w-full sm:w-auto"
-          onError={handleError}
-        />
+            onError={handleError}
+          />
         </div>
       </div>
-      
+
       <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
         {t('downloadDisclaimer')}
       </div>
