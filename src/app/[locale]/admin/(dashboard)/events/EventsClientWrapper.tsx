@@ -3,8 +3,13 @@
 import { useState } from "react";
 import { HiCalendar, HiCheckCircle, HiXCircle } from "react-icons/hi";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { DetailLinkButton } from "@/components/admin/ui";
-import EventDetailModal from "./EventDetailModal";
+
+const EventDetailModal = dynamic(() => import("./EventDetailModal"), {
+  loading: () => null,
+  ssr: false,
+});
 import { formatDate } from "@/utils/date";
 import { Database } from "@/database.types";
 import { useAuth } from "@/hooks/useAuth";
@@ -336,9 +341,8 @@ export default function EventsClientWrapper({
                   style={isRtl ? { textAlign: "right" } : { textAlign: "left" }}
                 >
                   <div
-                    className={`flex items-center gap-3 ${
-                      isRtl ? "flex-row-reverse justify-end" : ""
-                    }`}
+                    className={`flex items-center gap-3 ${isRtl ? "flex-row-reverse justify-end" : ""
+                      }`}
                   >
                     {isRtl && (
                       <>

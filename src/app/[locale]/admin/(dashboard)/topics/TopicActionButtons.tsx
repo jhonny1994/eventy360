@@ -4,9 +4,17 @@ import { useState } from 'react';
 import { Button } from 'flowbite-react';
 import { HiPlus, HiPencil, HiTrash } from 'react-icons/hi';
 import { useTranslations } from 'next-intl';
-import CreateTopicModal from './CreateTopicModal';
-import EditTopicModal from './EditTopicModal';
+import dynamic from "next/dynamic";
 import DeleteTopicConfirmation from './DeleteTopicConfirmation';
+
+const CreateTopicModal = dynamic(() => import("./CreateTopicModal"), {
+  loading: () => null,
+  ssr: false,
+});
+const EditTopicModal = dynamic(() => import("./EditTopicModal"), {
+  loading: () => null,
+  ssr: false,
+});
 
 export interface TopicData {
   id: string;
@@ -30,20 +38,20 @@ export default function TopicActionButtons({ variant, topic, onSuccess }: TopicA
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  
+
   // Create button only
   if (variant === 'create') {
     return (
       <>
-        <Button 
-          color="blue" 
+        <Button
+          color="blue"
           className="flex items-center gap-2"
           onClick={() => setShowCreateModal(true)}
         >
           <HiPlus className="h-5 w-5" />
           {t('createTopicButton')}
         </Button>
-        
+
         <CreateTopicModal
           show={showCreateModal}
           onClose={() => setShowCreateModal(false)}
@@ -52,14 +60,14 @@ export default function TopicActionButtons({ variant, topic, onSuccess }: TopicA
       </>
     );
   }
-  
+
   // Row actions (edit/delete)
   return (
     <>
       <div className="flex items-center space-x-3 rtl:space-x-reverse">
-        <Button 
-          size="xs" 
-          color="light" 
+        <Button
+          size="xs"
+          color="light"
           className="border-gray-300"
           onClick={() => setShowEditModal(true)}
         >
@@ -68,10 +76,10 @@ export default function TopicActionButtons({ variant, topic, onSuccess }: TopicA
             {t('table.edit')}
           </span>
         </Button>
-        
-        <Button 
-          size="xs" 
-          color="light" 
+
+        <Button
+          size="xs"
+          color="light"
           className="text-red-700 border-gray-300"
           onClick={() => setShowDeleteConfirmation(true)}
         >
@@ -81,7 +89,7 @@ export default function TopicActionButtons({ variant, topic, onSuccess }: TopicA
           </span>
         </Button>
       </div>
-      
+
       {topic && (
         <>
           <EditTopicModal
@@ -90,7 +98,7 @@ export default function TopicActionButtons({ variant, topic, onSuccess }: TopicA
             onSuccess={onSuccess}
             topic={topic}
           />
-          
+
           <DeleteTopicConfirmation
             show={showDeleteConfirmation}
             onClose={() => setShowDeleteConfirmation(false)}
@@ -101,4 +109,4 @@ export default function TopicActionButtons({ variant, topic, onSuccess }: TopicA
       )}
     </>
   );
-} 
+}

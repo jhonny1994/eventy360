@@ -535,5 +535,4 @@ export default async function AdminSubmissionsPage({
   );
 }
 
-// Enable dynamic rendering for real-time search results
-export const dynamic = "force-dynamic"; 
+// Removed dynamic rendering export for cacheComponents compatibility

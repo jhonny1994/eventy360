@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
 
+
 export interface ResearcherStats {
   totalSubmissions: number;
   acceptedAbstracts: number;
@@ -59,6 +60,7 @@ interface SubscriptionData {
  * @returns User statistics object with type-specific data
  */
 export async function getUserStats(userId: string): Promise<UserStats> {
+
   const supabase = await createServerSupabaseClient();
   
   // First determine the user type

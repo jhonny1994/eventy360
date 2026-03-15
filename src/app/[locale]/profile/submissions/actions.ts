@@ -10,6 +10,7 @@ import { nanoid } from 'nanoid';
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { addAuthorRevisionNotes } from '@/utils/submissions/feedbackHelpers';
+import { revalidateTag } from 'next/cache';
 
 /**
  * Submits an abstract to an event
@@ -153,6 +154,8 @@ export async function submitAbstract(
         // But log it for troubleshooting
       }
     }
+
+    revalidateTag(`user-stats-${user.id}`, 'minutes');
 
     // Return the submission ID if successful
     return {
@@ -313,6 +316,8 @@ export async function submitFullPaper(
         // But log it for troubleshooting
       }
     }
+
+    revalidateTag(`user-stats-${user.id}`, 'minutes');
 
     // Return the submission ID if successful
     return {
@@ -493,6 +498,8 @@ export async function submitRevision(
         error: updateError.message 
       };
     }
+
+    revalidateTag(`user-stats-${user.id}`, 'minutes');
 
     // Return the submission ID if successful
     return {

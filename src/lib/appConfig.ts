@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 
+
 // Define a more specific type for the data returned by the select query
 interface AppSettingsData {
   bank_name: string | null;
@@ -31,6 +32,8 @@ export interface AppSettings extends AppSettingsData {
 }
 
 export async function getAppSettings(): Promise<AppSettings | null> {
+
+
   const supabase = await createServerSupabaseClient();
   
   const { data, error } = await supabase

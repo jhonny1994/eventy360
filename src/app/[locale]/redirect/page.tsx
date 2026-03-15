@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Spinner } from 'flowbite-react';
 import { useRouter, useSearchParams, useParams } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
 
-export default function RedirectPage() {
+function RedirectPageContent() {
   const t = useTranslations('Common');
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -100,4 +100,18 @@ export default function RedirectPage() {
       </div>
     </div>
   );
-} 
+}
+
+export default function RedirectPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="text-center">
+          <Spinner size="xl" className="mx-auto mb-4" />
+        </div>
+      </div>
+    }>
+      <RedirectPageContent />
+    </Suspense>
+  );
+}

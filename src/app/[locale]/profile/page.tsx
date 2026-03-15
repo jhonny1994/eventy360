@@ -24,23 +24,34 @@ type Props = {
 export default async function ProfileDashboardPage({ params }: Props) {
   const { locale } = await params;
   const supabase = await createServerSupabaseClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const t = await getTranslations({ locale, namespace: "ProfilePage" });
-  const subscriptionT = await getTranslations({ locale, namespace: "Subscription" });
+  
+  const [
+    { data: { user } },
+    t,
+    subscriptionT
+  ] = await Promise.all([
+    supabase.auth.getUser(),
+    getTranslations({ locale, namespace: "ProfilePage" }),
+    getTranslations({ locale, namespace: "Subscription" })
+  ]);
 
   // Redirect if user is not authenticated
   if (!user) {
     redirect(`/${locale}/login`);
   }
 
-  // Fetch user profile data
-  const { data: profileData, error: profileError } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
+  // Fetch user profile data and statistics concurrently
+  const [
+    { data: profileData, error: profileError },
+    userStats
+  ] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .single(),
+    getUserStats(user.id)
+  ]);
 
   // Handle errors - redirect to setup if needed
   if (profileError || !profileData) {
@@ -51,9 +62,6 @@ export default async function ProfileDashboardPage({ params }: Props) {
   if (!profileData.is_extended_profile_complete) {
     redirect(`/${locale}/complete-profile`);
   }
-
-  // Fetch user statistics based on user type
-  const userStats = await getUserStats(user.id);
 
   const isRtl = locale === 'ar';
 

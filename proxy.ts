@@ -32,7 +32,7 @@ const PROFILE_COMPLETION_ACCESSIBLE_PATHS = [
 
 const handleI18nRouting = createIntlMiddleware(routing);
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
   const i18nResponse = handleI18nRouting(request);

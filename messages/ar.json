@@ -39,7 +39,10 @@
       "online": "دفع إلكتروني"
     },
     "switchLanguage": "تغيير اللغة",
-    "skipToMainContent": "تجاوز إلى المحتوى الرئيسي"
+    "skipToMainContent": "تجاوز إلى المحتوى الرئيسي",
+    "pageNotFound": "الصفحة غير موجودة",
+    "pageNotFoundDescription": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+    "returnHome": "العودة إلى الصفحة الرئيسية"
   },
   "Navigation": {
     "profileDashboard": "لوحة التحكم الشخصية",

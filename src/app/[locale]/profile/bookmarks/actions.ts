@@ -2,7 +2,8 @@
 
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { getTranslations } from 'next-intl/server';
-import { unstable_noStore as noStore } from 'next/cache';
+import { revalidateTag } from 'next/cache';
+import { connection } from 'next/server';
 import { Database } from '@/database.types';
 
 type Event = Database['public']['Functions']['discover_events']['Returns'][0];
@@ -68,6 +69,8 @@ export async function toggleBookmark(
         };
       }
 
+      revalidateTag(`user-stats-${user.id}`, 'minutes');
+      
       return {
         success: true,
         message: t('removeSuccess'),
@@ -90,6 +93,8 @@ export async function toggleBookmark(
           isBookmarked: false
         };
       }
+
+      revalidateTag(`user-stats-${user.id}`, 'minutes');
 
       return {
         success: true,
@@ -117,7 +122,7 @@ export async function toggleBookmark(
 export async function isEventBookmarked(
   eventId: string
 ): Promise<boolean> {
-  noStore(); // Disable caching to ensure fresh data
+  await connection(); // Opt out of static rendering to ensure fresh data
   const supabase = await createServerSupabaseClient();
 
   // Verify user is authenticated
@@ -155,7 +160,7 @@ export async function isEventBookmarked(
 export async function getBookmarkedEvents(
   locale: string
 ): Promise<{ events: Event[]; error?: string }> {
-  noStore(); // Disable caching to ensure fresh data
+  await connection(); // Opt out of static rendering to ensure fresh data
   const supabase = await createServerSupabaseClient();
   const t = await getTranslations({ locale, namespace: 'Bookmarks' });
   

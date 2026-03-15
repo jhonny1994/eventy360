@@ -122,3 +122,6 @@ dist
 # Supabase local development files
 # SpecStory explanation file
 .specstory/.what-is-this.md
+
+.agents/
+.agent/

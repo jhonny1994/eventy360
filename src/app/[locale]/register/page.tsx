@@ -2,6 +2,8 @@ import RegisterForm from './ui/RegisterForm';
 import { Link } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
+import { Suspense } from 'react';
+import { Spinner } from 'flowbite-react';
 
 export default async function RegisterPage() {
   const t = await getTranslations('Auth.RegisterPage');
@@ -27,7 +29,9 @@ export default async function RegisterPage() {
             {t('title')}
           </h2>
 
-          <RegisterForm />
+          <Suspense fallback={<div className="flex justify-center p-4"><Spinner /></div>}>
+            <RegisterForm />
+          </Suspense>
 
           <p className="mt-8 text-center text-sm text-muted-foreground">
             {t('haveAccountPrompt')}{' '}

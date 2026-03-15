@@ -36,10 +36,7 @@ type TopicsListProps = {
 const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_PAGE = 1;
 
-// Set cache control headers to prevent stale data
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
+// Removed cache control headers for cacheComponents compatibility
 /**
  * Admin topics overview page
  * Shows all topics with search functionality

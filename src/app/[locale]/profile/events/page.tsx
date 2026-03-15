@@ -24,16 +24,13 @@ type EventsPageProps = {
   params: Promise<{ locale: string }>;
 };
 
-/**
- * Events discovery page for researchers within the profile section
- * Shows searchable and filterable list of academic events
- * Supports Arabic RTL layout and follows existing profile UI patterns
- */
-export default async function ProfileEventsPage({
-  params,
-  searchParams,
-}: EventsPageProps) {
-  const { locale } = await params;
+async function ProfileEventsContent({
+  searchParamsPromise,
+  locale
+}: {
+  searchParamsPromise: EventsPageProps["searchParams"];
+  locale: string;
+}) {
   const supabase = await createServerSupabaseClient();
   const {
     data: { user },
@@ -41,11 +38,12 @@ export default async function ProfileEventsPage({
   const isRtl = locale === "ar";
   const t = await getTranslations("Events");
   const tProfile = await getTranslations("ProfilePage");
-  const searchParamsData = await searchParams;
+  const searchParamsData = await searchParamsPromise;
 
   if (!user) {
     redirect(`/${locale}/login`);
   }
+  
   // Get profile data to ensure user exists and check user type
   const { data: profileData } = await supabase
     .from("profiles")
@@ -85,32 +83,36 @@ export default async function ProfileEventsPage({
             {t("discovery.description")}
           </p>
 
-          {/* Event discovery container with loading fallback */}
-          <Suspense
-            fallback={
-              <div className="flex justify-center items-center h-64">
-                <Spinner size="lg" />
-                <span
-                  className={`${
-                    isRtl ? "mr-2" : "ml-2"
-                  } text-gray-500 dark:text-gray-400`}
-                >
-                  {t("loading")}
-                </span>
-              </div>
-            }
-          >
-            {" "}
-            <EventDiscoveryContainer
-              searchParams={searchParamsData}
-              locale={locale}
-            />
-          </Suspense>
+          <EventDiscoveryContainer
+            searchParams={searchParamsData}
+            locale={locale}
+          />
         </div>
       </ProfileCard>
     </div>
   );
 }
 
-// Enable dynamic rendering for real-time search results
-export const dynamic = "force-dynamic";
+/**
+ * Events discovery page for researchers within the profile section
+ * Shows searchable and filterable list of academic events
+ * Supports Arabic RTL layout and follows existing profile UI patterns
+ */
+export default async function ProfileEventsPage({
+  params,
+  searchParams,
+}: EventsPageProps) {
+  const { locale } = await params;
+
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center items-center min-h-[50vh]">
+          <Spinner size="xl" />
+        </div>
+      }
+    >
+      <ProfileEventsContent searchParamsPromise={searchParams} locale={locale} />
+    </Suspense>
+  );
+}
