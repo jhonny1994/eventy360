@@ -159,7 +159,7 @@ export async function getBookmarkStatuses(
     return {};
   }
 
-  noStore(); // Disable caching to ensure fresh data
+  await connection(); // Disable caching to ensure fresh data
   const supabase = await createServerSupabaseClient();
 
   // Verify user is authenticated
