@@ -26,7 +26,7 @@ export default async function ReviewAbstractPage({ params }: ReviewAbstractPageP
   const { data: { user } } = await supabase.auth.getUser()
   const t = await getTranslations('Submissions')
   const isRtl = locale === 'ar'
-  
+
   // Redirect if user is not authenticated
   if (!user) {
     redirect(`/${locale}/auth/signin`)
@@ -41,7 +41,6 @@ export default async function ReviewAbstractPage({ params }: ReviewAbstractPageP
     .single()
 
   if (submissionError || !submission) {
-    console.error('Error fetching submission:', submissionError)
     redirect(`/${locale}/profile/events/${eventId}/manage`)
   }
 
@@ -65,7 +64,7 @@ export default async function ReviewAbstractPage({ params }: ReviewAbstractPageP
   return (
     <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
       {/* Back button using standard component */}
-      <BackButton 
+      <BackButton
         href={`/${locale}/profile/events/${eventId}/submissions/${submissionId}`}
         label={t('backToSubmission')}
       />
@@ -82,8 +81,8 @@ export default async function ReviewAbstractPage({ params }: ReviewAbstractPageP
       {/* Review component */}
       <ProfileCard locale={locale}>
         <div className="p-4">
-          <AbstractReviewComponent 
-            submissionId={submissionId} 
+          <AbstractReviewComponent
+            submissionId={submissionId}
           />
         </div>
       </ProfileCard>

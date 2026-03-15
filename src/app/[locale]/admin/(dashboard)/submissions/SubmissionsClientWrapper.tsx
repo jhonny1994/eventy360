@@ -102,8 +102,8 @@ export default function SubmissionsClientWrapper({
       // We already have all the details needed, just set the selected submission
       setSelectedSubmission(submission);
       setShowModal(true);
-    } catch (error) {
-      console.error("Error fetching submission details:", error);
+    } catch {
+      // Error handling - submission details couldn't be fetched
     } finally {
       setLoadingSubmissionId(null);
     }
@@ -177,9 +177,8 @@ export default function SubmissionsClientWrapper({
                   className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`}
                 >
                   <div
-                    className={`flex items-center gap-3 ${
-                      isRtl ? "flex-row-reverse justify-end" : ""
-                    }`}
+                    className={`flex items-center gap-3 ${isRtl ? "flex-row-reverse justify-end" : ""
+                      }`}
                   >
                     {isRtl && (
                       <>
@@ -196,7 +195,7 @@ export default function SubmissionsClientWrapper({
                           />
                         ) : (
                           <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                           <HiUser className="w-4 h-4 text-gray-500" />
+                            <HiUser className="w-4 h-4 text-gray-500" />
                           </div>
                         )}
                       </>
@@ -213,7 +212,7 @@ export default function SubmissionsClientWrapper({
                           />
                         ) : (
                           <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                           <HiUser className="w-4 h-4 text-gray-500" />
+                            <HiUser className="w-4 h-4 text-gray-500" />
                           </div>
                         )}
                         <span>
@@ -251,28 +250,28 @@ export default function SubmissionsClientWrapper({
                         <span>{translations.status.received}</span>
                       </div>
                     )}
-                    {(submission.status === "abstract_accepted" || 
-                      submission.status === "full_paper_submitted" || 
+                    {(submission.status === "abstract_accepted" ||
+                      submission.status === "full_paper_submitted" ||
                       submission.status === "revision_under_review") && (
-                      <div className="flex items-center text-yellow-500 bg-yellow-100 dark:bg-yellow-900/20 px-2 py-1 rounded-full">
-                        <HiClipboardCheck className={`${rtlHelpers.iconMargin} h-4 w-4`} />
-                        <span>{translations.status.underReview}</span>
-                      </div>
-                    )}
-                    {(submission.status === "full_paper_accepted" || 
+                        <div className="flex items-center text-yellow-500 bg-yellow-100 dark:bg-yellow-900/20 px-2 py-1 rounded-full">
+                          <HiClipboardCheck className={`${rtlHelpers.iconMargin} h-4 w-4`} />
+                          <span>{translations.status.underReview}</span>
+                        </div>
+                      )}
+                    {(submission.status === "full_paper_accepted" ||
                       submission.status === "completed") && (
-                      <div className="flex items-center text-green-500 bg-green-100 dark:bg-green-900/20 px-2 py-1 rounded-full">
-                        <HiCheckCircle className={`${rtlHelpers.iconMargin} h-4 w-4`} />
-                        <span>{translations.status.accepted}</span>
-                      </div>
-                    )}
-                    {(submission.status === "abstract_rejected" || 
+                        <div className="flex items-center text-green-500 bg-green-100 dark:bg-green-900/20 px-2 py-1 rounded-full">
+                          <HiCheckCircle className={`${rtlHelpers.iconMargin} h-4 w-4`} />
+                          <span>{translations.status.accepted}</span>
+                        </div>
+                      )}
+                    {(submission.status === "abstract_rejected" ||
                       submission.status === "full_paper_rejected") && (
-                      <div className="flex items-center text-red-500 bg-red-100 dark:bg-red-900/20 px-2 py-1 rounded-full">
-                        <HiXCircle className={`${rtlHelpers.iconMargin} h-4 w-4`} />
-                        <span>{translations.status.rejected}</span>
-                      </div>
-                    )}
+                        <div className="flex items-center text-red-500 bg-red-100 dark:bg-red-900/20 px-2 py-1 rounded-full">
+                          <HiXCircle className={`${rtlHelpers.iconMargin} h-4 w-4`} />
+                          <span>{translations.status.rejected}</span>
+                        </div>
+                      )}
                   </div>
                 </td>
 
@@ -280,12 +279,12 @@ export default function SubmissionsClientWrapper({
                 <td
                   className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`}
                 >
-                    <DetailLinkButton
-                      href="#"
-                      label={translations.actions.viewDetails}
-                      onClick={() => handleViewDetails(submission)}
-                      disabled={loadingSubmissionId === submission.id}
-                    />
+                  <DetailLinkButton
+                    href="#"
+                    label={translations.actions.viewDetails}
+                    onClick={() => handleViewDetails(submission)}
+                    disabled={loadingSubmissionId === submission.id}
+                  />
                 </td>
               </tr>
             ))}

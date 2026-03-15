@@ -53,12 +53,12 @@ export default function ProfilePageHeader({
   const isRtl = locale === 'ar';
 
   return (
-    <div className="flex items-center justify-between mb-6 w-full" dir={isRtl ? 'rtl' : 'ltr'}>
+    <div className="flex items-center justify-between mb-8 w-full" dir={isRtl ? 'rtl' : 'ltr'}>
       <div className="flex items-center gap-4">
         <div className={`p-3 ${iconBgColor} rounded-full`}>
           <Icon className={`h-6 w-6 ${iconTextColor}`} />
         </div>
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
           {title}
         </h1>
       </div>

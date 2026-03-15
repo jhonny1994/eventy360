@@ -46,50 +46,50 @@ export default function SubmissionTimelineChart({ eventId, locale }: SubmissionT
     async function fetchTimelineData() {
       setLoading(true);
       setError(null);
-      
+
       try {
         // Get submission timestamps for the past 30 days
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        
+
         const { data, error } = await supabase
           .from('submissions')
           .select('created_at, status')
           .eq('event_id', eventId)
           .gte('created_at', thirtyDaysAgo.toISOString())
           .order('created_at', { ascending: true });
-          
+
         if (error) {
           throw error;
         }
-        
+
         if (data) {
           // Process data to group by date and status
           const processedData = data.reduce((acc: Record<string, Record<string, number>>, item) => {
             // Skip items with null status or created_at
             if (!item.status || !item.created_at) return acc;
-            
+
             const date = new Date(item.created_at).toLocaleDateString(
               locale === 'ar' ? 'ar-DZ' : 'en-US',
               { year: 'numeric', month: 'short', day: 'numeric' }
             );
-            
+
             if (!acc[date]) {
               acc[date] = {};
             }
-            
+
             if (!acc[date][item.status]) {
               acc[date][item.status] = 0;
             }
-            
+
             acc[date][item.status]++;
-            
+
             return acc;
           }, {});
-          
+
           // Convert to array format needed for chart
           const formattedData: SubmissionTimelineData = [];
-          
+
           Object.entries(processedData).forEach(([date, statuses]) => {
             Object.entries(statuses).forEach(([status, count]) => {
               formattedData.push({
@@ -99,17 +99,16 @@ export default function SubmissionTimelineChart({ eventId, locale }: SubmissionT
               });
             });
           });
-          
+
           setTimelineData(formattedData);
         }
       } catch (err) {
-        console.error('Error fetching timeline data:', err);
         setError(err instanceof Error ? err.message : t('fetchError'));
       } finally {
         setLoading(false);
       }
     }
-    
+
     fetchTimelineData();
   }, [eventId, locale, supabase, t]);
 
@@ -135,17 +134,17 @@ export default function SubmissionTimelineChart({ eventId, locale }: SubmissionT
 
   // Process data for the chart
   const dates = Array.from(new Set(timelineData.map(item => item.date)));
-  
+
   // Group data by status
   const dataByStatus: Record<string, number[]> = {};
-  
+
   // Initialize with all dates set to 0 for each status
   const allStatuses = Array.from(new Set(timelineData.map(item => item.status)));
-  
+
   allStatuses.forEach(status => {
     dataByStatus[status] = Array(dates.length).fill(0);
   });
-  
+
   // Fill in actual counts
   timelineData.forEach(item => {
     const dateIndex = dates.indexOf(item.date);
@@ -169,7 +168,7 @@ export default function SubmissionTimelineChart({ eventId, locale }: SubmissionT
         'rgb(0, 184, 148)',
         'rgb(22, 160, 133)'
       ];
-      
+
       return {
         label: t(`statusLabel.${status}`, { defaultValue: status }),
         data: dataByStatus[status],

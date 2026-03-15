@@ -168,8 +168,7 @@ function CompleteProfileFormComponent({
             setWilayas(wilayasData || []);
             setLocationDataLoaded(true);
           }
-        } catch (error) {
-          console.error("Failed to fetch wilayas data from Supabase:", error);
+        } catch {
           if (isMounted) {
             setFormError(t("locationDataFetchError") || "Failed to load location data");
           }
@@ -191,7 +190,7 @@ function CompleteProfileFormComponent({
     const fetchDairas = async () => {
       if (selectedWilayaId) {
         setDairasLoading(true);
-        setDairas([]); 
+        setDairas([]);
         try {
           const { data, error } = await supabase
             .from('dairas')
@@ -203,8 +202,7 @@ function CompleteProfileFormComponent({
           if (isMounted) {
             setDairas(data || []);
           }
-        } catch (error) {
-          console.error("Failed to fetch dairas for wilaya:", selectedWilayaId, error);
+        } catch {
           if (isMounted) {
             toast.error(t('dairaDataFetchError') || "Failed to load dairas for the selected wilaya.");
           }
@@ -272,7 +270,6 @@ function CompleteProfileFormComponent({
         toast.success(t("successToast"), { id: toastId });
         router.push("/redirect");
       } catch (error) {
-        console.error("Error completing profile:", error);
         const errorMessage =
           error instanceof Error ? error.message : t("errorToast");
         setFormError(errorMessage);
@@ -288,8 +285,8 @@ function CompleteProfileFormComponent({
     const researcherErrors = isResearcherError(errors, userProfile.user_type)
       ? errors
       : ({} as FieldErrors<
-          Extract<ProfileCompletionFormShape, { user_type: "researcher" }>
-        >);
+        Extract<ProfileCompletionFormShape, { user_type: "researcher" }>
+      >);
 
     return (
       <>
@@ -355,8 +352,8 @@ function CompleteProfileFormComponent({
     const organizerErrors = isOrganizerError(errors, userProfile.user_type)
       ? errors
       : ({} as FieldErrors<
-          Extract<ProfileCompletionFormShape, { user_type: "organizer" }>
-        >);
+        Extract<ProfileCompletionFormShape, { user_type: "organizer" }>
+      >);
 
     return (
       <>

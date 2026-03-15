@@ -25,7 +25,7 @@ import { isEventBookmarked, toggleBookmark } from '@/app/[locale]/profile/bookma
 
 // BookmarkButtonWrapper component to handle bookmarking with custom UI
 function BookmarkButtonWrapper({
-  eventId, 
+  eventId,
   text
 }: {
   eventId: string;
@@ -40,13 +40,13 @@ function BookmarkButtonWrapper({
       try {
         const status = await isEventBookmarked(eventId);
         setIsBookmarked(status);
-      } catch (error) {
-        console.error('Error checking bookmark status:', error);
+      } catch {
+        // Silent fail
       } finally {
         setIsLoading(false);
       }
     }
-    
+
     checkBookmarkStatus();
   }, [eventId]);
 
@@ -57,16 +57,16 @@ function BookmarkButtonWrapper({
       if (result.success) {
         setIsBookmarked(result.isBookmarked);
       }
-    } catch (error) {
-      console.error('Error toggling bookmark:', error);
+    } catch {
+      // Silent fail
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <Button 
-      color="light" 
+    <Button
+      color="light"
       className="w-full"
       onClick={handleBookmark}
       disabled={isLoading}
@@ -138,8 +138,8 @@ export function EventDetailsActions({
   if (userRole === "owner") {
     return (
       <div className="bg-white rounded-lg shadow-sm border p-6">        <h2 className="text-xl font-semibold text-gray-900 mb-6">
-          {t("header.statistics.title")}
-        </h2>
+        {t("header.statistics.title")}
+      </h2>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center p-3 bg-gray-50 rounded-lg">
@@ -179,7 +179,7 @@ export function EventDetailsActions({
         <h2 className="text-xl font-semibold text-gray-900 mb-6">
           {t("actions.participation")}
         </h2>
-        
+
         <div className="space-y-4">
           {/* Bookmark Event */}
           <BookmarkButtonWrapper
@@ -193,8 +193,8 @@ export function EventDetailsActions({
               href={`/${locale}/profile/submissions/create/${event.id}`}
               className="w-full"
             >
-              <Button 
-                color="success" 
+              <Button
+                color="success"
                 className="w-full"
               >
                 <FileText className="w-5 h-5 mr-2" />
@@ -209,8 +209,8 @@ export function EventDetailsActions({
               href={`/${locale}/profile/submissions/${submissionId}`}
               className="w-full"
             >
-              <Button 
-                color="info" 
+              <Button
+                color="info"
                 className="w-full"
               >
                 <Eye className="w-5 h-5 mr-2" />
@@ -241,8 +241,8 @@ export function EventDetailsActions({
       <div className="space-y-3">
         {/* Add to Calendar */}
         {!isEventPast && (
-          <Button 
-            color="light" 
+          <Button
+            color="light"
             className="w-full"
           >
             <Calendar className="w-5 h-5 mr-2" />
@@ -257,8 +257,8 @@ export function EventDetailsActions({
         />
 
         {/* Share Event */}
-        <Button 
-          color="light" 
+        <Button
+          color="light"
           className="w-full"
         >
           <Share2 className="w-5 h-5 mr-2" />
@@ -274,8 +274,8 @@ export function EventDetailsActions({
             rel="noopener noreferrer" // Security for opening in new tab
             className="w-full"
           >
-            <Button 
-              color="blue" 
+            <Button
+              color="blue"
               className="w-full"
             >
               <ExternalLink className="w-5 h-5 mr-2" />

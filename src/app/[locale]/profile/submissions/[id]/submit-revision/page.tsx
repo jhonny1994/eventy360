@@ -77,7 +77,6 @@ export default async function SubmitRevisionPage({
     .single();
 
   if (submissionError || !submission) {
-    console.error("Error fetching submission:", submissionError);
     redirect(`/${locale}/profile/submissions`);
   }
 
@@ -88,13 +87,13 @@ export default async function SubmitRevisionPage({
 
   // Fetch feedback items using the current_full_paper_version_id
   let feedbackItems: FeedbackItem[] | undefined = undefined;
-  
+
   if (submission.current_full_paper_version_id) {
     const { data: items } = await supabase
-      .rpc("get_feedback_for_version", { 
-        p_version_id: submission.current_full_paper_version_id 
+      .rpc("get_feedback_for_version", {
+        p_version_id: submission.current_full_paper_version_id
       });
-      
+
     if (items) {
       feedbackItems = items as FeedbackItem[];
     }

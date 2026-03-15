@@ -15,10 +15,9 @@ export default function LoginForm() {
   const t = useTranslations('Auth.LoginForm');
   const tValidation = useTranslations('Validations');
   const tAria = useTranslations('AriaLabels');
-
   const { supabase } = useAuth();
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -37,7 +36,7 @@ export default function LoginForm() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    setIsLoading(true);
+    setIsSubmitting(true);
     setFormError(null);
     const toastId = toast.loading(t('submitting'));
 
@@ -52,8 +51,6 @@ export default function LoginForm() {
         toast.error(`${t('loginFailed')}: ${error.message}`, { id: toastId });
       } else {
         toast.success(t('loginSuccessToast'), { id: toastId });
-
-
         router.push('/redirect');
       }
     } catch (err) {
@@ -61,7 +58,7 @@ export default function LoginForm() {
       setFormError(message);
       toast.error(`${t('loginFailed')}: ${message}`, { id: toastId });
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -88,7 +85,7 @@ export default function LoginForm() {
           required
           aria-invalid={!!errors.email}
           className="mt-1"
-          disabled={isLoading}
+          disabled={isSubmitting}
         />
         {errors.email?.message && (
           <p className="mt-0.5 text-sm text-red-600">{errors.email.message}</p>
@@ -111,14 +108,14 @@ export default function LoginForm() {
             required
             aria-invalid={!!errors.password}
             className=""
-            disabled={isLoading}
+            disabled={isSubmitting}
           />
           <button
             type="button"
             onClick={togglePasswordVisibility}
             className="absolute inset-y-0 end-0 flex items-center pe-3.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
             aria-label={showPassword ? t('hidePassword') : t('showPassword')}
-            disabled={isLoading}
+            disabled={isSubmitting}
           >
             {showPassword ? <HiEyeOff className="h-5 w-5" /> : <HiEye className="h-5 w-5" />}
           </button>
@@ -127,11 +124,11 @@ export default function LoginForm() {
           <p className="mt-0.5 text-sm text-red-600">{errors.password.message}</p>
         )}
       </div>
-      <Button type="submit" disabled={isLoading} className="mt-2 w-full">
-        {isLoading && (
+      <Button type="submit" disabled={isSubmitting} className="mt-2 w-full">
+        {isSubmitting && (
           <Spinner aria-label={tAria('loggingIn')} size="sm" className="me-2" />
         )}
-        {isLoading ? t('loading') : t('submitButton')}
+        {isSubmitting ? t('loading') : t('submitButton')}
       </Button>
     </form>
   );

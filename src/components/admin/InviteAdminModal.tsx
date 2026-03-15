@@ -123,7 +123,6 @@ export default function InviteAdminModal({
         }, 1500);
       }
     } catch (err) {
-      console.error("Error inviting admin:", err);
       setError(err instanceof Error ? err.message : t("errors.inviteFailed"));
     } finally {
       setIsSubmitting(false);

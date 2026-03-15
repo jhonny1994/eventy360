@@ -85,7 +85,6 @@ export default function SubscriptionActions({
     setSelectedPlan({ tier, period, amount });
     setShowPricingModal(false);
     setShowPaymentModal(true);
-    console.log("Plan selected:", { tier, period, amount });
   };
 
   return (

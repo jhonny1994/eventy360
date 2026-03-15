@@ -28,8 +28,8 @@ interface EditTopicModalProps {
   topic: TopicData | null;
 }
 
-export default function EditTopicModal({ 
-  show, 
+export default function EditTopicModal({
+  show,
   onClose,
   onSuccess,
   topic
@@ -38,14 +38,14 @@ export default function EditTopicModal({
   const locale = useLocale();
   const isRtl = locale === 'ar';
   const { supabase } = useAuth();
-  
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [generatedSlug, setGeneratedSlug] = useState('');
   const [originalArName, setOriginalArName] = useState('');
-  
+
   const schema = getTopicSchema(useTranslations('AdminTopics.edit'));
-  
+
   const {
     register,
     handleSubmit,
@@ -73,7 +73,7 @@ export default function EditTopicModal({
       setValue('name_translations.en', topic.name_translations.en || '');
       setValue('name_translations.fr', topic.name_translations.fr || '');
       setValue('slug', topic.slug);
-      
+
       // Store original Arabic name to check if it's changed for slug regeneration
       setOriginalArName(topic.name_translations.ar || '');
       setGeneratedSlug(topic.slug);
@@ -82,7 +82,7 @@ export default function EditTopicModal({
 
   // Watch Arabic name to regenerate slug if necessary
   const arabicName = watch('name_translations.ar');
-  
+
   // Regenerate slug only if Arabic name has changed from original
   useEffect(() => {
     if (arabicName && arabicName !== originalArName) {
@@ -102,10 +102,10 @@ export default function EditTopicModal({
 
   const onSubmit = async (data: TopicFormData) => {
     if (!topic) return;
-    
+
     setIsSubmitting(true);
     setError(null);
-    
+
     try {
       // Use the utility function to update topic
       const result = await updateTopic(supabase, topic.id, data, {
@@ -113,17 +113,16 @@ export default function EditTopicModal({
         UPDATE_FAILED: t('error'),
         UNEXPECTED: t('error')
       });
-      
+
       if (!result.success) {
         setError(result.error || t('error'));
         return;
       }
-      
+
       reset();
       onSuccess();
       onClose();
-    } catch (err) {
-      console.error('Error in EditTopicModal:', err);
+    } catch {
       setError(t('error'));
     } finally {
       setIsSubmitting(false);
@@ -142,14 +141,14 @@ export default function EditTopicModal({
       <ModalHeader className={isRtl ? "text-right" : "text-left"}>
         {t('title')}
       </ModalHeader>
-      
+
       <ModalBody className={isRtl ? "rtl text-right" : "ltr text-left"}>
         {error && (
           <Alert color="failure" icon={HiExclamationCircle} className="mb-4">
             {error}
           </Alert>
         )}
-        
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" dir={isRtl ? 'rtl' : 'ltr'}>
           <div>
             <div className={`mb-2 block ${isRtl ? "text-right" : "text-left"}`}>
@@ -249,7 +248,7 @@ export default function EditTopicModal({
               {isSubmitting && <Spinner size="sm" className={isRtl ? "ml-2" : "mr-2"} />}
               {isSubmitting ? t('submitting') : t('submitButton')}
             </Button>
-            
+
             <Button
               color="light"
               onClick={onClose}

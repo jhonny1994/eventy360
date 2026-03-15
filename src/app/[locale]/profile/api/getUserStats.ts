@@ -62,7 +62,7 @@ interface SubscriptionData {
 export async function getUserStats(userId: string): Promise<UserStats> {
 
   const supabase = await createServerSupabaseClient();
-  
+
   // First determine the user type
   const { data: profileData } = await supabase
     .from("profiles")
@@ -89,7 +89,7 @@ export async function getUserStats(userId: string): Promise<UserStats> {
     if (!error && data) {
       // Cast to appropriate type with defined structure
       const subscriptionData = data as unknown as SubscriptionData;
-      
+
       if (subscriptionData.has_subscription && subscriptionData.subscription) {
         userStats.subscription = {
           tier: subscriptionData.subscription.tier,
@@ -100,14 +100,13 @@ export async function getUserStats(userId: string): Promise<UserStats> {
         };
       }
     }
-  } catch (error) {
-    console.error("Error fetching subscription data:", error);
+  } catch {
     // Continue execution, other stats can still be fetched
   }
 
   if (profileData.user_type === "researcher") {
     // Get researcher-specific stats
-    
+
     // 1. Get submission counts
     const { data: submissionsData, error: submissionsError } = await supabase
       .from("submissions")
@@ -115,7 +114,6 @@ export async function getUserStats(userId: string): Promise<UserStats> {
       .eq("submitted_by", userId);
 
     if (submissionsError) {
-      console.error("Error fetching submissions:", submissionsError);
       throw new Error("Failed to fetch submissions data");
     }
 
@@ -154,7 +152,7 @@ export async function getUserStats(userId: string): Promise<UserStats> {
   }
   else if (profileData.user_type === "organizer") {
     // Get organizer-specific stats
-    
+
     // 1. Get events created by this organizer
     const { data: eventsData, error: eventsError } = await supabase
       .from("events")
@@ -162,7 +160,6 @@ export async function getUserStats(userId: string): Promise<UserStats> {
       .eq("created_by", userId);
 
     if (eventsError) {
-      console.error("Error fetching events:", eventsError);
       throw new Error("Failed to fetch events data");
     }
 
@@ -214,8 +211,8 @@ export async function getUserStats(userId: string): Promise<UserStats> {
  * @returns Profile completion statistics
  */
 async function calculateProfileCompletion(
-  userId: string, 
-  userType: string, 
+  userId: string,
+  userType: string,
   isExtendedProfileComplete: boolean,
   isVerified: boolean,
   supabase: SupabaseClient
@@ -229,7 +226,7 @@ async function calculateProfileCompletion(
     "participated_in_event",
     "bookmarked_event"
   ];
-  
+
   const organizerSteps = [
     "completed_profile_info",
     "uploaded_profile_photo",
@@ -237,15 +234,15 @@ async function calculateProfileCompletion(
     "subscribed",
     "created_event"
   ];
-  
+
   const steps = userType === "researcher" ? researcherSteps : organizerSteps;
   const completedSteps: string[] = [];
-  
+
   // 1. Check for completed profile info
   if (isExtendedProfileComplete) {
     completedSteps.push("completed_profile_info");
   }
-  
+
   // 2. Check for profile photo
   let hasProfilePhoto = false;
   if (userType === "researcher") {
@@ -254,7 +251,7 @@ async function calculateProfileCompletion(
       .select("profile_picture_url")
       .eq("profile_id", userId)
       .single();
-    
+
     hasProfilePhoto = !!(researcherProfile && researcherProfile.profile_picture_url);
   } else {
     const { data: organizerProfile } = await supabase
@@ -262,33 +259,33 @@ async function calculateProfileCompletion(
       .select("profile_picture_url")
       .eq("profile_id", userId)
       .single();
-    
+
     hasProfilePhoto = !!(organizerProfile && organizerProfile.profile_picture_url);
   }
-  
+
   if (hasProfilePhoto) {
     completedSteps.push("uploaded_profile_photo");
   }
-  
+
   // 3. Check for verified status
   if (isVerified) {
     completedSteps.push("verified");
   }
-  
+
   // 4. Check for active subscription
   const { data: subscriptionData } = await supabase.rpc(
     "get_subscription_details",
     { target_user_id: userId }
   );
-  
-  if (subscriptionData && 
-      subscriptionData.has_subscription && 
-      subscriptionData.subscription && 
-      subscriptionData.subscription.is_active && 
-      ["paid_researcher", "paid_organizer"].includes(subscriptionData.subscription.tier)) {
+
+  if (subscriptionData &&
+    subscriptionData.has_subscription &&
+    subscriptionData.subscription &&
+    subscriptionData.subscription.is_active &&
+    ["paid_researcher", "paid_organizer"].includes(subscriptionData.subscription.tier)) {
     completedSteps.push("subscribed");
   }
-  
+
   // 5. For researchers check for event participation and bookmarks
   if (userType === "researcher") {
     // Check if user has participated in any events (submitted papers)
@@ -297,22 +294,22 @@ async function calculateProfileCompletion(
       .select("id")
       .eq("submitted_by", userId)
       .limit(1);
-    
+
     if (submissions && submissions.length > 0) {
       completedSteps.push("participated_in_event");
     }
-    
+
     // Check if user has bookmarked any events
     const { data: bookmarks } = await supabase
       .from("bookmarks")
       .select("event_id")
       .eq("profile_id", userId)
       .limit(1);
-    
+
     if (bookmarks && bookmarks.length > 0) {
       completedSteps.push("bookmarked_event");
     }
-  } 
+  }
   // 6. For organizers check if they've created events
   else if (userType === "organizer") {
     const { data: events } = await supabase
@@ -320,15 +317,15 @@ async function calculateProfileCompletion(
       .select("id")
       .eq("created_by", userId)
       .limit(1);
-    
+
     if (events && events.length > 0) {
       completedSteps.push("created_event");
     }
   }
-  
+
   // Calculate the completion percentage
   const completionPercentage = Math.round((completedSteps.length / steps.length) * 100);
-  
+
   return {
     completionPercentage,
     completedSteps,

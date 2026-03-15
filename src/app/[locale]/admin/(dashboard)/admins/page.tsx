@@ -86,7 +86,6 @@ export default async function AdminsPage({
   } = await query.range(offset, offset + pageSize - 1);
 
   if (error) {
-    console.error("Error fetching admins:", error.message);
     return (
       <div className="w-full">
         <Card>
@@ -171,7 +170,7 @@ export default async function AdminsPage({
             {t("adminsCount", { count: totalAdmins || 0 })}
           </p>
         </div>
-        
+
         {/* Search section with invite button */}
         <div className="flex flex-col sm:flex-row justify-between mb-4 gap-4">
           <div className="w-full sm:w-auto sm:min-w-[300px]">
@@ -188,9 +187,8 @@ export default async function AdminsPage({
               )}
               <div className="relative">
                 <div
-                  className={`absolute inset-y-0 ${
-                    isRtl ? "end-0 pe-3" : "start-0 ps-3"
-                  } flex items-center pointer-events-none`}
+                  className={`absolute inset-y-0 ${isRtl ? "end-0 pe-3" : "start-0 ps-3"
+                    } flex items-center pointer-events-none`}
                 >
                   <HiSearch className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                 </div>
@@ -198,34 +196,31 @@ export default async function AdminsPage({
                   type="search"
                   name="search"
                   defaultValue={search}
-                  className={`block w-full p-2 ${
-                    isRtl ? "pe-10" : "ps-10"
-                  } text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
+                  className={`block w-full p-2 ${isRtl ? "pe-10" : "ps-10"
+                    } text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
                   placeholder={t("filters.searchAdminPlaceholder")}
                 />
                 <button
                   type="submit"
-                  className={`absolute top-0 ${
-                    isRtl ? "start-0" : "end-0"
-                  } p-2 text-sm font-medium h-full text-white bg-blue-700 ${
-                    isRtl ? "rounded-s-lg" : "rounded-e-lg"
-                  } border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800`}
+                  className={`absolute top-0 ${isRtl ? "start-0" : "end-0"
+                    } p-2 text-sm font-medium h-full text-white bg-blue-700 ${isRtl ? "rounded-s-lg" : "rounded-e-lg"
+                    } border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800`}
                 >
                   {t("filters.search")}
                 </button>
               </div>
             </form>
           </div>
-          
+
           {/* Invite Admin Button - Self-contained component */}
           <div className="flex justify-end">
-            <InviteAdminButton 
+            <InviteAdminButton
               locale={locale}
               translations={inviteModalTranslations}
             />
           </div>
         </div>
-        
+
         {/* Main content */}
         <Card>
           {!admins || admins.length === 0 ? (
@@ -279,9 +274,8 @@ export default async function AdminsPage({
                           }
                         >
                           <div
-                            className={`flex items-center gap-3 ${
-                              isRtl ? "flex-row-reverse justify-end" : ""
-                            }`}
+                            className={`flex items-center gap-3 ${isRtl ? "flex-row-reverse justify-end" : ""
+                              }`}
                           >
                             {isRtl && (
                               <>

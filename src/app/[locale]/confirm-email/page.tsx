@@ -45,7 +45,6 @@ export default function ConfirmEmailPage() {
     });
 
     if (resendError) {
-      console.error('Resend confirmation error:', resendError.message);
       setError(resendError.message);
       toast.error(`${t('resendErrorToast')}: ${resendError.message}`, { id: toastId });
     } else {

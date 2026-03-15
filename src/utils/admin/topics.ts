@@ -12,10 +12,10 @@ export const TOPIC_ERROR_KEYS = {
 };
 
 type AdminActionType = 'admin_topic_create' | 'admin_topic_update' | 'admin_topic_delete';
-type ActionDetails = { 
-  topic_name: string; 
-  slug: string; 
-  [key: string]: string | number | boolean | null 
+type ActionDetails = {
+  topic_name: string;
+  slug: string;
+  [key: string]: string | number | boolean | null
 };
 
 /**
@@ -34,7 +34,7 @@ export async function createTopic(
   try {
     // Generate slug if not provided
     const slug = data.slug || generateSlug(data.name_translations.ar, false);
-    
+
     // Start a transaction
     const { data: newTopic, error: insertError } = await supabase
       .from('topics')
@@ -44,7 +44,7 @@ export async function createTopic(
       })
       .select('id')
       .single();
-    
+
     if (insertError) {
       // Check for slug uniqueness violation
       if (insertError.code === '23505') {
@@ -52,18 +52,17 @@ export async function createTopic(
       }
       throw insertError;
     }
-    
+
     // Log the action
     await logTopicAction(supabase, 'admin_topic_create', newTopic.id, {
       topic_name: data.name_translations.ar,
       slug
     });
-    
+
     return { success: true, topicId: newTopic.id };
   } catch (error) {
-    console.error('Error creating topic:', error);
-    return { 
-      success: false, 
+    return {
+      success: false,
       error: errorKeys.CREATE_FAILED || (error instanceof Error ? error.message : 'An unexpected error occurred')
     };
   }
@@ -80,14 +79,14 @@ export async function createTopic(
  */
 export async function updateTopic(
   supabase: SupabaseClient<Database>,
-  topicId: string, 
+  topicId: string,
   data: TopicFormData,
   errorKeys: { [key: string]: string } = TOPIC_ERROR_KEYS
 ) {
   try {
     // Generate slug if Arabic name was changed
     const slug = data.slug || generateSlug(data.name_translations.ar, false);
-    
+
     // Update the topic
     const { error: updateError } = await supabase
       .from('topics')
@@ -96,7 +95,7 @@ export async function updateTopic(
         slug
       })
       .eq('id', topicId);
-    
+
     if (updateError) {
       // Check for slug uniqueness violation
       if (updateError.code === '23505') {
@@ -104,18 +103,17 @@ export async function updateTopic(
       }
       throw updateError;
     }
-    
+
     // Log the action
     await logTopicAction(supabase, 'admin_topic_update', topicId, {
       topic_name: data.name_translations.ar,
       slug
     });
-    
+
     return { success: true, topicId };
   } catch (error) {
-    console.error('Error updating topic:', error);
-    return { 
-      success: false, 
+    return {
+      success: false,
       error: errorKeys.UPDATE_FAILED || (error instanceof Error ? error.message : 'An unexpected error occurred')
     };
   }
@@ -132,7 +130,7 @@ export async function updateTopic(
  */
 export async function deleteTopic(
   supabase: SupabaseClient<Database>,
-  topicId: string, 
+  topicId: string,
   topicInfo?: { name: string, slug: string },
   errorKeys: { [key: string]: string } = TOPIC_ERROR_KEYS
 ) {
@@ -145,38 +143,37 @@ export async function deleteTopic(
         .select('name_translations, slug')
         .eq('id', topicId)
         .single();
-      
+
       if (fetchError) throw fetchError;
-      
+
       // Safely access the Arabic name with type checking
       const nameTranslations = topic.name_translations as { ar?: string } | null;
       const arName = nameTranslations && nameTranslations.ar ? nameTranslations.ar : 'Unknown';
-      
+
       logInfo = {
         name: arName,
         slug: topic.slug
       };
     }
-    
+
     // Delete the topic
     const { error: deleteError } = await supabase
       .from('topics')
       .delete()
       .eq('id', topicId);
-    
+
     if (deleteError) throw deleteError;
-    
+
     // Log the action
     await logTopicAction(supabase, 'admin_topic_delete', topicId, {
       topic_name: logInfo.name,
       slug: logInfo.slug
     });
-    
+
     return { success: true };
   } catch (error) {
-    console.error('Error deleting topic:', error);
-    return { 
-      success: false, 
+    return {
+      success: false,
       error: errorKeys.DELETE_FAILED || (error instanceof Error ? error.message : 'An unexpected error occurred')
     };
   }
@@ -196,29 +193,28 @@ export async function getTopicUsage(supabase: SupabaseClient<Database>, topicId:
       .from('event_topics')
       .select('*', { count: 'exact', head: true })
       .eq('topic_id', topicId);
-    
+
     if (eventError) throw eventError;
-    
+
     // Count researcher subscriptions to this topic
     const { count: subscriptionCount, error: subError } = await supabase
       .from('researcher_topic_subscriptions')
       .select('*', { count: 'exact', head: true })
       .eq('topic_id', topicId);
-    
+
     if (subError) throw subError;
-    
-    return { 
-      success: true, 
-      eventCount: eventCount || 0, 
-      subscriptionCount: subscriptionCount || 0 
+
+    return {
+      success: true,
+      eventCount: eventCount || 0,
+      subscriptionCount: subscriptionCount || 0
     };
   } catch (error) {
-    console.error('Error getting topic usage:', error);
-    return { 
-      success: false, 
+    return {
+      success: false,
       error: error instanceof Error ? error.message : 'An unexpected error occurred',
       eventCount: 0,
-      subscriptionCount: 0 
+      subscriptionCount: 0
     };
   }
 }
@@ -242,7 +238,6 @@ async function logTopicAction(
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-      console.warn('No authenticated user found when trying to log topic action');
       return;
     }
 
@@ -255,9 +250,8 @@ async function logTopicAction(
         target_entity_type: 'topic',
         details: details || {},
       });
-  } catch (error) {
-    // Just log errors here, don't stop the main operation
-    console.error('Error logging topic action:', error);
+  } catch {
+    // Silent fail - don't stop the main operation
   }
 }
 
@@ -271,7 +265,7 @@ async function logTopicAction(
  */
 export async function topicSlugExists(
   supabase: SupabaseClient<Database>,
-  slug: string, 
+  slug: string,
   excludeTopicId?: string
 ) {
   try {
@@ -279,18 +273,17 @@ export async function topicSlugExists(
       .from('topics')
       .select('id')
       .eq('slug', slug);
-    
+
     if (excludeTopicId) {
       query = query.neq('id', excludeTopicId);
     }
-    
+
     const { data, error } = await query;
-    
+
     if (error) throw error;
-    
+
     return data && data.length > 0;
-  } catch (error) {
-    console.error('Error checking topic slug:', error);
+  } catch {
     return false; // Default to false on error
   }
 } 

@@ -15,10 +15,10 @@ import { getFeedbackForVersion, FeedbackItem } from "@/utils/submissions/feedbac
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Submissions");
-  
+
   return {
-    title: t("submissionDetails"), 
-    description: t("submissionDetailsDescription"), 
+    title: t("submissionDetails"),
+    description: t("submissionDetailsDescription"),
   };
 }
 
@@ -87,7 +87,7 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
 
   // Check authentication
   const { data: { user }, error: authError } = await supabase.auth.getUser();
-  
+
   if (authError || !user) {
     redirect(`/${locale}/auth/signin`);
   }
@@ -144,7 +144,6 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
     .single();
 
   if (submissionError) {
-    console.error("Error fetching submission:", submissionError);
     redirect(`/${locale}/profile/submissions`);
   }
 
@@ -275,9 +274,9 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
   };
 
   // Determine if action buttons should be shown based on status
-  const showFullPaperUpload = submissionData.abstract_status === 'abstract_accepted' && 
-                             !submissionData.full_paper_file_url && 
-                             (!submissionData.full_paper_status || submissionData.full_paper_status === '');
+  const showFullPaperUpload = submissionData.abstract_status === 'abstract_accepted' &&
+    !submissionData.full_paper_file_url &&
+    (!submissionData.full_paper_status || submissionData.full_paper_status === '');
   const showRevisionUpload = submissionData.full_paper_status === 'revision_requested';
 
   // Get file metadata as human-readable info
@@ -288,25 +287,24 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
     try {
       const metadata = submissionData.full_paper_file_metadata as { originalName?: string; size?: number };
       paperFileName = metadata?.originalName || t('unknownFile');
-      
+
       // More robust size calculation to prevent NaN
       if (metadata?.size !== undefined && metadata?.size !== null && !isNaN(Number(metadata.size))) {
         const sizeInKB = Math.round(Number(metadata.size) / 1024);
         paperFileSize = `${sizeInKB} KB`;
       }
-    } catch (error) {
-      console.error("Error parsing file metadata:", error);
+    } catch {
       // Keep default values if there's an error
     }
   }
 
   // Add full paper status to timeline if it exists
-  const statusHistoryItems: TimelineItem[] = [{ 
-    status: submissionData.abstract_status, 
+  const statusHistoryItems: TimelineItem[] = [{
+    status: submissionData.abstract_status,
     changed_at: submissionData.created_at,
     file_url: submissionData.abstract_file_url,
-    file_name: submissionData.abstract_file_metadata ? 
-      (submissionData.abstract_file_metadata as { originalName?: string })?.originalName || t('abstractFile') : 
+    file_name: submissionData.abstract_file_metadata ?
+      (submissionData.abstract_file_metadata as { originalName?: string })?.originalName || t('abstractFile') :
       t('abstractFile'),
     file_type: 'abstract'
   }];
@@ -332,7 +330,7 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
         locale={locale}
       />
 
-      <BackButton 
+      <BackButton
         href={`/${locale}/profile/submissions`}
         label={t('backToSubmissions')}
       />
@@ -345,7 +343,7 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
               <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
                 {getTitle(submissionData.title_translations)}
               </h2>
-              
+
               <div className="flex items-center gap-2 mb-4">
                 <Badge color={statusColors[submissionData.abstract_status] || 'gray'}>
                   {t(`status.${submissionData.abstract_status}`)}
@@ -359,19 +357,19 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
                   {t("lastUpdated")}: {formatDate(submissionData.updated_at)}
                 </span>
               </div>
-              
+
               <div className="mt-6">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
                   {t("abstract")}
                 </h3>
                 <div className="prose dark:prose-invert max-w-none">
                   <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
-                    {submissionData.abstract_translations && 
-                     getTitle(submissionData.abstract_translations)}
+                    {submissionData.abstract_translations &&
+                      getTitle(submissionData.abstract_translations)}
                   </p>
                 </div>
               </div>
-              
+
               {/* Status Timeline Section */}
               <div className="mt-8">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
@@ -389,7 +387,7 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
                       <time className="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
                         {formatDateTime(item.changed_at)}
                       </time>
-                      
+
                       {/* Add file download button if this item has a file */}
                       {item.file_url && (
                         <div className="mt-2 mb-4">
@@ -400,9 +398,9 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
                                 <p className="text-sm text-gray-500 dark:text-gray-400">{item.file_size}</p>
                               )}
                             </div>
-                            <a 
-                              href={item.file_url} 
-                              target="_blank" 
+                            <a
+                              href={item.file_url}
+                              target="_blank"
                               rel="noopener noreferrer"
                               className="mt-2 sm:mt-0 inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800"
                             >
@@ -429,7 +427,7 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
                         {formatDateTime(submissionData.feedback.review_date)}
                       </p>
                     )}
-                    
+
                     {/* Display feedback items */}
                     {submissionData.feedback.feedback_items && submissionData.feedback.feedback_items.length > 0 ? (
                       <div className="space-y-4">
@@ -437,12 +435,12 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
                           // Determine if this is an organizer (admin/reviewer) or researcher (author) note
                           const isOrganizerFeedback = item.role_at_submission === 'organizer' || item.role_at_submission === 'admin';
                           // Set appropriate styling based on the role
-                          const bgColorClass = isOrganizerFeedback 
-                            ? 'bg-blue-50 dark:bg-blue-900/40 border-blue-200 dark:border-blue-800' 
+                          const bgColorClass = isOrganizerFeedback
+                            ? 'bg-blue-50 dark:bg-blue-900/40 border-blue-200 dark:border-blue-800'
                             : 'bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-700';
                           // Set appropriate icon based on the role
                           const RoleIcon = isOrganizerFeedback ? MessageCircle : FileText;
-                          
+
                           return (
                             <div key={item.id} className={`p-3 rounded-lg border ${bgColorClass}`}>
                               <div className="flex justify-between mb-2">
@@ -476,10 +474,10 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
                   <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
                     {t("actions")}
                   </h3>
-                  
+
                   <div className="flex flex-col sm:flex-row gap-3">
                     {showFullPaperUpload && (
-                      <Link 
+                      <Link
                         href={`/${locale}/profile/submissions/${id}/submit-paper`}
                         className="flex items-center justify-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md"
                       >
@@ -487,9 +485,9 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
                         {t("submitFullPaper")}
                       </Link>
                     )}
-                    
+
                     {showRevisionUpload && (
-                      <Link 
+                      <Link
                         href={`/${locale}/profile/submissions/${id}/submit-revision`}
                         className="flex items-center justify-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-md"
                       >
@@ -505,14 +503,14 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
               {showFullPaperUpload && (
                 <FullPaperUploadSection submissionId={id} />
               )}
-              
+
               {/* Revision Upload Section - Only show if revision is requested */}
               {showRevisionUpload && (
                 <RevisionUploadSection submissionId={id} />
               )}
             </div>
           </div>
-          
+
           {/* Right column - Event info */}
           <div className="space-y-6">
             <ProfileCard
@@ -528,21 +526,21 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
                     {getTitle(submissionData.events.event_name_translations)}
                   </p>
                 </div>
-                
+
                 <div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">{t("eventType")}</p>
                   <p className="font-medium text-gray-900 dark:text-white">
                     {t(`eventTypes.${submissionData.events.event_type}`)}
                   </p>
                 </div>
-                
+
                 <div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">{t("eventDates")}</p>
                   <p className="font-medium text-gray-900 dark:text-white">
                     {formatDate(submissionData.events.event_date)} - {formatDate(submissionData.events.event_end_date)}
                   </p>
                 </div>
-                
+
                 {submissionData.events.abstract_submission_deadline && (
                   <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">{t("abstractSubmissionDeadline")}</p>
@@ -563,9 +561,9 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
                   </div>
                 )}
               </div>
-              
+
               <div className="mt-4">
-                <Link 
+                <Link
                   href={`/${locale}/profile/events/${submissionData.events.id}`}
                   className="flex items-center gap-1 text-blue-600 hover:underline dark:text-blue-500 text-sm"
                 >

@@ -60,9 +60,9 @@ export function useSubscriptionCheck(
   const router = useRouter();
   const pathname = usePathname();
   const { user } = useAuth();
-  const { 
-    subscriptionData, 
-    canAccessPremiumFeature, 
+  const {
+    subscriptionData,
+    canAccessPremiumFeature,
     loading,
     refreshSubscriptionData  // Use the refresh function
   } = useSubscription();
@@ -101,8 +101,7 @@ export function useSubscriptionCheck(
               redirectPath || `/${locale}/profile?tab=subscription`;
 
             if (showToastOnRedirect) {
-              // Show toast message (implementation depends on your toast system)
-              console.warn("Subscription required:", content);
+              // Toast would be shown here via toast system
             }
 
             if (options.onCheckFailed) {
@@ -144,8 +143,7 @@ export function useSubscriptionCheck(
           redirectPath || `/${locale}/profile?tab=subscription`;
 
         if (showToastOnRedirect) {
-          // Show toast message (implementation depends on your toast system)
-          console.warn("Subscription required based on client-side check");
+          // Toast would be shown here via toast system
         }
 
         if (options.onCheckFailed) {

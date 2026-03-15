@@ -66,50 +66,49 @@ const getSubscriptionCacheKey = (userId: string): string => {
 
 const getCachedSubscriptionData = (userId: string): CachedSubscriptionData | null => {
   if (typeof window === 'undefined') return null;
-  
+
   try {
     const cachedData = localStorage.getItem(getSubscriptionCacheKey(userId));
     if (!cachedData) return null;
-    
+
     const parsedData = JSON.parse(cachedData) as CachedSubscriptionData;
     const now = Date.now();
-    
+
     // Check if cache is still valid
     if (now - parsedData.timestamp > CACHE_TTL_MS) {
       // Cache expired
       localStorage.removeItem(getSubscriptionCacheKey(userId));
       return null;
     }
-    
+
     return parsedData;
-  } catch (error) {
-    console.error('Error reading subscription cache:', error);
+  } catch {
     return null;
   }
 };
 
 const setCachedSubscriptionData = (userId: string, data: UserSubscriptionData): void => {
   if (typeof window === 'undefined') return;
-  
+
   try {
     const cacheData: CachedSubscriptionData = {
       data,
       timestamp: Date.now()
     };
-    
+
     localStorage.setItem(getSubscriptionCacheKey(userId), JSON.stringify(cacheData));
-  } catch (error) {
-    console.error('Error setting subscription cache:', error);
+  } catch {
+    // Silent fail for cache
   }
 };
 
 export const clearSubscriptionCache = (userId: string): void => {
   if (typeof window === 'undefined') return;
-  
+
   try {
     localStorage.removeItem(getSubscriptionCacheKey(userId));
-  } catch (error) {
-    console.error('Error clearing subscription cache:', error);
+  } catch {
+    // Silent fail for cache
   }
 };
 
@@ -126,14 +125,14 @@ export const useSubscription = (targetUserId?: string) => {
         setLoading(false);
         return;
       }
-      
+
       // Use targetUserId if provided, otherwise use current user's ID
       const userId = targetUserId || user?.id;
       if (!userId) {
         setLoading(false);
         return;
       }
-      
+
       // Check cache first (skip cache if targetUserId is provided, as we're likely viewing another user)
       if (!targetUserId) {
         const cachedData = getCachedSubscriptionData(userId);
@@ -151,7 +150,6 @@ export const useSubscription = (targetUserId?: string) => {
         );
 
         if (rpcError) {
-          console.error("Error fetching subscription details:", rpcError);
           setError(rpcError);
           setApiErrorOccurred(true);
           setLoading(false);
@@ -160,13 +158,12 @@ export const useSubscription = (targetUserId?: string) => {
 
         setApiErrorOccurred(false);
         setSubscriptionData(data as UserSubscriptionData);
-        
+
         // Cache data if it's for the current user
         if (!targetUserId && user?.id) {
           setCachedSubscriptionData(user.id, data as UserSubscriptionData);
         }
       } catch (e) {
-        console.error("Exception in subscription details fetch:", e);
         setError(e as PostgrestError);
         setApiErrorOccurred(true);
       } finally {
@@ -191,7 +188,7 @@ export const useSubscription = (targetUserId?: string) => {
       }
       return false;
     }
-    
+
     if (!subscriptionData?.has_subscription) return false;
     if (!subscriptionData?.subscription?.is_active) return false;
     return ['paid_researcher', 'paid_organizer'].includes(subscriptionData.subscription.tier);
@@ -209,7 +206,7 @@ export const useSubscription = (targetUserId?: string) => {
       }
       return false;
     }
-    
+
     if (!subscriptionData?.has_subscription) return false;
     if (!subscriptionData?.subscription?.is_active) return false;
     return subscriptionData.subscription.status === 'trial';
@@ -226,7 +223,7 @@ export const useSubscription = (targetUserId?: string) => {
         return daysSinceCreation <= 30; // Assume user is on trial if account is less than 30 days old
       }
     }
-    
+
     return hasPaidSubscription() || hasActiveTrialSubscription();
   };
 
@@ -241,20 +238,20 @@ export const useSubscription = (targetUserId?: string) => {
   const getSubscriptionStatus = () => {
     return subscriptionData?.subscription?.status || 'expired';
   };
-  
+
   // Function to refresh subscription data manually (skip cache)
   const refreshSubscriptionData = async () => {
     if (!user && !targetUserId) {
       return;
     }
-    
+
     setLoading(true);
-    
+
     // Clear cache for current user
     if (user?.id) {
       clearSubscriptionCache(user.id);
     }
-    
+
     try {
       const { data, error: rpcError } = await supabase.rpc(
         "get_subscription_details",
@@ -262,7 +259,6 @@ export const useSubscription = (targetUserId?: string) => {
       );
 
       if (rpcError) {
-        console.error("Error refreshing subscription details:", rpcError);
         setError(rpcError);
         setApiErrorOccurred(true);
         setLoading(false);
@@ -271,13 +267,12 @@ export const useSubscription = (targetUserId?: string) => {
 
       setApiErrorOccurred(false);
       setSubscriptionData(data as UserSubscriptionData);
-      
+
       // Cache fresh data if it's for the current user
       if (!targetUserId && user?.id) {
         setCachedSubscriptionData(user.id, data as UserSubscriptionData);
       }
     } catch (e) {
-      console.error("Exception in subscription refresh:", e);
       setError(e as PostgrestError);
       setApiErrorOccurred(true);
     } finally {
@@ -285,9 +280,9 @@ export const useSubscription = (targetUserId?: string) => {
     }
   };
 
-  return { 
-    subscriptionData, 
-    loading: authLoading || loading, 
+  return {
+    subscriptionData,
+    loading: authLoading || loading,
     error,
     apiErrorOccurred,
     hasPaidSubscription,

@@ -11,7 +11,7 @@
 export function formatDate(date: string | Date, locale: string = 'ar'): string {
   try {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
-    
+
     // Check if date is valid
     if (isNaN(dateObj.getTime())) {
       return '';
@@ -25,8 +25,7 @@ export function formatDate(date: string | Date, locale: string = 'ar'): string {
     };
 
     return new Intl.DateTimeFormat(locale === 'ar' ? 'ar-DZ' : 'en-US', options).format(dateObj);
-  } catch (error) {
-    console.error('Error formatting date:', error);
+  } catch {
     return '';
   }
 }
@@ -40,7 +39,7 @@ export function formatDate(date: string | Date, locale: string = 'ar'): string {
 export function formatTime(date: string | Date, locale: string = 'ar'): string {
   try {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
-    
+
     // Check if date is valid
     if (isNaN(dateObj.getTime())) {
       return '';
@@ -53,8 +52,7 @@ export function formatTime(date: string | Date, locale: string = 'ar'): string {
     };
 
     return new Intl.DateTimeFormat(locale === 'ar' ? 'ar-DZ' : 'en-US', options).format(dateObj);
-  } catch (error) {
-    console.error('Error formatting time:', error);
+  } catch {
     return '';
   }
 }
@@ -68,7 +66,7 @@ export function formatTime(date: string | Date, locale: string = 'ar'): string {
 export function formatDateTime(date: string | Date, locale: string = 'ar'): string {
   try {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
-    
+
     // Check if date is valid
     if (isNaN(dateObj.getTime())) {
       return '';
@@ -84,8 +82,7 @@ export function formatDateTime(date: string | Date, locale: string = 'ar'): stri
     };
 
     return new Intl.DateTimeFormat(locale === 'ar' ? 'ar-DZ' : 'en-US', options).format(dateObj);
-  } catch (error) {
-    console.error('Error formatting date and time:', error);
+  } catch {
     return '';
   }
 } 

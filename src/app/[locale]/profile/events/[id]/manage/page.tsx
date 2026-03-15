@@ -48,7 +48,7 @@ interface SubmissionData {
 export async function generateMetadata({ params }: EventManagementPageProps): Promise<Metadata> {
   const { locale, id } = await params
   const supabase = await createServerSupabaseClient()
-  
+
   // Fetch event for metadata
   const { data: event } = await supabase
     .from('events')
@@ -64,9 +64,9 @@ export async function generateMetadata({ params }: EventManagementPageProps): Pr
   }
 
   // Get localized title
-  const title = event.event_name_translations[locale] || 
-                event.event_name_translations['ar'] || 
-                'Event Management'
+  const title = event.event_name_translations[locale] ||
+    event.event_name_translations['ar'] ||
+    'Event Management'
 
   return {
     title: `Manage: ${title}`,
@@ -81,7 +81,7 @@ export default async function EventManagementPage({ params }: EventManagementPag
   const t = await getTranslations('EventManagement')
   const tSubmissions = await getTranslations('Submissions')
   const isRtl = locale === 'ar'
-  
+
   // Redirect if user is not authenticated
   if (!user) {
     redirect(`/${locale}/login`)
@@ -110,7 +110,7 @@ export default async function EventManagementPage({ params }: EventManagementPag
       .select('user_type')
       .eq('id', user.id)
       .single()
-    
+
     if (!profileData || profileData.user_type !== 'admin') {
       // If not owner or admin, redirect to event details
       redirect(`/${locale}/profile/events/${id}`)
@@ -118,10 +118,10 @@ export default async function EventManagementPage({ params }: EventManagementPag
   }
 
   // Get localized event title
-  const eventTitle = event.event_name_translations[locale] || 
-                     event.event_name_translations['ar'] || 
-                     'Untitled Event'
-                     
+  const eventTitle = event.event_name_translations[locale] ||
+    event.event_name_translations['ar'] ||
+    'Untitled Event'
+
   // Fetch submissions for this event
   const { data: submissionsData, error: submissionsError } = await supabase
     .from('submissions')
@@ -138,22 +138,22 @@ export default async function EventManagementPage({ params }: EventManagementPag
     .order('updated_at', { ascending: false })
 
   if (submissionsError) {
-    console.error('Error fetching submissions:', submissionsError)
+    // Continue with empty submissions
   }
 
   // Fetch researcher details for each submission
   let submissions: SubmissionData[] = [];
-  
+
   if (submissionsData && submissionsData.length > 0) {
     // Get unique profile IDs
     const profileIds = [...new Set(submissionsData.map(s => s.submitted_by))];
-    
+
     // Fetch researcher profiles in one query
     const { data: researcherProfiles } = await supabase
       .from('researcher_profiles')
       .select('profile_id, name')
       .in('profile_id', profileIds);
-    
+
     // Create a map of profile ID to researcher name
     const researcherNamesMap = new Map();
     if (researcherProfiles) {
@@ -161,7 +161,7 @@ export default async function EventManagementPage({ params }: EventManagementPag
         researcherNamesMap.set(profile.profile_id, profile.name);
       });
     }
-    
+
     // Create submissions with available data
     submissions = submissionsData.map(item => ({
       id: item.id,
@@ -182,8 +182,8 @@ export default async function EventManagementPage({ params }: EventManagementPag
   return (
     <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
       {/* Back button using standard component */}
-      <BackButton 
-        href={`/${locale}/profile/events/${id}`} 
+      <BackButton
+        href={`/${locale}/profile/events/${id}`}
         label={t('backToEventDetails')}
       />
 
@@ -217,8 +217,8 @@ export default async function EventManagementPage({ params }: EventManagementPag
       <ProfileCard locale={locale} title={tSubmissions('eventSubmissions')}>
         <div className="p-4">
           {submissions && submissions.length > 0 ? (
-            <EventSubmissionsTable 
-              submissions={submissions} 
+            <EventSubmissionsTable
+              submissions={submissions}
               eventId={id}
             />
           ) : (

@@ -99,8 +99,7 @@ export default function RepositoryFilters({
 
         if (error) throw error;
         setDairas(data || []);
-      } catch (err) {
-        console.error('Error fetching dairas:', err);
+      } catch {
         // Silently fail, UI will show no dairas
       } finally {
         setDairasLoading(false);
@@ -118,11 +117,11 @@ export default function RepositoryFilters({
   }, [filters.location, selectedLocation]);
 
   // Check if any filters are active
-  const hasActiveFilters = selectedTopics.length > 0 || 
-    selectedLocation || 
+  const hasActiveFilters = selectedTopics.length > 0 ||
+    selectedLocation ||
     selectedDaira ||
-    selectedResearcher || 
-    startDate || 
+    selectedResearcher ||
+    startDate ||
     endDate;
 
   // Apply filters
@@ -178,11 +177,11 @@ export default function RepositoryFilters({
           </h3>
           {hasActiveFilters && (
             <span className={`${isRtl ? 'mr-2' : 'ml-2'} bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300`}>
-              {selectedTopics.length + 
-                (selectedLocation ? 1 : 0) + 
+              {selectedTopics.length +
+                (selectedLocation ? 1 : 0) +
                 (selectedDaira ? 1 : 0) +
-                (selectedResearcher ? 1 : 0) + 
-                (startDate ? 1 : 0) + 
+                (selectedResearcher ? 1 : 0) +
+                (startDate ? 1 : 0) +
                 (endDate ? 1 : 0)}
             </span>
           )}
@@ -291,10 +290,10 @@ export default function RepositoryFilters({
               <Datepicker
                 id="start-date-filter"
                 value={filters.startDate ? new Date(filters.startDate) : undefined}
-                onChange={(date: Date | null) => 
-                  setFilters(prev => ({ 
-                    ...prev, 
-                    startDate: date ? date.toISOString().split('T')[0] : '' 
+                onChange={(date: Date | null) =>
+                  setFilters(prev => ({
+                    ...prev,
+                    startDate: date ? date.toISOString().split('T')[0] : ''
                   }))
                 }
                 placeholder={t('startDate')}
@@ -308,10 +307,10 @@ export default function RepositoryFilters({
               <Datepicker
                 id="end-date-filter"
                 value={filters.endDate ? new Date(filters.endDate) : undefined}
-                onChange={(date: Date | null) => 
-                  setFilters(prev => ({ 
-                    ...prev, 
-                    endDate: date ? date.toISOString().split('T')[0] : '' 
+                onChange={(date: Date | null) =>
+                  setFilters(prev => ({
+                    ...prev,
+                    endDate: date ? date.toISOString().split('T')[0] : ''
                   }))
                 }
                 placeholder={t('endDate')}

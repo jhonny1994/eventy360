@@ -54,14 +54,14 @@ function RepositoryContent({ locale, searchParams, userType, userId }: Repositor
         ? searchParams.page_size
         : undefined,
   };
-  
+
   // Pass organizer_id only if the user is an organizer
   const organizerId = userType === 'organizer' ? userId : undefined;
-  
+
   return (
-    <RepositoryContainer 
-      searchParams={parsedSearchParams} 
-      locale={locale} 
+    <RepositoryContainer
+      searchParams={parsedSearchParams}
+      locale={locale}
       organizerId={organizerId}
     />
   );
@@ -100,7 +100,6 @@ export default function RepositoryPageClient({
 
   if (profileError || !profile?.baseProfile) {
     // Handle error or missing profile - redirect to profile setup or show error
-    console.error("Profile error or profile not found:", profileError);
     router.push(`/${locale}/profile/setup`);
     return null;
   }
@@ -111,8 +110,8 @@ export default function RepositoryPageClient({
     return null;
   }
 
-  const pageTitle = profile.baseProfile.user_type === "researcher" 
-    ? t("title") 
+  const pageTitle = profile.baseProfile.user_type === "researcher"
+    ? t("title")
     : t("titleForOrganizer");
 
   return (
@@ -123,14 +122,13 @@ export default function RepositoryPageClient({
         </h1>
       </div>
       <PremiumFeatureGuard>
-        <RepositoryContent 
-          locale={locale} 
-          searchParams={searchParams} 
-          userType={profile.baseProfile.user_type as 'researcher' | 'organizer'} 
+        <RepositoryContent
+          locale={locale}
+          searchParams={searchParams}
+          userType={profile.baseProfile.user_type as 'researcher' | 'organizer'}
           userId={user.id}
         />
       </PremiumFeatureGuard>
     </div>
   );
 }
- 

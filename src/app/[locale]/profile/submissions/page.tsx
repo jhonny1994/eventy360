@@ -34,10 +34,10 @@ interface Submission {
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Submissions");
-  
+
   return {
-    title: t("mySubmissions"), 
-    description: t("mySubmissionsDescription"), 
+    title: t("mySubmissions"),
+    description: t("mySubmissionsDescription"),
   };
 }
 
@@ -48,7 +48,7 @@ export default async function ProfileSubmissionsPage({ params }: { params: Promi
 
   // Check authentication
   const { data: { user }, error: authError } = await supabase.auth.getUser();
-  
+
   if (authError || !user) {
     redirect(`/${locale}/auth/signin`);
   }
@@ -90,7 +90,7 @@ export default async function ProfileSubmissionsPage({ params }: { params: Promi
     .order("updated_at", { ascending: false });
 
   if (submissionsError) {
-    console.error("Error fetching submissions:", submissionsError);
+    // Continue with empty submissions
   }
 
   // Map the submissions data to match the expected Submission type
@@ -119,7 +119,7 @@ export default async function ProfileSubmissionsPage({ params }: { params: Promi
 
   // Create a button to navigate to the events page to create a new submission
   const SubmissionActions = (
-    <Link 
+    <Link
       href={`/${locale}/profile/events`}
       className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-700"
     >
@@ -141,9 +141,9 @@ export default async function ProfileSubmissionsPage({ params }: { params: Promi
       </ProfilePageHeader>
 
       <ProfileCard locale={locale}>
-        <SubmissionsList 
-          submissions={submissions} 
-          emptyMessage={t("noSubmissions")} 
+        <SubmissionsList
+          submissions={submissions}
+          emptyMessage={t("noSubmissions")}
         />
       </ProfileCard>
     </div>

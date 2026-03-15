@@ -16,8 +16,8 @@ interface CreateTopicModalProps {
   onSuccess: () => void;
 }
 
-export default function CreateTopicModal({ 
-  show, 
+export default function CreateTopicModal({
+  show,
   onClose,
   onSuccess
 }: CreateTopicModalProps) {
@@ -25,13 +25,13 @@ export default function CreateTopicModal({
   const locale = useLocale();
   const isRtl = locale === 'ar';
   const { supabase } = useAuth();
-  
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [generatedSlug, setGeneratedSlug] = useState('');
-  
+
   const schema = getTopicSchema(useTranslations('AdminTopics.create'));
-  
+
   const {
     register,
     handleSubmit,
@@ -53,7 +53,7 @@ export default function CreateTopicModal({
 
   // Watch Arabic name to generate slug
   const arabicName = watch('name_translations.ar');
-  
+
   // Generate slug when Arabic name changes
   useEffect(() => {
     if (arabicName) {
@@ -77,7 +77,7 @@ export default function CreateTopicModal({
   const onSubmit = async (data: TopicFormData) => {
     setIsSubmitting(true);
     setError(null);
-    
+
     try {
       // Use the utility function to create topic
       const result = await createTopic(supabase, data, {
@@ -85,17 +85,16 @@ export default function CreateTopicModal({
         CREATE_FAILED: t('error'),
         UNEXPECTED: t('error')
       });
-      
+
       if (!result.success) {
         setError(result.error || t('error'));
         return;
       }
-      
+
       reset();
       onSuccess();
       onClose();
-    } catch (err) {
-      console.error('Error in CreateTopicModal:', err);
+    } catch {
       setError(t('error'));
     } finally {
       setIsSubmitting(false);
@@ -114,14 +113,14 @@ export default function CreateTopicModal({
       <ModalHeader className={isRtl ? "text-right" : "text-left"}>
         {t('title')}
       </ModalHeader>
-      
+
       <ModalBody className={isRtl ? "rtl text-right" : "ltr text-left"}>
         {error && (
           <Alert color="failure" icon={HiExclamationCircle} className="mb-4">
             {error}
           </Alert>
         )}
-        
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" dir={isRtl ? 'rtl' : 'ltr'}>
           <div>
             <div className={`mb-2 block ${isRtl ? "text-right" : "text-left"}`}>
@@ -221,7 +220,7 @@ export default function CreateTopicModal({
               {isSubmitting && <Spinner size="sm" className={isRtl ? "ml-2" : "mr-2"} />}
               {isSubmitting ? t('submitting') : t('submitButton')}
             </Button>
-            
+
             <Button
               color="light"
               onClick={onClose}

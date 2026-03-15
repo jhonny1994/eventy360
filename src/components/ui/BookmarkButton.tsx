@@ -23,7 +23,7 @@ import { useState, useEffect } from 'react';
 import useTranslations from '@/hooks/useTranslations';
 import { Button, Tooltip } from 'flowbite-react';
 import { BookmarkPlus, BookmarkCheck, Loader2 } from 'lucide-react';
-import { toggleBookmark, isEventBookmarked } from '@/app/[locale]/profile/bookmarks/actions';
+import { toggleBookmark } from '@/app/[locale]/profile/bookmarks/actions';
 import { useSubscription } from '@/hooks/useSubscription';
 
 export interface BookmarkButtonProps {
@@ -52,21 +52,10 @@ export function BookmarkButton({
   const [isLoading, setIsLoading] = useState(false);
   const { canAccessPremiumFeature, loading: subscriptionLoading } = useSubscription();
 
-  // Check bookmark status on mount
-  useEffect(() => {
-    async function checkBookmarkStatus() {
-      try {
-        const status = await isEventBookmarked(eventId);
-        setIsBookmarked(status);
-      } catch (error) {
-        console.error('Error checking bookmark status:', error);
-      }
-    }
-    
-    checkBookmarkStatus();
-  }, [eventId]);
-  
-  // Also update state when initialBookmarked prop changes
+  // Use the initialBookmarked prop - parent component handles fetching
+  // No need to fetch individually since EventCardGrid batch-fetches all bookmark statuses
+
+  // Update state when initialBookmarked prop changes
   useEffect(() => {
     setIsBookmarked(initialBookmarked);
   }, [initialBookmarked]);
@@ -76,15 +65,15 @@ export function BookmarkButton({
 
   const handleBookmark = async () => {
     if (isDisabled || isLoading) return;
-    
+
     setIsLoading(true);
     try {
       const result = await toggleBookmark(eventId);
       if (result.success) {
         setIsBookmarked(result.isBookmarked);
       }
-    } catch (error) {
-      console.error('Error toggling bookmark:', error);
+    } catch {
+      // Error handled silently - user can retry
     } finally {
       setIsLoading(false);
     }

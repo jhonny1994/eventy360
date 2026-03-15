@@ -16,21 +16,20 @@ import { redirect } from "next/navigation";
 export default async function LogoutPage({ params }: { params: Promise<{ locale: string }> }) {
   // Extract locale parameter first
   const { locale } = await params;
-  
+
   try {
     // Create server-side Supabase client for secure operations
     const supabase = await createServerSupabaseClient();
-    
+
     // Sign the user out, clearing auth cookies and session
     await supabase.auth.signOut();
-    
+
     // Use the Next.js redirect function to redirect to login page
     // This preserves the locale in the URL
-  } catch (error) {
-    console.error("Logout error:", error);
+  } catch {
     // Even if there's an error, redirect to login page
   }
-  
+
   // Always redirect to login page as the final action
   redirect(`/${locale}/admin/login`);
 } 

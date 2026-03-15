@@ -58,11 +58,10 @@ export async function submitAbstract(
       .single();
 
     if (insertError) {
-      console.error('Submission error:', insertError);
-      return { 
-        success: false, 
-        message: t('submissionError'), 
-        error: insertError.message 
+      return {
+        success: false,
+        message: t('submissionError'),
+        error: insertError.message
       };
     }
 
@@ -82,11 +81,10 @@ export async function submitAbstract(
       });
 
     if (uploadError) {
-      console.error('File upload error:', uploadError);
-      return { 
-        success: false, 
-        message: t('fileUploadError'), 
-        error: uploadError.message 
+      return {
+        success: false,
+        message: t('fileUploadError'),
+        error: uploadError.message
       };
     }
 
@@ -112,11 +110,10 @@ export async function submitAbstract(
       .eq('id', submissionId);
 
     if (updateError) {
-      console.error('Update error:', updateError);
-      return { 
-        success: false, 
-        message: t('submissionError'), 
-        error: updateError.message 
+      return {
+        success: false,
+        message: t('submissionError'),
+        error: updateError.message
       };
     }
 
@@ -136,7 +133,6 @@ export async function submitAbstract(
       .single();
 
     if (versionError) {
-      console.error('Version creation error:', versionError);
       // Don't fail the submission if version creation fails
       // But log it for troubleshooting
     } else if (versionData) {
@@ -147,9 +143,8 @@ export async function submitAbstract(
           current_abstract_version_id: versionData.id
         })
         .eq('id', submissionId);
-      
+
       if (versionUpdateError) {
-        console.error('Error updating version ID:', versionUpdateError);
         // Don't fail the submission if this update fails
         // But log it for troubleshooting
       }
@@ -164,7 +159,6 @@ export async function submitAbstract(
       submissionId
     };
   } catch (error) {
-    console.error('Unexpected error:', error);
     return {
       success: false,
       message: t('unexpectedError'),
@@ -202,7 +196,6 @@ export async function submitFullPaper(
       .single();
 
     if (fetchError) {
-      console.error('Error fetching submission:', fetchError);
       return {
         success: false,
         message: t('unexpectedError'),
@@ -242,11 +235,10 @@ export async function submitFullPaper(
       });
 
     if (uploadError) {
-      console.error('File upload error:', uploadError);
-      return { 
-        success: false, 
-        message: t('fileUploadError'), 
-        error: uploadError.message 
+      return {
+        success: false,
+        message: t('fileUploadError'),
+        error: uploadError.message
       };
     }
 
@@ -274,11 +266,10 @@ export async function submitFullPaper(
       .eq('id', formData.submission_id);
 
     if (updateError) {
-      console.error('Update error:', updateError);
-      return { 
-        success: false, 
-        message: t('fullPaperSubmissionError'), 
-        error: updateError.message 
+      return {
+        success: false,
+        message: t('fullPaperSubmissionError'),
+        error: updateError.message
       };
     }
 
@@ -298,7 +289,6 @@ export async function submitFullPaper(
       .single();
 
     if (versionError) {
-      console.error('Version creation error:', versionError);
       // Don't fail the submission if version creation fails
       // But log it for troubleshooting
     } else if (versionData) {
@@ -309,9 +299,8 @@ export async function submitFullPaper(
           current_full_paper_version_id: versionData.id
         })
         .eq('id', formData.submission_id);
-      
+
       if (versionUpdateError) {
-        console.error('Error updating version ID:', versionUpdateError);
         // Don't fail the submission if this update fails
         // But log it for troubleshooting
       }
@@ -326,7 +315,6 @@ export async function submitFullPaper(
       submissionId: formData.submission_id
     };
   } catch (error) {
-    console.error('Unexpected error:', error);
     return {
       success: false,
       message: t('unexpectedError'),
@@ -399,7 +387,7 @@ export async function submitRevision(
     let nextVersionNumber = 1;
     let titleTranslations = {};
     let abstractTranslations = {};
-    
+
     if (!versionFetchError && currentVersion) {
       nextVersionNumber = currentVersion.version_number + 1;
       titleTranslations = currentVersion.title_translations || {};
@@ -421,10 +409,10 @@ export async function submitRevision(
       });
 
     if (uploadError) {
-      return { 
-        success: false, 
-        message: t('fileUploadError'), 
-        error: uploadError.message 
+      return {
+        success: false,
+        message: t('fileUploadError'),
+        error: uploadError.message
       };
     }
 
@@ -471,9 +459,8 @@ export async function submitRevision(
         newVersion.id,
         formData.revision_notes
       );
-      
+
       if (!notesAdded) {
-        console.error('Failed to add revision notes');
         // Don't fail the submission if adding notes fails
         // Just log it for troubleshooting
       }
@@ -492,10 +479,10 @@ export async function submitRevision(
       .eq('id', formData.submission_id);
 
     if (updateError) {
-      return { 
-        success: false, 
-        message: t('revisionSubmissionError'), 
-        error: updateError.message 
+      return {
+        success: false,
+        message: t('revisionSubmissionError'),
+        error: updateError.message
       };
     }
 

@@ -77,7 +77,7 @@ interface RawSubmission {
   profiles?: {
     id: string;
     researcher_profiles?: {
-  name: string;
+      name: string;
     } | null;
   };
 }
@@ -85,7 +85,7 @@ interface RawSubmission {
 export async function generateMetadata({ params }: EventSubmissionDetailPageProps): Promise<Metadata> {
   const { locale, id } = await params
   const supabase = await createServerSupabaseClient()
-  
+
   // Fetch event for metadata
   const { data: event } = await supabase
     .from('events')
@@ -101,9 +101,9 @@ export async function generateMetadata({ params }: EventSubmissionDetailPageProp
   }
 
   // Get localized title
-  const title = event.event_name_translations[locale] || 
-                event.event_name_translations['ar'] || 
-                'Event Management'
+  const title = event.event_name_translations[locale] ||
+    event.event_name_translations['ar'] ||
+    'Event Management'
 
   return {
     title: `${title} - Submission Details`,
@@ -117,7 +117,7 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
   const { data: { user } } = await supabase.auth.getUser()
   const tSubmissions = await getTranslations('Submissions')
   const isRtl = locale === 'ar'
-  
+
   // Redirect if user is not authenticated
   if (!user) {
     redirect(`/${locale}/login`)
@@ -142,13 +142,13 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
       .select('user_type')
       .eq('id', user.id)
       .single()
-    
+
     if (!profileData || profileData.user_type !== 'admin') {
       // If not owner or admin, redirect to event details
       redirect(`/${locale}/profile/events/${eventId}`)
     }
   }
-  
+
   // Fetch submission details
   const { data: submission, error: submissionError } = await supabase
     .from('submissions')
@@ -178,7 +178,6 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
     .single()
 
   if (submissionError || !submission) {
-    console.error('Error fetching submission:', submissionError)
     redirect(`/${locale}/profile/events/${eventId}/manage`)
   }
 
@@ -187,7 +186,7 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
 
   // Fetch feedback items for the current version
   let feedbackItems: FeedbackItem[] | undefined = undefined;
-  
+
   if (typedSubmission.current_full_paper_version_id || typedSubmission.current_abstract_version_id) {
     const versionId = typedSubmission.current_full_paper_version_id || typedSubmission.current_abstract_version_id;
     if (versionId) {
@@ -200,7 +199,7 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
 
   // Create researcher profile from the joined data
   const researcher: ResearcherProfile = {
-        id: typedSubmission.submitted_by,
+    id: typedSubmission.submitted_by,
     full_name: typedSubmission.profiles?.researcher_profiles?.name || 'Unknown Researcher',
     email: '',
     phone: undefined,
@@ -259,7 +258,7 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
     // Otherwise use the abstract status
     return submission.abstract_status || 'abstract_submitted';
   };
-  
+
   // Create the complete submission data
   const submissionData: SubmissionData = {
     id: typedSubmission.id,
@@ -286,15 +285,15 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
 
   // Determine current status and next possible statuses
   const currentStatus = getEffectiveStatus(submissionData);
-  
+
   // Get submission title
   const submissionTitle = getTitle(submissionData.title_translations);
 
   return (
     <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'}>
       {/* Back button using standard component */}
-      <BackButton 
-        href={`/${locale}/profile/events/${eventId}/manage`} 
+      <BackButton
+        href={`/${locale}/profile/events/${eventId}/manage`}
         label={tSubmissions('backToSubmissions')}
       />
 
@@ -320,7 +319,7 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
               <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
                 {submissionTitle}
               </h2>
-              
+
               <div className="flex items-center gap-2 mb-4">
                 <span className="text-gray-500 dark:text-gray-400 text-sm">
                   {tSubmissions("submittedOn")}: {formatDate(submissionData.created_at)}
@@ -329,37 +328,37 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
                   {tSubmissions("lastUpdated")}: {formatDate(submissionData.updated_at)}
                 </span>
               </div>
-              
+
               <div className="mt-6">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
                   {tSubmissions("abstract")}
                 </h3>
                 <div className="prose dark:prose-invert max-w-none">
                   <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
-                    {submissionData.abstract_translations && 
-                     getTitle(submissionData.abstract_translations)}
-                  </p>              
+                    {submissionData.abstract_translations &&
+                      getTitle(submissionData.abstract_translations)}
+                  </p>
                 </div>
               </div>
-              
+
               {/* Feedback items section */}
               {submissionData.feedback_items && submissionData.feedback_items.length > 0 && (
                 <div className="mt-8">
                   <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
                     {tSubmissions("submissionFeedback")}
                   </h3>
-                  
+
                   <div className="space-y-4 mt-4">
                     {submissionData.feedback_items.map((item) => {
                       // Determine if this is an organizer (admin/reviewer) or researcher (author) note
                       const isOrganizerFeedback = item.role_at_submission === 'organizer' || item.role_at_submission === 'admin';
                       // Set appropriate styling based on the role
-                      const bgColorClass = isOrganizerFeedback 
-                        ? 'bg-blue-50 dark:bg-blue-900/40 border-blue-200 dark:border-blue-800' 
+                      const bgColorClass = isOrganizerFeedback
+                        ? 'bg-blue-50 dark:bg-blue-900/40 border-blue-200 dark:border-blue-800'
                         : 'bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-700';
                       // Set appropriate icon based on the role
                       const RoleIcon = isOrganizerFeedback ? MessageCircle : FileText;
-                      
+
                       return (
                         <div key={item.id} className={`p-3 rounded-lg border ${bgColorClass}`}>
                           <div className="flex justify-between mb-2">
@@ -382,7 +381,7 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
               )}
             </div>
           </div>
-          
+
           {/* Right column - Researcher info & Actions */}
           <div className="space-y-6">
             {/* Researcher info */}
@@ -390,7 +389,7 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
                 {tSubmissions("researcherInformation")}
               </h3>
-              
+
               <div className="space-y-3">
                 <div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">{tSubmissions("researcherName")}</p>
@@ -398,7 +397,7 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
                     {submissionData.researcher_profile?.full_name}
                   </p>
                 </div>
-                
+
                 {submissionData.researcher_profile?.phone && (
                   <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">{tSubmissions("phone")}</p>
@@ -407,7 +406,7 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
                     </p>
                   </div>
                 )}
-                
+
                 {submissionData.researcher_profile?.institution && (
                   <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">{tSubmissions("institution")}</p>
@@ -418,17 +417,17 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
                 )}
               </div>
             </div>
-            
+
             {/* Actions */}
             <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
                 {tSubmissions("actions")}
               </h3>
-              
+
               <div className="space-y-3">
                 {/* Different actions based on current status */}
                 {currentStatus === 'abstract_submitted' && (
-                  <Link 
+                  <Link
                     href={`/${locale}/profile/events/${eventId}/submissions/${submissionId}/review-abstract`}
                     className="flex items-center w-full justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300"
                   >
@@ -436,9 +435,9 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
                     {tSubmissions('reviewAbstract')}
                   </Link>
                 )}
-                
+
                 {currentStatus === 'full_paper_submitted' && (
-                  <Link 
+                  <Link
                     href={`/${locale}/profile/events/${eventId}/submissions/${submissionId}/review-paper`}
                     className="flex items-center w-full justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300"
                   >
@@ -446,9 +445,9 @@ export default async function EventSubmissionDetailPage({ params }: EventSubmiss
                     {tSubmissions('reviewPaper')}
                   </Link>
                 )}
-                
+
                 {(currentStatus === 'revision_submitted' || currentStatus === 'revision_under_review') && (
-                  <Link 
+                  <Link
                     href={`/${locale}/profile/events/${eventId}/submissions/${submissionId}/review-revision`}
                     className="flex items-center w-full justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300"
                   >

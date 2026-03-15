@@ -87,7 +87,7 @@ export default async function AdminSubmissionsPage({
   // Await the params and searchParams
   const { locale } = await params;
   const searchParamsData = await searchParams;
-  
+
   // Check if user is authenticated and is an admin
   const supabase = await createServerSupabaseClient();
 
@@ -179,7 +179,7 @@ export default async function AdminSubmissionsPage({
     await submissionsQuery;
 
   if (submissionsError) {
-    console.error("Error fetching submissions:", submissionsError);
+    // Error will be shown in UI
   }
 
   // Calculate counts for filters
@@ -215,16 +215,16 @@ export default async function AdminSubmissionsPage({
 
   // Only process further if we have valid submission data
   const submissions: SubmissionType[] = [];
-  
+
   if (submissionsData && !submissionsError) {
     try {
       // Extract IDs for related data queries
       const researcherIds = submissionsData.map(sub => sub.submitted_by);
       const eventIds = submissionsData.map(sub => sub.event_id);
-      
+
       // Define version IDs for the submission feedback query, using the current abstract or paper version
       const versionIds: string[] = [];
-      
+
       for (const sub of submissionsData) {
         // Determine the current version ID based on which is available
         if (sub.current_full_paper_version_id) {
@@ -273,15 +273,15 @@ export default async function AdminSubmissionsPage({
       ]);
 
       if (researchersError) {
-        console.error("Error fetching researchers:", researchersError);
+        // Continue with partial data
       }
 
       if (eventsError) {
-        console.error("Error fetching events:", eventsError);
+        // Continue with partial data
       }
 
       if (feedbackError) {
-        console.error("Error fetching feedback:", feedbackError);
+        // Continue with partial data
       }
 
       // Transform data only if we have valid related data
@@ -292,7 +292,7 @@ export default async function AdminSubmissionsPage({
             r => r.id === submission.submitted_by
           );
           const event = eventsData.find(e => e.id === submission.event_id);
-          
+
           // Determine which version ID to use for feedback lookup
           let versionIdForFeedback = "";
           if (submission.current_full_paper_version_id) {
@@ -302,7 +302,7 @@ export default async function AdminSubmissionsPage({
           } else {
             versionIdForFeedback = `${submission.id}_v1`;
           }
-          
+
           const feedback = feedbackData?.find(
             f => f.submission_version_id === versionIdForFeedback
           );
@@ -312,26 +312,26 @@ export default async function AdminSubmissionsPage({
 
           // Extract title from translations based on locale or fallback
           const titleTranslations = submission.title_translations as TranslatedText;
-          const title = titleTranslations[locale] || 
-                        titleTranslations['en'] || 
-                        Object.values(titleTranslations)[0] || '';
+          const title = titleTranslations[locale] ||
+            titleTranslations['en'] ||
+            Object.values(titleTranslations)[0] || '';
 
           // Extract abstract from translations based on locale or fallback
           const abstractTranslations = submission.abstract_translations as TranslatedText;
-          const abstract = abstractTranslations[locale] || 
-                          abstractTranslations['en'] || 
-                          Object.values(abstractTranslations)[0] || null;
+          const abstract = abstractTranslations[locale] ||
+            abstractTranslations['en'] ||
+            Object.values(abstractTranslations)[0] || null;
 
           // Get researcher name and profile picture if available
           let researcherName = "Unknown Researcher";
           let profilePictureUrl = null;
-          
+
           if (researcher?.researcher_profiles) {
             // researcher_profiles could be an object or array depending on how Supabase returns it
-            const profiles = Array.isArray(researcher.researcher_profiles) 
-              ? researcher.researcher_profiles 
+            const profiles = Array.isArray(researcher.researcher_profiles)
+              ? researcher.researcher_profiles
               : [researcher.researcher_profiles];
-              
+
             if (profiles.length > 0) {
               const profile = profiles[0] as { name: string; profile_picture_url: string | null };
               researcherName = profile.name || "Unknown Researcher";
@@ -343,9 +343,9 @@ export default async function AdminSubmissionsPage({
           let eventName = "Unknown Event";
           if (event?.event_name_translations) {
             const eventNameTranslations = event.event_name_translations as TranslatedText;
-            eventName = eventNameTranslations[locale] || 
-                       eventNameTranslations['en'] || 
-                       Object.values(eventNameTranslations)[0] || "Unknown Event";
+            eventName = eventNameTranslations[locale] ||
+              eventNameTranslations['en'] ||
+              Object.values(eventNameTranslations)[0] || "Unknown Event";
           }
 
           submissions.push({
@@ -366,8 +366,8 @@ export default async function AdminSubmissionsPage({
           });
         });
       }
-    } catch (error) {
-      console.error("Error processing submission data:", error);
+    } catch {
+      // Error processing data - UI shows empty state
     }
   }
 
@@ -434,7 +434,7 @@ export default async function AdminSubmissionsPage({
   };
 
   const isRtl = locale === "ar";
-  
+
   return (
     <div className="w-full" dir={isRtl ? 'rtl' : 'ltr'}>
       {/* Page header */}
@@ -446,7 +446,7 @@ export default async function AdminSubmissionsPage({
           {t("submissionsCount", { count: count || 0 })}
         </p>
       </div>
-      
+
       {/* Filter section */}
       <div className="flex flex-col sm:flex-row justify-between mb-4 gap-4">
         <div className="flex items-center w-full sm:w-auto mb-2 sm:mb-0">
@@ -463,7 +463,7 @@ export default async function AdminSubmissionsPage({
             translations={filterTranslations}
           />
         </div>
-        
+
         <div className="w-full sm:w-auto sm:min-w-[300px]">
           <form action={`/${locale}/admin/submissions`} method="get">
             <input type="hidden" name="status" value={activeFilter} />
@@ -488,7 +488,7 @@ export default async function AdminSubmissionsPage({
           </form>
         </div>
       </div>
-      
+
       {/* Main content */}
       <Card>
         {submissionsError ? (
@@ -501,7 +501,7 @@ export default async function AdminSubmissionsPage({
           </div>
         ) : (
           <>
-            <SubmissionsClientWrapper 
+            <SubmissionsClientWrapper
               submissions={submissions}
               locale={locale}
               translations={clientTranslations}

@@ -83,15 +83,15 @@ interface SubmissionWithDetails {
 // Type for the review status options
 type FullPaperReviewStatus = 'full_paper_accepted' | 'full_paper_rejected' | 'revision_requested' | 'revision_submitted';
 
-export default function FullPaperReviewComponent({ 
-  submissionId, 
-  onReviewComplete 
+export default function FullPaperReviewComponent({
+  submissionId,
+  onReviewComplete
 }: FullPaperReviewComponentProps) {
   const t = useTranslations('Submissions');
   const locale = useLocale();
   const { supabase } = useAuth();
   const router = useRouter();
-  
+
   const [submission, setSubmission] = useState<SubmissionWithDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -104,7 +104,7 @@ export default function FullPaperReviewComponent({
     const fetchSubmissionDetails = async () => {
       setLoading(true);
       setError(null);
-      
+
       try {
         const { data, error } = await supabase
           .from('submissions')
@@ -128,14 +128,14 @@ export default function FullPaperReviewComponent({
           `)
           .eq('id', submissionId)
           .single();
-          
+
         if (error) throw error;
-        
+
         if (data) {
           // Cast the data to our type
           const typedData = data as unknown as SubmissionWithDetails;
           setSubmission(typedData);
-          
+
           // Fetch feedback items using the getFeedbackForVersion function
           if (typedData.current_full_paper_version_id) {
             const items = await getFeedbackForVersion(supabase, typedData.current_full_paper_version_id);
@@ -150,7 +150,7 @@ export default function FullPaperReviewComponent({
         setLoading(false);
       }
     };
-    
+
     fetchSubmissionDetails();
   }, [submissionId, supabase, t]);
 
@@ -165,10 +165,10 @@ export default function FullPaperReviewComponent({
       setError(t('feedbackRequired'));
       return;
     }
-    
+
     setSubmitting(true);
     setError(null);
-    
+
     try {
       // Call the review_full_paper database function with plain text feedback
       const { data, error } = await supabase.rpc('review_full_paper', {
@@ -176,9 +176,9 @@ export default function FullPaperReviewComponent({
         p_status: newStatus,
         p_feedback: feedback
       });
-      
+
       if (error) throw error;
-      
+
       if (data) {
         // Refresh submission data or call the onReviewComplete callback
         if (onReviewComplete) {
@@ -209,7 +209,7 @@ export default function FullPaperReviewComponent({
       minute: '2-digit'
     });
   };
-  
+
   if (loading) {
     return (
       <div className="flex justify-center items-center p-8">
@@ -218,7 +218,7 @@ export default function FullPaperReviewComponent({
       </div>
     );
   }
-  
+
   if (!submission) {
     return (
       <Alert color="failure" icon={HiExclamationCircle}>
@@ -226,54 +226,53 @@ export default function FullPaperReviewComponent({
       </Alert>
     );
   }
-  
+
   // Format file metadata for display
   const getFileMetadata = () => {
     if (!submission.full_paper_file_metadata) return { name: t('unknownFile'), size: t('unknownSize') };
-    
+
     try {
       const metadata = submission.full_paper_file_metadata as FileMetadata;
       const fileName = metadata.originalName || t('unknownFile');
       let fileSize = t('unknownSize');
-      
+
       if (metadata.size !== undefined && typeof metadata.size === 'number') {
         const sizeInKB = Math.round(metadata.size / 1024);
         fileSize = `${sizeInKB} KB`;
       }
-      
+
       return { name: fileName, size: fileSize };
-    } catch (err) {
-      console.error("Error parsing file metadata:", err);
+    } catch {
       return { name: t('unknownFile'), size: t('unknownSize') };
     }
   };
-  
+
   const { name: fileName, size: fileSize } = getFileMetadata();
-  
+
   // Determine if full paper can be reviewed
   // Only when status is 'full_paper_submitted' or if it's a revision under review
-  const canReview = submission.full_paper_status === 'full_paper_submitted' || 
-                   submission.full_paper_status === 'revision_under_review';
-  
+  const canReview = submission.full_paper_status === 'full_paper_submitted' ||
+    submission.full_paper_status === 'revision_under_review';
+
   return (
     <Card className="mb-6">
       <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
         {t('fullPaperReview')}
       </h2>
-      
+
       {error && (
         <Alert color="failure" icon={HiExclamationCircle} className="mb-4">
           <span className="font-medium">{t('error')}</span> {error}
         </Alert>
       )}
-      
+
       {!canReview && (
         <Alert color="warning" icon={HiInformationCircle} className="mb-4">
-          <span className="font-medium">{t('cannotReview')}</span> 
+          <span className="font-medium">{t('cannotReview')}</span>
           {t('fullPaperStatus')}: {t(`status.${submission.full_paper_status}`)}
         </Alert>
       )}
-      
+
       {/* Display submission info */}
       <div className="mb-6">
         <h3 className="text-lg font-semibold mb-2">{t('submissionDetails')}</h3>
@@ -287,7 +286,7 @@ export default function FullPaperReviewComponent({
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400">{t('event')}</p>
             <p className="font-medium">
-              {submission.events?.event_name_translations[locale] || 
+              {submission.events?.event_name_translations[locale] ||
                 submission.events?.event_name_translations.ar || ''}
             </p>
           </div>
@@ -305,7 +304,7 @@ export default function FullPaperReviewComponent({
           </div>
         </div>
       </div>
-      
+
       {/* Abstract content */}
       <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
         <h3 className="text-lg font-semibold mb-3">{t('abstract')}</h3>
@@ -315,7 +314,7 @@ export default function FullPaperReviewComponent({
           </p>
         </div>
       </div>
-      
+
       {/* File download section */}
       <div className="mb-6">
         {submission.full_paper_file_url ? (
@@ -326,9 +325,9 @@ export default function FullPaperReviewComponent({
                 <p className="font-medium">{fileName}</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{fileSize}</p>
               </div>
-              <a 
-                href={submission.full_paper_file_url} 
-                target="_blank" 
+              <a
+                href={submission.full_paper_file_url}
+                target="_blank"
                 rel="noopener noreferrer"
                 className="mt-2 sm:mt-0 inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700"
               >
@@ -343,7 +342,7 @@ export default function FullPaperReviewComponent({
           </Alert>
         )}
       </div>
-      
+
       {/* Previous feedback */}
       {feedbackItems && feedbackItems.length > 0 && (
         <div className="mb-6">
@@ -353,12 +352,12 @@ export default function FullPaperReviewComponent({
               // Determine if this is an organizer (admin/reviewer) or researcher (author) note
               const isOrganizerFeedback = item.role_at_submission === 'organizer' || item.role_at_submission === 'admin';
               // Set appropriate styling based on the role
-              const bgColorClass = isOrganizerFeedback 
-                ? 'bg-blue-50 dark:bg-blue-900/40 border-blue-200 dark:border-blue-800' 
+              const bgColorClass = isOrganizerFeedback
+                ? 'bg-blue-50 dark:bg-blue-900/40 border-blue-200 dark:border-blue-800'
                 : 'bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-700';
               // Set appropriate icon based on the role
               const RoleIcon = isOrganizerFeedback ? MessageCircle : FileText;
-              
+
               return (
                 <div key={item.id} className={`p-3 rounded-lg border ${bgColorClass}`}>
                   <div className="flex justify-between mb-2">
@@ -379,12 +378,12 @@ export default function FullPaperReviewComponent({
           </div>
         </div>
       )}
-      
+
       {/* Provide feedback section */}
       {canReview && (
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-3">{t('provideFeedback')}</h3>
-          
+
           <div className="mb-4">
             <Label htmlFor="feedback" className="mb-2">
               {t('feedback')}
@@ -392,16 +391,16 @@ export default function FullPaperReviewComponent({
             <Alert color="info" icon={HiInformationCircle} className="mb-4">
               {t('feedbackGuidelines')}
             </Alert>
-            <Textarea 
-              id="feedback" 
+            <Textarea
+              id="feedback"
               value={feedback}
               onChange={(e) => handleFeedbackChange(e.target.value)}
-              rows={6} 
+              rows={6}
               placeholder={t('typeYourFeedback')}
               required
             />
           </div>
-          
+
           {/* Decision buttons */}
           <div className="flex flex-wrap gap-3 justify-end">
             <Button
@@ -431,18 +430,17 @@ export default function FullPaperReviewComponent({
           </div>
         </div>
       )}
-      
+
       {/* Current Status */}
       <div className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
         <h3 className="text-lg font-semibold mb-2">{t('currentStatus')}</h3>
         <div className="flex items-center">
-          <div className={`h-3 w-3 rounded-full mr-2 ${
-            submission.full_paper_status === 'full_paper_accepted' ? 'bg-green-500' :
-            submission.full_paper_status === 'full_paper_rejected' ? 'bg-red-500' :
-            submission.full_paper_status === 'revision_requested' || 
-            submission.full_paper_status === 'revision_under_review' ? 'bg-yellow-500' :
-            'bg-blue-500'
-          }`}></div>
+          <div className={`h-3 w-3 rounded-full mr-2 ${submission.full_paper_status === 'full_paper_accepted' ? 'bg-green-500' :
+              submission.full_paper_status === 'full_paper_rejected' ? 'bg-red-500' :
+                submission.full_paper_status === 'revision_requested' ||
+                  submission.full_paper_status === 'revision_under_review' ? 'bg-yellow-500' :
+                  'bg-blue-500'
+            }`}></div>
           <span>{t(`status.${submission.full_paper_status}`)}</span>
         </div>
       </div>

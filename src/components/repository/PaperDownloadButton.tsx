@@ -61,30 +61,30 @@ export default function PaperDownloadButton({
   // Locale hook available for future use if needed
   const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const { supabase, session } = useAuth();
   const { hasAccess, loading: isCheckingSubscription } = useSubscriptionCheck();
-  
+
   // Determine if user can download
   const canDownload = !requireSubscription || hasAccess;
-  
+
   // Format file size for display
   function formatFileSize(bytes: number): string {
     if (bytes === 0) return '0 Bytes';
-    
+
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
+
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
-  
+
   // Get file name and size
   const fileName = fileMetadata?.name || t('paperFile');
-  const fileSize = fileMetadata?.size 
-    ? formatFileSize(fileMetadata.size) 
+  const fileSize = fileMetadata?.size
+    ? formatFileSize(fileMetadata.size)
     : t('unknownSize');
-  
+
   const handleDownload = async () => {
     if (!fileUrl) {
       const err = new Error(t('noFileAvailable'));
@@ -92,7 +92,7 @@ export default function PaperDownloadButton({
       onError?.(err);
       return;
     }
-    
+
     if (!session) {
       // Redirect to login would be handled by parent component
       const err = new Error('Authentication required');
@@ -100,44 +100,43 @@ export default function PaperDownloadButton({
       onError?.(err);
       return;
     }
-    
+
     if (requireSubscription && !canDownload) {
       const err = new Error('Subscription required');
       setError(t('subscriptionRequired'));
       onError?.(err);
       return;
     }
-    
+
     setIsDownloading(true);
     setError(null);
-    
+
     try {
       // Track download event
       await trackPaperDownload(supabase, submissionId);
-      
+
       // Open file in new tab (or trigger download)
       window.open(fileUrl, '_blank');
-      
+
       // Call success callback if provided
       onSuccess?.();
     } catch (err) {
-      console.error('Download error:', err);
       setError(t('downloadTrackingError'));
       onError?.(err as Error);
     } finally {
       setIsDownloading(false);
     }
   };
-  
+
   // Button text based on state
-  const displayText = isDownloading 
-    ? (loadingText || t('downloading')) 
+  const displayText = isDownloading
+    ? (loadingText || t('downloading'))
     : (buttonText || t('downloadPaper'));
-  
+
   // If subscription check is still loading, show loading state
   if (requireSubscription && isCheckingSubscription) {
     return (
-      <Button 
+      <Button
         color="light"
         disabled
         className={className}
@@ -147,7 +146,7 @@ export default function PaperDownloadButton({
       </Button>
     );
   }
-  
+
   // If subscription is required but user doesn't have access
   if (requireSubscription && !canDownload) {
     return (
@@ -164,7 +163,7 @@ export default function PaperDownloadButton({
       </Tooltip>
     );
   }
-  
+
   // If no file URL is available
   if (!fileUrl) {
     return (
@@ -173,7 +172,7 @@ export default function PaperDownloadButton({
       </Alert>
     );
   }
-  
+
   return (
     <div className={`${showFileName ? 'space-y-2' : ''} ${isRtl ? 'text-right' : 'text-left'}`}>
       {error && (
@@ -181,14 +180,14 @@ export default function PaperDownloadButton({
           {error}
         </Alert>
       )}
-      
+
       {showFileName && (
         <div className={`text-sm ${isRtl ? 'text-right' : 'text-left'}`}>
           <p className="font-medium">{fileName}</p>
           <p className="text-gray-500">{fileSize}</p>
         </div>
       )}
-      
+
       <Button
         color={color}
         onClick={handleDownload}

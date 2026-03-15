@@ -27,7 +27,7 @@ export default function RegisterForm() {
   };
 
   const { supabase } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -54,7 +54,7 @@ export default function RegisterForm() {
   });
 
   const onSubmit = async (data: RegisterFormData) => {
-    setIsLoading(true);
+    setIsSubmitting(true);
     setFormError(null);
 
     const toastId = toast.loading(t('submitting'));
@@ -88,7 +88,7 @@ export default function RegisterForm() {
       setFormError(message);
       toast.error(`${t('registrationFailed')}: ${message}`, { id: toastId });
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -124,7 +124,7 @@ export default function RegisterForm() {
         {registeredEmail && (
           <Button
             onClick={handleResendConfirmationEmail}
-            disabled={isResendingEmail || isLoading}
+            disabled={isResendingEmail || isSubmitting}
             color="primary"
             size="sm"
             className="mx-auto"
@@ -167,7 +167,7 @@ export default function RegisterForm() {
           required
           aria-invalid={!!errors.email}
           className="mt-1"
-          disabled={isLoading || !!formSuccess}
+          disabled={isSubmitting || !!formSuccess}
         />
         {errors.email?.message && (
           <p className="mt-0.5 text-sm text-red-600">{errors.email.message}</p>
@@ -185,14 +185,14 @@ export default function RegisterForm() {
             color={errors.password ? 'failure' : 'gray'}
             required
             aria-invalid={!!errors.password}
-            disabled={isLoading || !!formSuccess}
+            disabled={isSubmitting || !!formSuccess}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className="absolute inset-y-0 end-0 flex items-center pe-3.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
             aria-label={showPassword ? t('hidePassword') : t('showPassword')}
-            disabled={isLoading || !!formSuccess}
+            disabled={isSubmitting || !!formSuccess}
           >
             {showPassword ? <HiEyeOff className="h-5 w-5" /> : <HiEye className="h-5 w-5" />}
           </button>
@@ -214,14 +214,14 @@ export default function RegisterForm() {
             required
             aria-invalid={!!errors.confirmPassword}
             className=""
-            disabled={isLoading || !!formSuccess}
+            disabled={isSubmitting || !!formSuccess}
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             className="absolute inset-y-0 end-0 flex items-center pe-3.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-            aria-label={showConfirmPassword ? t('hidePassword') : t('showPassword')}
-            disabled={isLoading || !!formSuccess}
+            aria-label={showConfirmPassword ? t('hideConfirmPassword') : t('showConfirmPassword')}
+            disabled={isSubmitting || !!formSuccess}
           >
             {showConfirmPassword ? <HiEyeOff className="h-5 w-5" /> : <HiEye className="h-5 w-5" />}
           </button>
@@ -305,14 +305,14 @@ export default function RegisterForm() {
         )}
       </div>
 
-      <Button type="submit" disabled={isLoading || !!formSuccess} className="mt-2 w-full">
-        {isLoading && (
+      <Button type="submit" disabled={isSubmitting || !!formSuccess} className="mt-2 w-full">
+        {isSubmitting && (
           <>
             <Spinner size="sm" />
             <span className="ps-3">{t('loading')}</span>
           </>
         )}
-        {!isLoading && t('submitButton')}
+        {!isSubmitting && t('submitButton')}
       </Button>
     </form>
   );

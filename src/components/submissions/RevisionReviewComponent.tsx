@@ -84,15 +84,15 @@ interface SubmissionWithDetails {
 // Type for the review status options
 type RevisionReviewStatus = 'full_paper_accepted' | 'full_paper_rejected' | 'revision_requested';
 
-export default function RevisionReviewComponent({ 
-  submissionId, 
-  onReviewComplete 
+export default function RevisionReviewComponent({
+  submissionId,
+  onReviewComplete
 }: RevisionReviewComponentProps) {
   const t = useTranslations('Submissions');
   const locale = useLocale();
   const { supabase } = useAuth();
   const router = useRouter();
-  
+
   const [submission, setSubmission] = useState<SubmissionWithDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -105,7 +105,7 @@ export default function RevisionReviewComponent({
     const fetchSubmissionDetails = async () => {
       setLoading(true);
       setError(null);
-      
+
       try {
         const { data, error } = await supabase
           .from('submissions')
@@ -130,14 +130,14 @@ export default function RevisionReviewComponent({
           `)
           .eq('id', submissionId)
           .single();
-          
+
         if (error) throw error;
-        
+
         if (data) {
           // Cast the data to our type
           const typedData = data as unknown as SubmissionWithDetails;
           setSubmission(typedData);
-          
+
           // Fetch feedback items using the getFeedbackForVersion function
           if (typedData.current_full_paper_version_id) {
             const items = await getFeedbackForVersion(supabase, typedData.current_full_paper_version_id);
@@ -152,7 +152,7 @@ export default function RevisionReviewComponent({
         setLoading(false);
       }
     };
-    
+
     fetchSubmissionDetails();
   }, [submissionId, supabase, t]);
 
@@ -167,10 +167,10 @@ export default function RevisionReviewComponent({
       setError(t('feedbackRequired'));
       return;
     }
-    
+
     setSubmitting(true);
     setError(null);
-    
+
     try {
       // Call the review_full_paper database function with plain text feedback
       const { data, error } = await supabase.rpc('review_full_paper', {
@@ -178,9 +178,9 @@ export default function RevisionReviewComponent({
         p_status: newStatus,
         p_feedback: feedback
       });
-      
+
       if (error) throw error;
-      
+
       if (data) {
         // Refresh submission data or call the onReviewComplete callback
         if (onReviewComplete) {
@@ -211,7 +211,7 @@ export default function RevisionReviewComponent({
       minute: '2-digit'
     });
   };
-  
+
   if (loading) {
     return (
       <div className="flex justify-center items-center p-8">
@@ -220,7 +220,7 @@ export default function RevisionReviewComponent({
       </div>
     );
   }
-  
+
   if (!submission) {
     return (
       <Alert color="failure" icon={HiExclamationCircle}>
@@ -228,36 +228,35 @@ export default function RevisionReviewComponent({
       </Alert>
     );
   }
-  
+
   // Format file metadata for display
   const getFileMetadata = () => {
     if (!submission.full_paper_file_metadata) return { name: t('unknownFile'), size: t('unknownSize') };
-    
+
     try {
       const metadata = submission.full_paper_file_metadata as FileMetadata;
       const fileName = metadata.originalName || t('unknownFile');
       let fileSize = t('unknownSize');
-      
+
       if (metadata.size !== undefined && typeof metadata.size === 'number') {
         const sizeInKB = Math.round(metadata.size / 1024);
         fileSize = `${sizeInKB} KB`;
       }
-      
+
       return { name: fileName, size: fileSize };
-    } catch (err) {
-      console.error("Error parsing file metadata:", err);
+    } catch {
       return { name: t('unknownFile'), size: t('unknownSize') };
     }
   };
-  
+
   const { name: fileName, size: fileSize } = getFileMetadata();
-  
+
   return (
     <Card className="mb-6">
       <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
         {t('reviewRevision')}
       </h2>
-      
+
       {/* Display submission info */}
       <div className="mb-6">
         <h3 className="text-lg font-semibold mb-2">{t('submissionDetails')}</h3>
@@ -271,7 +270,7 @@ export default function RevisionReviewComponent({
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400">{t('event')}</p>
             <p className="font-medium">
-              {submission.events?.event_name_translations[locale] || 
+              {submission.events?.event_name_translations[locale] ||
                 submission.events?.event_name_translations.ar || ''}
             </p>
           </div>
@@ -289,7 +288,7 @@ export default function RevisionReviewComponent({
           </div>
         </div>
       </div>
-      
+
       {/* Display file download section */}
       <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg">
         <h3 className="text-lg font-semibold mb-2">{t('revisedFile')}</h3>
@@ -299,9 +298,9 @@ export default function RevisionReviewComponent({
             <p className="text-sm text-gray-500 dark:text-gray-400">{fileSize}</p>
           </div>
           {submission.full_paper_file_url && (
-            <a 
+            <a
               href={submission.full_paper_file_url}
-              target="_blank" 
+              target="_blank"
               rel="noopener noreferrer"
               className="mt-2 sm:mt-0 inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700"
             >
@@ -311,7 +310,7 @@ export default function RevisionReviewComponent({
           )}
         </div>
       </div>
-      
+
       {/* Previous feedback */}
       {feedbackItems && feedbackItems.length > 0 && (
         <div className="mb-6">
@@ -321,12 +320,12 @@ export default function RevisionReviewComponent({
               // Determine if this is an organizer (admin/reviewer) or researcher (author) note
               const isOrganizerFeedback = item.role_at_submission === 'organizer' || item.role_at_submission === 'admin';
               // Set appropriate styling based on the role
-              const bgColorClass = isOrganizerFeedback 
-                ? 'bg-blue-50 dark:bg-blue-900/40 border-blue-200 dark:border-blue-800' 
+              const bgColorClass = isOrganizerFeedback
+                ? 'bg-blue-50 dark:bg-blue-900/40 border-blue-200 dark:border-blue-800'
                 : 'bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-700';
               // Set appropriate icon based on the role
               const RoleIcon = isOrganizerFeedback ? MessageCircle : FileText;
-              
+
               return (
                 <div key={item.id} className={`p-3 rounded-lg border ${bgColorClass}`}>
                   <div className="flex justify-between mb-2">
@@ -347,17 +346,17 @@ export default function RevisionReviewComponent({
           </div>
         </div>
       )}
-      
+
       {/* Provide feedback section */}
       <div className="mb-6">
         <h3 className="text-lg font-semibold mb-3">{t('provideFeedback')}</h3>
-        
+
         {error && (
           <Alert color="failure" icon={HiExclamationCircle} className="mb-4">
             <span className="font-medium">{t('error')}</span> {error}
           </Alert>
         )}
-        
+
         <div className="mb-4">
           <Label htmlFor="feedback" className="mb-2">
             {t('feedback')}
@@ -365,17 +364,17 @@ export default function RevisionReviewComponent({
           <Alert color="info" icon={HiInformationCircle} className="mb-4">
             {t('feedbackGuidelines')}
           </Alert>
-          <Textarea 
-            id="feedback" 
+          <Textarea
+            id="feedback"
             value={feedback}
             onChange={(e) => handleFeedbackChange(e.target.value)}
-            rows={6} 
+            rows={6}
             placeholder={t('typeYourFeedback')}
             required
           />
         </div>
       </div>
-      
+
       {/* Decision buttons */}
       <div>
         <h3 className="text-lg font-semibold mb-3">{t('makeDecision')}</h3>

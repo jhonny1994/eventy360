@@ -51,7 +51,7 @@ export default async function AdminUsersPage({
   // Parse pagination parameters with defaults
   const page = pageParam ? parseInt(pageParam, 10) : DEFAULT_PAGE;
   const pageSize = pageSizeParam ? parseInt(pageSizeParam, 10) : DEFAULT_PAGE_SIZE;
-  
+
   // Calculate offset for pagination
   const offset = (page - 1) * pageSize;
 
@@ -76,7 +76,6 @@ export default async function AdminUsersPage({
   const { data: profilesData, error: profilesError } = await profilesQuery;
 
   if (profilesError) {
-    console.error("Error fetching profiles:", profilesError.message);
     return (
       <div className="w-full">
         <Card>
@@ -162,7 +161,7 @@ export default async function AdminUsersPage({
     // Get profile picture and name based on user_type
     let name = "";
     let profile_picture_url = null;
-    
+
     if (profile.user_type === 'researcher') {
       const researcher = researcherLookup.get(profile.id);
       name = researcher?.name || "Unknown Researcher";
@@ -171,28 +170,28 @@ export default async function AdminUsersPage({
       const organizer = organizerLookup.get(profile.id);
       // Get name from name_translations with Arabic fallback to English
       if (organizer?.name_translations && typeof organizer.name_translations === 'object') {
-        name = (organizer.name_translations as Record<string, string>)['ar'] || 
-               (organizer.name_translations as Record<string, string>)['en'] || 
-               "Unknown Organizer";
+        name = (organizer.name_translations as Record<string, string>)['ar'] ||
+          (organizer.name_translations as Record<string, string>)['en'] ||
+          "Unknown Organizer";
       } else {
         name = "Unknown Organizer";
       }
       profile_picture_url = organizer?.profile_picture_url || null;
     }
-    
+
     // Get verification and subscription data
     const verifications = verificationLookup.get(profile.id) || [];
     const verification_request_id = verifications.length > 0 ? verifications[0].id : null;
-    
+
     // Get subscription details
     const subscription = subscriptionLookup.get(profile.id);
     const subscription_id = subscription ? subscription.id : null;
     const subscription_status = subscription ? subscription.status : null;
     const subscription_tier = subscription ? subscription.tier : null;
-    
+
     // Get pending payment id
     const pending_payment_id = pendingPaymentLookup.get(profile.id) || null;
-    
+
     return {
       id: profile.id,
       name,
@@ -212,7 +211,7 @@ export default async function AdminUsersPage({
   let filteredUsers = allUsers;
   if (search && search.trim() !== '') {
     const searchLower = search.toLowerCase();
-    filteredUsers = allUsers.filter(u => 
+    filteredUsers = allUsers.filter(u =>
       (u.name && u.name.toLowerCase().includes(searchLower))
     );
   }
@@ -249,7 +248,7 @@ export default async function AdminUsersPage({
 
   // Check if we're using RTL layout
   const isRtl = locale === 'ar';
-  
+
   // Function to get appropriate text align class based on RTL
   const getTextAlignClass = () => {
     return isRtl ? 'text-right' : 'text-left';
@@ -285,7 +284,7 @@ export default async function AdminUsersPage({
             translations={filterTranslations}
           />
         </div>
-        
+
         <div className="w-full sm:w-auto sm:min-w-[300px]">
           <form action={`/${locale}/admin/users`} method="get">
             {user_type && <input type="hidden" name="user_type" value={user_type} />}
@@ -321,19 +320,19 @@ export default async function AdminUsersPage({
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className={`w-full text-sm text-gray-500 dark:text-gray-400 ${getRtlClass()} min-w-[700px]`} dir={isRtl ? 'rtl' : 'ltr'} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+              <table className={`w-full text-sm text-gray-500 dark:text-gray-400 ${getRtlClass()} min-w-[700px]`} dir={isRtl ? 'rtl' : 'ltr'} style={isRtl ? { textAlign: 'right' } : { textAlign: 'left' }}>
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
-                    <th scope="col" className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                    <th scope="col" className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? { textAlign: 'right' } : { textAlign: 'left' }}>
                       {t("table.user")}
                     </th>
-                    <th scope="col" className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                    <th scope="col" className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? { textAlign: 'right' } : { textAlign: 'left' }}>
                       {t("table.userType")}
                     </th>
-                    <th scope="col" className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                    <th scope="col" className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? { textAlign: 'right' } : { textAlign: 'left' }}>
                       {t("table.verificationStatus")}
                     </th>
-                    <th scope="col" className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                    <th scope="col" className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? { textAlign: 'right' } : { textAlign: 'left' }}>
                       {t("table.actions")}
                     </th>
                   </tr>
@@ -346,7 +345,7 @@ export default async function AdminUsersPage({
                       dir={isRtl ? 'rtl' : 'ltr'}
                     >
                       {/* User column with profile picture and name */}
-                      <td className={`px-3 py-3 sm:px-4 sm:py-3 font-medium text-gray-900 dark:text-white ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                      <td className={`px-3 py-3 sm:px-4 sm:py-3 font-medium text-gray-900 dark:text-white ${getTextAlignClass()}`} style={isRtl ? { textAlign: 'right' } : { textAlign: 'left' }}>
                         <div className={`flex items-center gap-3 ${isRtl ? 'flex-row-reverse justify-end' : ''}`}>
                           {isRtl && (
                             <>
@@ -388,7 +387,7 @@ export default async function AdminUsersPage({
                       </td>
 
                       {/* User type column */}
-                      <td className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                      <td className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? { textAlign: 'right' } : { textAlign: 'left' }}>
                         <div className="flex items-center">
                           {user.type === "researcher" ? (
                             <div className="flex items-center">
@@ -407,7 +406,7 @@ export default async function AdminUsersPage({
                       </td>
 
                       {/* Verification status column */}
-                      <td className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                      <td className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? { textAlign: 'right' } : { textAlign: 'left' }}>
                         <div className="flex items-center">
                           {user.is_verified ? (
                             <div className="flex items-center text-green-500 bg-green-100 dark:bg-green-900/20 px-2 py-1 rounded-full">
@@ -424,7 +423,7 @@ export default async function AdminUsersPage({
                       </td>
 
                       {/* Actions column */}
-                      <td className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? {textAlign: 'right'} : {textAlign: 'left'}}>
+                      <td className={`px-3 py-3 sm:px-4 sm:py-3 ${getTextAlignClass()}`} style={isRtl ? { textAlign: 'right' } : { textAlign: 'left' }}>
                         <div className="flex flex-col sm:flex-row gap-2">
                           {user.verification_request_id && (
                             <DetailLinkButton
@@ -433,14 +432,14 @@ export default async function AdminUsersPage({
                             />
                           )}
                           {/* Show subscription button if active paid subscription or pending payment exists */}
-                          {((user.subscription_id && user.subscription_status === 'active' && 
-                             (user.subscription_tier === 'paid_researcher' || user.subscription_tier === 'paid_organizer')) || 
+                          {((user.subscription_id && user.subscription_status === 'active' &&
+                            (user.subscription_tier === 'paid_researcher' || user.subscription_tier === 'paid_organizer')) ||
                             user.pending_payment_id) && (
-                            <DetailLinkButton
-                              href={`/${locale}/admin/payments/${user.pending_payment_id || user.subscription_id}`}
-                              label={t("actions.viewSubscription")}
-                            />
-                          )}
+                              <DetailLinkButton
+                                href={`/${locale}/admin/payments/${user.pending_payment_id || user.subscription_id}`}
+                                label={t("actions.viewSubscription")}
+                              />
+                            )}
                         </div>
                       </td>
                     </tr>
