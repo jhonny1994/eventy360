@@ -334,7 +334,7 @@ Deno.serve(async (req: Request) => {
     }
 
     const magicLink = linkData.properties.action_link;
-    console.log("Magic link generated:", magicLink);
+    console.log("Admin invitation magic link generated successfully.");
 
     // Call the create_admin_invitation SQL function to record invitation and queue notification
     const { error: rpcError } = await supabaseAdmin.rpc(
@@ -390,7 +390,6 @@ Deno.serve(async (req: Request) => {
     return new Response(
       JSON.stringify({
         error: "An unexpected error occurred.",
-        details: error instanceof Error ? error.message : String(error),
       }),
       {
         status: 500,

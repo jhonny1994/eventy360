@@ -31,8 +31,7 @@ Deno.serve(async () => {
     if (purgeError) {
       console.error("Error executing purge_expired_deletions function:", purgeError);
       return new Response(JSON.stringify({ 
-        error: "Failed to execute purge_expired_deletions", 
-        details: purgeError
+        error: "Failed to execute purge_expired_deletions"
       }), {
         status: 500,
         headers: CORS_HEADERS,
@@ -71,10 +70,8 @@ Deno.serve(async () => {
     });
   } catch (error) {
     console.error("Error in purge-deleted-items job:", error);
-    const errorMessage = error instanceof Error ? error.message : String(error);
     return new Response(JSON.stringify({ 
-      error: "Failed to process purge-deleted-items job", 
-      details: errorMessage
+      error: "Failed to process purge-deleted-items job"
     }), {
       status: 500,
       headers: CORS_HEADERS,
