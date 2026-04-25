@@ -6,12 +6,14 @@ on:
       - main
     paths:
       - "apps/web/**"
+      - "supabase/**"
       - ".github/workflows/security.yml"
   pull_request:
     branches:
       - main
     paths:
       - "apps/web/**"
+      - "supabase/**"
       - ".github/workflows/security.yml"
   schedule:
     - cron: "23 3 * * 1"
