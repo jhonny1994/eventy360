@@ -40,6 +40,7 @@ build/Release
 
 # Dependency directories
 node_modules/
+apps/**/node_modules/
 jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)
@@ -82,11 +83,14 @@ web_modules/
 
 # Next.js build output
 .next
+apps/**/.next/
 out
+apps/**/out/
 
 # Nuxt.js build / generate output
 .nuxt
 dist
+apps/**/dist/
 
 # Gatsby files
 .cache/
@@ -125,3 +129,15 @@ dist
 
 .agents/
 .agent/
+
+# Flutter
+apps/**/.dart_tool/
+apps/**/.flutter-plugins
+apps/**/.flutter-plugins-dependencies
+apps/**/.packages
+apps/**/build/
+apps/**/coverage/
+
+# Local app environments
+apps/**/.env
+apps/**/.env*.local

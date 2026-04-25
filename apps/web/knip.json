@@ -1,0 +1,15 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "i18next.config.ts",
+    "scripts/*.mjs",
+    "src/app/**/page.{ts,tsx}",
+    "src/app/**/layout.{ts,tsx}",
+    "src/app/**/route.{ts,tsx}"
+  ],
+  "project": [
+    "*.{js,mjs,cjs,ts,mts,cts}",
+    "scripts/**/*.{js,mjs,cjs,ts,mts,cts}",
+    "src/**/*.{js,jsx,ts,tsx}"
+  ]
+}

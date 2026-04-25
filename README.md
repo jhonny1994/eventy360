@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Eventy360
+
+Eventy360 is an academic events platform for discovering events, managing profiles, handling submissions, reviewing research work, tracking subscriptions and payments, and administering the platform.
+
+This repository is organized as a simple production monorepo. The current product runs as a Next.js web application backed by Supabase. A Flutter mobile app is planned and has a reserved workspace, but it is intentionally not scaffolded yet.
+
+## Repository Layout
+
+```text
+eventy360/
+  apps/
+    web/       Next.js app: public pages, user flows, and admin flows
+    mobile/    Reserved for the future Flutter app
+  supabase/    Migrations, edge functions, storage/RLS backend config
+  docs/        Architecture, development, environment, and release runbooks
+  .github/     CI, security scanning, dependency updates, review policy
+```
+
+The monorepo stays deliberately lightweight. The root owns policy, CI/CD, and release coordination; each application keeps its native tooling.
+
+## Stack
+
+- Web: Next.js 16, React 19, TypeScript, Tailwind CSS, next-intl
+- Backend: Supabase Postgres, Auth, Storage, RPCs, Edge Functions
+- Package manager: pnpm
+- Mobile: Flutter, planned for `apps/mobile`
+- CI/CD: GitHub Actions
 
 ## Getting Started
 
-First, run the development server:
+Prerequisites:
+
+- Node.js 24.14.1 or newer
+- pnpm 10.23 or newer
+- Supabase CLI for local backend work
+
+Run the web app:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp apps/web/.env.example apps/web/.env.local
+pnpm install:web
+pnpm dev:web
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open the local URL printed by the Next.js dev server.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Quality Checks
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Run the full local web check:
 
-## Learn More
+```bash
+pnpm check:repo
+pnpm install:web
+pnpm check:web
+```
 
-To learn more about Next.js, take a look at the following resources:
+Individual commands:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm lint:web
+pnpm typecheck:web
+pnpm build:web
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment Model
 
-## Deploy on Vercel
+- Web deploys from `apps/web` on the chosen hosting platform.
+- Supabase migrations and edge functions deploy from `supabase/` through protected GitHub Actions environments.
+- Mobile releases will publish Android APK artifacts to GitHub Releases from `mobile-v*` tags once the Flutter app exists.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Production releases should move through pull requests, required checks, review, and documented environment approvals.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Documentation
+
+- [Architecture](docs/architecture.md)
+- [Development](docs/development.md)
+- [Environments](docs/environments.md)
+- [Release Process](docs/release.md)
+
+## Current Status
+
+- `apps/web` contains the active product.
+- `supabase` contains the shared backend contract and deployable edge functions.
+- `apps/mobile` is reserved for the future user-facing Flutter app and should remain blank until mobile development starts.

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">Eventy360</title>
+  <desc id="description">Eventy360 academic events platform social preview image.</desc>
+  <rect width="1200" height="630" fill="#0d47a1"/>
+  <rect x="76" y="76" width="1048" height="478" rx="32" fill="#ffffff"/>
+  <circle cx="956" cy="172" r="58" fill="#ffa000"/>
+  <circle cx="1008" cy="230" r="26" fill="#388e3c"/>
+  <text x="128" y="244" fill="#0d47a1" font-family="Arial, sans-serif" font-size="92" font-weight="700">Eventy360</text>
+  <text x="132" y="326" fill="#212121" font-family="Arial, sans-serif" font-size="38">Academic events, papers, and research workflows</text>
+  <text x="132" y="390" fill="#555555" font-family="Arial, sans-serif" font-size="30">Built for Algeria's academic community</text>
+  <path d="M132 456h312" stroke="#ffa000" stroke-width="14" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,61 @@
+name: Mobile Release
+
+on:
+  push:
+    tags:
+      - "mobile-v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mobile-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  android-release:
+    name: Build Android release artifact
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ensure Flutter app exists
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f pubspec.yaml
+          test -d lib
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          artifact="build/app/outputs/flutter-apk/app-release.apk"
+          test -f "$artifact"
+          gh release create "$TAG_NAME" "$artifact" \
+            --title "$TAG_NAME" \
+            --notes "Eventy360 Android release artifact for $TAG_NAME." \
+            --latest=false

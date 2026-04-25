@@ -1,0 +1,11 @@
+packages:
+  - "."
+
+ignoredBuiltDependencies:
+  - '@parcel/watcher'
+
+onlyBuiltDependencies:
+  - '@swc/core'
+  - '@tsparticles/engine'
+  - sharp
+  - unrs-resolver
