@@ -239,6 +239,66 @@ class S {
     );
   }
 
+  /// `Set a new password`
+  String get updatePasswordTitle {
+    return Intl.message(
+      'Set a new password',
+      name: 'updatePasswordTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New password`
+  String get newPassword {
+    return Intl.message(
+      'New password',
+      name: 'newPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm password`
+  String get confirmPassword {
+    return Intl.message(
+      'Confirm password',
+      name: 'confirmPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update password`
+  String get updatePasswordAction {
+    return Intl.message(
+      'Update password',
+      name: 'updatePasswordAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Passwords do not match.`
+  String get passwordsDoNotMatch {
+    return Intl.message(
+      'Passwords do not match.',
+      name: 'passwordsDoNotMatch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Password updated successfully.`
+  String get passwordUpdatedSuccess {
+    return Intl.message(
+      'Password updated successfully.',
+      name: 'passwordUpdatedSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Account created successfully.`
   String get accountCreated {
     return Intl.message(
@@ -326,6 +386,86 @@ class S {
       name: 'profileStatus',
       desc: '',
       args: [],
+    );
+  }
+
+  /// `Verification status`
+  String get verificationStatusTitle {
+    return Intl.message(
+      'Verification status',
+      name: 'verificationStatusTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subscription status`
+  String get subscriptionStatusTitle {
+    return Intl.message(
+      'Subscription status',
+      name: 'subscriptionStatusTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Premium subscription active`
+  String get subscriptionActive {
+    return Intl.message(
+      'Premium subscription active',
+      name: 'subscriptionActive',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No active premium subscription`
+  String get subscriptionInactive {
+    return Intl.message(
+      'No active premium subscription',
+      name: 'subscriptionInactive',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Nearest deadline`
+  String get nearestDeadlineTitle {
+    return Intl.message(
+      'Nearest deadline',
+      name: 'nearestDeadlineTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No upcoming deadlines`
+  String get noUpcomingDeadline {
+    return Intl.message(
+      'No upcoming deadlines',
+      name: 'noUpcomingDeadline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Active submissions`
+  String get activeSubmissionsTitle {
+    return Intl.message(
+      'Active submissions',
+      name: 'activeSubmissionsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} active submissions`
+  String activeSubmissionsCount(int count) {
+    return Intl.message(
+      '$count active submissions',
+      name: 'activeSubmissionsCount',
+      desc: '',
+      args: [count],
     );
   }
 

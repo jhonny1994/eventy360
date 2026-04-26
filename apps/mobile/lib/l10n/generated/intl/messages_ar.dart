@@ -20,10 +20,16 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'ar';
 
+  static String m0(count) => "${count} ترشيحات نشطة";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "accountCreated": MessageLookupByLibrary.simpleMessage(
       "تم إنشاء الحساب بنجاح.",
+    ),
+    "activeSubmissionsCount": m0,
+    "activeSubmissionsTitle": MessageLookupByLibrary.simpleMessage(
+      "الترشيحات النشطة",
     ),
     "addBookmark": MessageLookupByLibrary.simpleMessage("إضافة إشارة مرجعية"),
     "appTitle": MessageLookupByLibrary.simpleMessage("إيفنتي 360"),
@@ -35,6 +41,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "completeProfileTitle": MessageLookupByLibrary.simpleMessage(
       "أكمل ملفك الشخصي",
+    ),
+    "confirmPassword": MessageLookupByLibrary.simpleMessage(
+      "تأكيد كلمة المرور",
     ),
     "continueAction": MessageLookupByLibrary.simpleMessage("متابعة"),
     "createAccount": MessageLookupByLibrary.simpleMessage("إنشاء حساب"),
@@ -70,7 +79,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "loadMore": MessageLookupByLibrary.simpleMessage("تحميل المزيد"),
     "loading": MessageLookupByLibrary.simpleMessage("جار التحميل..."),
     "location": MessageLookupByLibrary.simpleMessage("الموقع"),
+    "nearestDeadlineTitle": MessageLookupByLibrary.simpleMessage(
+      "أقرب موعد نهائي",
+    ),
+    "newPassword": MessageLookupByLibrary.simpleMessage("كلمة المرور الجديدة"),
     "noEventsFound": MessageLookupByLibrary.simpleMessage("لا توجد فعاليات."),
+    "noUpcomingDeadline": MessageLookupByLibrary.simpleMessage(
+      "لا توجد مواعيد نهائية قادمة",
+    ),
     "notificationEducationBody": MessageLookupByLibrary.simpleMessage(
       "سنطلب إذن الإشعارات فقط بعد الاشتراك في المواضيع.",
     ),
@@ -86,6 +102,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "password": MessageLookupByLibrary.simpleMessage("كلمة المرور"),
     "passwordTooShort": MessageLookupByLibrary.simpleMessage(
       "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.",
+    ),
+    "passwordUpdatedSuccess": MessageLookupByLibrary.simpleMessage(
+      "تم تحديث كلمة المرور بنجاح.",
+    ),
+    "passwordsDoNotMatch": MessageLookupByLibrary.simpleMessage(
+      "كلمتا المرور غير متطابقتين.",
     ),
     "profileCompleted": MessageLookupByLibrary.simpleMessage(
       "الملف الشخصي مكتمل",
@@ -113,6 +135,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "signUp": MessageLookupByLibrary.simpleMessage("إنشاء حساب"),
     "signedInAs": MessageLookupByLibrary.simpleMessage("تم تسجيل الدخول باسم"),
     "somethingWentWrong": MessageLookupByLibrary.simpleMessage("حدث خطأ ما."),
+    "subscriptionActive": MessageLookupByLibrary.simpleMessage(
+      "اشتراك مميز نشط",
+    ),
+    "subscriptionInactive": MessageLookupByLibrary.simpleMessage(
+      "لا يوجد اشتراك مميز نشط",
+    ),
+    "subscriptionStatusTitle": MessageLookupByLibrary.simpleMessage(
+      "حالة الاشتراك",
+    ),
     "topicSubscriptionHint": MessageLookupByLibrary.simpleMessage(
       "اشترك في المواضيع لتصلك تنبيهات فورية.",
     ),
@@ -121,6 +152,15 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "unsupportedRoleTitle": MessageLookupByLibrary.simpleMessage(
       "هذا الدور غير مدعوم على التطبيق المحمول",
+    ),
+    "updatePasswordAction": MessageLookupByLibrary.simpleMessage(
+      "تحديث كلمة المرور",
+    ),
+    "updatePasswordTitle": MessageLookupByLibrary.simpleMessage(
+      "تعيين كلمة مرور جديدة",
+    ),
+    "verificationStatusTitle": MessageLookupByLibrary.simpleMessage(
+      "حالة التحقق",
     ),
   };
 }

@@ -41,7 +41,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: RoutePaths.resetPassword,
-        builder: (context, state) => const PasswordResetScreen(),
+        builder: (context, state) => PasswordResetScreen(
+          isRecoveryMode: state.uri.queryParameters['mode'] == 'recovery',
+        ),
       ),
       GoRoute(
         path: RoutePaths.profileGate,

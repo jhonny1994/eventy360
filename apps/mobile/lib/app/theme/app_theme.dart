@@ -6,49 +6,48 @@ class AppTheme {
   static const _seed = Color(0xFF0B6B73);
 
   static ThemeData get light => ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: _seed,
-          brightness: Brightness.light,
-          dynamicSchemeVariant: DynamicSchemeVariant.tonalSpot,
-          contrastLevel: 0.0,
-        ),
-        scaffoldBackgroundColor:
-            ColorScheme.fromSeed(seedColor: _seed).surfaceContainerLowest,
-        textTheme: Typography.material2021().black,
-        appBarTheme: _appBarTheme(Brightness.light),
-        inputDecorationTheme: _inputDecorationTheme(Brightness.light),
-        cardTheme: _cardTheme(Brightness.light),
-        filledButtonTheme: _filledButtonTheme(Brightness.light),
-        outlinedButtonTheme: _outlinedButtonTheme(Brightness.light),
-        chipTheme: _chipTheme(Brightness.light),
-        snackBarTheme: _snackBarTheme(Brightness.light),
-        useMaterial3: true,
-      );
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: _seed,
+    ),
+    scaffoldBackgroundColor: ColorScheme.fromSeed(
+      seedColor: _seed,
+    ).surfaceContainerLowest,
+    textTheme: Typography.material2021().black,
+    appBarTheme: _appBarTheme(Brightness.light),
+    inputDecorationTheme: _inputDecorationTheme(Brightness.light),
+    cardTheme: _cardTheme(Brightness.light),
+    filledButtonTheme: _filledButtonTheme(Brightness.light),
+    outlinedButtonTheme: _outlinedButtonTheme(Brightness.light),
+    chipTheme: _chipTheme(Brightness.light),
+    snackBarTheme: _snackBarTheme(Brightness.light),
+    useMaterial3: true,
+  );
 
   static ThemeData get dark => ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: _seed,
-          brightness: Brightness.dark,
-          dynamicSchemeVariant: DynamicSchemeVariant.tonalSpot,
-          contrastLevel: 0.0,
-        ),
-        scaffoldBackgroundColor: ColorScheme.fromSeed(
-          seedColor: _seed,
-          brightness: Brightness.dark,
-        ).surfaceContainerLowest,
-        textTheme: Typography.material2021().white,
-        appBarTheme: _appBarTheme(Brightness.dark),
-        inputDecorationTheme: _inputDecorationTheme(Brightness.dark),
-        cardTheme: _cardTheme(Brightness.dark),
-        filledButtonTheme: _filledButtonTheme(Brightness.dark),
-        outlinedButtonTheme: _outlinedButtonTheme(Brightness.dark),
-        chipTheme: _chipTheme(Brightness.dark),
-        snackBarTheme: _snackBarTheme(Brightness.dark),
-        useMaterial3: true,
-      );
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: _seed,
+      brightness: Brightness.dark,
+    ),
+    scaffoldBackgroundColor: ColorScheme.fromSeed(
+      seedColor: _seed,
+      brightness: Brightness.dark,
+    ).surfaceContainerLowest,
+    textTheme: Typography.material2021().white,
+    appBarTheme: _appBarTheme(Brightness.dark),
+    inputDecorationTheme: _inputDecorationTheme(Brightness.dark),
+    cardTheme: _cardTheme(Brightness.dark),
+    filledButtonTheme: _filledButtonTheme(Brightness.dark),
+    outlinedButtonTheme: _outlinedButtonTheme(Brightness.dark),
+    chipTheme: _chipTheme(Brightness.dark),
+    snackBarTheme: _snackBarTheme(Brightness.dark),
+    useMaterial3: true,
+  );
 
   static AppBarTheme _appBarTheme(Brightness brightness) {
-    final colorScheme = ColorScheme.fromSeed(seedColor: _seed, brightness: brightness);
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: _seed,
+      brightness: brightness,
+    );
     return AppBarTheme(
       centerTitle: false,
       elevation: 0,
@@ -64,7 +63,10 @@ class AppTheme {
   }
 
   static InputDecorationTheme _inputDecorationTheme(Brightness brightness) {
-    final colorScheme = ColorScheme.fromSeed(seedColor: _seed, brightness: brightness);
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: _seed,
+      brightness: brightness,
+    );
     return InputDecorationTheme(
       filled: true,
       fillColor: colorScheme.surfaceContainerLow,
@@ -89,20 +91,28 @@ class AppTheme {
   }
 
   static CardThemeData _cardTheme(Brightness brightness) {
-    final colorScheme = ColorScheme.fromSeed(seedColor: _seed, brightness: brightness);
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: _seed,
+      brightness: brightness,
+    );
     return CardThemeData(
       color: colorScheme.surfaceContainerLow,
       elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18),
-        side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.6)),
+        side: BorderSide(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.6),
+        ),
       ),
     );
   }
 
   static FilledButtonThemeData _filledButtonTheme(Brightness brightness) {
-    final colorScheme = ColorScheme.fromSeed(seedColor: _seed, brightness: brightness);
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: _seed,
+      brightness: brightness,
+    );
     return FilledButtonThemeData(
       style: FilledButton.styleFrom(
         minimumSize: const Size.fromHeight(48),
@@ -114,7 +124,10 @@ class AppTheme {
   }
 
   static OutlinedButtonThemeData _outlinedButtonTheme(Brightness brightness) {
-    final colorScheme = ColorScheme.fromSeed(seedColor: _seed, brightness: brightness);
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: _seed,
+      brightness: brightness,
+    );
     return OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         minimumSize: const Size.fromHeight(48),
@@ -126,7 +139,10 @@ class AppTheme {
   }
 
   static ChipThemeData _chipTheme(Brightness brightness) {
-    final colorScheme = ColorScheme.fromSeed(seedColor: _seed, brightness: brightness);
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: _seed,
+      brightness: brightness,
+    );
     return ChipThemeData(
       backgroundColor: colorScheme.surfaceContainerHigh,
       selectedColor: colorScheme.secondaryContainer,
@@ -139,7 +155,10 @@ class AppTheme {
   }
 
   static SnackBarThemeData _snackBarTheme(Brightness brightness) {
-    final colorScheme = ColorScheme.fromSeed(seedColor: _seed, brightness: brightness);
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: _seed,
+      brightness: brightness,
+    );
     return SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
       backgroundColor: colorScheme.inverseSurface,

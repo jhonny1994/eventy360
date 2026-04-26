@@ -10,7 +10,6 @@ void main() {
     final redirect = appRedirect(
       session: const AsyncData(
         SessionState(
-          user: null,
           onboardingCompleted: false,
           profileCompleted: false,
         ),
@@ -23,9 +22,9 @@ void main() {
 
   test('redirects authenticated incomplete profile to profile gate', () {
     final redirect = appRedirect(
-      session: AsyncData(
+      session: const AsyncData(
         SessionState(
-          user: const AuthUser(id: '1', email: 'r@e.com', role: 'researcher'),
+          user: AuthUser(id: '1', email: 'r@e.com', role: 'researcher'),
           onboardingCompleted: true,
           profileCompleted: false,
         ),

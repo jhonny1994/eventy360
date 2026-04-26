@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class AdaptivePageBody extends StatelessWidget {
   const AdaptivePageBody({
-    super.key,
     required this.child,
+    super.key,
   });
 
   final Widget child;

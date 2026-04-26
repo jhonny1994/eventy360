@@ -7,16 +7,16 @@ part 'session_state.g.dart';
 @freezed
 abstract class SessionState with _$SessionState {
   const factory SessionState({
-    AuthUser? user,
     required bool onboardingCompleted,
     required bool profileCompleted,
+    AuthUser? user,
   }) = _SessionState;
+
+  factory SessionState.fromJson(Map<String, dynamic> json) =>
+      _$SessionStateFromJson(json);
 
   const SessionState._();
 
   bool get isAuthenticated => user != null;
   bool get isResearcher => (user?.role ?? 'researcher') == 'researcher';
-
-  factory SessionState.fromJson(Map<String, dynamic> json) =>
-      _$SessionStateFromJson(json);
 }

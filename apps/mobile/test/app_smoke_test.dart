@@ -1,7 +1,7 @@
 import 'package:eventy360/app/app.dart';
 import 'package:eventy360/app/providers.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

@@ -63,7 +63,7 @@ final class AuthStateChangesProvider
         argument: null,
         retry: null,
         name: r'authStateChangesProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -82,7 +82,49 @@ final class AuthStateChangesProvider
   }
 }
 
-String _$authStateChangesHash() => r'a3912864287e0693e53ed48def52f70a5147a428';
+String _$authStateChangesHash() => r'2c05fbb3ee0960ed98617aa72f8a295a05905ebd';
+
+@ProviderFor(authDeepLinkIntents)
+final authDeepLinkIntentsProvider = AuthDeepLinkIntentsProvider._();
+
+final class AuthDeepLinkIntentsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<AuthDeepLinkIntent>,
+          AuthDeepLinkIntent,
+          Stream<AuthDeepLinkIntent>
+        >
+    with
+        $FutureModifier<AuthDeepLinkIntent>,
+        $StreamProvider<AuthDeepLinkIntent> {
+  AuthDeepLinkIntentsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'authDeepLinkIntentsProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$authDeepLinkIntentsHash();
+
+  @$internal
+  @override
+  $StreamProviderElement<AuthDeepLinkIntent> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<AuthDeepLinkIntent> create(Ref ref) {
+    return authDeepLinkIntents(ref);
+  }
+}
+
+String _$authDeepLinkIntentsHash() =>
+    r'a99282ad72866d8edee9d424d91f6f78c8f906d6';
 
 @ProviderFor(SessionController)
 final sessionControllerProvider = SessionControllerProvider._();
@@ -108,7 +150,7 @@ final class SessionControllerProvider
   SessionController create() => SessionController();
 }
 
-String _$sessionControllerHash() => r'493bdbc31314e063f6ab7378c3a61a13e8f5b1e9';
+String _$sessionControllerHash() => r'a047df9319fc272f3d9a4c4ea4e3293a244aa4b4';
 
 abstract class _$SessionController extends $AsyncNotifier<SessionState> {
   FutureOr<SessionState> build();
