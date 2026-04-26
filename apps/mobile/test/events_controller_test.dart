@@ -86,6 +86,53 @@ void main() {
     expect(updated.events.length, 1);
     expect(updated.events.first.id, 'evt-2');
   });
+
+  test('unsubscribing from topic unregisters current token', () async {
+    final repository = _FakeEventsRepository().._subs.add('cybersecurity');
+    final notificationController = _FakeNotificationController();
+    final container = ProviderContainer(
+      overrides: [
+        eventsRepositoryProvider.overrideWithValue(repository),
+        notificationControllerProvider.overrideWith(
+          () => notificationController,
+        ),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await container.read(eventsControllerProvider.future);
+    await container
+        .read(eventsControllerProvider.notifier)
+        .toggleTopicSubscription('cybersecurity');
+
+    final updated = container.read(eventsControllerProvider).asData!.value;
+    expect(updated.subscribedTopicIds.contains('cybersecurity'), isFalse);
+    expect(notificationController.lastUnregisteredTopicId, 'cybersecurity');
+  });
+
+  test('ensureEventLoaded fetches missing event by id', () async {
+    final repository = _FakeEventsRepository();
+    final notificationController = _FakeNotificationController();
+    final container = ProviderContainer(
+      overrides: [
+        eventsRepositoryProvider.overrideWithValue(repository),
+        notificationControllerProvider.overrideWith(
+          () => notificationController,
+        ),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await container.read(eventsControllerProvider.future);
+    final fetched = await container
+        .read(eventsControllerProvider.notifier)
+        .ensureEventLoaded('evt-3');
+
+    expect(fetched, isNotNull);
+    expect(fetched!.id, 'evt-3');
+    final updated = container.read(eventsControllerProvider).asData!.value;
+    expect(updated.events.any((event) => event.id == 'evt-3'), isTrue);
+  });
 }
 
 class _FakeNotificationController extends NotificationController {
@@ -139,6 +186,14 @@ class _FakeEventsRepository implements EventsRepository {
         location: 'Oran',
         topics: const ['Cybersecurity'],
         isBookmarked: _bookmarks.contains('evt-2'),
+      ),
+      EventSummary(
+        id: 'evt-3',
+        title: 'Data event',
+        deadline: DateTime(2026, 10, 20),
+        location: 'Constantine',
+        topics: const ['Data Science'],
+        isBookmarked: _bookmarks.contains('evt-3'),
       ),
     ];
     if (selectedTopicIds.isEmpty) {

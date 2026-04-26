@@ -3,6 +3,7 @@ import 'package:eventy360/core/domain/operation_receipt.dart';
 import 'package:eventy360/features/submissions/application/submissions_controller.dart';
 import 'package:eventy360/features/submissions/domain/submission_models.dart';
 import 'package:eventy360/features/submissions/domain/submissions_repository.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -97,12 +98,91 @@ void main() {
     expect(draft, isNotNull);
     expect(draft!.titleAr, 'draft');
   });
+
+  test('submits full paper and refreshes submissions', () async {
+    final repository = _FakeSubmissionsRepository();
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    final prefs = await SharedPreferences.getInstance();
+    final container = ProviderContainer(
+      overrides: [
+        submissionsRepositoryProvider.overrideWithValue(repository),
+        sharedPreferencesProvider.overrideWithValue(prefs),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await container.read(submissionsControllerProvider.future);
+    await container
+        .read(submissionsControllerProvider.notifier)
+        .submitFullPaper(
+          SubmitFullPaperInput(
+            submissionId: 'sub-1',
+            file: SubmissionUploadFile(
+              bytes: Uint8List.fromList(<int>[1, 2, 3]),
+              fileName: 'paper.pdf',
+              mimeType: 'application/pdf',
+            ),
+          ),
+        );
+
+    final state = container.read(submissionsControllerProvider).asData!.value;
+    expect(state.lastReceipt?.id, 'sub-1');
+    expect(repository.submitFullPaperCallCount, 1);
+  });
+
+  test('submits revision and refreshes submissions', () async {
+    final repository = _FakeSubmissionsRepository();
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    final prefs = await SharedPreferences.getInstance();
+    final container = ProviderContainer(
+      overrides: [
+        submissionsRepositoryProvider.overrideWithValue(repository),
+        sharedPreferencesProvider.overrideWithValue(prefs),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await container.read(submissionsControllerProvider.future);
+    await container
+        .read(submissionsControllerProvider.notifier)
+        .submitRevision(
+          SubmitRevisionInput(
+            submissionId: 'sub-1',
+            file: SubmissionUploadFile(
+              bytes: Uint8List.fromList(<int>[4, 5, 6]),
+              fileName: 'revision.pdf',
+              mimeType: 'application/pdf',
+            ),
+            revisionNotes: 'Updated references',
+          ),
+        );
+
+    final state = container.read(submissionsControllerProvider).asData!.value;
+    expect(state.lastReceipt?.id, 'sub-1');
+    expect(repository.submitRevisionCallCount, 1);
+  });
 }
 
 class _FakeSubmissionsRepository implements SubmissionsRepository {
-  final List<SubmissionRecord> _items = <SubmissionRecord>[];
+  final List<SubmissionRecord> _items = <SubmissionRecord>[
+    SubmissionRecord(
+      id: 'sub-1',
+      eventId: 'evt-1',
+      eventTitle: 'Event',
+      title: 'Seed submission',
+      abstractText: 'Seed abstract',
+      status: SubmissionStatus.abstractAccepted,
+      submissionDate: DateTime(2026),
+      updatedAt: DateTime(2026),
+      abstractStatus: SubmissionStatus.abstractAccepted,
+      fullPaperStatus: SubmissionStatus.revisionRequested,
+      currentAbstractVersionId: 'v1',
+    ),
+  ];
 
   int submitAbstractCallCount = 0;
+  int submitFullPaperCallCount = 0;
+  int submitRevisionCallCount = 0;
   int transientFailuresBeforeSuccess = 0;
 
   @override
@@ -138,7 +218,7 @@ class _FakeSubmissionsRepository implements SubmissionsRepository {
       currentAbstractVersionId: 'v1',
     );
     _items
-      ..clear()
+      ..removeWhere((item) => item.id == record.id)
       ..add(record);
     return SubmissionWriteResult(
       submissionId: record.id,
@@ -154,6 +234,7 @@ class _FakeSubmissionsRepository implements SubmissionsRepository {
   Future<SubmissionWriteResult> submitFullPaper(
     SubmitFullPaperInput input,
   ) async {
+    submitFullPaperCallCount += 1;
     return SubmissionWriteResult(
       submissionId: input.submissionId,
       receipt: OperationReceipt(
@@ -168,6 +249,7 @@ class _FakeSubmissionsRepository implements SubmissionsRepository {
   Future<SubmissionWriteResult> submitRevision(
     SubmitRevisionInput input,
   ) async {
+    submitRevisionCallCount += 1;
     return SubmissionWriteResult(
       submissionId: input.submissionId,
       receipt: OperationReceipt(
