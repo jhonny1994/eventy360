@@ -1,0 +1,9 @@
+{
+  "@@locale": "en",
+  "appTitle": "Eventy360",
+  "homeTitle": "Researcher Home",
+  "homeSubtitle": "MVP foundation is ready.",
+  "retry": "Retry",
+  "somethingWentWrong": "Something went wrong.",
+  "loading": "Loading..."
+}
