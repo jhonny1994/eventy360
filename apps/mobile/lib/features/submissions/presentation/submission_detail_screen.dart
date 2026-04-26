@@ -108,16 +108,14 @@ class _SubmissionDetailScreenState
           const SizedBox(height: 16),
           if (record.canSubmitFullPaper)
             FilledButton(
-              onPressed: () => context.go(
-                '${RoutePaths.submissions}/${record.id}/full-paper',
-              ),
+              onPressed: () =>
+                  context.go(RoutePaths.submissionFullPaper(record.id)),
               child: Text(localizations.submitFullPaperAction),
             ),
           if (record.canSubmitRevision)
             FilledButton.tonal(
-              onPressed: () => context.go(
-                '${RoutePaths.submissions}/${record.id}/revision',
-              ),
+              onPressed: () =>
+                  context.go(RoutePaths.submissionRevision(record.id)),
               child: Text(localizations.submitRevisionAction),
             ),
         ],

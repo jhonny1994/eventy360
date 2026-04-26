@@ -1,5 +1,7 @@
 import 'package:eventy360/app/router/route_paths.dart';
+import 'package:eventy360/core/presentation/app_feedback.dart';
 import 'package:eventy360/core/presentation/widgets/adaptive_page_body.dart';
+import 'package:eventy360/core/presentation/widgets/app_inline_message.dart';
 import 'package:eventy360/features/auth/application/session_controller.dart';
 import 'package:eventy360/features/auth/domain/auth_exception.dart';
 import 'package:eventy360/l10n/generated/l10n.dart';
@@ -64,11 +66,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   ),
                   const SizedBox(height: 12),
                   if (_error != null)
-                    Text(
-                      _error!,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
+                    AppInlineMessage.error(
+                      message: _error!,
                     ),
                   const SizedBox(height: 16),
                   Semantics(
@@ -106,9 +105,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             password: _passwordController.text,
           );
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(localizations.accountCreated)),
-        );
+        AppFeedback.showSuccess(localizations.accountCreated);
       }
     } on AuthException catch (error) {
       setState(() {

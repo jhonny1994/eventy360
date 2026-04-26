@@ -66,7 +66,7 @@ class SubmissionsScreen extends ConsumerWidget {
                         isThreeLine: true,
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () => context.go(
-                          '${RoutePaths.submissions}/${submission.id}',
+                          RoutePaths.submissionDetail(submission.id),
                         ),
                       ),
                     ),

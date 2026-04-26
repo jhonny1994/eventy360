@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$NotificationState {
 
- bool get permissionGranted; String? get pendingEventId;
+ bool get permissionGranted; String? get pendingEventId; String? get foregroundTitle; String? get foregroundBody; String? get foregroundEventId; int get foregroundMessageSerial;
 /// Create a copy of NotificationState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $NotificationStateCopyWith<NotificationState> get copyWith => _$NotificationStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotificationState&&(identical(other.permissionGranted, permissionGranted) || other.permissionGranted == permissionGranted)&&(identical(other.pendingEventId, pendingEventId) || other.pendingEventId == pendingEventId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotificationState&&(identical(other.permissionGranted, permissionGranted) || other.permissionGranted == permissionGranted)&&(identical(other.pendingEventId, pendingEventId) || other.pendingEventId == pendingEventId)&&(identical(other.foregroundTitle, foregroundTitle) || other.foregroundTitle == foregroundTitle)&&(identical(other.foregroundBody, foregroundBody) || other.foregroundBody == foregroundBody)&&(identical(other.foregroundEventId, foregroundEventId) || other.foregroundEventId == foregroundEventId)&&(identical(other.foregroundMessageSerial, foregroundMessageSerial) || other.foregroundMessageSerial == foregroundMessageSerial));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,permissionGranted,pendingEventId);
+int get hashCode => Object.hash(runtimeType,permissionGranted,pendingEventId,foregroundTitle,foregroundBody,foregroundEventId,foregroundMessageSerial);
 
 @override
 String toString() {
-  return 'NotificationState(permissionGranted: $permissionGranted, pendingEventId: $pendingEventId)';
+  return 'NotificationState(permissionGranted: $permissionGranted, pendingEventId: $pendingEventId, foregroundTitle: $foregroundTitle, foregroundBody: $foregroundBody, foregroundEventId: $foregroundEventId, foregroundMessageSerial: $foregroundMessageSerial)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $NotificationStateCopyWith<$Res>  {
   factory $NotificationStateCopyWith(NotificationState value, $Res Function(NotificationState) _then) = _$NotificationStateCopyWithImpl;
 @useResult
 $Res call({
- bool permissionGranted, String? pendingEventId
+ bool permissionGranted, String? pendingEventId, String? foregroundTitle, String? foregroundBody, String? foregroundEventId, int foregroundMessageSerial
 });
 
 
@@ -65,11 +65,15 @@ class _$NotificationStateCopyWithImpl<$Res>
 
 /// Create a copy of NotificationState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? permissionGranted = null,Object? pendingEventId = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? permissionGranted = null,Object? pendingEventId = freezed,Object? foregroundTitle = freezed,Object? foregroundBody = freezed,Object? foregroundEventId = freezed,Object? foregroundMessageSerial = null,}) {
   return _then(_self.copyWith(
 permissionGranted: null == permissionGranted ? _self.permissionGranted : permissionGranted // ignore: cast_nullable_to_non_nullable
 as bool,pendingEventId: freezed == pendingEventId ? _self.pendingEventId : pendingEventId // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,foregroundTitle: freezed == foregroundTitle ? _self.foregroundTitle : foregroundTitle // ignore: cast_nullable_to_non_nullable
+as String?,foregroundBody: freezed == foregroundBody ? _self.foregroundBody : foregroundBody // ignore: cast_nullable_to_non_nullable
+as String?,foregroundEventId: freezed == foregroundEventId ? _self.foregroundEventId : foregroundEventId // ignore: cast_nullable_to_non_nullable
+as String?,foregroundMessageSerial: null == foregroundMessageSerial ? _self.foregroundMessageSerial : foregroundMessageSerial // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 
@@ -154,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool permissionGranted,  String? pendingEventId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool permissionGranted,  String? pendingEventId,  String? foregroundTitle,  String? foregroundBody,  String? foregroundEventId,  int foregroundMessageSerial)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NotificationState() when $default != null:
-return $default(_that.permissionGranted,_that.pendingEventId);case _:
+return $default(_that.permissionGranted,_that.pendingEventId,_that.foregroundTitle,_that.foregroundBody,_that.foregroundEventId,_that.foregroundMessageSerial);case _:
   return orElse();
 
 }
@@ -175,10 +179,10 @@ return $default(_that.permissionGranted,_that.pendingEventId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool permissionGranted,  String? pendingEventId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool permissionGranted,  String? pendingEventId,  String? foregroundTitle,  String? foregroundBody,  String? foregroundEventId,  int foregroundMessageSerial)  $default,) {final _that = this;
 switch (_that) {
 case _NotificationState():
-return $default(_that.permissionGranted,_that.pendingEventId);case _:
+return $default(_that.permissionGranted,_that.pendingEventId,_that.foregroundTitle,_that.foregroundBody,_that.foregroundEventId,_that.foregroundMessageSerial);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,10 +199,10 @@ return $default(_that.permissionGranted,_that.pendingEventId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool permissionGranted,  String? pendingEventId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool permissionGranted,  String? pendingEventId,  String? foregroundTitle,  String? foregroundBody,  String? foregroundEventId,  int foregroundMessageSerial)?  $default,) {final _that = this;
 switch (_that) {
 case _NotificationState() when $default != null:
-return $default(_that.permissionGranted,_that.pendingEventId);case _:
+return $default(_that.permissionGranted,_that.pendingEventId,_that.foregroundTitle,_that.foregroundBody,_that.foregroundEventId,_that.foregroundMessageSerial);case _:
   return null;
 
 }
@@ -210,11 +214,15 @@ return $default(_that.permissionGranted,_that.pendingEventId);case _:
 @JsonSerializable()
 
 class _NotificationState implements NotificationState {
-  const _NotificationState({required this.permissionGranted, this.pendingEventId});
+  const _NotificationState({required this.permissionGranted, this.pendingEventId, this.foregroundTitle, this.foregroundBody, this.foregroundEventId, this.foregroundMessageSerial = 0});
   factory _NotificationState.fromJson(Map<String, dynamic> json) => _$NotificationStateFromJson(json);
 
 @override final  bool permissionGranted;
 @override final  String? pendingEventId;
+@override final  String? foregroundTitle;
+@override final  String? foregroundBody;
+@override final  String? foregroundEventId;
+@override@JsonKey() final  int foregroundMessageSerial;
 
 /// Create a copy of NotificationState
 /// with the given fields replaced by the non-null parameter values.
@@ -229,16 +237,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NotificationState&&(identical(other.permissionGranted, permissionGranted) || other.permissionGranted == permissionGranted)&&(identical(other.pendingEventId, pendingEventId) || other.pendingEventId == pendingEventId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NotificationState&&(identical(other.permissionGranted, permissionGranted) || other.permissionGranted == permissionGranted)&&(identical(other.pendingEventId, pendingEventId) || other.pendingEventId == pendingEventId)&&(identical(other.foregroundTitle, foregroundTitle) || other.foregroundTitle == foregroundTitle)&&(identical(other.foregroundBody, foregroundBody) || other.foregroundBody == foregroundBody)&&(identical(other.foregroundEventId, foregroundEventId) || other.foregroundEventId == foregroundEventId)&&(identical(other.foregroundMessageSerial, foregroundMessageSerial) || other.foregroundMessageSerial == foregroundMessageSerial));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,permissionGranted,pendingEventId);
+int get hashCode => Object.hash(runtimeType,permissionGranted,pendingEventId,foregroundTitle,foregroundBody,foregroundEventId,foregroundMessageSerial);
 
 @override
 String toString() {
-  return 'NotificationState(permissionGranted: $permissionGranted, pendingEventId: $pendingEventId)';
+  return 'NotificationState(permissionGranted: $permissionGranted, pendingEventId: $pendingEventId, foregroundTitle: $foregroundTitle, foregroundBody: $foregroundBody, foregroundEventId: $foregroundEventId, foregroundMessageSerial: $foregroundMessageSerial)';
 }
 
 
@@ -249,7 +257,7 @@ abstract mixin class _$NotificationStateCopyWith<$Res> implements $NotificationS
   factory _$NotificationStateCopyWith(_NotificationState value, $Res Function(_NotificationState) _then) = __$NotificationStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool permissionGranted, String? pendingEventId
+ bool permissionGranted, String? pendingEventId, String? foregroundTitle, String? foregroundBody, String? foregroundEventId, int foregroundMessageSerial
 });
 
 
@@ -266,11 +274,15 @@ class __$NotificationStateCopyWithImpl<$Res>
 
 /// Create a copy of NotificationState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? permissionGranted = null,Object? pendingEventId = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? permissionGranted = null,Object? pendingEventId = freezed,Object? foregroundTitle = freezed,Object? foregroundBody = freezed,Object? foregroundEventId = freezed,Object? foregroundMessageSerial = null,}) {
   return _then(_NotificationState(
 permissionGranted: null == permissionGranted ? _self.permissionGranted : permissionGranted // ignore: cast_nullable_to_non_nullable
 as bool,pendingEventId: freezed == pendingEventId ? _self.pendingEventId : pendingEventId // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,foregroundTitle: freezed == foregroundTitle ? _self.foregroundTitle : foregroundTitle // ignore: cast_nullable_to_non_nullable
+as String?,foregroundBody: freezed == foregroundBody ? _self.foregroundBody : foregroundBody // ignore: cast_nullable_to_non_nullable
+as String?,foregroundEventId: freezed == foregroundEventId ? _self.foregroundEventId : foregroundEventId // ignore: cast_nullable_to_non_nullable
+as String?,foregroundMessageSerial: null == foregroundMessageSerial ? _self.foregroundMessageSerial : foregroundMessageSerial // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 

@@ -1,8 +1,10 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:eventy360/app/localization/locale_controller.dart';
 import 'package:eventy360/app/router/app_router.dart';
 import 'package:eventy360/app/router/route_paths.dart';
 import 'package:eventy360/app/theme/app_theme.dart';
 import 'package:eventy360/app/theme/theme_mode_controller.dart';
+import 'package:eventy360/core/presentation/app_feedback.dart';
 import 'package:eventy360/features/auth/application/session_controller.dart';
 import 'package:eventy360/features/auth/domain/auth_deep_link_intent.dart';
 import 'package:eventy360/features/notifications/application/notification_controller.dart';
@@ -31,30 +33,59 @@ class Eventy360App extends ConsumerWidget {
       })
       ..listen(notificationControllerProvider, (previous, next) {
         final pendingEventId = next.asData?.value.pendingEventId;
-        if (pendingEventId == null || pendingEventId.isEmpty) {
+        if (pendingEventId != null && pendingEventId.isNotEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            appRouter.go(RoutePaths.eventDetail(pendingEventId));
+            ref
+                .read(notificationControllerProvider.notifier)
+                .clearPendingEvent();
+          });
+        }
+        final previousValue = previous?.asData?.value;
+        final nextValue = next.asData?.value;
+        if (nextValue == null ||
+            nextValue.foregroundMessageSerial ==
+                previousValue?.foregroundMessageSerial) {
+          return;
+        }
+        final message = nextValue.foregroundBody ?? nextValue.foregroundTitle;
+        if (message == null || message.isEmpty) {
           return;
         }
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          appRouter.go('${RoutePaths.events}/$pendingEventId');
-          ref.read(notificationControllerProvider.notifier).clearPendingEvent();
+          AppFeedback.showInfo(
+            message,
+            actionLabel: S.current.repositoryDetailAction,
+            onAction: nextValue.foregroundEventId == null
+                ? null
+                : () => appRouter.go(
+                    RoutePaths.eventDetail(nextValue.foregroundEventId!),
+                  ),
+          );
+          ref.read(notificationControllerProvider.notifier).clearForeground();
         });
       });
 
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      title: 'Eventy360',
-      routerConfig: appRouter,
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
-      themeMode: themeMode,
-      locale: locale,
-      supportedLocales: S.delegate.supportedLocales,
-      localizationsDelegates: const [
-        S.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
+    return DynamicColorBuilder(
+      builder: (lightDynamic, darkDynamic) {
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          title: 'Eventy360',
+          scaffoldMessengerKey: appScaffoldMessengerKey,
+          routerConfig: appRouter,
+          theme: AppTheme.light(lightDynamic?.harmonized()),
+          darkTheme: AppTheme.dark(darkDynamic?.harmonized()),
+          themeMode: themeMode,
+          locale: locale,
+          supportedLocales: S.delegate.supportedLocales,
+          localizationsDelegates: const [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+        );
+      },
     );
   }
 }

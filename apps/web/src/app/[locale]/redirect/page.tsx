@@ -84,7 +84,16 @@ function RedirectPageContent() {
         clearTimeout(timerRef.current);
       }
     };
-  }, [user, authLoading, router, isEmailConfirmed, authAction, locale, supabase]);
+  }, [
+    user,
+    authLoading,
+    isCheckingProfile,
+    router,
+    isEmailConfirmed,
+    authAction,
+    locale,
+    supabase,
+  ]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
