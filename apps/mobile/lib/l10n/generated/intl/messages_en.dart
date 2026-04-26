@@ -20,10 +20,16 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
+  static String m0(count) => "${count} active submissions";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "accountCreated": MessageLookupByLibrary.simpleMessage(
       "Account created successfully.",
+    ),
+    "activeSubmissionsCount": m0,
+    "activeSubmissionsTitle": MessageLookupByLibrary.simpleMessage(
+      "Active submissions",
     ),
     "addBookmark": MessageLookupByLibrary.simpleMessage("Add bookmark"),
     "appTitle": MessageLookupByLibrary.simpleMessage("Eventy360"),
@@ -34,6 +40,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "completeProfileTitle": MessageLookupByLibrary.simpleMessage(
       "Complete Your Profile",
     ),
+    "confirmPassword": MessageLookupByLibrary.simpleMessage("Confirm password"),
     "continueAction": MessageLookupByLibrary.simpleMessage("Continue"),
     "createAccount": MessageLookupByLibrary.simpleMessage("Create account"),
     "deadline": MessageLookupByLibrary.simpleMessage("Deadline"),
@@ -64,7 +71,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "loadMore": MessageLookupByLibrary.simpleMessage("Load more"),
     "loading": MessageLookupByLibrary.simpleMessage("Loading..."),
     "location": MessageLookupByLibrary.simpleMessage("Location"),
+    "nearestDeadlineTitle": MessageLookupByLibrary.simpleMessage(
+      "Nearest deadline",
+    ),
+    "newPassword": MessageLookupByLibrary.simpleMessage("New password"),
     "noEventsFound": MessageLookupByLibrary.simpleMessage("No events found."),
+    "noUpcomingDeadline": MessageLookupByLibrary.simpleMessage(
+      "No upcoming deadlines",
+    ),
     "notificationEducationBody": MessageLookupByLibrary.simpleMessage(
       "We will ask for notification permission only after you subscribe to topics.",
     ),
@@ -80,6 +94,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "password": MessageLookupByLibrary.simpleMessage("Password"),
     "passwordTooShort": MessageLookupByLibrary.simpleMessage(
       "Password must be at least 8 characters.",
+    ),
+    "passwordUpdatedSuccess": MessageLookupByLibrary.simpleMessage(
+      "Password updated successfully.",
+    ),
+    "passwordsDoNotMatch": MessageLookupByLibrary.simpleMessage(
+      "Passwords do not match.",
     ),
     "profileCompleted": MessageLookupByLibrary.simpleMessage(
       "Profile completed",
@@ -105,6 +125,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "somethingWentWrong": MessageLookupByLibrary.simpleMessage(
       "Something went wrong.",
     ),
+    "subscriptionActive": MessageLookupByLibrary.simpleMessage(
+      "Premium subscription active",
+    ),
+    "subscriptionInactive": MessageLookupByLibrary.simpleMessage(
+      "No active premium subscription",
+    ),
+    "subscriptionStatusTitle": MessageLookupByLibrary.simpleMessage(
+      "Subscription status",
+    ),
     "topicSubscriptionHint": MessageLookupByLibrary.simpleMessage(
       "Subscribe to topics to receive push alerts.",
     ),
@@ -113,6 +142,15 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "unsupportedRoleTitle": MessageLookupByLibrary.simpleMessage(
       "This account role is not supported on mobile",
+    ),
+    "updatePasswordAction": MessageLookupByLibrary.simpleMessage(
+      "Update password",
+    ),
+    "updatePasswordTitle": MessageLookupByLibrary.simpleMessage(
+      "Set a new password",
+    ),
+    "verificationStatusTitle": MessageLookupByLibrary.simpleMessage(
+      "Verification status",
     ),
   };
 }

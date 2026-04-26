@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 
 class AppErrorView extends StatelessWidget {
   const AppErrorView({
+    required this.onRetry,
     super.key,
     this.message,
-    required this.onRetry,
   });
 
   final String? message;
@@ -21,7 +21,10 @@ class AppErrorView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline, color: Theme.of(context).colorScheme.error),
+            Icon(
+              Icons.error_outline,
+              color: Theme.of(context).colorScheme.error,
+            ),
             const SizedBox(height: 12),
             Text(
               message ?? localizations.somethingWentWrong,

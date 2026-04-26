@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "314339800063",
+    "project_id": "eventy-360",
+    "storage_bucket": "eventy-360.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:314339800063:android:09e7fb637622f727b9adca",
+        "android_client_info": {
+          "package_name": "com.carbodex.eventy360"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJacAK0I5iH9dU78n4yBZuUZpAhm4uQXI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -22,6 +22,12 @@
   "sendResetLink": "Send reset link",
   "resetEmailSent": "Password reset email was sent.",
   "backToSignIn": "Back to sign in",
+  "updatePasswordTitle": "Set a new password",
+  "newPassword": "New password",
+  "confirmPassword": "Confirm password",
+  "updatePasswordAction": "Update password",
+  "passwordsDoNotMatch": "Passwords do not match.",
+  "passwordUpdatedSuccess": "Password updated successfully.",
   "accountCreated": "Account created successfully.",
   "genericError": "Something went wrong. Please try again.",
   "completeProfileTitle": "Complete Your Profile",
@@ -33,6 +39,21 @@
   "unsupportedRoleBody": "Eventy360 mobile currently supports researcher accounts only.",
   "signedInAs": "Signed in as",
   "profileStatus": "Profile status",
+  "verificationStatusTitle": "Verification status",
+  "subscriptionStatusTitle": "Subscription status",
+  "subscriptionActive": "Premium subscription active",
+  "subscriptionInactive": "No active premium subscription",
+  "nearestDeadlineTitle": "Nearest deadline",
+  "noUpcomingDeadline": "No upcoming deadlines",
+  "activeSubmissionsTitle": "Active submissions",
+  "activeSubmissionsCount": "{count} active submissions",
+  "@activeSubmissionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "profileCompleted": "Profile completed",
   "profileIncomplete": "Profile incomplete",
   "exploreEvents": "Explore events",

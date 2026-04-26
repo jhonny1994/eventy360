@@ -22,6 +22,12 @@
   "sendResetLink": "إرسال رابط إعادة التعيين",
   "resetEmailSent": "تم إرسال رسالة إعادة تعيين كلمة المرور.",
   "backToSignIn": "العودة إلى تسجيل الدخول",
+  "updatePasswordTitle": "تعيين كلمة مرور جديدة",
+  "newPassword": "كلمة المرور الجديدة",
+  "confirmPassword": "تأكيد كلمة المرور",
+  "updatePasswordAction": "تحديث كلمة المرور",
+  "passwordsDoNotMatch": "كلمتا المرور غير متطابقتين.",
+  "passwordUpdatedSuccess": "تم تحديث كلمة المرور بنجاح.",
   "accountCreated": "تم إنشاء الحساب بنجاح.",
   "genericError": "حدث خطأ ما. حاول مرة أخرى.",
   "completeProfileTitle": "أكمل ملفك الشخصي",
@@ -33,6 +39,21 @@
   "unsupportedRoleBody": "تطبيق إيفنتي 360 المحمول يدعم حسابات الباحثين فقط حاليًا.",
   "signedInAs": "تم تسجيل الدخول باسم",
   "profileStatus": "حالة الملف الشخصي",
+  "verificationStatusTitle": "حالة التحقق",
+  "subscriptionStatusTitle": "حالة الاشتراك",
+  "subscriptionActive": "اشتراك مميز نشط",
+  "subscriptionInactive": "لا يوجد اشتراك مميز نشط",
+  "nearestDeadlineTitle": "أقرب موعد نهائي",
+  "noUpcomingDeadline": "لا توجد مواعيد نهائية قادمة",
+  "activeSubmissionsTitle": "الترشيحات النشطة",
+  "activeSubmissionsCount": "{count} ترشيحات نشطة",
+  "@activeSubmissionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "profileCompleted": "الملف الشخصي مكتمل",
   "profileIncomplete": "الملف الشخصي غير مكتمل",
   "exploreEvents": "استكشف الفعاليات",

@@ -82,7 +82,7 @@ final class NotificationControllerProvider
 }
 
 String _$notificationControllerHash() =>
-    r'f3ccf5e7c8592a54c5f1849f4c09560a0cdd9d48';
+    r'e51861672199682cb6deafa8066e5aa4716fe1d8';
 
 abstract class _$NotificationController
     extends $AsyncNotifier<NotificationState> {

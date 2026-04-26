@@ -6,8 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class EventDetailScreen extends ConsumerWidget {
   const EventDetailScreen({
-    super.key,
     required this.eventId,
+    super.key,
   });
 
   final String eventId;
@@ -36,7 +36,10 @@ class EventDetailScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text(selectedEvent.title, style: Theme.of(context).textTheme.headlineSmall),
+          Text(
+            selectedEvent.title,
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
           const SizedBox(height: 8),
           Text(
             '${localizations.deadline}: '
@@ -54,10 +57,13 @@ class EventDetailScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           FilledButton.icon(
-            onPressed: () =>
-                ref.read(eventsControllerProvider.notifier).toggleBookmark(selectedEvent.id),
+            onPressed: () => ref
+                .read(eventsControllerProvider.notifier)
+                .toggleBookmark(selectedEvent.id),
             icon: Icon(
-              selectedEvent.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+              selectedEvent.isBookmarked
+                  ? Icons.bookmark
+                  : Icons.bookmark_border,
             ),
             label: Text(
               selectedEvent.isBookmarked
