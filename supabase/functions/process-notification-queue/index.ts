@@ -37,6 +37,12 @@ interface NotificationQueueItem {
 }
 // --- END INLINED TYPES ---
 
+const PUSH_ELIGIBLE_TEMPLATE_KEYS = new Set([
+  "new_event_in_subscribed_topic",
+  "abstract_deadline_approaching",
+  "full_paper_deadline_approaching",
+]);
+
 Deno.serve(async () => {
   try {
     // Initialize the Supabase client
@@ -188,6 +194,28 @@ async function processNotificationBatch(supabase: SupabaseClient, notifications:
         throw new Error(`Failed to send email: ${errorText}`);
         }
 
+      if (shouldSendPushNotification(notification)) {
+        const pushResponse = await fetch(
+          `${Deno.env.get("SUPABASE_URL")}/functions/v1/send-push`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+            },
+            body: JSON.stringify({ notification_id: notification.id }),
+          }
+        );
+
+        if (!pushResponse.ok) {
+          const pushErrorText = await pushResponse.text();
+          // Push should not block queued email delivery completion.
+          console.warn(
+            `Push dispatch failed for notification ${notification.id}: ${pushErrorText}`,
+          );
+        }
+      }
+
       // Mark as completed if successful
       await supabase
           .from("notification_queue")
@@ -261,4 +289,11 @@ async function processNotificationBatch(supabase: SupabaseClient, notifications:
         .eq("id", notification.id);
     }
   }
+}
+
+function shouldSendPushNotification(notification: NotificationQueueItem): boolean {
+  if (!notification.template_key) {
+    return false;
+  }
+  return PUSH_ELIGIBLE_TEMPLATE_KEYS.has(notification.template_key);
 }
