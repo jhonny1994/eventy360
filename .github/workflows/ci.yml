@@ -159,6 +159,19 @@ jobs:
         if: steps.mobile-project.outputs.exists == 'true'
         run: flutter pub get
 
+      - name: Generate code
+        if: steps.mobile-project.outputs.exists == 'true'
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+
+      - name: Generate localization files
+        if: steps.mobile-project.outputs.exists == 'true'
+        run: flutter pub run intl_utils:generate
+
+      - name: Verify generated sources are committed
+        if: steps.mobile-project.outputs.exists == 'true'
+        shell: bash
+        run: git diff --exit-code -- lib pubspec.lock
+
       - name: Analyze
         if: steps.mobile-project.outputs.exists == 'true'
         run: flutter analyze

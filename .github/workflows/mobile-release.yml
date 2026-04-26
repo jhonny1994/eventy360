@@ -38,6 +38,16 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
 
+      - name: Generate code
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+
+      - name: Generate localization files
+        run: flutter pub run intl_utils:generate
+
+      - name: Verify generated sources are committed
+        shell: bash
+        run: git diff --exit-code -- apps/mobile/lib apps/mobile/pubspec.lock
+
       - name: Analyze
         run: flutter analyze
 
