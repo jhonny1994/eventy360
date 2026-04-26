@@ -21,13 +21,17 @@ class SupabaseAuthRepository implements AuthRepository {
 
   @override
   Stream<AuthUser?> authStateChanges() {
-    return _auth.onAuthStateChange.map((event) => _mapUser(event.session?.user));
+    return _auth.onAuthStateChange.map(
+      (event) => _mapUser(event.session?.user),
+    );
   }
 
   @override
   Stream<AuthDeepLinkIntent> authDeepLinkIntents() {
     return _auth.onAuthStateChange
-        .where((event) => event.event == supabase.AuthChangeEvent.passwordRecovery)
+        .where(
+          (event) => event.event == supabase.AuthChangeEvent.passwordRecovery,
+        )
         .map(
           (_) => const AuthDeepLinkIntent(
             action: AuthDeepLinkAction.passwordRecovery,
@@ -58,7 +62,10 @@ class SupabaseAuthRepository implements AuthRepository {
     required String email,
     required String password,
   }) async {
-    final response = await _auth.signInWithPassword(email: email, password: password);
+    final response = await _auth.signInWithPassword(
+      email: email,
+      password: password,
+    );
     final user = response.user;
     if (user == null || user.email == null) {
       throw AuthException('Sign in did not return a valid user.');
@@ -86,7 +93,8 @@ class SupabaseAuthRepository implements AuthRepository {
     if (user == null || user.email == null) {
       return null;
     }
-    final role = user.userMetadata?['role']?.toString() ??
+    final role =
+        user.userMetadata?['role']?.toString() ??
         user.appMetadata['role']?.toString() ??
         'researcher';
     return AuthUser(

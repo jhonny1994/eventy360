@@ -51,9 +51,12 @@ void main() {
     addTearDown(container.dispose);
 
     await container.read(notificationControllerProvider.future);
-    await container.read(notificationControllerProvider.notifier).requestPermissionForTopicIntent();
+    await container
+        .read(notificationControllerProvider.notifier)
+        .requestPermissionForTopicIntent();
 
-    final state = container.read(notificationControllerProvider).asData?.value ??
+    final state =
+        container.read(notificationControllerProvider).asData?.value ??
         NotificationState.initial();
     expect(state.permissionGranted, isTrue);
   });

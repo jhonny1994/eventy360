@@ -584,6 +584,296 @@ class S {
     );
   }
 
+  /// `My Submissions`
+  String get submissionsTitle {
+    return Intl.message(
+      'My Submissions',
+      name: 'submissionsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submit Abstract`
+  String get submitAbstractTitle {
+    return Intl.message(
+      'Submit Abstract',
+      name: 'submitAbstractTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submit abstract`
+  String get submitAbstractAction {
+    return Intl.message(
+      'Submit abstract',
+      name: 'submitAbstractAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submit Full Paper`
+  String get submitFullPaperTitle {
+    return Intl.message(
+      'Submit Full Paper',
+      name: 'submitFullPaperTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submit full paper`
+  String get submitFullPaperAction {
+    return Intl.message(
+      'Submit full paper',
+      name: 'submitFullPaperAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submit Revision`
+  String get submitRevisionTitle {
+    return Intl.message(
+      'Submit Revision',
+      name: 'submitRevisionTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submit revision`
+  String get submitRevisionAction {
+    return Intl.message(
+      'Submit revision',
+      name: 'submitRevisionAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Event`
+  String get eventSelectionLabel {
+    return Intl.message(
+      'Event',
+      name: 'eventSelectionLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Title (Arabic)`
+  String get submissionTitleArLabel {
+    return Intl.message(
+      'Title (Arabic)',
+      name: 'submissionTitleArLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Title (English, optional)`
+  String get submissionTitleEnLabel {
+    return Intl.message(
+      'Title (English, optional)',
+      name: 'submissionTitleEnLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Abstract (Arabic)`
+  String get abstractArLabel {
+    return Intl.message(
+      'Abstract (Arabic)',
+      name: 'abstractArLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Abstract (English, optional)`
+  String get abstractEnLabel {
+    return Intl.message(
+      'Abstract (English, optional)',
+      name: 'abstractEnLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Paste the uploaded file URL from your storage path.`
+  String get fileUrlHint {
+    return Intl.message(
+      'Paste the uploaded file URL from your storage path.',
+      name: 'fileUrlHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `File URL`
+  String get fileUrlLabel {
+    return Intl.message('File URL', name: 'fileUrlLabel', desc: '', args: []);
+  }
+
+  /// `Revision notes (optional)`
+  String get revisionNotesLabel {
+    return Intl.message(
+      'Revision notes (optional)',
+      name: 'revisionNotesLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel`
+  String get cancelAction {
+    return Intl.message('Cancel', name: 'cancelAction', desc: '', args: []);
+  }
+
+  /// `No submissions found.`
+  String get noSubmissionsFound {
+    return Intl.message(
+      'No submissions found.',
+      name: 'noSubmissionsFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Status`
+  String get submissionStatusLabel {
+    return Intl.message(
+      'Status',
+      name: 'submissionStatusLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Abstract submitted`
+  String get statusAbstractSubmitted {
+    return Intl.message(
+      'Abstract submitted',
+      name: 'statusAbstractSubmitted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Abstract accepted`
+  String get statusAbstractAccepted {
+    return Intl.message(
+      'Abstract accepted',
+      name: 'statusAbstractAccepted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Abstract rejected`
+  String get statusAbstractRejected {
+    return Intl.message(
+      'Abstract rejected',
+      name: 'statusAbstractRejected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Full paper submitted`
+  String get statusFullPaperSubmitted {
+    return Intl.message(
+      'Full paper submitted',
+      name: 'statusFullPaperSubmitted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Full paper accepted`
+  String get statusFullPaperAccepted {
+    return Intl.message(
+      'Full paper accepted',
+      name: 'statusFullPaperAccepted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Full paper rejected`
+  String get statusFullPaperRejected {
+    return Intl.message(
+      'Full paper rejected',
+      name: 'statusFullPaperRejected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Revision requested`
+  String get statusRevisionRequested {
+    return Intl.message(
+      'Revision requested',
+      name: 'statusRevisionRequested',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Revision under review`
+  String get statusRevisionUnderReview {
+    return Intl.message(
+      'Revision under review',
+      name: 'statusRevisionUnderReview',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Completed`
+  String get statusCompleted {
+    return Intl.message(
+      'Completed',
+      name: 'statusCompleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submission Details`
+  String get submissionDetailTitle {
+    return Intl.message(
+      'Submission Details',
+      name: 'submissionDetailTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submission details are not available.`
+  String get submissionDetailMissing {
+    return Intl.message(
+      'Submission details are not available.',
+      name: 'submissionDetailMissing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Status and Feedback Timeline`
+  String get submissionTimelineTitle {
+    return Intl.message(
+      'Status and Feedback Timeline',
+      name: 'submissionTimelineTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Deadline`
   String get deadline {
     return Intl.message('Deadline', name: 'deadline', desc: '', args: []);

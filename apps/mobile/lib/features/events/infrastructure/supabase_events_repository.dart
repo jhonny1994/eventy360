@@ -35,7 +35,13 @@ class SupabaseEventsRepository implements EventsRepository {
     final offset = (page - 1) * pageSize;
     final client = _client;
     if (client == null) {
-      return _demoEvents(bookmarkedIds, query, selectedTopicIds, page, pageSize);
+      return _demoEvents(
+        bookmarkedIds,
+        query,
+        selectedTopicIds,
+        page,
+        pageSize,
+      );
     }
 
     try {
@@ -43,7 +49,9 @@ class SupabaseEventsRepository implements EventsRepository {
         'discover_events',
         params: {
           'search_query': query.isEmpty ? null : query,
-          'topic_ids': selectedTopicIds.isEmpty ? null : selectedTopicIds.toList(),
+          'topic_ids': selectedTopicIds.isEmpty
+              ? null
+              : selectedTopicIds.toList(),
           'wilaya_id_param': null,
           'daira_id_param': null,
           'start_date': null,
@@ -61,15 +69,22 @@ class SupabaseEventsRepository implements EventsRepository {
           .map(
             (json) => EventSummary(
               id: (json['id'] ?? '').toString(),
-              title: (json['title'] ?? json['name'] ?? 'Untitled event').toString(),
-              deadline: DateTime.tryParse((json['submission_deadline'] ?? json['end_date'] ?? '')
-                      .toString()) ??
+              title: (json['title'] ?? json['name'] ?? 'Untitled event')
+                  .toString(),
+              deadline:
+                  DateTime.tryParse(
+                    (json['submission_deadline'] ?? json['end_date'] ?? '')
+                        .toString(),
+                  ) ??
                   DateTime.now().add(const Duration(days: 10)),
-              location: (json['location'] ?? json['wilaya_name'] ?? 'Algeria').toString(),
+              location: (json['location'] ?? json['wilaya_name'] ?? 'Algeria')
+                  .toString(),
               topics: ((json['topics'] as List<dynamic>?) ?? const [])
                   .map((item) => item.toString())
                   .toList(),
-              isBookmarked: bookmarkedIds.contains((json['id'] ?? '').toString()),
+              isBookmarked: bookmarkedIds.contains(
+                (json['id'] ?? '').toString(),
+              ),
             ),
           )
           .toList();
@@ -154,19 +169,24 @@ class SupabaseEventsRepository implements EventsRepository {
 
     try {
       final data = await client.from('topics').select('id, name_translations');
-      final locale = ref.read(sharedPreferencesProvider).getString('app.locale_code') ?? 'en';
+      final locale =
+          ref.read(sharedPreferencesProvider).getString('app.locale_code') ??
+          'en';
       final topics = (data as List<dynamic>)
           .map((row) => row as Map<String, dynamic>)
           .map((row) {
-        final translations = row['name_translations'] as Map<String, dynamic>?;
-        return TopicItem(
-          id: row['id'].toString(),
-          name: translations?[locale]?.toString() ??
-              translations?['en']?.toString() ??
-              translations?['ar']?.toString() ??
-              'Topic',
-        );
-      }).toList();
+            final translations =
+                row['name_translations'] as Map<String, dynamic>?;
+            return TopicItem(
+              id: row['id'].toString(),
+              name:
+                  translations?[locale]?.toString() ??
+                  translations?['en']?.toString() ??
+                  translations?['ar']?.toString() ??
+                  'Topic',
+            );
+          })
+          .toList();
       if (topics.isNotEmpty) {
         return topics;
       }
@@ -211,14 +231,15 @@ class SupabaseEventsRepository implements EventsRepository {
     if (client != null && userId != null) {
       try {
         if (isSubscribed) {
-          await client
-              .from('researcher_topic_subscriptions')
-              .delete()
-              .match({'profile_id': userId, 'topic_id': topicId});
+          await client.from('researcher_topic_subscriptions').delete().match({
+            'profile_id': userId,
+            'topic_id': topicId,
+          });
         } else {
-          await client
-              .from('researcher_topic_subscriptions')
-              .insert({'profile_id': userId, 'topic_id': topicId});
+          await client.from('researcher_topic_subscriptions').insert({
+            'profile_id': userId,
+            'topic_id': topicId,
+          });
         }
       } on Object catch (error) {
         debugPrint('toggleTopicSubscription remote write failed: $error');
@@ -230,7 +251,9 @@ class SupabaseEventsRepository implements EventsRepository {
     } else {
       subs.add(topicId);
     }
-    await ref.read(sharedPreferencesProvider).setStringList(_topicCacheKey, subs.toList());
+    await ref
+        .read(sharedPreferencesProvider)
+        .setStringList(_topicCacheKey, subs.toList());
     return !isSubscribed;
   }
 }
@@ -279,21 +302,21 @@ List<EventSummary> _demoEvents(
   final queryFiltered = query.trim().isEmpty
       ? all
       : all
-          .where(
-            (event) =>
-                event.title.toLowerCase().contains(query.toLowerCase()) ||
-                event.location.toLowerCase().contains(query.toLowerCase()),
-          )
-          .toList();
+            .where(
+              (event) =>
+                  event.title.toLowerCase().contains(query.toLowerCase()) ||
+                  event.location.toLowerCase().contains(query.toLowerCase()),
+            )
+            .toList();
   final filtered = selectedTopicIds.isEmpty
       ? queryFiltered
       : queryFiltered
-          .where(
-            (event) => event.topics.any(
-              (topic) => selectedTopicIds.contains(_topicKey(topic)),
-            ),
-          )
-          .toList();
+            .where(
+              (event) => event.topics.any(
+                (topic) => selectedTopicIds.contains(_topicKey(topic)),
+              ),
+            )
+            .toList();
   final offset = (page - 1) * pageSize;
   if (offset >= filtered.length) {
     return <EventSummary>[];

@@ -24,6 +24,10 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "abstractArLabel": MessageLookupByLibrary.simpleMessage("الملخص (العربية)"),
+    "abstractEnLabel": MessageLookupByLibrary.simpleMessage(
+      "الملخص (الإنجليزية - اختياري)",
+    ),
     "accountCreated": MessageLookupByLibrary.simpleMessage(
       "تم إنشاء الحساب بنجاح.",
     ),
@@ -36,6 +40,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "backToSignIn": MessageLookupByLibrary.simpleMessage(
       "العودة إلى تسجيل الدخول",
     ),
+    "cancelAction": MessageLookupByLibrary.simpleMessage("إلغاء"),
     "completeProfileBody": MessageLookupByLibrary.simpleMessage(
       "قبل استخدام ميزات الباحث، أكمل بيانات ملفك الشخصي.",
     ),
@@ -55,11 +60,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "eventNotFound": MessageLookupByLibrary.simpleMessage(
       "لم يتم العثور على الفعالية.",
     ),
+    "eventSelectionLabel": MessageLookupByLibrary.simpleMessage("الفعالية"),
     "eventsSearchHint": MessageLookupByLibrary.simpleMessage(
       "ابحث عن الفعاليات بالاسم أو الموقع",
     ),
     "eventsTitle": MessageLookupByLibrary.simpleMessage("استكشاف الفعاليات"),
     "exploreEvents": MessageLookupByLibrary.simpleMessage("استكشف الفعاليات"),
+    "fileUrlHint": MessageLookupByLibrary.simpleMessage(
+      "الصق رابط الملف المرفوع من مسار التخزين.",
+    ),
+    "fileUrlLabel": MessageLookupByLibrary.simpleMessage("رابط الملف"),
     "forgotPassword": MessageLookupByLibrary.simpleMessage(
       "هل نسيت كلمة المرور؟",
     ),
@@ -84,6 +94,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "newPassword": MessageLookupByLibrary.simpleMessage("كلمة المرور الجديدة"),
     "noEventsFound": MessageLookupByLibrary.simpleMessage("لا توجد فعاليات."),
+    "noSubmissionsFound": MessageLookupByLibrary.simpleMessage(
+      "لا توجد ترشيحات.",
+    ),
     "noUpcomingDeadline": MessageLookupByLibrary.simpleMessage(
       "لا توجد مواعيد نهائية قادمة",
     ),
@@ -127,6 +140,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "إعادة تعيين كلمة المرور",
     ),
     "retry": MessageLookupByLibrary.simpleMessage("إعادة المحاولة"),
+    "revisionNotesLabel": MessageLookupByLibrary.simpleMessage(
+      "ملاحظات المراجعة (اختياري)",
+    ),
     "sendResetLink": MessageLookupByLibrary.simpleMessage(
       "إرسال رابط إعادة التعيين",
     ),
@@ -135,6 +151,64 @@ class MessageLookup extends MessageLookupByLibrary {
     "signUp": MessageLookupByLibrary.simpleMessage("إنشاء حساب"),
     "signedInAs": MessageLookupByLibrary.simpleMessage("تم تسجيل الدخول باسم"),
     "somethingWentWrong": MessageLookupByLibrary.simpleMessage("حدث خطأ ما."),
+    "statusAbstractAccepted": MessageLookupByLibrary.simpleMessage(
+      "تم قبول الملخص",
+    ),
+    "statusAbstractRejected": MessageLookupByLibrary.simpleMessage(
+      "تم رفض الملخص",
+    ),
+    "statusAbstractSubmitted": MessageLookupByLibrary.simpleMessage(
+      "تم تقديم الملخص",
+    ),
+    "statusCompleted": MessageLookupByLibrary.simpleMessage("مكتمل"),
+    "statusFullPaperAccepted": MessageLookupByLibrary.simpleMessage(
+      "تم قبول البحث الكامل",
+    ),
+    "statusFullPaperRejected": MessageLookupByLibrary.simpleMessage(
+      "تم رفض البحث الكامل",
+    ),
+    "statusFullPaperSubmitted": MessageLookupByLibrary.simpleMessage(
+      "تم تقديم البحث الكامل",
+    ),
+    "statusRevisionRequested": MessageLookupByLibrary.simpleMessage(
+      "تم طلب مراجعة",
+    ),
+    "statusRevisionUnderReview": MessageLookupByLibrary.simpleMessage(
+      "المراجعة قيد التقييم",
+    ),
+    "submissionDetailMissing": MessageLookupByLibrary.simpleMessage(
+      "تفاصيل الترشيح غير متاحة.",
+    ),
+    "submissionDetailTitle": MessageLookupByLibrary.simpleMessage(
+      "تفاصيل الترشيح",
+    ),
+    "submissionStatusLabel": MessageLookupByLibrary.simpleMessage("الحالة"),
+    "submissionTimelineTitle": MessageLookupByLibrary.simpleMessage(
+      "الخط الزمني للحالة والملاحظات",
+    ),
+    "submissionTitleArLabel": MessageLookupByLibrary.simpleMessage(
+      "العنوان (العربية)",
+    ),
+    "submissionTitleEnLabel": MessageLookupByLibrary.simpleMessage(
+      "العنوان (الإنجليزية - اختياري)",
+    ),
+    "submissionsTitle": MessageLookupByLibrary.simpleMessage("ترشيحاتي"),
+    "submitAbstractAction": MessageLookupByLibrary.simpleMessage(
+      "تقديم الملخص",
+    ),
+    "submitAbstractTitle": MessageLookupByLibrary.simpleMessage("تقديم الملخص"),
+    "submitFullPaperAction": MessageLookupByLibrary.simpleMessage(
+      "تقديم البحث الكامل",
+    ),
+    "submitFullPaperTitle": MessageLookupByLibrary.simpleMessage(
+      "تقديم البحث الكامل",
+    ),
+    "submitRevisionAction": MessageLookupByLibrary.simpleMessage(
+      "تقديم المراجعة",
+    ),
+    "submitRevisionTitle": MessageLookupByLibrary.simpleMessage(
+      "تقديم المراجعة",
+    ),
     "subscriptionActive": MessageLookupByLibrary.simpleMessage(
       "اشتراك مميز نشط",
     ),

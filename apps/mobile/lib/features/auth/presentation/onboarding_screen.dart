@@ -17,41 +17,41 @@ class OnboardingScreen extends ConsumerWidget {
         child: AdaptivePageBody(
           child: Padding(
             padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                localizations.onboardingTitle,
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 16),
-              Text(localizations.onboardingBody),
-              const SizedBox(height: 24),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(localizations.notificationEducationBody),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  localizations.onboardingTitle,
+                  style: Theme.of(context).textTheme.headlineMedium,
                 ),
-              ),
-              const Spacer(),
-              Semantics(
-                button: true,
-                label: localizations.getStarted,
-                child: FilledButton(
-                  onPressed: () async {
-                    await ref
-                        .read(sessionControllerProvider.notifier)
-                        .setOnboardingCompleted(value: true);
-                    if (context.mounted) {
-                      context.go(RoutePaths.signIn);
-                    }
-                  },
-                  child: Text(localizations.getStarted),
+                const SizedBox(height: 16),
+                Text(localizations.onboardingBody),
+                const SizedBox(height: 24),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(localizations.notificationEducationBody),
+                  ),
                 ),
-              ),
-            ],
+                const Spacer(),
+                Semantics(
+                  button: true,
+                  label: localizations.getStarted,
+                  child: FilledButton(
+                    onPressed: () async {
+                      await ref
+                          .read(sessionControllerProvider.notifier)
+                          .setOnboardingCompleted(value: true);
+                      if (context.mounted) {
+                        context.go(RoutePaths.signIn);
+                      }
+                    },
+                    child: Text(localizations.getStarted),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
         ),
       ),
     );

@@ -16,7 +16,8 @@ class PasswordResetScreen extends ConsumerStatefulWidget {
   final bool isRecoveryMode;
 
   @override
-  ConsumerState<PasswordResetScreen> createState() => _PasswordResetScreenState();
+  ConsumerState<PasswordResetScreen> createState() =>
+      _PasswordResetScreenState();
 }
 
 class _PasswordResetScreenState extends ConsumerState<PasswordResetScreen> {
@@ -60,8 +61,11 @@ class _PasswordResetScreenState extends ConsumerState<PasswordResetScreen> {
                         TextFormField(
                           controller: _passwordController,
                           obscureText: true,
-                          decoration: InputDecoration(labelText: localizations.newPassword),
-                          validator: (value) => (value == null || value.length < 8)
+                          decoration: InputDecoration(
+                            labelText: localizations.newPassword,
+                          ),
+                          validator: (value) =>
+                              (value == null || value.length < 8)
                               ? localizations.passwordTooShort
                               : null,
                         ),
@@ -69,8 +73,9 @@ class _PasswordResetScreenState extends ConsumerState<PasswordResetScreen> {
                         TextFormField(
                           controller: _confirmPasswordController,
                           obscureText: true,
-                          decoration:
-                              InputDecoration(labelText: localizations.confirmPassword),
+                          decoration: InputDecoration(
+                            labelText: localizations.confirmPassword,
+                          ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return localizations.requiredField;
@@ -98,9 +103,12 @@ class _PasswordResetScreenState extends ConsumerState<PasswordResetScreen> {
                       TextFormField(
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(labelText: localizations.email),
-                        validator: (value) =>
-                            (value == null || value.isEmpty) ? localizations.requiredField : null,
+                        decoration: InputDecoration(
+                          labelText: localizations.email,
+                        ),
+                        validator: (value) => (value == null || value.isEmpty)
+                            ? localizations.requiredField
+                            : null,
                       ),
                       const SizedBox(height: 16),
                       FilledButton(
@@ -118,7 +126,9 @@ class _PasswordResetScreenState extends ConsumerState<PasswordResetScreen> {
                   const SizedBox(height: 12),
                   Text(
                     _error!,
-                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                   ),
                 ],
                 const SizedBox(height: 12),

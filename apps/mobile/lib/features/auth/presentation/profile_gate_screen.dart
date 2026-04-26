@@ -34,34 +34,42 @@ class _ProfileGateScreenState extends ConsumerState<ProfileGateScreen> {
         child: AdaptivePageBody(
           child: Padding(
             padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                Text(localizations.completeProfileBody),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _fullNameController,
-                  decoration: InputDecoration(labelText: localizations.fullName),
-                  validator: (value) =>
-                      (value == null || value.trim().isEmpty) ? localizations.requiredField : null,
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _institutionController,
-                  decoration: InputDecoration(labelText: localizations.institution),
-                  validator: (value) =>
-                      (value == null || value.trim().isEmpty) ? localizations.requiredField : null,
-                ),
-                const SizedBox(height: 16),
-                FilledButton(
-                  onPressed: _complete,
-                  child: Text(localizations.continueAction),
-                ),
-              ],
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  Text(localizations.completeProfileBody),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _fullNameController,
+                    decoration: InputDecoration(
+                      labelText: localizations.fullName,
+                    ),
+                    validator: (value) =>
+                        (value == null || value.trim().isEmpty)
+                        ? localizations.requiredField
+                        : null,
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _institutionController,
+                    decoration: InputDecoration(
+                      labelText: localizations.institution,
+                    ),
+                    validator: (value) =>
+                        (value == null || value.trim().isEmpty)
+                        ? localizations.requiredField
+                        : null,
+                  ),
+                  const SizedBox(height: 16),
+                  FilledButton(
+                    onPressed: _complete,
+                    child: Text(localizations.continueAction),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
         ),
       ),
     );

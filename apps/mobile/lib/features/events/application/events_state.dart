@@ -19,15 +19,15 @@ abstract class EventsState with _$EventsState {
   }) = _EventsState;
 
   factory EventsState.initial() => const EventsState(
-        events: [],
-        topics: [],
-        subscribedTopicIds: {},
-        selectedTopicIds: {},
-        query: '',
-        page: 1,
-        pageSize: 20,
-        isLoadingMore: false,
-      );
+    events: [],
+    topics: [],
+    subscribedTopicIds: {},
+    selectedTopicIds: {},
+    query: '',
+    page: 1,
+    pageSize: 20,
+    isLoadingMore: false,
+  );
 
   factory EventsState.fromJson(Map<String, dynamic> json) =>
       _$EventsStateFromJson(json);

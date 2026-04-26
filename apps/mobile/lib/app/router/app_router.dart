@@ -11,6 +11,9 @@ import 'package:eventy360/features/auth/presentation/unsupported_role_screen.dar
 import 'package:eventy360/features/events/presentation/event_detail_screen.dart';
 import 'package:eventy360/features/events/presentation/events_screen.dart';
 import 'package:eventy360/features/home/presentation/home_screen.dart';
+import 'package:eventy360/features/submissions/presentation/submission_detail_screen.dart';
+import 'package:eventy360/features/submissions/presentation/submission_write_screen.dart';
+import 'package:eventy360/features/submissions/presentation/submissions_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -66,6 +69,34 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) =>
             EventDetailScreen(eventId: state.pathParameters['eventId'] ?? ''),
       ),
+      GoRoute(
+        path: RoutePaths.submissions,
+        builder: (context, state) => const SubmissionsScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.newAbstractSubmission,
+        builder: (context, state) => SubmissionWriteScreen.abstract(
+          prefilledEventId: state.uri.queryParameters['eventId'],
+        ),
+      ),
+      GoRoute(
+        path: '${RoutePaths.submissions}/:submissionId',
+        builder: (context, state) => SubmissionDetailScreen(
+          submissionId: state.pathParameters['submissionId'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '${RoutePaths.submissions}/:submissionId/full-paper',
+        builder: (context, state) => SubmissionWriteScreen.fullPaper(
+          submissionId: state.pathParameters['submissionId'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '${RoutePaths.submissions}/:submissionId/revision',
+        builder: (context, state) => SubmissionWriteScreen.revision(
+          submissionId: state.pathParameters['submissionId'] ?? '',
+        ),
+      ),
     ],
   );
 });
@@ -83,7 +114,8 @@ String? appRedirect({
   }
 
   final current = session.value!;
-  final isAuthRoute = location == RoutePaths.signIn ||
+  final isAuthRoute =
+      location == RoutePaths.signIn ||
       location == RoutePaths.signUp ||
       location == RoutePaths.resetPassword;
 

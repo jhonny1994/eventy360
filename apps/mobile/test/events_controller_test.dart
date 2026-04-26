@@ -25,32 +25,45 @@ void main() {
     expect(initial.events, isNotEmpty);
     expect(initial.events.first.isBookmarked, isFalse);
 
-    await container.read(eventsControllerProvider.notifier).toggleBookmark('evt-1');
+    await container
+        .read(eventsControllerProvider.notifier)
+        .toggleBookmark('evt-1');
     final updated = container.read(eventsControllerProvider).asData!.value;
     expect(updated.events.first.isBookmarked, isTrue);
   });
 
-  test('requests permission and registers token when subscribing to topic', () async {
-    final repository = _FakeEventsRepository();
-    final notificationController = _FakeNotificationController();
-    final container = ProviderContainer(
-      overrides: [
-        eventsRepositoryProvider.overrideWithValue(repository),
-        notificationControllerProvider.overrideWith(() => notificationController),
-      ],
-    );
-    addTearDown(container.dispose);
+  test(
+    'requests permission and registers token when subscribing to topic',
+    () async {
+      final repository = _FakeEventsRepository();
+      final notificationController = _FakeNotificationController();
+      final container = ProviderContainer(
+        overrides: [
+          eventsRepositoryProvider.overrideWithValue(repository),
+          notificationControllerProvider.overrideWith(
+            () => notificationController,
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
 
-    await container.read(eventsControllerProvider.future);
-    await container
-        .read(eventsControllerProvider.notifier)
-        .toggleTopicSubscription('artificial-intelligence');
+      await container.read(eventsControllerProvider.future);
+      await container
+          .read(eventsControllerProvider.notifier)
+          .toggleTopicSubscription('artificial-intelligence');
 
-    final updated = container.read(eventsControllerProvider).asData!.value;
-    expect(updated.subscribedTopicIds.contains('artificial-intelligence'), isTrue);
-    expect(notificationController.permissionRequested, isTrue);
-    expect(notificationController.lastRegisteredTopicId, 'artificial-intelligence');
-  });
+      final updated = container.read(eventsControllerProvider).asData!.value;
+      expect(
+        updated.subscribedTopicIds.contains('artificial-intelligence'),
+        isTrue,
+      );
+      expect(notificationController.permissionRequested, isTrue);
+      expect(
+        notificationController.lastRegisteredTopicId,
+        'artificial-intelligence',
+      );
+    },
+  );
 
   test('applies topic filter to discovery results', () async {
     final repository = _FakeEventsRepository();
@@ -58,13 +71,17 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         eventsRepositoryProvider.overrideWithValue(repository),
-        notificationControllerProvider.overrideWith(() => notificationController),
+        notificationControllerProvider.overrideWith(
+          () => notificationController,
+        ),
       ],
     );
     addTearDown(container.dispose);
 
     await container.read(eventsControllerProvider.future);
-    await container.read(eventsControllerProvider.notifier).toggleTopicFilter('cybersecurity');
+    await container
+        .read(eventsControllerProvider.notifier)
+        .toggleTopicFilter('cybersecurity');
     final updated = container.read(eventsControllerProvider).asData!.value;
     expect(updated.events.length, 1);
     expect(updated.events.first.id, 'evt-2');
@@ -124,7 +141,9 @@ class _FakeEventsRepository implements EventsRepository {
     return events
         .where(
           (event) => event.topics.any(
-            (topic) => selectedTopicIds.contains(topic.toLowerCase().replaceAll(' ', '-')),
+            (topic) => selectedTopicIds.contains(
+              topic.toLowerCase().replaceAll(' ', '-'),
+            ),
           ),
         )
         .toList();
@@ -137,11 +156,10 @@ class _FakeEventsRepository implements EventsRepository {
   Future<Set<String>> getSubscribedTopicIds() async => {..._subs};
 
   @override
-  Future<List<TopicItem>> getTopics() async =>
-      const [
-        TopicItem(id: 'artificial-intelligence', name: 'Artificial Intelligence'),
-        TopicItem(id: 'cybersecurity', name: 'Cybersecurity'),
-      ];
+  Future<List<TopicItem>> getTopics() async => const [
+    TopicItem(id: 'artificial-intelligence', name: 'Artificial Intelligence'),
+    TopicItem(id: 'cybersecurity', name: 'Cybersecurity'),
+  ];
 
   @override
   Future<bool> toggleBookmark(String eventId) async {
