@@ -105,6 +105,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "somethingWentWrong": MessageLookupByLibrary.simpleMessage(
       "Something went wrong.",
     ),
+    "topicSubscriptionHint": MessageLookupByLibrary.simpleMessage(
+      "Subscribe to topics to receive push alerts.",
+    ),
     "unsupportedRoleBody": MessageLookupByLibrary.simpleMessage(
       "Eventy360 mobile currently supports researcher accounts only.",
     ),

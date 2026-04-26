@@ -23,6 +23,7 @@ class EventsController extends _$EventsController {
       page: 1,
       pageSize: 20,
       query: '',
+      selectedTopicIds: const {},
     );
     return EventsState.initial().copyWith(
       topics: topics,
@@ -40,6 +41,7 @@ class EventsController extends _$EventsController {
         page: 1,
         pageSize: current.pageSize,
         query: current.query,
+        selectedTopicIds: current.selectedTopicIds,
       );
       final topics = await repository.getTopics();
       final subscribedTopics = await repository.getSubscribedTopicIds();
@@ -59,6 +61,7 @@ class EventsController extends _$EventsController {
       page: 1,
       pageSize: current.pageSize,
       query: query,
+      selectedTopicIds: current.selectedTopicIds,
     );
     state = AsyncData(
       current.copyWith(
@@ -81,6 +84,7 @@ class EventsController extends _$EventsController {
       page: nextPage,
       pageSize: current.pageSize,
       query: current.query,
+      selectedTopicIds: current.selectedTopicIds,
     );
     state = AsyncData(
       current.copyWith(
@@ -129,6 +133,33 @@ class EventsController extends _$EventsController {
     }
 
     state = AsyncData(current.copyWith(subscribedTopicIds: updatedSubs));
+  }
+
+  Future<void> toggleTopicFilter(String topicId) async {
+    final current = state.asData?.value;
+    if (current == null) {
+      return;
+    }
+    final selected = {...current.selectedTopicIds};
+    if (selected.contains(topicId)) {
+      selected.remove(topicId);
+    } else {
+      selected.add(topicId);
+    }
+    final repository = ref.read(eventsRepositoryProvider);
+    final filteredEvents = await repository.discoverEvents(
+      page: 1,
+      pageSize: current.pageSize,
+      query: current.query,
+      selectedTopicIds: selected,
+    );
+    state = AsyncData(
+      current.copyWith(
+        selectedTopicIds: selected,
+        page: 1,
+        events: filteredEvents,
+      ),
+    );
   }
 
   EventSummary? findById(String eventId) {

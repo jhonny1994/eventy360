@@ -55,7 +55,7 @@ final class PushNotificationServiceProvider
 }
 
 String _$pushNotificationServiceHash() =>
-    r'4730a581cc937f488ee2a274c8d66de537d18103';
+    r'd31cc04d1b8d14374fb75a4795f2180f74f52eca';
 
 @ProviderFor(NotificationController)
 final notificationControllerProvider = NotificationControllerProvider._();
@@ -82,7 +82,7 @@ final class NotificationControllerProvider
 }
 
 String _$notificationControllerHash() =>
-    r'9f13d56e0eaad77f4be35c436ac9f003634c8cd4';
+    r'f3ccf5e7c8592a54c5f1849f4c09560a0cdd9d48';
 
 abstract class _$NotificationController
     extends $AsyncNotifier<NotificationState> {

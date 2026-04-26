@@ -379,6 +379,16 @@ class S {
     );
   }
 
+  /// `Subscribe to topics to receive push alerts.`
+  String get topicSubscriptionHint {
+    return Intl.message(
+      'Subscribe to topics to receive push alerts.',
+      name: 'topicSubscriptionHint',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Add bookmark`
   String get addBookmark {
     return Intl.message(

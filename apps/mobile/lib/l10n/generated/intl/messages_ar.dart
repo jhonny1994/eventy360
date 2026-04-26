@@ -113,6 +113,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "signUp": MessageLookupByLibrary.simpleMessage("إنشاء حساب"),
     "signedInAs": MessageLookupByLibrary.simpleMessage("تم تسجيل الدخول باسم"),
     "somethingWentWrong": MessageLookupByLibrary.simpleMessage("حدث خطأ ما."),
+    "topicSubscriptionHint": MessageLookupByLibrary.simpleMessage(
+      "اشترك في المواضيع لتصلك تنبيهات فورية.",
+    ),
     "unsupportedRoleBody": MessageLookupByLibrary.simpleMessage(
       "تطبيق إيفنتي 360 المحمول يدعم حسابات الباحثين فقط حاليًا.",
     ),

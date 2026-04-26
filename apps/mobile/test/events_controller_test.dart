@@ -44,12 +44,30 @@ void main() {
     await container.read(eventsControllerProvider.future);
     await container
         .read(eventsControllerProvider.notifier)
-        .toggleTopicSubscription('ai');
+        .toggleTopicSubscription('artificial-intelligence');
 
     final updated = container.read(eventsControllerProvider).asData!.value;
-    expect(updated.subscribedTopicIds.contains('ai'), isTrue);
+    expect(updated.subscribedTopicIds.contains('artificial-intelligence'), isTrue);
     expect(notificationController.permissionRequested, isTrue);
-    expect(notificationController.lastRegisteredTopicId, 'ai');
+    expect(notificationController.lastRegisteredTopicId, 'artificial-intelligence');
+  });
+
+  test('applies topic filter to discovery results', () async {
+    final repository = _FakeEventsRepository();
+    final notificationController = _FakeNotificationController();
+    final container = ProviderContainer(
+      overrides: [
+        eventsRepositoryProvider.overrideWithValue(repository),
+        notificationControllerProvider.overrideWith(() => notificationController),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await container.read(eventsControllerProvider.future);
+    await container.read(eventsControllerProvider.notifier).toggleTopicFilter('cybersecurity');
+    final updated = container.read(eventsControllerProvider).asData!.value;
+    expect(updated.events.length, 1);
+    expect(updated.events.first.id, 'evt-2');
   });
 }
 
@@ -80,8 +98,9 @@ class _FakeEventsRepository implements EventsRepository {
     required int page,
     required int pageSize,
     required String query,
+    required Set<String> selectedTopicIds,
   }) async {
-    return [
+    final events = [
       EventSummary(
         id: 'evt-1',
         title: 'Demo event',
@@ -90,7 +109,25 @@ class _FakeEventsRepository implements EventsRepository {
         topics: const ['Artificial Intelligence'],
         isBookmarked: _bookmarks.contains('evt-1'),
       ),
+      EventSummary(
+        id: 'evt-2',
+        title: 'Security event',
+        deadline: DateTime(2026, 11, 30),
+        location: 'Oran',
+        topics: const ['Cybersecurity'],
+        isBookmarked: _bookmarks.contains('evt-2'),
+      ),
     ];
+    if (selectedTopicIds.isEmpty) {
+      return events;
+    }
+    return events
+        .where(
+          (event) => event.topics.any(
+            (topic) => selectedTopicIds.contains(topic.toLowerCase().replaceAll(' ', '-')),
+          ),
+        )
+        .toList();
   }
 
   @override
@@ -101,7 +138,10 @@ class _FakeEventsRepository implements EventsRepository {
 
   @override
   Future<List<TopicItem>> getTopics() async =>
-      const [TopicItem(id: 'ai', name: 'Artificial Intelligence')];
+      const [
+        TopicItem(id: 'artificial-intelligence', name: 'Artificial Intelligence'),
+        TopicItem(id: 'cybersecurity', name: 'Cybersecurity'),
+      ];
 
   @override
   Future<bool> toggleBookmark(String eventId) async {

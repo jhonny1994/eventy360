@@ -28,12 +28,13 @@ class SupabaseEventsRepository implements EventsRepository {
     required int page,
     required int pageSize,
     required String query,
+    required Set<String> selectedTopicIds,
   }) async {
     final bookmarkedIds = await getBookmarkedEventIds();
     final offset = (page - 1) * pageSize;
     final client = _client;
     if (client == null) {
-      return _demoEvents(bookmarkedIds, query, page, pageSize);
+      return _demoEvents(bookmarkedIds, query, selectedTopicIds, page, pageSize);
     }
 
     try {
@@ -41,7 +42,7 @@ class SupabaseEventsRepository implements EventsRepository {
         'discover_events',
         params: {
           'search_query': query.isEmpty ? null : query,
-          'topic_ids': null,
+          'topic_ids': selectedTopicIds.isEmpty ? null : selectedTopicIds.toList(),
           'wilaya_id_param': null,
           'daira_id_param': null,
           'start_date': null,
@@ -77,7 +78,7 @@ class SupabaseEventsRepository implements EventsRepository {
       }
     } catch (_) {}
 
-    return _demoEvents(bookmarkedIds, query, page, pageSize);
+    return _demoEvents(bookmarkedIds, query, selectedTopicIds, page, pageSize);
   }
 
   @override
@@ -235,6 +236,7 @@ final _demoTopics = <TopicItem>[
 List<EventSummary> _demoEvents(
   Set<String> bookmarkedIds,
   String query,
+  Set<String> selectedTopicIds,
   int page,
   int pageSize,
 ) {
@@ -265,7 +267,7 @@ List<EventSummary> _demoEvents(
     ),
   ];
 
-  final filtered = query.trim().isEmpty
+  final queryFiltered = query.trim().isEmpty
       ? all
       : all
           .where(
@@ -274,9 +276,20 @@ List<EventSummary> _demoEvents(
                 event.location.toLowerCase().contains(query.toLowerCase()),
           )
           .toList();
+  final filtered = selectedTopicIds.isEmpty
+      ? queryFiltered
+      : queryFiltered
+          .where(
+            (event) => event.topics.any(
+              (topic) => selectedTopicIds.contains(_topicKey(topic)),
+            ),
+          )
+          .toList();
   final offset = (page - 1) * pageSize;
   if (offset >= filtered.length) {
     return <EventSummary>[];
   }
   return filtered.skip(offset).take(pageSize).toList();
 }
+
+String _topicKey(String name) => name.toLowerCase().replaceAll(' ', '-');
