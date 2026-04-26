@@ -1,3 +1,4 @@
+import 'package:eventy360/core/presentation/widgets/adaptive_page_body.dart';
 import 'package:eventy360/features/auth/application/session_controller.dart';
 import 'package:eventy360/l10n/generated/l10n.dart';
 import 'package:flutter/material.dart';
@@ -30,8 +31,9 @@ class _ProfileGateScreenState extends ConsumerState<ProfileGateScreen> {
         title: Text(localizations.completeProfileTitle),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
+        child: AdaptivePageBody(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
           child: Form(
             key: _formKey,
             child: Column(
@@ -59,6 +61,7 @@ class _ProfileGateScreenState extends ConsumerState<ProfileGateScreen> {
               ],
             ),
           ),
+        ),
         ),
       ),
     );

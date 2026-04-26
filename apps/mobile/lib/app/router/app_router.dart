@@ -8,6 +8,8 @@ import 'package:eventy360/features/auth/presentation/sign_in_screen.dart';
 import 'package:eventy360/features/auth/presentation/sign_up_screen.dart';
 import 'package:eventy360/features/auth/presentation/splash_screen.dart';
 import 'package:eventy360/features/auth/presentation/unsupported_role_screen.dart';
+import 'package:eventy360/features/events/presentation/event_detail_screen.dart';
+import 'package:eventy360/features/events/presentation/events_screen.dart';
 import 'package:eventy360/features/home/presentation/home_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -52,6 +54,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RoutePaths.home,
         builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.events,
+        builder: (context, state) => const EventsScreen(),
+      ),
+      GoRoute(
+        path: '${RoutePaths.events}/:eventId',
+        builder: (context, state) =>
+            EventDetailScreen(eventId: state.pathParameters['eventId'] ?? ''),
       ),
     ],
   );

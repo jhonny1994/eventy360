@@ -9,4 +9,5 @@ class RoutePaths {
   static const profileGate = '/profile-gate';
   static const unsupportedRole = '/unsupported-role';
   static const home = '/home';
+  static const events = '/events';
 }

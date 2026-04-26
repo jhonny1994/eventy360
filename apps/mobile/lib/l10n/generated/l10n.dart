@@ -349,6 +349,101 @@ class S {
     );
   }
 
+  /// `Explore events`
+  String get exploreEvents {
+    return Intl.message(
+      'Explore events',
+      name: 'exploreEvents',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Discover Events`
+  String get eventsTitle {
+    return Intl.message(
+      'Discover Events',
+      name: 'eventsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search events by name or location`
+  String get eventsSearchHint {
+    return Intl.message(
+      'Search events by name or location',
+      name: 'eventsSearchHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add bookmark`
+  String get addBookmark {
+    return Intl.message(
+      'Add bookmark',
+      name: 'addBookmark',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remove bookmark`
+  String get removeBookmark {
+    return Intl.message(
+      'Remove bookmark',
+      name: 'removeBookmark',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Load more`
+  String get loadMore {
+    return Intl.message('Load more', name: 'loadMore', desc: '', args: []);
+  }
+
+  /// `No events found.`
+  String get noEventsFound {
+    return Intl.message(
+      'No events found.',
+      name: 'noEventsFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Event Details`
+  String get eventDetailsTitle {
+    return Intl.message(
+      'Event Details',
+      name: 'eventDetailsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Event was not found.`
+  String get eventNotFound {
+    return Intl.message(
+      'Event was not found.',
+      name: 'eventNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Deadline`
+  String get deadline {
+    return Intl.message('Deadline', name: 'deadline', desc: '', args: []);
+  }
+
+  /// `Location`
+  String get location {
+    return Intl.message('Location', name: 'location', desc: '', args: []);
+  }
+
   /// `Retry`
   String get retry {
     return Intl.message('Retry', name: 'retry', desc: '', args: []);

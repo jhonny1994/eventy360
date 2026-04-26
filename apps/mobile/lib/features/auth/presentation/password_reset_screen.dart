@@ -1,4 +1,5 @@
 import 'package:eventy360/app/router/route_paths.dart';
+import 'package:eventy360/core/presentation/widgets/adaptive_page_body.dart';
 import 'package:eventy360/features/auth/application/session_controller.dart';
 import 'package:eventy360/features/auth/domain/auth_exception.dart';
 import 'package:eventy360/l10n/generated/l10n.dart';
@@ -31,8 +32,9 @@ class _PasswordResetScreenState extends ConsumerState<PasswordResetScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(localizations.resetPassword)),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
+        child: AdaptivePageBody(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
           child: Form(
             key: _formKey,
             child: Column(
@@ -65,6 +67,7 @@ class _PasswordResetScreenState extends ConsumerState<PasswordResetScreen> {
               ],
             ),
           ),
+        ),
         ),
       ),
     );

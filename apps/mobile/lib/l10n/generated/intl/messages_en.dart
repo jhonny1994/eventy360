@@ -25,6 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "accountCreated": MessageLookupByLibrary.simpleMessage(
       "Account created successfully.",
     ),
+    "addBookmark": MessageLookupByLibrary.simpleMessage("Add bookmark"),
     "appTitle": MessageLookupByLibrary.simpleMessage("Eventy360"),
     "backToSignIn": MessageLookupByLibrary.simpleMessage("Back to sign in"),
     "completeProfileBody": MessageLookupByLibrary.simpleMessage(
@@ -35,7 +36,17 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "continueAction": MessageLookupByLibrary.simpleMessage("Continue"),
     "createAccount": MessageLookupByLibrary.simpleMessage("Create account"),
+    "deadline": MessageLookupByLibrary.simpleMessage("Deadline"),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
+    "eventDetailsTitle": MessageLookupByLibrary.simpleMessage("Event Details"),
+    "eventNotFound": MessageLookupByLibrary.simpleMessage(
+      "Event was not found.",
+    ),
+    "eventsSearchHint": MessageLookupByLibrary.simpleMessage(
+      "Search events by name or location",
+    ),
+    "eventsTitle": MessageLookupByLibrary.simpleMessage("Discover Events"),
+    "exploreEvents": MessageLookupByLibrary.simpleMessage("Explore events"),
     "forgotPassword": MessageLookupByLibrary.simpleMessage("Forgot password?"),
     "fullName": MessageLookupByLibrary.simpleMessage("Full name"),
     "genericError": MessageLookupByLibrary.simpleMessage(
@@ -50,7 +61,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "homeTitle": MessageLookupByLibrary.simpleMessage("Researcher Home"),
     "institution": MessageLookupByLibrary.simpleMessage("Institution"),
+    "loadMore": MessageLookupByLibrary.simpleMessage("Load more"),
     "loading": MessageLookupByLibrary.simpleMessage("Loading..."),
+    "location": MessageLookupByLibrary.simpleMessage("Location"),
+    "noEventsFound": MessageLookupByLibrary.simpleMessage("No events found."),
     "notificationEducationBody": MessageLookupByLibrary.simpleMessage(
       "We will ask for notification permission only after you subscribe to topics.",
     ),
@@ -74,6 +88,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Profile incomplete",
     ),
     "profileStatus": MessageLookupByLibrary.simpleMessage("Profile status"),
+    "removeBookmark": MessageLookupByLibrary.simpleMessage("Remove bookmark"),
     "requiredField": MessageLookupByLibrary.simpleMessage(
       "This field is required.",
     ),
