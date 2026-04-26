@@ -22,15 +22,79 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "accountCreated": MessageLookupByLibrary.simpleMessage(
+      "Account created successfully.",
+    ),
     "appTitle": MessageLookupByLibrary.simpleMessage("Eventy360"),
+    "backToSignIn": MessageLookupByLibrary.simpleMessage("Back to sign in"),
+    "completeProfileBody": MessageLookupByLibrary.simpleMessage(
+      "Before using researcher features, complete your profile details.",
+    ),
+    "completeProfileTitle": MessageLookupByLibrary.simpleMessage(
+      "Complete Your Profile",
+    ),
+    "continueAction": MessageLookupByLibrary.simpleMessage("Continue"),
+    "createAccount": MessageLookupByLibrary.simpleMessage("Create account"),
+    "email": MessageLookupByLibrary.simpleMessage("Email"),
+    "forgotPassword": MessageLookupByLibrary.simpleMessage("Forgot password?"),
+    "fullName": MessageLookupByLibrary.simpleMessage("Full name"),
+    "genericError": MessageLookupByLibrary.simpleMessage(
+      "Something went wrong. Please try again.",
+    ),
+    "getStarted": MessageLookupByLibrary.simpleMessage("Get Started"),
+    "haveAccountSignIn": MessageLookupByLibrary.simpleMessage(
+      "Already have an account? Sign in",
+    ),
     "homeSubtitle": MessageLookupByLibrary.simpleMessage(
-      "MVP foundation is ready.",
+      "Your command center is ready.",
     ),
     "homeTitle": MessageLookupByLibrary.simpleMessage("Researcher Home"),
+    "institution": MessageLookupByLibrary.simpleMessage("Institution"),
     "loading": MessageLookupByLibrary.simpleMessage("Loading..."),
+    "notificationEducationBody": MessageLookupByLibrary.simpleMessage(
+      "We will ask for notification permission only after you subscribe to topics.",
+    ),
+    "notificationEducationTitle": MessageLookupByLibrary.simpleMessage(
+      "Notification setup",
+    ),
+    "onboardingBody": MessageLookupByLibrary.simpleMessage(
+      "Complete your researcher workflow from mobile with fewer steps.",
+    ),
+    "onboardingTitle": MessageLookupByLibrary.simpleMessage(
+      "Welcome to Eventy360",
+    ),
+    "password": MessageLookupByLibrary.simpleMessage("Password"),
+    "passwordTooShort": MessageLookupByLibrary.simpleMessage(
+      "Password must be at least 8 characters.",
+    ),
+    "profileCompleted": MessageLookupByLibrary.simpleMessage(
+      "Profile completed",
+    ),
+    "profileIncomplete": MessageLookupByLibrary.simpleMessage(
+      "Profile incomplete",
+    ),
+    "profileStatus": MessageLookupByLibrary.simpleMessage("Profile status"),
+    "requiredField": MessageLookupByLibrary.simpleMessage(
+      "This field is required.",
+    ),
+    "resetEmailSent": MessageLookupByLibrary.simpleMessage(
+      "Password reset email was sent.",
+    ),
+    "resetPassword": MessageLookupByLibrary.simpleMessage("Reset Password"),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
+    "sendResetLink": MessageLookupByLibrary.simpleMessage("Send reset link"),
+    "signIn": MessageLookupByLibrary.simpleMessage("Sign In"),
+    "signOut": MessageLookupByLibrary.simpleMessage("Sign Out"),
+    "signUp": MessageLookupByLibrary.simpleMessage("Sign Up"),
+    "signedInAs": MessageLookupByLibrary.simpleMessage("Signed in as"),
     "somethingWentWrong": MessageLookupByLibrary.simpleMessage(
       "Something went wrong.",
+    ),
+    "unsupportedRoleBody": MessageLookupByLibrary.simpleMessage(
+      "Eventy360 mobile currently supports researcher accounts only.",
+    ),
+    "unsupportedRoleTitle": MessageLookupByLibrary.simpleMessage(
+      "This account role is not supported on mobile",
     ),
   };
 }

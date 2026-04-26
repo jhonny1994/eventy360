@@ -1,0 +1,12 @@
+class RoutePaths {
+  const RoutePaths._();
+
+  static const splash = '/splash';
+  static const onboarding = '/onboarding';
+  static const signIn = '/auth/sign-in';
+  static const signUp = '/auth/sign-up';
+  static const resetPassword = '/auth/reset';
+  static const profileGate = '/profile-gate';
+  static const unsupportedRole = '/unsupported-role';
+  static const home = '/home';
+}
