@@ -146,6 +146,26 @@ class HomeScreen extends ConsumerWidget {
                 label: Text(localizations.submissionsTitle),
               ),
             ),
+            const SizedBox(height: 8),
+            Semantics(
+              button: true,
+              label: localizations.trustCenterTitle,
+              child: OutlinedButton.icon(
+                onPressed: () => context.go(RoutePaths.trust),
+                icon: const Icon(Icons.verified_user_outlined),
+                label: Text(localizations.trustCenterTitle),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Semantics(
+              button: true,
+              label: localizations.repositoryTitle,
+              child: OutlinedButton.icon(
+                onPressed: () => context.go(RoutePaths.repository),
+                icon: const Icon(Icons.menu_book_outlined),
+                label: Text(localizations.repositoryTitle),
+              ),
+            ),
           ],
         ),
       ),

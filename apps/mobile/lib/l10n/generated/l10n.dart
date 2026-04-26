@@ -919,6 +919,581 @@ class S {
     );
   }
 
+  /// `Trust Center`
+  String get trustCenterTitle {
+    return Intl.message(
+      'Trust Center',
+      name: 'trustCenterTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sensitive document handling`
+  String get secureDocsTitle {
+    return Intl.message(
+      'Sensitive document handling',
+      name: 'secureDocsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Verification and payment files are uploaded through authenticated requests, validated before upload, and opened later with short-lived signed links.`
+  String get secureDocsBody {
+    return Intl.message(
+      'Verification and payment files are uploaded through authenticated requests, validated before upload, and opened later with short-lived signed links.',
+      name: 'secureDocsBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Verification`
+  String get verificationCenterTitle {
+    return Intl.message(
+      'Verification',
+      name: 'verificationCenterTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your researcher verification is approved. You can continue using verified researcher flows.`
+  String get verificationApprovedBody {
+    return Intl.message(
+      'Your researcher verification is approved. You can continue using verified researcher flows.',
+      name: 'verificationApprovedBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your verification request is pending review. We will keep your latest document on file until the review is completed.`
+  String get verificationPendingBody {
+    return Intl.message(
+      'Your verification request is pending review. We will keep your latest document on file until the review is completed.',
+      name: 'verificationPendingBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Upload one clear proof document to start the verification review process.`
+  String get verificationRequiredBody {
+    return Intl.message(
+      'Upload one clear proof document to start the verification review process.',
+      name: 'verificationRequiredBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Latest request`
+  String get latestRequestLabel {
+    return Intl.message(
+      'Latest request',
+      name: 'latestRequestLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rejection reason`
+  String get rejectionReasonLabel {
+    return Intl.message(
+      'Rejection reason',
+      name: 'rejectionReasonLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View uploaded document`
+  String get viewUploadedDocument {
+    return Intl.message(
+      'View uploaded document',
+      name: 'viewUploadedDocument',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose verification document`
+  String get pickVerificationDocument {
+    return Intl.message(
+      'Choose verification document',
+      name: 'pickVerificationDocument',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submit verification request`
+  String get submitVerificationRequest {
+    return Intl.message(
+      'Submit verification request',
+      name: 'submitVerificationRequest',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pending review`
+  String get verificationPendingStatus {
+    return Intl.message(
+      'Pending review',
+      name: 'verificationPendingStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rejected`
+  String get verificationRejectedStatus {
+    return Intl.message(
+      'Rejected',
+      name: 'verificationRejectedStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payment History`
+  String get paymentHistoryTitle {
+    return Intl.message(
+      'Payment History',
+      name: 'paymentHistoryTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Report Payment`
+  String get reportPaymentTitle {
+    return Intl.message(
+      'Report Payment',
+      name: 'reportPaymentTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No payments found yet.`
+  String get noPaymentsFound {
+    return Intl.message(
+      'No payments found yet.',
+      name: 'noPaymentsFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Billing period`
+  String get billingPeriodLabel {
+    return Intl.message(
+      'Billing period',
+      name: 'billingPeriodLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payment method`
+  String get paymentMethodLabel {
+    return Intl.message(
+      'Payment method',
+      name: 'paymentMethodLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reported at`
+  String get reportedAtLabel {
+    return Intl.message(
+      'Reported at',
+      name: 'reportedAtLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reference number`
+  String get referenceNumberLabel {
+    return Intl.message(
+      'Reference number',
+      name: 'referenceNumberLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View proof document`
+  String get viewProofDocument {
+    return Intl.message(
+      'View proof document',
+      name: 'viewProofDocument',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Monthly`
+  String get billingPeriodMonthly {
+    return Intl.message(
+      'Monthly',
+      name: 'billingPeriodMonthly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quarterly`
+  String get billingPeriodQuarterly {
+    return Intl.message(
+      'Quarterly',
+      name: 'billingPeriodQuarterly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Biannual`
+  String get billingPeriodBiannual {
+    return Intl.message(
+      'Biannual',
+      name: 'billingPeriodBiannual',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Annual`
+  String get billingPeriodAnnual {
+    return Intl.message(
+      'Annual',
+      name: 'billingPeriodAnnual',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bank transfer`
+  String get paymentMethodBank {
+    return Intl.message(
+      'Bank transfer',
+      name: 'paymentMethodBank',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check`
+  String get paymentMethodCheck {
+    return Intl.message(
+      'Check',
+      name: 'paymentMethodCheck',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cash`
+  String get paymentMethodCash {
+    return Intl.message('Cash', name: 'paymentMethodCash', desc: '', args: []);
+  }
+
+  /// `Online payment`
+  String get paymentMethodOnline {
+    return Intl.message(
+      'Online payment',
+      name: 'paymentMethodOnline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pending verification`
+  String get paymentPendingStatus {
+    return Intl.message(
+      'Pending verification',
+      name: 'paymentPendingStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Verified`
+  String get paymentVerifiedStatus {
+    return Intl.message(
+      'Verified',
+      name: 'paymentVerifiedStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rejected`
+  String get paymentRejectedStatus {
+    return Intl.message(
+      'Rejected',
+      name: 'paymentRejectedStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submit your payment amount, method, and proof so the team can verify your subscription access.`
+  String get reportPaymentBody {
+    return Intl.message(
+      'Submit your payment amount, method, and proof so the team can verify your subscription access.',
+      name: 'reportPaymentBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Amount`
+  String get paymentAmountLabel {
+    return Intl.message(
+      'Amount',
+      name: 'paymentAmountLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter a valid amount greater than zero.`
+  String get paymentAmountError {
+    return Intl.message(
+      'Enter a valid amount greater than zero.',
+      name: 'paymentAmountError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payer notes`
+  String get paymentNotesLabel {
+    return Intl.message(
+      'Payer notes',
+      name: 'paymentNotesLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose proof document`
+  String get pickProofDocument {
+    return Intl.message(
+      'Choose proof document',
+      name: 'pickProofDocument',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submit payment report`
+  String get submitPaymentReportAction {
+    return Intl.message(
+      'Submit payment report',
+      name: 'submitPaymentReportAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Research Repository`
+  String get repositoryTitle {
+    return Intl.message(
+      'Research Repository',
+      name: 'repositoryTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Premium access is required`
+  String get repositorySubscriptionRequiredTitle {
+    return Intl.message(
+      'Premium access is required',
+      name: 'repositorySubscriptionRequiredTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The repository is reserved for active premium or trial subscriptions.`
+  String get repositorySubscriptionRequiredBody {
+    return Intl.message(
+      'The repository is reserved for active premium or trial subscriptions.',
+      name: 'repositorySubscriptionRequiredBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search papers, events, or authors`
+  String get repositorySearchHint {
+    return Intl.message(
+      'Search papers, events, or authors',
+      name: 'repositorySearchHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No papers matched your current filters.`
+  String get repositoryEmptyState {
+    return Intl.message(
+      'No papers matched your current filters.',
+      name: 'repositoryEmptyState',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Views`
+  String get repositoryViewsLabel {
+    return Intl.message(
+      'Views',
+      name: 'repositoryViewsLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Downloads`
+  String get repositoryDownloadsLabel {
+    return Intl.message(
+      'Downloads',
+      name: 'repositoryDownloadsLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download paper`
+  String get repositoryDownloadAction {
+    return Intl.message(
+      'Download paper',
+      name: 'repositoryDownloadAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View details`
+  String get repositoryDetailAction {
+    return Intl.message(
+      'View details',
+      name: 'repositoryDetailAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Paper Details`
+  String get repositoryDetailTitle {
+    return Intl.message(
+      'Paper Details',
+      name: 'repositoryDetailTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Abstract`
+  String get repositoryAbstractTitle {
+    return Intl.message(
+      'Abstract',
+      name: 'repositoryAbstractTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download`
+  String get repositoryDownloadSectionTitle {
+    return Intl.message(
+      'Download',
+      name: 'repositoryDownloadSectionTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Paper file`
+  String get repositoryPaperFileFallback {
+    return Intl.message(
+      'Paper file',
+      name: 'repositoryPaperFileFallback',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No downloadable file is available for this paper.`
+  String get repositoryNoFileAvailable {
+    return Intl.message(
+      'No downloadable file is available for this paper.',
+      name: 'repositoryNoFileAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We could not read the selected file.`
+  String get fileReadFailed {
+    return Intl.message(
+      'We could not read the selected file.',
+      name: 'fileReadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Only PDF, JPG, or PNG files are allowed here.`
+  String get secureFileTypeError {
+    return Intl.message(
+      'Only PDF, JPG, or PNG files are allowed here.',
+      name: 'secureFileTypeError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The selected file exceeds the 10 MB limit.`
+  String get secureFileSizeError {
+    return Intl.message(
+      'The selected file exceeds the 10 MB limit.',
+      name: 'secureFileSizeError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose a file before submitting.`
+  String get secureFileRequiredError {
+    return Intl.message(
+      'Choose a file before submitting.',
+      name: 'secureFileRequiredError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We could not open the file.`
+  String get fileOpenFailed {
+    return Intl.message(
+      'We could not open the file.',
+      name: 'fileOpenFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Deadline`
   String get deadline {
     return Intl.message('Deadline', name: 'deadline', desc: '', args: []);

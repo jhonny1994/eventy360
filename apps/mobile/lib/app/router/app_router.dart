@@ -11,9 +11,13 @@ import 'package:eventy360/features/auth/presentation/unsupported_role_screen.dar
 import 'package:eventy360/features/events/presentation/event_detail_screen.dart';
 import 'package:eventy360/features/events/presentation/events_screen.dart';
 import 'package:eventy360/features/home/presentation/home_screen.dart';
+import 'package:eventy360/features/repository/presentation/paper_detail_screen.dart';
+import 'package:eventy360/features/repository/presentation/repository_screen.dart';
 import 'package:eventy360/features/submissions/presentation/submission_detail_screen.dart';
 import 'package:eventy360/features/submissions/presentation/submission_write_screen.dart';
 import 'package:eventy360/features/submissions/presentation/submissions_screen.dart';
+import 'package:eventy360/features/trust/presentation/payment_report_screen.dart';
+import 'package:eventy360/features/trust/presentation/trust_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -59,6 +63,24 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RoutePaths.home,
         builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.trust,
+        builder: (context, state) => const TrustScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.reportPayment,
+        builder: (context, state) => const PaymentReportScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.repository,
+        builder: (context, state) => const RepositoryScreen(),
+      ),
+      GoRoute(
+        path: '${RoutePaths.repository}/:paperId',
+        builder: (context, state) => PaperDetailScreen(
+          paperId: state.pathParameters['paperId'] ?? '',
+        ),
       ),
       GoRoute(
         path: RoutePaths.events,
