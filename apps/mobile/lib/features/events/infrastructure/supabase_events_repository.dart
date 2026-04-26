@@ -2,6 +2,7 @@ import 'package:eventy360/app/providers.dart';
 import 'package:eventy360/features/events/domain/event_summary.dart';
 import 'package:eventy360/features/events/domain/events_repository.dart';
 import 'package:eventy360/features/events/domain/topic_item.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
@@ -16,7 +17,7 @@ class SupabaseEventsRepository implements EventsRepository {
   supabase.SupabaseClient? get _client {
     try {
       return supabase.Supabase.instance.client;
-    } catch (_) {
+    } on Object {
       return null;
     }
   }
@@ -76,7 +77,9 @@ class SupabaseEventsRepository implements EventsRepository {
       if (events.isNotEmpty) {
         return events;
       }
-    } catch (_) {}
+    } on Object catch (error) {
+      debugPrint('discoverEvents fallback to demo data: $error');
+    }
 
     return _demoEvents(bookmarkedIds, query, selectedTopicIds, page, pageSize);
   }
@@ -100,7 +103,7 @@ class SupabaseEventsRepository implements EventsRepository {
           .toSet();
       await prefs.setStringList(_bookmarkCacheKey, ids.toList());
       return ids;
-    } catch (_) {
+    } on Object {
       return fallback.toSet();
     }
   }
@@ -126,7 +129,9 @@ class SupabaseEventsRepository implements EventsRepository {
             'event_id': eventId,
           });
         }
-      } catch (_) {}
+      } on Object catch (error) {
+        debugPrint('toggleBookmark remote write failed: $error');
+      }
     }
 
     if (isBookmarked) {
@@ -153,7 +158,7 @@ class SupabaseEventsRepository implements EventsRepository {
       final topics = (data as List<dynamic>)
           .map((row) => row as Map<String, dynamic>)
           .map((row) {
-        final translations = (row['name_translations'] as Map<String, dynamic>?);
+        final translations = row['name_translations'] as Map<String, dynamic>?;
         return TopicItem(
           id: row['id'].toString(),
           name: translations?[locale]?.toString() ??
@@ -165,7 +170,9 @@ class SupabaseEventsRepository implements EventsRepository {
       if (topics.isNotEmpty) {
         return topics;
       }
-    } catch (_) {}
+    } on Object catch (error) {
+      debugPrint('getTopics fallback to demo topics: $error');
+    }
 
     return _demoTopics;
   }
@@ -189,7 +196,7 @@ class SupabaseEventsRepository implements EventsRepository {
           .toSet();
       await prefs.setStringList(_topicCacheKey, ids.toList());
       return ids;
-    } catch (_) {
+    } on Object {
       return fallback.toSet();
     }
   }
@@ -213,7 +220,9 @@ class SupabaseEventsRepository implements EventsRepository {
               .from('researcher_topic_subscriptions')
               .insert({'profile_id': userId, 'topic_id': topicId});
         }
-      } catch (_) {}
+      } on Object catch (error) {
+        debugPrint('toggleTopicSubscription remote write failed: $error');
+      }
     }
 
     if (isSubscribed) {

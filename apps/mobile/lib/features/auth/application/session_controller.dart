@@ -1,5 +1,6 @@
 import 'package:eventy360/app/providers.dart';
 import 'package:eventy360/features/auth/application/session_state.dart';
+import 'package:eventy360/features/auth/domain/auth_deep_link_intent.dart';
 import 'package:eventy360/features/auth/domain/auth_exception.dart';
 import 'package:eventy360/features/auth/domain/auth_repository.dart';
 import 'package:eventy360/features/auth/domain/auth_user.dart';
@@ -16,9 +17,14 @@ AuthRepository authRepository(Ref ref) {
   return SupabaseAuthRepository();
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 Stream<AuthUser?> authStateChanges(Ref ref) {
   return ref.watch(authRepositoryProvider).authStateChanges();
+}
+
+@Riverpod(keepAlive: true)
+Stream<AuthDeepLinkIntent> authDeepLinkIntents(Ref ref) {
+  return ref.watch(authRepositoryProvider).authDeepLinkIntents();
 }
 
 @Riverpod(keepAlive: true)
@@ -31,7 +37,7 @@ class SessionController extends _$SessionController {
     AuthUser? currentUser;
     try {
       currentUser = await ref.watch(authRepositoryProvider).getCurrentUser();
-    } catch (_) {
+    } on Object {
       currentUser = null;
     }
 
@@ -44,17 +50,15 @@ class SessionController extends _$SessionController {
         state = AsyncData(
           previousData.copyWith(
             user: user,
-            profileCompleted: user == null
-                ? false
-                : (prefs.getBool('$_profileCompletedPrefix${user.id}') ?? false),
+            profileCompleted: user != null &&
+                (prefs.getBool('$_profileCompletedPrefix${user.id}') ?? false),
           ),
         );
       });
     });
 
-    final profileCompleted = currentUser == null
-        ? false
-        : (prefs.getBool('$_profileCompletedPrefix${currentUser.id}') ?? false);
+    final profileCompleted = currentUser != null &&
+        (prefs.getBool('$_profileCompletedPrefix${currentUser.id}') ?? false);
 
     return SessionState(
       user: currentUser,
@@ -63,7 +67,7 @@ class SessionController extends _$SessionController {
     );
   }
 
-  Future<void> setOnboardingCompleted(bool value) async {
+  Future<void> setOnboardingCompleted({required bool value}) async {
     final current = state.asData?.value;
     if (current == null) {
       return;
@@ -72,7 +76,7 @@ class SessionController extends _$SessionController {
     state = AsyncData(current.copyWith(onboardingCompleted: value));
   }
 
-  Future<void> setProfileCompleted(bool value) async {
+  Future<void> setProfileCompleted({required bool value}) async {
     final current = state.asData?.value;
     final user = current?.user;
     if (current == null || user == null) {
@@ -147,6 +151,20 @@ class SessionController extends _$SessionController {
         rethrow;
       }
       throw AuthException('Password reset failed.');
+    }
+  }
+
+  Future<void> updatePassword(String newPassword) async {
+    if (newPassword.length < 8) {
+      throw AuthException('Password must be at least 8 characters.');
+    }
+    try {
+      await ref.read(authRepositoryProvider).updatePassword(newPassword);
+    } catch (error) {
+      if (error is AuthException) {
+        rethrow;
+      }
+      throw AuthException('Password update failed.');
     }
   }
 }

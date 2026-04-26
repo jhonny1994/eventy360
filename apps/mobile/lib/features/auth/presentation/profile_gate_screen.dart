@@ -71,6 +71,8 @@ class _ProfileGateScreenState extends ConsumerState<ProfileGateScreen> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    await ref.read(sessionControllerProvider.notifier).setProfileCompleted(true);
+    await ref
+        .read(sessionControllerProvider.notifier)
+        .setProfileCompleted(value: true);
   }
 }

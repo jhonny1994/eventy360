@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:eventy360/app/router/route_paths.dart';
 import 'package:eventy360/core/presentation/widgets/adaptive_page_body.dart';
 import 'package:eventy360/core/presentation/widgets/app_loading_view.dart';
@@ -30,8 +32,11 @@ class EventsScreen extends ConsumerWidget {
                     label: localizations.eventsSearchHint,
                     textField: true,
                     child: TextField(
-                      onChanged: (value) =>
+                      onChanged: (value) {
+                        unawaited(
                           ref.read(eventsControllerProvider.notifier).updateQuery(value),
+                        );
+                      },
                       decoration: InputDecoration(
                         hintText: localizations.eventsSearchHint,
                         prefixIcon: const Icon(Icons.search),
@@ -48,7 +53,11 @@ class EventsScreen extends ConsumerWidget {
                         label: Text(topic.name),
                         selected: selected,
                         onSelected: (_) {
-                          ref.read(eventsControllerProvider.notifier).toggleTopicFilter(topic.id);
+                          unawaited(
+                            ref
+                                .read(eventsControllerProvider.notifier)
+                                .toggleTopicFilter(topic.id),
+                          );
                         },
                       );
                     }).toList(),
@@ -69,9 +78,11 @@ class EventsScreen extends ConsumerWidget {
                         label: Text(topic.name),
                         selected: subscribed,
                         onSelected: (_) {
-                          ref
-                              .read(eventsControllerProvider.notifier)
-                              .toggleTopicSubscription(topic.id);
+                          unawaited(
+                            ref
+                                .read(eventsControllerProvider.notifier)
+                                .toggleTopicSubscription(topic.id),
+                          );
                         },
                       );
                     }).toList(),

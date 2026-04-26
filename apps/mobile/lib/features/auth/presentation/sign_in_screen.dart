@@ -101,10 +101,12 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
             email: _emailController.text.trim(),
             password: _passwordController.text,
           );
-    } catch (error) {
+    } on AuthException catch (error) {
       setState(() {
-        _error = error is AuthException ? error.message : localizations.genericError;
+        _error = error.message;
       });
+    } on Object {
+      setState(() => _error = localizations.genericError);
     }
   }
 }
