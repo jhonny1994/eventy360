@@ -69,11 +69,281 @@ class S {
     );
   }
 
-  /// `MVP foundation is ready.`
+  /// `Your command center is ready.`
   String get homeSubtitle {
     return Intl.message(
-      'MVP foundation is ready.',
+      'Your command center is ready.',
       name: 'homeSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Welcome to Eventy360`
+  String get onboardingTitle {
+    return Intl.message(
+      'Welcome to Eventy360',
+      name: 'onboardingTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Complete your researcher workflow from mobile with fewer steps.`
+  String get onboardingBody {
+    return Intl.message(
+      'Complete your researcher workflow from mobile with fewer steps.',
+      name: 'onboardingBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notification setup`
+  String get notificationEducationTitle {
+    return Intl.message(
+      'Notification setup',
+      name: 'notificationEducationTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We will ask for notification permission only after you subscribe to topics.`
+  String get notificationEducationBody {
+    return Intl.message(
+      'We will ask for notification permission only after you subscribe to topics.',
+      name: 'notificationEducationBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get Started`
+  String get getStarted {
+    return Intl.message('Get Started', name: 'getStarted', desc: '', args: []);
+  }
+
+  /// `Sign In`
+  String get signIn {
+    return Intl.message('Sign In', name: 'signIn', desc: '', args: []);
+  }
+
+  /// `Sign Up`
+  String get signUp {
+    return Intl.message('Sign Up', name: 'signUp', desc: '', args: []);
+  }
+
+  /// `Sign Out`
+  String get signOut {
+    return Intl.message('Sign Out', name: 'signOut', desc: '', args: []);
+  }
+
+  /// `Email`
+  String get email {
+    return Intl.message('Email', name: 'email', desc: '', args: []);
+  }
+
+  /// `Password`
+  String get password {
+    return Intl.message('Password', name: 'password', desc: '', args: []);
+  }
+
+  /// `This field is required.`
+  String get requiredField {
+    return Intl.message(
+      'This field is required.',
+      name: 'requiredField',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Password must be at least 8 characters.`
+  String get passwordTooShort {
+    return Intl.message(
+      'Password must be at least 8 characters.',
+      name: 'passwordTooShort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create account`
+  String get createAccount {
+    return Intl.message(
+      'Create account',
+      name: 'createAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Already have an account? Sign in`
+  String get haveAccountSignIn {
+    return Intl.message(
+      'Already have an account? Sign in',
+      name: 'haveAccountSignIn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Forgot password?`
+  String get forgotPassword {
+    return Intl.message(
+      'Forgot password?',
+      name: 'forgotPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reset Password`
+  String get resetPassword {
+    return Intl.message(
+      'Reset Password',
+      name: 'resetPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send reset link`
+  String get sendResetLink {
+    return Intl.message(
+      'Send reset link',
+      name: 'sendResetLink',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Password reset email was sent.`
+  String get resetEmailSent {
+    return Intl.message(
+      'Password reset email was sent.',
+      name: 'resetEmailSent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Back to sign in`
+  String get backToSignIn {
+    return Intl.message(
+      'Back to sign in',
+      name: 'backToSignIn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Account created successfully.`
+  String get accountCreated {
+    return Intl.message(
+      'Account created successfully.',
+      name: 'accountCreated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Something went wrong. Please try again.`
+  String get genericError {
+    return Intl.message(
+      'Something went wrong. Please try again.',
+      name: 'genericError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Complete Your Profile`
+  String get completeProfileTitle {
+    return Intl.message(
+      'Complete Your Profile',
+      name: 'completeProfileTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Before using researcher features, complete your profile details.`
+  String get completeProfileBody {
+    return Intl.message(
+      'Before using researcher features, complete your profile details.',
+      name: 'completeProfileBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Full name`
+  String get fullName {
+    return Intl.message('Full name', name: 'fullName', desc: '', args: []);
+  }
+
+  /// `Institution`
+  String get institution {
+    return Intl.message('Institution', name: 'institution', desc: '', args: []);
+  }
+
+  /// `Continue`
+  String get continueAction {
+    return Intl.message('Continue', name: 'continueAction', desc: '', args: []);
+  }
+
+  /// `This account role is not supported on mobile`
+  String get unsupportedRoleTitle {
+    return Intl.message(
+      'This account role is not supported on mobile',
+      name: 'unsupportedRoleTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Eventy360 mobile currently supports researcher accounts only.`
+  String get unsupportedRoleBody {
+    return Intl.message(
+      'Eventy360 mobile currently supports researcher accounts only.',
+      name: 'unsupportedRoleBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Signed in as`
+  String get signedInAs {
+    return Intl.message('Signed in as', name: 'signedInAs', desc: '', args: []);
+  }
+
+  /// `Profile status`
+  String get profileStatus {
+    return Intl.message(
+      'Profile status',
+      name: 'profileStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile completed`
+  String get profileCompleted {
+    return Intl.message(
+      'Profile completed',
+      name: 'profileCompleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile incomplete`
+  String get profileIncomplete {
+    return Intl.message(
+      'Profile incomplete',
+      name: 'profileIncomplete',
       desc: '',
       args: [],
     );

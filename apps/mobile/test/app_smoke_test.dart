@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  testWidgets('renders home title', (tester) async {
+  testWidgets('renders onboarding on first launch', (tester) async {
     SharedPreferences.setMockInitialValues(const {});
     final prefs = await SharedPreferences.getInstance();
 
@@ -20,6 +20,6 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('Researcher Home'), findsOneWidget);
+    expect(find.text('Welcome to Eventy360'), findsOneWidget);
   });
 }
