@@ -55,6 +55,19 @@ type NotificationQueueRow = {
   payload_data: Record<string, unknown> | null;
 };
 
+type EmailTemplateRow = {
+  template_key: string;
+  subject_translations: Record<string, string> | null;
+  body_html_translations: Record<string, string> | null;
+};
+
+type PushTemplateRow = {
+  template_key: string;
+  locale: string;
+  title_template: string;
+  body_template: string;
+};
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: CORS_HEADERS });
@@ -167,17 +180,6 @@ Deno.serve(async (req: Request) => {
     });
   }
 
-  const messageTitle =
-    requestInput.title ??
-    asString(notificationQueueRecord?.payload_data?.push_title) ??
-    asString(notificationQueueRecord?.payload_data?.title) ??
-    "Eventy360";
-  const messageBody =
-    requestInput.body ??
-    asString(notificationQueueRecord?.payload_data?.push_body) ??
-    asString(notificationQueueRecord?.payload_data?.body) ??
-    "You have a new update.";
-
   const mergedData = {
     ...(notificationQueueRecord?.payload_data ?? {}),
     ...(requestInput.data ?? {}),
@@ -185,6 +187,70 @@ Deno.serve(async (req: Request) => {
   if (requestInput.notification_id != null) {
     mergedData.notification_id = requestInput.notification_id;
   }
+
+  const emailTemplate = notificationQueueRecord?.template_key
+    ? await getEmailTemplate(supabase, notificationQueueRecord.template_key)
+    : null;
+  const pushTemplates = notificationQueueRecord?.template_key
+    ? await getPushTemplates(supabase, notificationQueueRecord.template_key)
+    : [];
+  const profileLanguage = resolvedProfileId
+    ? await resolveProfileLanguage(supabase, resolvedProfileId)
+    : null;
+  const resolvedLocale = normalizeLocaleCode(
+    asString(mergedData.locale) ??
+    asString(mergedData.language) ??
+    profileLanguage ??
+    "ar",
+  );
+
+  const templateResolvedTitle = pushTemplates.length > 0
+    ? pickLocalizedPushTemplate({
+      templates: pushTemplates,
+      preferredLocale: resolvedLocale,
+      field: "title",
+    })
+    : null;
+  const templateResolvedBody = pushTemplates.length > 0
+    ? pickLocalizedPushTemplate({
+      templates: pushTemplates,
+      preferredLocale: resolvedLocale,
+      field: "body",
+    })
+    : null;
+  const emailFallbackTitle = emailTemplate
+    ? pickLocalizedText({
+      preferredLocale: resolvedLocale,
+      preferred: emailTemplate.subject_translations,
+      defaultText: "Eventy360",
+    })
+    : null;
+  const emailFallbackBody = emailTemplate
+    ? pickLocalizedText({
+      preferredLocale: resolvedLocale,
+      preferred: emailTemplate.body_html_translations,
+      defaultText: "You have a new update.",
+      stripHtml: true,
+    })
+    : null;
+
+  const rawTitle =
+    requestInput.title ??
+    asString(mergedData.push_title) ??
+    asString(mergedData.title) ??
+    templateResolvedTitle ??
+    emailFallbackTitle ??
+    "Eventy360";
+  const rawBody =
+    requestInput.body ??
+    asString(mergedData.push_body) ??
+    asString(mergedData.body) ??
+    templateResolvedBody ??
+    emailFallbackBody ??
+    "You have a new update.";
+
+  const messageTitle = interpolateTemplate(rawTitle, mergedData);
+  const messageBody = interpolateTemplate(rawBody, mergedData);
 
   const dataPayload = toStringRecord(mergedData);
   const androidPriority = requestInput.android_priority ?? "high";
@@ -271,6 +337,7 @@ Deno.serve(async (req: Request) => {
     notification_id: requestInput.notification_id ?? null,
     profile_id: resolvedProfileId ?? null,
     topic_id: resolvedTopicId ?? null,
+    locale: resolvedLocale,
     ...sendSummary,
   });
 });
@@ -323,6 +390,207 @@ async function resolveDeviceTokens(
     return [];
   }
   return (data as DeviceTokenRow[]).filter((row) => typeof row.token === "string" && row.token.length > 0);
+}
+
+async function getEmailTemplate(
+  supabase: ReturnType<typeof createClient>,
+  templateKey: string,
+): Promise<EmailTemplateRow | null> {
+  const { data, error } = await supabase
+    .from("email_templates")
+    .select("template_key, subject_translations, body_html_translations")
+    .eq("template_key", templateKey)
+    .maybeSingle();
+
+  if (error) {
+    console.warn(`Failed to fetch email template '${templateKey}':`, error.message);
+    return null;
+  }
+
+  return (data as EmailTemplateRow | null) ?? null;
+}
+
+async function getPushTemplates(
+  supabase: ReturnType<typeof createClient>,
+  templateKey: string,
+): Promise<PushTemplateRow[]> {
+  const { data, error } = await supabase
+    .from("push_notification_templates")
+    .select("template_key, locale, title_template, body_template")
+    .eq("template_key", templateKey);
+
+  if (error || !data) {
+    console.warn(`Failed to fetch push templates '${templateKey}':`, error?.message ?? "unknown");
+    return [];
+  }
+
+  return (data as PushTemplateRow[]).filter((row) =>
+    typeof row.locale === "string" &&
+    row.locale.length > 0 &&
+    typeof row.title_template === "string" &&
+    row.title_template.length > 0 &&
+    typeof row.body_template === "string" &&
+    row.body_template.length > 0
+  );
+}
+
+async function resolveProfileLanguage(
+  supabase: ReturnType<typeof createClient>,
+  profileId: string,
+): Promise<string | null> {
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("language")
+    .eq("id", profileId)
+    .maybeSingle();
+
+  const profileLanguage = normalizeLocaleCode((profile as any)?.language ?? null);
+  if (profileLanguage) {
+    return profileLanguage;
+  }
+
+  const profileTables = ["researcher_profiles", "organizer_profiles"];
+  for (const table of profileTables) {
+    const { data } = await supabase
+      .from(table)
+      .select("language")
+      .eq("profile_id", profileId)
+      .maybeSingle();
+    const language = normalizeLocaleCode((data as any)?.language ?? null);
+    if (language) {
+      return language;
+    }
+  }
+
+  return null;
+}
+
+function pickLocalizedPushTemplate(input: {
+  templates: PushTemplateRow[];
+  preferredLocale: string;
+  field: "title" | "body";
+}): string | null {
+  const byLocale = new Map<string, PushTemplateRow>();
+  for (const row of input.templates) {
+    const normalized = normalizeLocaleCode(row.locale);
+    if (!normalized) continue;
+    byLocale.set(normalized, row);
+  }
+
+  for (const candidate of buildLocaleCandidates(input.preferredLocale)) {
+    const row = byLocale.get(candidate);
+    if (!row) continue;
+    const raw = input.field === "title" ? row.title_template : row.body_template;
+    if (raw.trim().length === 0) continue;
+    return input.field === "body" ? stripHtml(raw).trim() : raw.trim();
+  }
+
+  for (const row of input.templates) {
+    const raw = input.field === "title" ? row.title_template : row.body_template;
+    if (raw.trim().length === 0) continue;
+    return input.field === "body" ? stripHtml(raw).trim() : raw.trim();
+  }
+
+  return null;
+}
+
+function pickLocalizedText(input: {
+  preferredLocale: string;
+  preferred: Record<string, string> | null;
+  fallback?: Record<string, string> | null;
+  defaultText: string;
+  stripHtml?: boolean;
+}): string {
+  const preferred = input.preferred ?? {};
+  const fallback = input.fallback ?? {};
+  for (const locale of buildLocaleCandidates(input.preferredLocale)) {
+    const candidate = preferred[locale] ?? fallback[locale];
+    if (typeof candidate === "string" && candidate.trim().length > 0) {
+      return input.stripHtml ? stripHtml(candidate).trim() : candidate.trim();
+    }
+  }
+
+  for (const candidate of Object.values(preferred)) {
+    if (typeof candidate === "string" && candidate.trim().length > 0) {
+      return input.stripHtml ? stripHtml(candidate).trim() : candidate.trim();
+    }
+  }
+  for (const candidate of Object.values(fallback)) {
+    if (typeof candidate === "string" && candidate.trim().length > 0) {
+      return input.stripHtml ? stripHtml(candidate).trim() : candidate.trim();
+    }
+  }
+  return input.defaultText;
+}
+
+function buildLocaleCandidates(locale: string): string[] {
+  const normalized = normalizeLocaleCode(locale) ?? "ar";
+  const candidates = new Set<string>();
+  candidates.add(normalized);
+
+  const languageOnly = normalized.split("-")[0];
+  if (languageOnly) {
+    candidates.add(languageOnly);
+  }
+
+  candidates.add("ar");
+  candidates.add("en");
+  return [...candidates];
+}
+
+function normalizeLocaleCode(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim().replace("_", "-");
+  if (!trimmed) return null;
+  const parts = trimmed.split("-");
+  const language = parts[0]?.toLowerCase();
+  if (!language || language.length < 2) return null;
+  if (parts.length === 1) return language;
+  const region = parts[1]?.toUpperCase();
+  if (!region) return language;
+  return `${language}-${region}`;
+}
+
+function interpolateTemplate(template: string, data: Record<string, unknown>): string {
+  return template.replace(/\{\{\s*([A-Za-z0-9_.-]+)\s*\}\}/g, (_match, key) => {
+    const value = getNestedValue(data, key);
+    if (value == null) {
+      return "";
+    }
+    if (typeof value === "string") {
+      return value;
+    }
+    if (typeof value === "number" || typeof value === "boolean") {
+      return String(value);
+    }
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return "";
+    }
+  });
+}
+
+function getNestedValue(source: Record<string, unknown>, path: string): unknown {
+  return path.split(".").reduce<unknown>((acc, segment) => {
+    if (acc == null || typeof acc !== "object") {
+      return undefined;
+    }
+    return (acc as Record<string, unknown>)[segment];
+  }, source);
+}
+
+function stripHtml(input: string): string {
+  return input
+    .replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, " ")
+    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, " ")
+    .replace(/<\/?[^>]+(>|$)/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 async function dropInvalidDeviceToken(
