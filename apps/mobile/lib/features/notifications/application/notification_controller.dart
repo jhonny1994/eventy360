@@ -13,7 +13,7 @@ PushNotificationService pushNotificationService(Ref ref) {
 
 @Riverpod(keepAlive: true)
 class NotificationController extends _$NotificationController {
-  StreamSubscription? _openedSub;
+  StreamSubscription<PushNotificationMessage>? _openedSub;
 
   @override
   Future<NotificationState> build() async {

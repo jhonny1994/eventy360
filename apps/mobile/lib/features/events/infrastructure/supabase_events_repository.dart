@@ -38,7 +38,7 @@ class SupabaseEventsRepository implements EventsRepository {
     }
 
     try {
-      final response = await client.rpc(
+      final response = await client.rpc<List<dynamic>>(
         'discover_events',
         params: {
           'search_query': query.isEmpty ? null : query,
@@ -55,7 +55,7 @@ class SupabaseEventsRepository implements EventsRepository {
         },
       );
 
-      final events = (response as List<dynamic>)
+      final events = response
           .map((raw) => raw as Map<String, dynamic>)
           .map(
             (json) => EventSummary(
