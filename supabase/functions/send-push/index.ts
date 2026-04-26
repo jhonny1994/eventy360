@@ -338,6 +338,15 @@ Deno.serve(async (req: Request) => {
     profile_id: resolvedProfileId ?? null,
     topic_id: resolvedTopicId ?? null,
     locale: resolvedLocale,
+    ...(dryRun
+      ? {
+        preview: {
+          title: messageTitle,
+          body: messageBody,
+          template_key: notificationQueueRecord?.template_key ?? null,
+        },
+      }
+      : {}),
     ...sendSummary,
   });
 });
