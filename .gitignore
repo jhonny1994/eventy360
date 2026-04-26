@@ -141,3 +141,5 @@ apps/**/coverage/
 # Local app environments
 apps/**/.env
 apps/**/.env*.local
+
+docs/**/**
