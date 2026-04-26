@@ -85,11 +85,11 @@
   - [ ] 5.7 Run milestone manual validation #4: verification, payment, repository
 
 - [ ] 6.0 Add phase-by-phase automated checks and milestone manual validation
-  - [ ] 6.1 Create one command set for local automated checks and document it in project docs
-  - [ ] 6.2 Enforce analyze, tests, and code generation checks in CI for this app path
-  - [ ] 6.3 Define manual validation checklist template for each milestone
-  - [ ] 6.3.1 Define objective milestone acceptance criteria (required evidence, blocker policy, pass/fail threshold)
-  - [ ] 6.3.2 Define push operational validation checklist (delivery failures, stale token handling, retry/queue behavior)
+  - [x] 6.1 Create one command set for local automated checks and document it in project docs
+  - [x] 6.2 Enforce analyze, tests, and code generation checks in CI for this app path
+  - [x] 6.3 Define manual validation checklist template for each milestone
+  - [x] 6.3.1 Define objective milestone acceptance criteria (required evidence, blocker policy, pass/fail threshold)
+  - [x] 6.3.2 Define push operational validation checklist (delivery failures, stale token handling, retry/queue behavior)
   - [ ] 6.4 Execute full manual walkthrough across all core researcher flows
   - [ ] 6.5 Capture defects from walkthrough and resolve blocking issues
   - [ ] 6.6 Re-run automated checks after fixes and confirm clean status

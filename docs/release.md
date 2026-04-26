@@ -35,15 +35,23 @@ Mobile starts with GitHub Releases, not store distribution.
 When `apps/mobile` contains a real Flutter app:
 
 1. Open a pull request with the mobile change.
-2. Ensure Flutter analyze/tests pass in CI.
-3. Merge to `main`.
-4. Create and push a release tag:
+2. Run the canonical mobile check set locally:
+
+```powershell
+cd C:\Users\raouf\projects\eventy360\apps\mobile
+.\tool\check_mobile.ps1
+```
+
+3. Ensure mobile CI passes, including code generation and localization generation.
+4. Merge to `main`.
+5. Create and push a release tag:
 
 ```bash
 git tag mobile-v0.1.0
 git push origin mobile-v0.1.0
 ```
 
-5. The `Mobile Release` workflow builds an Android release APK and creates a GitHub Release.
+6. Confirm milestone manual validation evidence is complete for the target release candidate.
+7. The `Mobile Release` workflow builds an Android release APK and creates a GitHub Release.
 
 Signing, Play Store, and App Store automation are intentionally out of scope for the starter release path.
