@@ -6,8 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 const _localeCodeKey = 'app.locale_code';
 const _supportedLanguageCodes = {'en', 'ar'};
 
-final localeControllerProvider =
-    NotifierProvider<LocaleController, Locale?>(LocaleController.new);
+final localeControllerProvider = NotifierProvider<LocaleController, Locale?>(
+  LocaleController.new,
+);
 
 class LocaleController extends Notifier<Locale?> {
   @override

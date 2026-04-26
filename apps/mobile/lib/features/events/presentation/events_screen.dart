@@ -25,7 +25,8 @@ class EventsScreen extends ConsumerWidget {
         child: state.when(
           data: (data) {
             return RefreshIndicator(
-              onRefresh: () => ref.read(eventsControllerProvider.notifier).refresh(),
+              onRefresh: () =>
+                  ref.read(eventsControllerProvider.notifier).refresh(),
               child: ListView(
                 children: [
                   Semantics(
@@ -34,7 +35,9 @@ class EventsScreen extends ConsumerWidget {
                     child: TextField(
                       onChanged: (value) {
                         unawaited(
-                          ref.read(eventsControllerProvider.notifier).updateQuery(value),
+                          ref
+                              .read(eventsControllerProvider.notifier)
+                              .updateQuery(value),
                         );
                       },
                       decoration: InputDecoration(
@@ -72,9 +75,13 @@ class EventsScreen extends ConsumerWidget {
                     spacing: 8,
                     runSpacing: 8,
                     children: data.topics.map((topic) {
-                      final subscribed = data.subscribedTopicIds.contains(topic.id);
+                      final subscribed = data.subscribedTopicIds.contains(
+                        topic.id,
+                      );
                       return FilterChip(
-                        selectedColor: Theme.of(context).colorScheme.secondaryContainer,
+                        selectedColor: Theme.of(
+                          context,
+                        ).colorScheme.secondaryContainer,
                         label: Text(topic.name),
                         selected: subscribed,
                         onSelected: (_) {
@@ -92,7 +99,8 @@ class EventsScreen extends ConsumerWidget {
                     Card(
                       child: ListTile(
                         contentPadding: const EdgeInsets.all(12),
-                        onTap: () => context.go('${RoutePaths.events}/${event.id}'),
+                        onTap: () =>
+                            context.go('${RoutePaths.events}/${event.id}'),
                         title: Text(event.title),
                         subtitle: Text(
                           '${event.location} • ${_formatDate(event.deadline)}',
@@ -119,8 +127,9 @@ class EventsScreen extends ConsumerWidget {
                   if (!data.isLoadingMore && data.events.isNotEmpty)
                     Center(
                       child: OutlinedButton(
-                        onPressed: () =>
-                            ref.read(eventsControllerProvider.notifier).loadNextPage(),
+                        onPressed: () => ref
+                            .read(eventsControllerProvider.notifier)
+                            .loadNextPage(),
                         child: Text(localizations.loadMore),
                       ),
                     ),

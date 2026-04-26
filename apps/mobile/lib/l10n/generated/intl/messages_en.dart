@@ -24,6 +24,12 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "abstractArLabel": MessageLookupByLibrary.simpleMessage(
+      "Abstract (Arabic)",
+    ),
+    "abstractEnLabel": MessageLookupByLibrary.simpleMessage(
+      "Abstract (English, optional)",
+    ),
     "accountCreated": MessageLookupByLibrary.simpleMessage(
       "Account created successfully.",
     ),
@@ -34,6 +40,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "addBookmark": MessageLookupByLibrary.simpleMessage("Add bookmark"),
     "appTitle": MessageLookupByLibrary.simpleMessage("Eventy360"),
     "backToSignIn": MessageLookupByLibrary.simpleMessage("Back to sign in"),
+    "cancelAction": MessageLookupByLibrary.simpleMessage("Cancel"),
     "completeProfileBody": MessageLookupByLibrary.simpleMessage(
       "Before using researcher features, complete your profile details.",
     ),
@@ -49,11 +56,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "eventNotFound": MessageLookupByLibrary.simpleMessage(
       "Event was not found.",
     ),
+    "eventSelectionLabel": MessageLookupByLibrary.simpleMessage("Event"),
     "eventsSearchHint": MessageLookupByLibrary.simpleMessage(
       "Search events by name or location",
     ),
     "eventsTitle": MessageLookupByLibrary.simpleMessage("Discover Events"),
     "exploreEvents": MessageLookupByLibrary.simpleMessage("Explore events"),
+    "fileUrlHint": MessageLookupByLibrary.simpleMessage(
+      "Paste the uploaded file URL from your storage path.",
+    ),
+    "fileUrlLabel": MessageLookupByLibrary.simpleMessage("File URL"),
     "forgotPassword": MessageLookupByLibrary.simpleMessage("Forgot password?"),
     "fullName": MessageLookupByLibrary.simpleMessage("Full name"),
     "genericError": MessageLookupByLibrary.simpleMessage(
@@ -76,6 +88,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "newPassword": MessageLookupByLibrary.simpleMessage("New password"),
     "noEventsFound": MessageLookupByLibrary.simpleMessage("No events found."),
+    "noSubmissionsFound": MessageLookupByLibrary.simpleMessage(
+      "No submissions found.",
+    ),
     "noUpcomingDeadline": MessageLookupByLibrary.simpleMessage(
       "No upcoming deadlines",
     ),
@@ -117,6 +132,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "resetPassword": MessageLookupByLibrary.simpleMessage("Reset Password"),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
+    "revisionNotesLabel": MessageLookupByLibrary.simpleMessage(
+      "Revision notes (optional)",
+    ),
     "sendResetLink": MessageLookupByLibrary.simpleMessage("Send reset link"),
     "signIn": MessageLookupByLibrary.simpleMessage("Sign In"),
     "signOut": MessageLookupByLibrary.simpleMessage("Sign Out"),
@@ -124,6 +142,66 @@ class MessageLookup extends MessageLookupByLibrary {
     "signedInAs": MessageLookupByLibrary.simpleMessage("Signed in as"),
     "somethingWentWrong": MessageLookupByLibrary.simpleMessage(
       "Something went wrong.",
+    ),
+    "statusAbstractAccepted": MessageLookupByLibrary.simpleMessage(
+      "Abstract accepted",
+    ),
+    "statusAbstractRejected": MessageLookupByLibrary.simpleMessage(
+      "Abstract rejected",
+    ),
+    "statusAbstractSubmitted": MessageLookupByLibrary.simpleMessage(
+      "Abstract submitted",
+    ),
+    "statusCompleted": MessageLookupByLibrary.simpleMessage("Completed"),
+    "statusFullPaperAccepted": MessageLookupByLibrary.simpleMessage(
+      "Full paper accepted",
+    ),
+    "statusFullPaperRejected": MessageLookupByLibrary.simpleMessage(
+      "Full paper rejected",
+    ),
+    "statusFullPaperSubmitted": MessageLookupByLibrary.simpleMessage(
+      "Full paper submitted",
+    ),
+    "statusRevisionRequested": MessageLookupByLibrary.simpleMessage(
+      "Revision requested",
+    ),
+    "statusRevisionUnderReview": MessageLookupByLibrary.simpleMessage(
+      "Revision under review",
+    ),
+    "submissionDetailMissing": MessageLookupByLibrary.simpleMessage(
+      "Submission details are not available.",
+    ),
+    "submissionDetailTitle": MessageLookupByLibrary.simpleMessage(
+      "Submission Details",
+    ),
+    "submissionStatusLabel": MessageLookupByLibrary.simpleMessage("Status"),
+    "submissionTimelineTitle": MessageLookupByLibrary.simpleMessage(
+      "Status and Feedback Timeline",
+    ),
+    "submissionTitleArLabel": MessageLookupByLibrary.simpleMessage(
+      "Title (Arabic)",
+    ),
+    "submissionTitleEnLabel": MessageLookupByLibrary.simpleMessage(
+      "Title (English, optional)",
+    ),
+    "submissionsTitle": MessageLookupByLibrary.simpleMessage("My Submissions"),
+    "submitAbstractAction": MessageLookupByLibrary.simpleMessage(
+      "Submit abstract",
+    ),
+    "submitAbstractTitle": MessageLookupByLibrary.simpleMessage(
+      "Submit Abstract",
+    ),
+    "submitFullPaperAction": MessageLookupByLibrary.simpleMessage(
+      "Submit full paper",
+    ),
+    "submitFullPaperTitle": MessageLookupByLibrary.simpleMessage(
+      "Submit Full Paper",
+    ),
+    "submitRevisionAction": MessageLookupByLibrary.simpleMessage(
+      "Submit revision",
+    ),
+    "submitRevisionTitle": MessageLookupByLibrary.simpleMessage(
+      "Submit Revision",
     ),
     "subscriptionActive": MessageLookupByLibrary.simpleMessage(
       "Premium subscription active",

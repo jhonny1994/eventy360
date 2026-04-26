@@ -1,8 +1,10 @@
+import 'package:eventy360/app/router/route_paths.dart';
 import 'package:eventy360/features/events/application/events_controller.dart';
 import 'package:eventy360/features/events/domain/event_summary.dart';
 import 'package:eventy360/l10n/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class EventDetailScreen extends ConsumerWidget {
   const EventDetailScreen({
@@ -70,6 +72,14 @@ class EventDetailScreen extends ConsumerWidget {
                   ? localizations.removeBookmark
                   : localizations.addBookmark,
             ),
+          ),
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: () => context.go(
+              '${RoutePaths.newAbstractSubmission}?eventId=${selectedEvent.id}',
+            ),
+            icon: const Icon(Icons.upload_file_outlined),
+            label: Text(localizations.submitAbstractAction),
           ),
         ],
       ),

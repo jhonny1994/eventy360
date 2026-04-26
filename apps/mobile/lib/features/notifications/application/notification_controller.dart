@@ -37,8 +37,11 @@ class NotificationController extends _$NotificationController {
 
   Future<void> requestPermissionForTopicIntent() async {
     final current = state.asData?.value ?? NotificationState.initial();
-    final settings = await ref.read(pushNotificationServiceProvider).requestPermission();
-    final granted = settings == PushAuthorizationStatus.authorized ||
+    final settings = await ref
+        .read(pushNotificationServiceProvider)
+        .requestPermission();
+    final granted =
+        settings == PushAuthorizationStatus.authorized ||
         settings == PushAuthorizationStatus.provisional;
     state = AsyncData(current.copyWith(permissionGranted: granted));
   }

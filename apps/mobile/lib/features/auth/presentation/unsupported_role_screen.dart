@@ -30,7 +30,8 @@ class UnsupportedRoleScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 16),
                 OutlinedButton(
-                  onPressed: () => ref.read(sessionControllerProvider.notifier).signOut(),
+                  onPressed: () =>
+                      ref.read(sessionControllerProvider.notifier).signOut(),
                   child: Text(localizations.signOut),
                 ),
               ],

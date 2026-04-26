@@ -50,14 +50,16 @@ class SessionController extends _$SessionController {
         state = AsyncData(
           previousData.copyWith(
             user: user,
-            profileCompleted: user != null &&
+            profileCompleted:
+                user != null &&
                 (prefs.getBool('$_profileCompletedPrefix${user.id}') ?? false),
           ),
         );
       });
     });
 
-    final profileCompleted = currentUser != null &&
+    final profileCompleted =
+        currentUser != null &&
         (prefs.getBool('$_profileCompletedPrefix${currentUser.id}') ?? false);
 
     return SessionState(
@@ -101,12 +103,16 @@ class SessionController extends _$SessionController {
       final prefs = ref.read(sharedPreferencesProvider);
       final profileCompleted =
           prefs.getBool('$_profileCompletedPrefix${user.id}') ?? false;
-      return (previous ?? const SessionState(onboardingCompleted: true, profileCompleted: false))
+      return (previous ??
+              const SessionState(
+                onboardingCompleted: true,
+                profileCompleted: false,
+              ))
           .copyWith(
-        user: user,
-        onboardingCompleted: true,
-        profileCompleted: profileCompleted,
-      );
+            user: user,
+            onboardingCompleted: true,
+            profileCompleted: profileCompleted,
+          );
     });
   }
 
@@ -120,12 +126,16 @@ class SessionController extends _$SessionController {
       final user = await ref
           .read(authRepositoryProvider)
           .signUp(email: email, password: password);
-      return (previous ?? const SessionState(onboardingCompleted: true, profileCompleted: false))
+      return (previous ??
+              const SessionState(
+                onboardingCompleted: true,
+                profileCompleted: false,
+              ))
           .copyWith(
-        user: user,
-        onboardingCompleted: true,
-        profileCompleted: false,
-      );
+            user: user,
+            onboardingCompleted: true,
+            profileCompleted: false,
+          );
     });
   }
 

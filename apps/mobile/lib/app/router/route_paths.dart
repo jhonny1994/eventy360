@@ -10,4 +10,6 @@ class RoutePaths {
   static const unsupportedRole = '/unsupported-role';
   static const home = '/home';
   static const events = '/events';
+  static const submissions = '/submissions';
+  static const newAbstractSubmission = '/submissions/new-abstract';
 }

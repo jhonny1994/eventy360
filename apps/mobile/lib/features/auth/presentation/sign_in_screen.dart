@@ -39,52 +39,58 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         child: AdaptivePageBody(
           child: Padding(
             padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(labelText: localizations.email),
-                  validator: (value) =>
-                      (value == null || value.isEmpty) ? localizations.requiredField : null,
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(labelText: localizations.password),
-                  validator: (value) =>
-                      (value == null || value.isEmpty) ? localizations.requiredField : null,
-                ),
-                const SizedBox(height: 12),
-                if (_error != null)
-                  Text(
-                    _error!,
-                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(labelText: localizations.email),
+                    validator: (value) => (value == null || value.isEmpty)
+                        ? localizations.requiredField
+                        : null,
                   ),
-                const SizedBox(height: 16),
-                Semantics(
-                  button: true,
-                  label: localizations.signIn,
-                  child: FilledButton(
-                    onPressed: isBusy ? null : _submit,
-                    child: Text(localizations.signIn),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      labelText: localizations.password,
+                    ),
+                    validator: (value) => (value == null || value.isEmpty)
+                        ? localizations.requiredField
+                        : null,
                   ),
-                ),
-                TextButton(
-                  onPressed: () => context.go(RoutePaths.signUp),
-                  child: Text(localizations.createAccount),
-                ),
-                TextButton(
-                  onPressed: () => context.go(RoutePaths.resetPassword),
-                  child: Text(localizations.forgotPassword),
-                ),
-              ],
+                  const SizedBox(height: 12),
+                  if (_error != null)
+                    Text(
+                      _error!,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+                  Semantics(
+                    button: true,
+                    label: localizations.signIn,
+                    child: FilledButton(
+                      onPressed: isBusy ? null : _submit,
+                      child: Text(localizations.signIn),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => context.go(RoutePaths.signUp),
+                    child: Text(localizations.createAccount),
+                  ),
+                  TextButton(
+                    onPressed: () => context.go(RoutePaths.resetPassword),
+                    child: Text(localizations.forgotPassword),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
         ),
       ),
     );
@@ -97,7 +103,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     }
     setState(() => _error = null);
     try {
-      await ref.read(sessionControllerProvider.notifier).signIn(
+      await ref
+          .read(sessionControllerProvider.notifier)
+          .signIn(
             email: _emailController.text.trim(),
             password: _passwordController.text,
           );

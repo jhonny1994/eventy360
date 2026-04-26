@@ -20,6 +20,8 @@ class ThemeModeController extends Notifier<ThemeMode> {
 
   Future<void> setThemeMode(ThemeMode mode) async {
     state = mode;
-    await ref.read(sharedPreferencesProvider).setString(_themeModeKey, mode.name);
+    await ref
+        .read(sharedPreferencesProvider)
+        .setString(_themeModeKey, mode.name);
   }
 }

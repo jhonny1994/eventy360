@@ -106,8 +106,9 @@ class EventsController extends _$EventsController {
       current.copyWith(
         events: current.events
             .map(
-              (event) =>
-                  event.id == eventId ? event.copyWith(isBookmarked: isBookmarked) : event,
+              (event) => event.id == eventId
+                  ? event.copyWith(isBookmarked: isBookmarked)
+                  : event,
             )
             .toList(),
       ),

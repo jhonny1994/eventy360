@@ -39,48 +39,54 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         child: AdaptivePageBody(
           child: Padding(
             padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(labelText: localizations.email),
-                  validator: (value) =>
-                      (value == null || value.isEmpty) ? localizations.requiredField : null,
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(labelText: localizations.password),
-                  validator: (value) =>
-                      (value == null || value.length < 8) ? localizations.passwordTooShort : null,
-                ),
-                const SizedBox(height: 12),
-                if (_error != null)
-                  Text(
-                    _error!,
-                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(labelText: localizations.email),
+                    validator: (value) => (value == null || value.isEmpty)
+                        ? localizations.requiredField
+                        : null,
                   ),
-                const SizedBox(height: 16),
-                Semantics(
-                  button: true,
-                  label: localizations.signUp,
-                  child: FilledButton(
-                    onPressed: isBusy ? null : _submit,
-                    child: Text(localizations.signUp),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      labelText: localizations.password,
+                    ),
+                    validator: (value) => (value == null || value.length < 8)
+                        ? localizations.passwordTooShort
+                        : null,
                   ),
-                ),
-                TextButton(
-                  onPressed: () => context.go(RoutePaths.signIn),
-                  child: Text(localizations.haveAccountSignIn),
-                ),
-              ],
+                  const SizedBox(height: 12),
+                  if (_error != null)
+                    Text(
+                      _error!,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+                  Semantics(
+                    button: true,
+                    label: localizations.signUp,
+                    child: FilledButton(
+                      onPressed: isBusy ? null : _submit,
+                      child: Text(localizations.signUp),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => context.go(RoutePaths.signIn),
+                    child: Text(localizations.haveAccountSignIn),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
         ),
       ),
     );
@@ -93,7 +99,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     }
     setState(() => _error = null);
     try {
-      await ref.read(sessionControllerProvider.notifier).signUp(
+      await ref
+          .read(sessionControllerProvider.notifier)
+          .signUp(
             email: _emailController.text.trim(),
             password: _passwordController.text,
           );
