@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$EventsState {
 
- List<EventSummary> get events; List<TopicItem> get topics; Set<String> get subscribedTopicIds; Set<String> get selectedTopicIds; String get query; int get page; int get pageSize; bool get isLoadingMore;
+ List<EventSummary> get events; List<TopicItem> get topics; Set<String> get subscribedTopicIds; Set<String> get selectedTopicIds; String get query; int get page; int get pageSize; bool get isLoadingMore; String? get errorMessage;
 /// Create a copy of EventsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $EventsStateCopyWith<EventsState> get copyWith => _$EventsStateCopyWithImpl<Even
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventsState&&const DeepCollectionEquality().equals(other.events, events)&&const DeepCollectionEquality().equals(other.topics, topics)&&const DeepCollectionEquality().equals(other.subscribedTopicIds, subscribedTopicIds)&&const DeepCollectionEquality().equals(other.selectedTopicIds, selectedTopicIds)&&(identical(other.query, query) || other.query == query)&&(identical(other.page, page) || other.page == page)&&(identical(other.pageSize, pageSize) || other.pageSize == pageSize)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventsState&&const DeepCollectionEquality().equals(other.events, events)&&const DeepCollectionEquality().equals(other.topics, topics)&&const DeepCollectionEquality().equals(other.subscribedTopicIds, subscribedTopicIds)&&const DeepCollectionEquality().equals(other.selectedTopicIds, selectedTopicIds)&&(identical(other.query, query) || other.query == query)&&(identical(other.page, page) || other.page == page)&&(identical(other.pageSize, pageSize) || other.pageSize == pageSize)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(events),const DeepCollectionEquality().hash(topics),const DeepCollectionEquality().hash(subscribedTopicIds),const DeepCollectionEquality().hash(selectedTopicIds),query,page,pageSize,isLoadingMore);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(events),const DeepCollectionEquality().hash(topics),const DeepCollectionEquality().hash(subscribedTopicIds),const DeepCollectionEquality().hash(selectedTopicIds),query,page,pageSize,isLoadingMore,errorMessage);
 
 @override
 String toString() {
-  return 'EventsState(events: $events, topics: $topics, subscribedTopicIds: $subscribedTopicIds, selectedTopicIds: $selectedTopicIds, query: $query, page: $page, pageSize: $pageSize, isLoadingMore: $isLoadingMore)';
+  return 'EventsState(events: $events, topics: $topics, subscribedTopicIds: $subscribedTopicIds, selectedTopicIds: $selectedTopicIds, query: $query, page: $page, pageSize: $pageSize, isLoadingMore: $isLoadingMore, errorMessage: $errorMessage)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $EventsStateCopyWith<$Res>  {
   factory $EventsStateCopyWith(EventsState value, $Res Function(EventsState) _then) = _$EventsStateCopyWithImpl;
 @useResult
 $Res call({
- List<EventSummary> events, List<TopicItem> topics, Set<String> subscribedTopicIds, Set<String> selectedTopicIds, String query, int page, int pageSize, bool isLoadingMore
+ List<EventSummary> events, List<TopicItem> topics, Set<String> subscribedTopicIds, Set<String> selectedTopicIds, String query, int page, int pageSize, bool isLoadingMore, String? errorMessage
 });
 
 
@@ -65,7 +65,7 @@ class _$EventsStateCopyWithImpl<$Res>
 
 /// Create a copy of EventsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? events = null,Object? topics = null,Object? subscribedTopicIds = null,Object? selectedTopicIds = null,Object? query = null,Object? page = null,Object? pageSize = null,Object? isLoadingMore = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? events = null,Object? topics = null,Object? subscribedTopicIds = null,Object? selectedTopicIds = null,Object? query = null,Object? page = null,Object? pageSize = null,Object? isLoadingMore = null,Object? errorMessage = freezed,}) {
   return _then(_self.copyWith(
 events: null == events ? _self.events : events // ignore: cast_nullable_to_non_nullable
 as List<EventSummary>,topics: null == topics ? _self.topics : topics // ignore: cast_nullable_to_non_nullable
@@ -75,7 +75,8 @@ as Set<String>,query: null == query ? _self.query : query // ignore: cast_nullab
 as String,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
 as int,pageSize: null == pageSize ? _self.pageSize : pageSize // ignore: cast_nullable_to_non_nullable
 as int,isLoadingMore: null == isLoadingMore ? _self.isLoadingMore : isLoadingMore // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -160,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<EventSummary> events,  List<TopicItem> topics,  Set<String> subscribedTopicIds,  Set<String> selectedTopicIds,  String query,  int page,  int pageSize,  bool isLoadingMore)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<EventSummary> events,  List<TopicItem> topics,  Set<String> subscribedTopicIds,  Set<String> selectedTopicIds,  String query,  int page,  int pageSize,  bool isLoadingMore,  String? errorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _EventsState() when $default != null:
-return $default(_that.events,_that.topics,_that.subscribedTopicIds,_that.selectedTopicIds,_that.query,_that.page,_that.pageSize,_that.isLoadingMore);case _:
+return $default(_that.events,_that.topics,_that.subscribedTopicIds,_that.selectedTopicIds,_that.query,_that.page,_that.pageSize,_that.isLoadingMore,_that.errorMessage);case _:
   return orElse();
 
 }
@@ -181,10 +182,10 @@ return $default(_that.events,_that.topics,_that.subscribedTopicIds,_that.selecte
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<EventSummary> events,  List<TopicItem> topics,  Set<String> subscribedTopicIds,  Set<String> selectedTopicIds,  String query,  int page,  int pageSize,  bool isLoadingMore)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<EventSummary> events,  List<TopicItem> topics,  Set<String> subscribedTopicIds,  Set<String> selectedTopicIds,  String query,  int page,  int pageSize,  bool isLoadingMore,  String? errorMessage)  $default,) {final _that = this;
 switch (_that) {
 case _EventsState():
-return $default(_that.events,_that.topics,_that.subscribedTopicIds,_that.selectedTopicIds,_that.query,_that.page,_that.pageSize,_that.isLoadingMore);case _:
+return $default(_that.events,_that.topics,_that.subscribedTopicIds,_that.selectedTopicIds,_that.query,_that.page,_that.pageSize,_that.isLoadingMore,_that.errorMessage);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +202,10 @@ return $default(_that.events,_that.topics,_that.subscribedTopicIds,_that.selecte
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<EventSummary> events,  List<TopicItem> topics,  Set<String> subscribedTopicIds,  Set<String> selectedTopicIds,  String query,  int page,  int pageSize,  bool isLoadingMore)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<EventSummary> events,  List<TopicItem> topics,  Set<String> subscribedTopicIds,  Set<String> selectedTopicIds,  String query,  int page,  int pageSize,  bool isLoadingMore,  String? errorMessage)?  $default,) {final _that = this;
 switch (_that) {
 case _EventsState() when $default != null:
-return $default(_that.events,_that.topics,_that.subscribedTopicIds,_that.selectedTopicIds,_that.query,_that.page,_that.pageSize,_that.isLoadingMore);case _:
+return $default(_that.events,_that.topics,_that.subscribedTopicIds,_that.selectedTopicIds,_that.query,_that.page,_that.pageSize,_that.isLoadingMore,_that.errorMessage);case _:
   return null;
 
 }
@@ -216,7 +217,7 @@ return $default(_that.events,_that.topics,_that.subscribedTopicIds,_that.selecte
 @JsonSerializable()
 
 class _EventsState implements EventsState {
-  const _EventsState({required final  List<EventSummary> events, required final  List<TopicItem> topics, required final  Set<String> subscribedTopicIds, required final  Set<String> selectedTopicIds, required this.query, required this.page, required this.pageSize, required this.isLoadingMore}): _events = events,_topics = topics,_subscribedTopicIds = subscribedTopicIds,_selectedTopicIds = selectedTopicIds;
+  const _EventsState({required final  List<EventSummary> events, required final  List<TopicItem> topics, required final  Set<String> subscribedTopicIds, required final  Set<String> selectedTopicIds, required this.query, required this.page, required this.pageSize, required this.isLoadingMore, this.errorMessage}): _events = events,_topics = topics,_subscribedTopicIds = subscribedTopicIds,_selectedTopicIds = selectedTopicIds;
   factory _EventsState.fromJson(Map<String, dynamic> json) => _$EventsStateFromJson(json);
 
  final  List<EventSummary> _events;
@@ -251,6 +252,7 @@ class _EventsState implements EventsState {
 @override final  int page;
 @override final  int pageSize;
 @override final  bool isLoadingMore;
+@override final  String? errorMessage;
 
 /// Create a copy of EventsState
 /// with the given fields replaced by the non-null parameter values.
@@ -265,16 +267,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventsState&&const DeepCollectionEquality().equals(other._events, _events)&&const DeepCollectionEquality().equals(other._topics, _topics)&&const DeepCollectionEquality().equals(other._subscribedTopicIds, _subscribedTopicIds)&&const DeepCollectionEquality().equals(other._selectedTopicIds, _selectedTopicIds)&&(identical(other.query, query) || other.query == query)&&(identical(other.page, page) || other.page == page)&&(identical(other.pageSize, pageSize) || other.pageSize == pageSize)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventsState&&const DeepCollectionEquality().equals(other._events, _events)&&const DeepCollectionEquality().equals(other._topics, _topics)&&const DeepCollectionEquality().equals(other._subscribedTopicIds, _subscribedTopicIds)&&const DeepCollectionEquality().equals(other._selectedTopicIds, _selectedTopicIds)&&(identical(other.query, query) || other.query == query)&&(identical(other.page, page) || other.page == page)&&(identical(other.pageSize, pageSize) || other.pageSize == pageSize)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_events),const DeepCollectionEquality().hash(_topics),const DeepCollectionEquality().hash(_subscribedTopicIds),const DeepCollectionEquality().hash(_selectedTopicIds),query,page,pageSize,isLoadingMore);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_events),const DeepCollectionEquality().hash(_topics),const DeepCollectionEquality().hash(_subscribedTopicIds),const DeepCollectionEquality().hash(_selectedTopicIds),query,page,pageSize,isLoadingMore,errorMessage);
 
 @override
 String toString() {
-  return 'EventsState(events: $events, topics: $topics, subscribedTopicIds: $subscribedTopicIds, selectedTopicIds: $selectedTopicIds, query: $query, page: $page, pageSize: $pageSize, isLoadingMore: $isLoadingMore)';
+  return 'EventsState(events: $events, topics: $topics, subscribedTopicIds: $subscribedTopicIds, selectedTopicIds: $selectedTopicIds, query: $query, page: $page, pageSize: $pageSize, isLoadingMore: $isLoadingMore, errorMessage: $errorMessage)';
 }
 
 
@@ -285,7 +287,7 @@ abstract mixin class _$EventsStateCopyWith<$Res> implements $EventsStateCopyWith
   factory _$EventsStateCopyWith(_EventsState value, $Res Function(_EventsState) _then) = __$EventsStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<EventSummary> events, List<TopicItem> topics, Set<String> subscribedTopicIds, Set<String> selectedTopicIds, String query, int page, int pageSize, bool isLoadingMore
+ List<EventSummary> events, List<TopicItem> topics, Set<String> subscribedTopicIds, Set<String> selectedTopicIds, String query, int page, int pageSize, bool isLoadingMore, String? errorMessage
 });
 
 
@@ -302,7 +304,7 @@ class __$EventsStateCopyWithImpl<$Res>
 
 /// Create a copy of EventsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? events = null,Object? topics = null,Object? subscribedTopicIds = null,Object? selectedTopicIds = null,Object? query = null,Object? page = null,Object? pageSize = null,Object? isLoadingMore = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? events = null,Object? topics = null,Object? subscribedTopicIds = null,Object? selectedTopicIds = null,Object? query = null,Object? page = null,Object? pageSize = null,Object? isLoadingMore = null,Object? errorMessage = freezed,}) {
   return _then(_EventsState(
 events: null == events ? _self._events : events // ignore: cast_nullable_to_non_nullable
 as List<EventSummary>,topics: null == topics ? _self._topics : topics // ignore: cast_nullable_to_non_nullable
@@ -312,7 +314,8 @@ as Set<String>,query: null == query ? _self.query : query // ignore: cast_nullab
 as String,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
 as int,pageSize: null == pageSize ? _self.pageSize : pageSize // ignore: cast_nullable_to_non_nullable
 as int,isLoadingMore: null == isLoadingMore ? _self.isLoadingMore : isLoadingMore // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

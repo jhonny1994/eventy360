@@ -29,6 +29,7 @@ class EventsController extends _$EventsController {
       topics: topics,
       subscribedTopicIds: subscribedTopics,
       events: events,
+      errorMessage: null,
     );
   }
 
@@ -50,26 +51,32 @@ class EventsController extends _$EventsController {
         topics: topics,
         subscribedTopicIds: subscribedTopics,
         page: 1,
+        errorMessage: null,
       );
     });
   }
 
   Future<void> updateQuery(String query) async {
     final current = state.asData?.value ?? EventsState.initial();
-    final repository = ref.read(eventsRepositoryProvider);
-    final events = await repository.discoverEvents(
-      page: 1,
-      pageSize: current.pageSize,
-      query: query,
-      selectedTopicIds: current.selectedTopicIds,
-    );
-    state = AsyncData(
-      current.copyWith(
-        query: query,
+    try {
+      final repository = ref.read(eventsRepositoryProvider);
+      final events = await repository.discoverEvents(
         page: 1,
-        events: events,
-      ),
-    );
+        pageSize: current.pageSize,
+        query: query,
+        selectedTopicIds: current.selectedTopicIds,
+      );
+      state = AsyncData(
+        current.copyWith(
+          query: query,
+          page: 1,
+          events: events,
+          errorMessage: null,
+        ),
+      );
+    } on Object catch (error) {
+      state = AsyncData(current.copyWith(errorMessage: error.toString()));
+    }
   }
 
   Future<void> loadNextPage() async {
@@ -78,21 +85,31 @@ class EventsController extends _$EventsController {
       return;
     }
     state = AsyncData(current.copyWith(isLoadingMore: true));
-    final repository = ref.read(eventsRepositoryProvider);
-    final nextPage = current.page + 1;
-    final nextEvents = await repository.discoverEvents(
-      page: nextPage,
-      pageSize: current.pageSize,
-      query: current.query,
-      selectedTopicIds: current.selectedTopicIds,
-    );
-    state = AsyncData(
-      current.copyWith(
-        events: [...current.events, ...nextEvents],
+    try {
+      final repository = ref.read(eventsRepositoryProvider);
+      final nextPage = current.page + 1;
+      final nextEvents = await repository.discoverEvents(
         page: nextPage,
-        isLoadingMore: false,
-      ),
-    );
+        pageSize: current.pageSize,
+        query: current.query,
+        selectedTopicIds: current.selectedTopicIds,
+      );
+      state = AsyncData(
+        current.copyWith(
+          events: [...current.events, ...nextEvents],
+          page: nextPage,
+          isLoadingMore: false,
+          errorMessage: null,
+        ),
+      );
+    } on Object catch (error) {
+      state = AsyncData(
+        current.copyWith(
+          isLoadingMore: false,
+          errorMessage: error.toString(),
+        ),
+      );
+    }
   }
 
   Future<void> toggleBookmark(String eventId) async {
@@ -100,19 +117,24 @@ class EventsController extends _$EventsController {
     if (current == null) {
       return;
     }
-    final repository = ref.read(eventsRepositoryProvider);
-    final isBookmarked = await repository.toggleBookmark(eventId);
-    state = AsyncData(
-      current.copyWith(
-        events: current.events
-            .map(
-              (event) => event.id == eventId
-                  ? event.copyWith(isBookmarked: isBookmarked)
-                  : event,
-            )
-            .toList(),
-      ),
-    );
+    try {
+      final repository = ref.read(eventsRepositoryProvider);
+      final isBookmarked = await repository.toggleBookmark(eventId);
+      state = AsyncData(
+        current.copyWith(
+          events: current.events
+              .map(
+                (event) => event.id == eventId
+                    ? event.copyWith(isBookmarked: isBookmarked)
+                    : event,
+              )
+              .toList(),
+          errorMessage: null,
+        ),
+      );
+    } on Object catch (error) {
+      state = AsyncData(current.copyWith(errorMessage: error.toString()));
+    }
   }
 
   Future<void> toggleTopicSubscription(String topicId) async {
@@ -121,20 +143,38 @@ class EventsController extends _$EventsController {
       return;
     }
     final notifications = ref.read(notificationControllerProvider.notifier);
-    await notifications.requestPermissionForTopicIntent();
     final repository = ref.read(eventsRepositoryProvider);
-    final subscribed = await repository.toggleTopicSubscription(topicId);
+    try {
+      await notifications.requestPermissionForTopicIntent();
+      final subscribed = await repository.toggleTopicSubscription(topicId);
 
-    final updatedSubs = {...current.subscribedTopicIds};
-    if (subscribed) {
-      updatedSubs.add(topicId);
-      await notifications.registerCurrentToken(topicId: topicId);
-    } else {
-      updatedSubs.remove(topicId);
-      await notifications.unregisterCurrentToken(topicId: topicId);
+      try {
+        if (subscribed) {
+          await notifications.registerCurrentToken(topicId: topicId);
+        } else {
+          await notifications.unregisterCurrentToken(topicId: topicId);
+        }
+      } on Object {
+        await repository.toggleTopicSubscription(topicId);
+        rethrow;
+      }
+
+      final updatedSubs = {...current.subscribedTopicIds};
+      if (subscribed) {
+        updatedSubs.add(topicId);
+      } else {
+        updatedSubs.remove(topicId);
+      }
+
+      state = AsyncData(
+        current.copyWith(
+          subscribedTopicIds: updatedSubs,
+          errorMessage: null,
+        ),
+      );
+    } on Object catch (error) {
+      state = AsyncData(current.copyWith(errorMessage: error.toString()));
     }
-
-    state = AsyncData(current.copyWith(subscribedTopicIds: updatedSubs));
   }
 
   Future<void> toggleTopicFilter(String topicId) async {
@@ -148,20 +188,25 @@ class EventsController extends _$EventsController {
     } else {
       selected.add(topicId);
     }
-    final repository = ref.read(eventsRepositoryProvider);
-    final filteredEvents = await repository.discoverEvents(
-      page: 1,
-      pageSize: current.pageSize,
-      query: current.query,
-      selectedTopicIds: selected,
-    );
-    state = AsyncData(
-      current.copyWith(
-        selectedTopicIds: selected,
+    try {
+      final repository = ref.read(eventsRepositoryProvider);
+      final filteredEvents = await repository.discoverEvents(
         page: 1,
-        events: filteredEvents,
-      ),
-    );
+        pageSize: current.pageSize,
+        query: current.query,
+        selectedTopicIds: selected,
+      );
+      state = AsyncData(
+        current.copyWith(
+          selectedTopicIds: selected,
+          page: 1,
+          events: filteredEvents,
+          errorMessage: null,
+        ),
+      );
+    } on Object catch (error) {
+      state = AsyncData(current.copyWith(errorMessage: error.toString()));
+    }
   }
 
   EventSummary? findById(String eventId) {

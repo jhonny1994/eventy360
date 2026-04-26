@@ -46,7 +46,7 @@ jobs:
 
       - name: Verify generated sources are committed
         shell: bash
-        run: git diff --exit-code -- apps/mobile/lib apps/mobile/pubspec.lock
+        run: git diff --exit-code -- lib pubspec.lock
 
       - name: Analyze
         run: flutter analyze

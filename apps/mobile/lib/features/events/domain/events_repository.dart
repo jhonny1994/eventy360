@@ -17,3 +17,12 @@ abstract class EventsRepository {
   Future<Set<String>> getSubscribedTopicIds();
   Future<bool> toggleTopicSubscription(String topicId);
 }
+
+class EventsRepositoryError implements Exception {
+  EventsRepositoryError(this.message);
+
+  final String message;
+
+  @override
+  String toString() => message;
+}
