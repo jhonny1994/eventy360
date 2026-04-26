@@ -1,4 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart' as fcm;
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 enum PushAuthorizationStatus {
@@ -32,15 +33,11 @@ class FirebasePushNotificationService implements PushNotificationService {
 
   @override
   Future<PushAuthorizationStatus> requestPermission() async {
-    final settings = await _messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-      provisional: false,
-    );
+    final settings = await _messaging.requestPermission();
     return switch (settings.authorizationStatus) {
       fcm.AuthorizationStatus.authorized => PushAuthorizationStatus.authorized,
-      fcm.AuthorizationStatus.provisional => PushAuthorizationStatus.provisional,
+      fcm.AuthorizationStatus.provisional =>
+        PushAuthorizationStatus.provisional,
       fcm.AuthorizationStatus.denied => PushAuthorizationStatus.denied,
       _ => PushAuthorizationStatus.notDetermined,
     };
@@ -81,6 +78,8 @@ class FirebasePushNotificationService implements PushNotificationService {
         'token': token,
         'topic_id': topicId,
       });
-    } catch (_) {}
+    } on Object catch (error) {
+      debugPrint('registerTokenToBackend failed: $error');
+    }
   }
 }

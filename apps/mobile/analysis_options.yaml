@@ -12,10 +12,3 @@ linter:
   rules:
     public_member_api_docs: false
     lines_longer_than_80_chars: false
-    avoid_catches_without_on_clauses: false
-    avoid_positional_boolean_parameters: false
-    avoid_bool_literals_in_conditional_expressions: false
-    cascade_invocations: false
-    discarded_futures: false
-    prefer_const_declarations: false
-    unnecessary_parenthesis: false

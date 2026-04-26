@@ -1,3 +1,4 @@
+import 'package:eventy360/features/auth/domain/auth_deep_link_intent.dart';
 import 'package:eventy360/features/auth/domain/auth_exception.dart';
 import 'package:eventy360/features/auth/domain/auth_repository.dart';
 import 'package:eventy360/features/auth/domain/auth_user.dart';
@@ -11,7 +12,7 @@ class SupabaseAuthRepository implements AuthRepository {
   supabase.SupabaseClient get _client {
     try {
       return supabase.Supabase.instance.client;
-    } catch (_) {
+    } on Object {
       throw AuthException(
         'Supabase is not initialized. Provide SUPABASE_URL and SUPABASE_ANON_KEY.',
       );
@@ -24,6 +25,17 @@ class SupabaseAuthRepository implements AuthRepository {
   }
 
   @override
+  Stream<AuthDeepLinkIntent> authDeepLinkIntents() {
+    return _auth.onAuthStateChange
+        .where((event) => event.event == supabase.AuthChangeEvent.passwordRecovery)
+        .map(
+          (_) => const AuthDeepLinkIntent(
+            action: AuthDeepLinkAction.passwordRecovery,
+          ),
+        );
+  }
+
+  @override
   Future<AuthUser?> getCurrentUser() async {
     final user = _auth.currentUser;
     return _mapUser(user);
@@ -32,6 +44,13 @@ class SupabaseAuthRepository implements AuthRepository {
   @override
   Future<void> sendPasswordResetEmail(String email) async {
     await _auth.resetPasswordForEmail(email);
+  }
+
+  @override
+  Future<void> updatePassword(String newPassword) async {
+    await _auth.updateUser(
+      supabase.UserAttributes(password: newPassword),
+    );
   }
 
   @override

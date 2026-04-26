@@ -3,6 +3,8 @@ import 'package:eventy360/app/router/app_router.dart';
 import 'package:eventy360/app/router/route_paths.dart';
 import 'package:eventy360/app/theme/app_theme.dart';
 import 'package:eventy360/app/theme/theme_mode_controller.dart';
+import 'package:eventy360/features/auth/application/session_controller.dart';
+import 'package:eventy360/features/auth/domain/auth_deep_link_intent.dart';
 import 'package:eventy360/features/notifications/application/notification_controller.dart';
 import 'package:eventy360/l10n/generated/l10n.dart';
 import 'package:flutter/material.dart';
@@ -17,16 +19,26 @@ class Eventy360App extends ConsumerWidget {
     final appRouter = ref.watch(appRouterProvider);
     final themeMode = ref.watch(themeModeControllerProvider);
     final locale = ref.watch(localeControllerProvider);
-    ref.listen(notificationControllerProvider, (previous, next) {
-      final pendingEventId = next.asData?.value.pendingEventId;
-      if (pendingEventId == null || pendingEventId.isEmpty) {
-        return;
-      }
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        appRouter.go('${RoutePaths.events}/$pendingEventId');
-        ref.read(notificationControllerProvider.notifier).clearPendingEvent();
+    ref
+      ..listen(authDeepLinkIntentsProvider, (previous, next) {
+        next.whenData((intent) {
+          if (intent.action == AuthDeepLinkAction.passwordRecovery) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              appRouter.go('${RoutePaths.resetPassword}?mode=recovery');
+            });
+          }
+        });
+      })
+      ..listen(notificationControllerProvider, (previous, next) {
+        final pendingEventId = next.asData?.value.pendingEventId;
+        if (pendingEventId == null || pendingEventId.isEmpty) {
+          return;
+        }
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          appRouter.go('${RoutePaths.events}/$pendingEventId');
+          ref.read(notificationControllerProvider.notifier).clearPendingEvent();
+        });
       });
-    });
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,

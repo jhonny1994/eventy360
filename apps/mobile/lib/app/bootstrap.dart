@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:eventy360/app/app.dart';
 import 'package:eventy360/app/providers.dart';
 import 'package:eventy360/core/presentation/widgets/app_error_view.dart';
+import 'package:eventy360/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -54,13 +55,15 @@ Future<void> bootstrap() async {
 
 Future<void> _initializeBackendClients() async {
   try {
-    await Firebase.initializeApp();
-  } catch (error) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } on Object catch (error) {
     debugPrint('Firebase initialization skipped: $error');
   }
 
-  final supabaseUrl = const String.fromEnvironment('SUPABASE_URL');
-  final supabaseAnonKey = const String.fromEnvironment('SUPABASE_ANON_KEY');
+  const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
+  const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
   if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
     debugPrint('Supabase initialization skipped: missing dart defines.');
     return;

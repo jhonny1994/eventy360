@@ -41,7 +41,7 @@ class OnboardingScreen extends ConsumerWidget {
                   onPressed: () async {
                     await ref
                         .read(sessionControllerProvider.notifier)
-                        .setOnboardingCompleted(true);
+                        .setOnboardingCompleted(value: true);
                     if (context.mounted) {
                       context.go(RoutePaths.signIn);
                     }

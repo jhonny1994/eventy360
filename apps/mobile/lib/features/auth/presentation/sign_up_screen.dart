@@ -102,10 +102,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
           SnackBar(content: Text(localizations.accountCreated)),
         );
       }
-    } catch (error) {
+    } on AuthException catch (error) {
       setState(() {
-        _error = error is AuthException ? error.message : localizations.genericError;
+        _error = error.message;
       });
+    } on Object {
+      setState(() => _error = localizations.genericError);
     }
   }
 }
