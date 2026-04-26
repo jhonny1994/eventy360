@@ -2,7 +2,7 @@ import 'package:eventy360/app/localization/locale_controller.dart';
 import 'package:eventy360/app/router/app_router.dart';
 import 'package:eventy360/app/theme/app_theme.dart';
 import 'package:eventy360/app/theme/theme_mode_controller.dart';
-import 'package:eventy360/l10n/generated/app_localizations.dart';
+import 'package:eventy360/l10n/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,9 +24,9 @@ class Eventy360App extends ConsumerWidget {
       darkTheme: AppTheme.dark,
       themeMode: themeMode,
       locale: locale,
-      supportedLocales: AppLocalizations.supportedLocales,
+      supportedLocales: S.delegate.supportedLocales,
       localizationsDelegates: const [
-        AppLocalizations.delegate,
+        S.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
