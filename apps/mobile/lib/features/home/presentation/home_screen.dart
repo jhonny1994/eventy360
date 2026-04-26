@@ -4,6 +4,8 @@ import 'package:eventy360/core/presentation/widgets/adaptive_page_body.dart';
 import 'package:eventy360/features/auth/application/session_controller.dart';
 import 'package:eventy360/features/events/application/events_controller.dart';
 import 'package:eventy360/features/events/domain/event_summary.dart';
+import 'package:eventy360/features/home/application/home_subscription_provider.dart';
+import 'package:eventy360/features/submissions/application/submissions_controller.dart';
 import 'package:eventy360/l10n/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,17 +19,20 @@ class HomeScreen extends ConsumerWidget {
     final localizations = S.of(context);
     final session = ref.watch(sessionControllerProvider).asData?.value;
     final eventsState = ref.watch(eventsControllerProvider).asData?.value;
+    final submissionsState = ref
+        .watch(submissionsControllerProvider)
+        .asData
+        ?.value;
+    final subscriptionState = ref.watch(homeSubscriptionStatusProvider);
     final userEmail = session?.user?.email ?? '-';
-    final hasPremiumSubscription = (session?.user?.email ?? '').contains(
-      '+pro@',
-    );
-    final verificationStatus = session?.profileCompleted == true
-        ? localizations.profileCompleted
-        : localizations.profileIncomplete;
+    final hasPremiumSubscription =
+        subscriptionState.asData?.value.isActive == true ||
+        subscriptionState.asData?.value.isTrial == true;
+    final verificationStatus = session?.isVerified == true
+        ? localizations.verifiedStatus
+        : localizations.notVerifiedStatus;
     final nearestDeadline = _nearestDeadline(eventsState?.events ?? const []);
-    final activeSubmissionCount = _activeSubmissionCount(
-      eventsState?.events ?? const [],
-    );
+    final activeSubmissionCount = submissionsState?.submissions.length ?? 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -157,13 +162,6 @@ DateTime? _nearestDeadline(List<EventSummary> events) {
     }
   }
   return nearest;
-}
-
-int _activeSubmissionCount(List<EventSummary> events) {
-  if (events.isEmpty) {
-    return 0;
-  }
-  return events.length > 2 ? 2 : events.length;
 }
 
 String _formatDate(DateTime date) {

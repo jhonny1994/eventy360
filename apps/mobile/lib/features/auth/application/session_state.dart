@@ -9,6 +9,7 @@ abstract class SessionState with _$SessionState {
   const factory SessionState({
     required bool onboardingCompleted,
     required bool profileCompleted,
+    required bool isVerified,
     AuthUser? user,
   }) = _SessionState;
 

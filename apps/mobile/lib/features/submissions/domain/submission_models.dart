@@ -1,4 +1,5 @@
 import 'package:eventy360/core/domain/operation_receipt.dart';
+import 'package:flutter/foundation.dart';
 
 enum SubmissionWriteKind { abstract, fullPaper, revision }
 
@@ -238,27 +239,49 @@ class SubmitAbstractInput {
 class SubmitFullPaperInput {
   const SubmitFullPaperInput({
     required this.submissionId,
-    required this.fileUrl,
+    required this.file,
     this.idempotencyKey,
   });
 
   final String submissionId;
-  final String fileUrl;
+  final SubmissionUploadFile file;
   final String? idempotencyKey;
 }
 
 class SubmitRevisionInput {
   const SubmitRevisionInput({
     required this.submissionId,
-    required this.fileUrl,
+    required this.file,
     this.revisionNotes = '',
     this.idempotencyKey,
   });
 
   final String submissionId;
-  final String fileUrl;
+  final SubmissionUploadFile file;
   final String revisionNotes;
   final String? idempotencyKey;
+}
+
+class SubmissionUploadFile {
+  const SubmissionUploadFile({
+    required this.bytes,
+    required this.fileName,
+    required this.mimeType,
+  });
+
+  final Uint8List bytes;
+  final String fileName;
+  final String mimeType;
+
+  int get sizeInBytes => bytes.lengthInBytes;
+
+  String get extension {
+    final parts = fileName.split('.');
+    if (parts.length < 2) {
+      return 'pdf';
+    }
+    return parts.last.toLowerCase();
+  }
 }
 
 class SubmissionWriteResult {

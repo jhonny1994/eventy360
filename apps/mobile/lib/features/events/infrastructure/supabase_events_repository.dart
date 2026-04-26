@@ -100,6 +100,99 @@ class SupabaseEventsRepository implements EventsRepository {
   }
 
   @override
+  Future<EventSummary?> fetchEventById(String eventId) async {
+    final client = _client;
+    if (client == null) {
+      return _demoEvents(await getBookmarkedEventIds(), '', const {}, 1, 50)
+          .where((event) => event.id == eventId)
+          .cast<EventSummary?>()
+          .firstWhere((event) => event != null, orElse: () => null);
+    }
+
+    try {
+      final locale =
+          ref.read(sharedPreferencesProvider).getString('app.locale_code') ??
+          'en';
+      final eventRow = await client
+          .from('events')
+          .select(
+            'id,event_name_translations,abstract_submission_deadline,wilaya_id',
+          )
+          .eq('id', eventId)
+          .maybeSingle();
+      if (eventRow == null) {
+        return null;
+      }
+
+      final topicRows = await client
+          .from('event_topics')
+          .select('topic_id')
+          .eq('event_id', eventId);
+      final topicIds = (topicRows as List<dynamic>)
+          .map((row) => (row as Map<String, dynamic>)['topic_id'].toString())
+          .toList();
+      final topics = <String>[];
+      if (topicIds.isNotEmpty) {
+        final topicData = await client
+            .from('topics')
+            .select('id,name_translations')
+            .inFilter('id', topicIds);
+        final topicNameById = <String, String>{};
+        for (final row
+            in (topicData as List<dynamic>).cast<Map<String, dynamic>>()) {
+          final translations =
+              (row['name_translations'] as Map?)?.cast<String, dynamic>() ??
+              const <String, dynamic>{};
+          topicNameById[row['id'].toString()] =
+              translations[locale]?.toString() ??
+              translations['en']?.toString() ??
+              translations['ar']?.toString() ??
+              'Topic';
+        }
+        for (final topicId in topicIds) {
+          topics.add(topicNameById[topicId] ?? 'Topic');
+        }
+      }
+
+      final wilayaId = eventRow['wilaya_id'] as int?;
+      final location = wilayaId == null
+          ? 'Algeria'
+          : await client.rpc<String>(
+              'get_wilaya_name',
+              params: {
+                'p_wilaya_id': wilayaId,
+                'p_locale': locale,
+              },
+            );
+
+      final translations =
+          (eventRow['event_name_translations'] as Map?)
+              ?.cast<String, dynamic>() ??
+          const <String, dynamic>{};
+      final bookmarkedIds = await getBookmarkedEventIds();
+      return EventSummary(
+        id: eventRow['id'].toString(),
+        title:
+            translations[locale]?.toString() ??
+            translations['en']?.toString() ??
+            translations['ar']?.toString() ??
+            'Untitled event',
+        deadline:
+            DateTime.tryParse(
+              eventRow['abstract_submission_deadline']?.toString() ?? '',
+            ) ??
+            DateTime.now().add(const Duration(days: 10)),
+        location: location,
+        topics: topics,
+        isBookmarked: bookmarkedIds.contains(eventId),
+      );
+    } on Object catch (error) {
+      debugPrint('fetchEventById failed: $error');
+      return null;
+    }
+  }
+
+  @override
   Future<Set<String>> getBookmarkedEventIds() async {
     final prefs = ref.read(sharedPreferencesProvider);
     final fallback = prefs.getStringList(_bookmarkCacheKey) ?? const <String>[];

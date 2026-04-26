@@ -349,6 +349,16 @@ class S {
     return Intl.message('Institution', name: 'institution', desc: '', args: []);
   }
 
+  /// `Wilaya`
+  String get wilayaLabel {
+    return Intl.message('Wilaya', name: 'wilayaLabel', desc: '', args: []);
+  }
+
+  /// `Daira`
+  String get dairaLabel {
+    return Intl.message('Daira', name: 'dairaLabel', desc: '', args: []);
+  }
+
   /// `Continue`
   String get continueAction {
     return Intl.message('Continue', name: 'continueAction', desc: '', args: []);
@@ -394,6 +404,21 @@ class S {
     return Intl.message(
       'Verification status',
       name: 'verificationStatusTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Verified`
+  String get verifiedStatus {
+    return Intl.message('Verified', name: 'verifiedStatus', desc: '', args: []);
+  }
+
+  /// `Not verified`
+  String get notVerifiedStatus {
+    return Intl.message(
+      'Not verified',
+      name: 'notVerifiedStatus',
       desc: '',
       args: [],
     );
@@ -704,11 +729,31 @@ class S {
     );
   }
 
-  /// `Paste the uploaded file URL from your storage path.`
-  String get fileUrlHint {
+  /// `Choose a PDF, DOC, or DOCX file and we will upload it for you.`
+  String get filePickerHint {
     return Intl.message(
-      'Paste the uploaded file URL from your storage path.',
-      name: 'fileUrlHint',
+      'Choose a PDF, DOC, or DOCX file and we will upload it for you.',
+      name: 'filePickerHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose file`
+  String get pickFileAction {
+    return Intl.message(
+      'Choose file',
+      name: 'pickFileAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No file selected`
+  String get noFileSelected {
+    return Intl.message(
+      'No file selected',
+      name: 'noFileSelected',
       desc: '',
       args: [],
     );

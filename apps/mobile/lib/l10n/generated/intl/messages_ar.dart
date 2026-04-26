@@ -52,6 +52,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "continueAction": MessageLookupByLibrary.simpleMessage("متابعة"),
     "createAccount": MessageLookupByLibrary.simpleMessage("إنشاء حساب"),
+    "dairaLabel": MessageLookupByLibrary.simpleMessage("الدائرة"),
     "deadline": MessageLookupByLibrary.simpleMessage("آخر موعد"),
     "email": MessageLookupByLibrary.simpleMessage("البريد الإلكتروني"),
     "eventDetailsTitle": MessageLookupByLibrary.simpleMessage(
@@ -66,8 +67,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "eventsTitle": MessageLookupByLibrary.simpleMessage("استكشاف الفعاليات"),
     "exploreEvents": MessageLookupByLibrary.simpleMessage("استكشف الفعاليات"),
-    "fileUrlHint": MessageLookupByLibrary.simpleMessage(
-      "الصق رابط الملف المرفوع من مسار التخزين.",
+    "filePickerHint": MessageLookupByLibrary.simpleMessage(
+      "اختر ملف PDF أو DOC أو DOCX وسنقوم برفعه لك.",
     ),
     "fileUrlLabel": MessageLookupByLibrary.simpleMessage("رابط الملف"),
     "forgotPassword": MessageLookupByLibrary.simpleMessage(
@@ -94,12 +95,14 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "newPassword": MessageLookupByLibrary.simpleMessage("كلمة المرور الجديدة"),
     "noEventsFound": MessageLookupByLibrary.simpleMessage("لا توجد فعاليات."),
+    "noFileSelected": MessageLookupByLibrary.simpleMessage("لم يتم اختيار ملف"),
     "noSubmissionsFound": MessageLookupByLibrary.simpleMessage(
       "لا توجد ترشيحات.",
     ),
     "noUpcomingDeadline": MessageLookupByLibrary.simpleMessage(
       "لا توجد مواعيد نهائية قادمة",
     ),
+    "notVerifiedStatus": MessageLookupByLibrary.simpleMessage("غير موثق"),
     "notificationEducationBody": MessageLookupByLibrary.simpleMessage(
       "سنطلب إذن الإشعارات فقط بعد الاشتراك في المواضيع.",
     ),
@@ -122,6 +125,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "passwordsDoNotMatch": MessageLookupByLibrary.simpleMessage(
       "كلمتا المرور غير متطابقتين.",
     ),
+    "pickFileAction": MessageLookupByLibrary.simpleMessage("اختر ملفًا"),
     "profileCompleted": MessageLookupByLibrary.simpleMessage(
       "الملف الشخصي مكتمل",
     ),
@@ -236,5 +240,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "verificationStatusTitle": MessageLookupByLibrary.simpleMessage(
       "حالة التحقق",
     ),
+    "verifiedStatus": MessageLookupByLibrary.simpleMessage("موثق"),
+    "wilayaLabel": MessageLookupByLibrary.simpleMessage("الولاية"),
   };
 }

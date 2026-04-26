@@ -2,6 +2,8 @@ import 'package:eventy360/features/auth/domain/auth_deep_link_intent.dart';
 import 'package:eventy360/features/auth/domain/auth_exception.dart';
 import 'package:eventy360/features/auth/domain/auth_repository.dart';
 import 'package:eventy360/features/auth/domain/auth_user.dart';
+import 'package:eventy360/features/auth/domain/location_option.dart';
+import 'package:eventy360/features/auth/domain/user_profile_status.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 class SupabaseAuthRepository implements AuthRepository {
@@ -43,6 +45,86 @@ class SupabaseAuthRepository implements AuthRepository {
   Future<AuthUser?> getCurrentUser() async {
     final user = _auth.currentUser;
     return _mapUser(user);
+  }
+
+  @override
+  Future<UserProfileStatus> getUserProfileStatus(String userId) async {
+    final row = await _client
+        .from('profiles')
+        .select('user_type,is_verified,is_extended_profile_complete')
+        .eq('id', userId)
+        .single();
+    return UserProfileStatus(
+      userType: row['user_type']?.toString() ?? 'researcher',
+      isVerified: row['is_verified'] == true,
+      isExtendedProfileComplete: row['is_extended_profile_complete'] == true,
+    );
+  }
+
+  @override
+  Future<List<LocationOption>> fetchWilayas(String localeCode) async {
+    final rows = await _client
+        .from('wilayas')
+        .select('id,name_ar,name_other')
+        .order('id');
+    return (rows as List<dynamic>).cast<Map<String, dynamic>>().map((row) {
+      final localized = _pickLocalizedName(
+        localeCode: localeCode,
+        arabic: row['name_ar']?.toString(),
+        other: row['name_other']?.toString(),
+      );
+      return LocationOption(
+        id: row['id'] as int,
+        name: localized,
+      );
+    }).toList();
+  }
+
+  @override
+  Future<List<LocationOption>> fetchDairas({
+    required int wilayaId,
+    required String localeCode,
+  }) async {
+    final rows = await _client
+        .from('dairas')
+        .select('id,wilaya_id,name_ar,name_other')
+        .eq('wilaya_id', wilayaId)
+        .order('id');
+    return (rows as List<dynamic>).cast<Map<String, dynamic>>().map((row) {
+      final localized = _pickLocalizedName(
+        localeCode: localeCode,
+        arabic: row['name_ar']?.toString(),
+        other: row['name_other']?.toString(),
+      );
+      return LocationOption(
+        id: row['id'] as int,
+        wilayaId: row['wilaya_id'] as int,
+        name: localized,
+      );
+    }).toList();
+  }
+
+  @override
+  Future<void> completeResearcherProfile({
+    required String fullName,
+    required String institution,
+    required int wilayaId,
+    required int dairaId,
+  }) async {
+    await _client.rpc<Object?>(
+      'complete_my_profile',
+      params: {
+        'profile_data': {
+          'name': fullName,
+          'institution': institution,
+          'academic_position': '',
+          'bio_translations': <String, String>{'ar': '', 'en': ''},
+          'profile_picture_url': null,
+          'wilaya_id': wilayaId,
+          'daira_id': dairaId,
+        },
+      },
+    );
   }
 
   @override
@@ -102,5 +184,16 @@ class SupabaseAuthRepository implements AuthRepository {
       email: user.email!,
       role: role,
     );
+  }
+
+  String _pickLocalizedName({
+    required String localeCode,
+    required String? arabic,
+    required String? other,
+  }) {
+    if (localeCode.toLowerCase().startsWith('ar')) {
+      return arabic ?? other ?? '';
+    }
+    return other ?? arabic ?? '';
   }
 }

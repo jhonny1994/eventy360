@@ -330,7 +330,7 @@ class SupabaseSubmissionsRepository implements SubmissionsRepository {
           .from('submissions')
           .select(
             'id,submitted_by,title_translations,abstract_translations,full_paper_status,'
-            'event_id,full_paper_file_url',
+            'event_id,full_paper_file_url,full_paper_file_metadata',
           )
           .eq('id', input.submissionId)
           .single();
@@ -341,9 +341,12 @@ class SupabaseSubmissionsRepository implements SubmissionsRepository {
       final fullPaperStatus = submissionStatusFromDb(
         (submission['full_paper_status'] ?? '').toString(),
       );
+      final currentMetadata =
+          (submission['full_paper_file_metadata'] as Map?)
+              ?.cast<String, dynamic>() ??
+          const <String, dynamic>{};
       if (fullPaperStatus == SubmissionStatus.fullPaperSubmitted &&
-          (submission['full_paper_file_url']?.toString() ?? '') ==
-              input.fileUrl.trim()) {
+          currentMetadata['originalName']?.toString() == input.file.fileName) {
         return SubmissionWriteResult(
           submissionId: input.submissionId,
           receipt: _receipt(
@@ -364,9 +367,19 @@ class SupabaseSubmissionsRepository implements SubmissionsRepository {
           ? 1
           : (versionRows.first['version_number'] as int) + 1;
 
+      final uploaded = await _uploadSubmissionFile(
+        eventId: submission['event_id'].toString(),
+        submissionId: input.submissionId,
+        file: input.file,
+        versionNumber: nextVersion,
+      );
+
       final metadata = <String, dynamic>{
-        'source': 'mobile_manual_url',
-        'url': input.fileUrl.trim(),
+        'source': 'mobile_upload',
+        'storage_path': uploaded.storagePath,
+        'originalName': input.file.fileName,
+        'size': input.file.sizeInBytes,
+        'type': input.file.mimeType,
         'submitted_via': 'mobile',
       };
 
@@ -377,7 +390,7 @@ class SupabaseSubmissionsRepository implements SubmissionsRepository {
             'version_number': nextVersion,
             'title_translations': submission['title_translations'],
             'abstract_translations': submission['abstract_translations'],
-            'full_paper_file_url': input.fileUrl.trim(),
+            'full_paper_file_url': uploaded.publicUrl,
             'full_paper_file_metadata': metadata,
             'submitted_at': DateTime.now().toUtc().toIso8601String(),
           })
@@ -387,7 +400,7 @@ class SupabaseSubmissionsRepository implements SubmissionsRepository {
       await _client
           .from('submissions')
           .update({
-            'full_paper_file_url': input.fileUrl.trim(),
+            'full_paper_file_url': uploaded.publicUrl,
             'full_paper_file_metadata': metadata,
             'full_paper_status': 'full_paper_submitted',
             'status': 'full_paper_submitted',
@@ -436,7 +449,7 @@ class SupabaseSubmissionsRepository implements SubmissionsRepository {
           .from('submissions')
           .select(
             'id,submitted_by,title_translations,abstract_translations,'
-            'full_paper_status,current_full_paper_version_id',
+            'full_paper_status,current_full_paper_version_id,event_id',
           )
           .eq('id', input.submissionId)
           .single();
@@ -462,9 +475,19 @@ class SupabaseSubmissionsRepository implements SubmissionsRepository {
           ? 1
           : (versionRows.first['version_number'] as int) + 1;
 
+      final uploaded = await _uploadSubmissionFile(
+        eventId: submission['event_id'].toString(),
+        submissionId: input.submissionId,
+        file: input.file,
+        versionNumber: nextVersion,
+      );
+
       final metadata = <String, dynamic>{
-        'source': 'mobile_manual_url',
-        'url': input.fileUrl.trim(),
+        'source': 'mobile_upload',
+        'storage_path': uploaded.storagePath,
+        'originalName': input.file.fileName,
+        'size': input.file.sizeInBytes,
+        'type': input.file.mimeType,
         'submitted_via': 'mobile',
         'revision_notes': input.revisionNotes.trim(),
       };
@@ -476,7 +499,7 @@ class SupabaseSubmissionsRepository implements SubmissionsRepository {
             'version_number': nextVersion,
             'title_translations': submission['title_translations'],
             'abstract_translations': submission['abstract_translations'],
-            'full_paper_file_url': input.fileUrl.trim(),
+            'full_paper_file_url': uploaded.publicUrl,
             'full_paper_file_metadata': metadata,
             'submitted_at': DateTime.now().toUtc().toIso8601String(),
           })
@@ -486,7 +509,7 @@ class SupabaseSubmissionsRepository implements SubmissionsRepository {
       await _client
           .from('submissions')
           .update({
-            'full_paper_file_url': input.fileUrl.trim(),
+            'full_paper_file_url': uploaded.publicUrl,
             'full_paper_file_metadata': metadata,
             'full_paper_status': 'revision_under_review',
             'status': 'revision_under_review',
@@ -610,6 +633,34 @@ class SupabaseSubmissionsRepository implements SubmissionsRepository {
     await _prefs.setString(_idempotencyCacheKey, jsonEncode(map));
   }
 
+  Future<_UploadedSubmissionFile> _uploadSubmissionFile({
+    required String eventId,
+    required String submissionId,
+    required SubmissionUploadFile file,
+    required int versionNumber,
+  }) async {
+    final safeName =
+        '${DateTime.now().microsecondsSinceEpoch}.${file.extension}';
+    final storagePath =
+        '$eventId/$submissionId/full_paper/v$versionNumber/$safeName';
+    await _client.storage
+        .from('submission_files')
+        .uploadBinary(
+          storagePath,
+          file.bytes,
+          fileOptions: FileOptions(
+            contentType: file.mimeType,
+          ),
+        );
+    final publicUrl = _client.storage
+        .from('submission_files')
+        .getPublicUrl(storagePath);
+    return _UploadedSubmissionFile(
+      storagePath: storagePath,
+      publicUrl: publicUrl,
+    );
+  }
+
   SubmissionError _mapError(Object error) {
     if (error is SubmissionError) {
       return error;
@@ -641,4 +692,14 @@ class SupabaseSubmissionsRepository implements SubmissionsRepository {
         message.contains('502') ||
         message.contains('429');
   }
+}
+
+class _UploadedSubmissionFile {
+  const _UploadedSubmissionFile({
+    required this.storagePath,
+    required this.publicUrl,
+  });
+
+  final String storagePath;
+  final String publicUrl;
 }
