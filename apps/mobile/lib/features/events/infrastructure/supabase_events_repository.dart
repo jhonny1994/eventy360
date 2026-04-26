@@ -2,7 +2,6 @@ import 'package:eventy360/app/providers.dart';
 import 'package:eventy360/features/events/domain/event_summary.dart';
 import 'package:eventy360/features/events/domain/events_repository.dart';
 import 'package:eventy360/features/events/domain/topic_item.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
@@ -35,12 +34,8 @@ class SupabaseEventsRepository implements EventsRepository {
     final offset = (page - 1) * pageSize;
     final client = _client;
     if (client == null) {
-      return _demoEvents(
-        bookmarkedIds,
-        query,
-        selectedTopicIds,
-        page,
-        pageSize,
+      throw EventsRepositoryError(
+        'Supabase client is not initialized for event discovery.',
       );
     }
 
@@ -89,24 +84,19 @@ class SupabaseEventsRepository implements EventsRepository {
           )
           .toList();
 
-      if (events.isNotEmpty) {
-        return events;
-      }
+      return events;
     } on Object catch (error) {
-      debugPrint('discoverEvents fallback to demo data: $error');
+      throw EventsRepositoryError('Event discovery failed: $error');
     }
-
-    return _demoEvents(bookmarkedIds, query, selectedTopicIds, page, pageSize);
   }
 
   @override
   Future<EventSummary?> fetchEventById(String eventId) async {
     final client = _client;
     if (client == null) {
-      return _demoEvents(await getBookmarkedEventIds(), '', const {}, 1, 50)
-          .where((event) => event.id == eventId)
-          .cast<EventSummary?>()
-          .firstWhere((event) => event != null, orElse: () => null);
+      throw EventsRepositoryError(
+        'Supabase client is not initialized for event details.',
+      );
     }
 
     try {
@@ -187,8 +177,7 @@ class SupabaseEventsRepository implements EventsRepository {
         isBookmarked: bookmarkedIds.contains(eventId),
       );
     } on Object catch (error) {
-      debugPrint('fetchEventById failed: $error');
-      return null;
+      throw EventsRepositoryError('Event detail lookup failed: $error');
     }
   }
 
@@ -238,7 +227,7 @@ class SupabaseEventsRepository implements EventsRepository {
           });
         }
       } on Object catch (error) {
-        debugPrint('toggleBookmark remote write failed: $error');
+        throw EventsRepositoryError('Bookmark update failed: $error');
       }
     }
 
@@ -257,7 +246,9 @@ class SupabaseEventsRepository implements EventsRepository {
   Future<List<TopicItem>> getTopics() async {
     final client = _client;
     if (client == null) {
-      return _demoTopics;
+      throw EventsRepositoryError(
+        'Supabase client is not initialized for topics.',
+      );
     }
 
     try {
@@ -280,14 +271,10 @@ class SupabaseEventsRepository implements EventsRepository {
             );
           })
           .toList();
-      if (topics.isNotEmpty) {
-        return topics;
-      }
+      return topics;
     } on Object catch (error) {
-      debugPrint('getTopics fallback to demo topics: $error');
+      throw EventsRepositoryError('Topic lookup failed: $error');
     }
-
-    return _demoTopics;
   }
 
   @override
@@ -335,7 +322,7 @@ class SupabaseEventsRepository implements EventsRepository {
           });
         }
       } on Object catch (error) {
-        debugPrint('toggleTopicSubscription remote write failed: $error');
+        throw EventsRepositoryError('Topic subscription update failed: $error');
       }
     }
 
@@ -350,71 +337,3 @@ class SupabaseEventsRepository implements EventsRepository {
     return !isSubscribed;
   }
 }
-
-final _demoTopics = <TopicItem>[
-  const TopicItem(id: 'ai', name: 'Artificial Intelligence'),
-  const TopicItem(id: 'cyber', name: 'Cybersecurity'),
-  const TopicItem(id: 'data', name: 'Data Science'),
-  const TopicItem(id: 'systems', name: 'Distributed Systems'),
-];
-
-List<EventSummary> _demoEvents(
-  Set<String> bookmarkedIds,
-  String query,
-  Set<String> selectedTopicIds,
-  int page,
-  int pageSize,
-) {
-  final all = <EventSummary>[
-    EventSummary(
-      id: 'evt-1',
-      title: 'AI for Climate Research Summit',
-      deadline: DateTime.now().add(const Duration(days: 12)),
-      location: 'Algiers',
-      topics: const ['Artificial Intelligence', 'Data Science'],
-      isBookmarked: bookmarkedIds.contains('evt-1'),
-    ),
-    EventSummary(
-      id: 'evt-2',
-      title: 'National Cybersecurity Colloquium',
-      deadline: DateTime.now().add(const Duration(days: 20)),
-      location: 'Oran',
-      topics: const ['Cybersecurity'],
-      isBookmarked: bookmarkedIds.contains('evt-2'),
-    ),
-    EventSummary(
-      id: 'evt-3',
-      title: 'Distributed Systems Doctoral Forum',
-      deadline: DateTime.now().add(const Duration(days: 7)),
-      location: 'Constantine',
-      topics: const ['Distributed Systems'],
-      isBookmarked: bookmarkedIds.contains('evt-3'),
-    ),
-  ];
-
-  final queryFiltered = query.trim().isEmpty
-      ? all
-      : all
-            .where(
-              (event) =>
-                  event.title.toLowerCase().contains(query.toLowerCase()) ||
-                  event.location.toLowerCase().contains(query.toLowerCase()),
-            )
-            .toList();
-  final filtered = selectedTopicIds.isEmpty
-      ? queryFiltered
-      : queryFiltered
-            .where(
-              (event) => event.topics.any(
-                (topic) => selectedTopicIds.contains(_topicKey(topic)),
-              ),
-            )
-            .toList();
-  final offset = (page - 1) * pageSize;
-  if (offset >= filtered.length) {
-    return <EventSummary>[];
-  }
-  return filtered.skip(offset).take(pageSize).toList();
-}
-
-String _topicKey(String name) => name.toLowerCase().replaceAll(' ', '-');

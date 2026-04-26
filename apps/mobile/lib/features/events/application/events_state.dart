@@ -16,6 +16,7 @@ abstract class EventsState with _$EventsState {
     required int page,
     required int pageSize,
     required bool isLoadingMore,
+    String? errorMessage,
   }) = _EventsState;
 
   factory EventsState.initial() => const EventsState(

@@ -54,19 +54,21 @@ Future<void> bootstrap() async {
 }
 
 Future<void> _initializeBackendClients() async {
+  const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
+  const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+  if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
+    throw StateError(
+      'Supabase initialization failed: missing SUPABASE_URL or '
+      'SUPABASE_ANON_KEY dart defines.',
+    );
+  }
+
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
   } on Object catch (error) {
-    debugPrint('Firebase initialization skipped: $error');
-  }
-
-  const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
-  const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
-  if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
-    debugPrint('Supabase initialization skipped: missing dart defines.');
-    return;
+    throw StateError('Firebase initialization failed: $error');
   }
 
   await Supabase.initialize(

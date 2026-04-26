@@ -1,5 +1,4 @@
 import 'package:firebase_messaging/firebase_messaging.dart' as fcm;
-import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 enum PushAuthorizationStatus {
@@ -71,20 +70,16 @@ class FirebasePushNotificationService implements PushNotificationService {
     required String token,
     required String topicId,
   }) async {
-    try {
-      final client = supabase.Supabase.instance.client;
-      final userId = client.auth.currentUser?.id;
-      if (userId == null) {
-        return;
-      }
-      await client.from('device_tokens').upsert({
-        'profile_id': userId,
-        'token': token,
-        'topic_id': topicId,
-      });
-    } on Object catch (error) {
-      debugPrint('registerTokenToBackend failed: $error');
+    final client = supabase.Supabase.instance.client;
+    final userId = client.auth.currentUser?.id;
+    if (userId == null) {
+      throw StateError('User must be authenticated to register a device token.');
     }
+    await client.from('device_tokens').upsert({
+      'profile_id': userId,
+      'token': token,
+      'topic_id': topicId,
+    });
   }
 
   @override
@@ -92,20 +87,18 @@ class FirebasePushNotificationService implements PushNotificationService {
     required String token,
     required String topicId,
   }) async {
-    try {
-      final client = supabase.Supabase.instance.client;
-      final userId = client.auth.currentUser?.id;
-      if (userId == null) {
-        return;
-      }
-      await client
-          .from('device_tokens')
-          .delete()
-          .eq('profile_id', userId)
-          .eq('token', token)
-          .eq('topic_id', topicId);
-    } on Object catch (error) {
-      debugPrint('unregisterTokenFromBackend failed: $error');
+    final client = supabase.Supabase.instance.client;
+    final userId = client.auth.currentUser?.id;
+    if (userId == null) {
+      throw StateError(
+        'User must be authenticated to unregister a device token.',
+      );
     }
+    await client
+        .from('device_tokens')
+        .delete()
+        .eq('profile_id', userId)
+        .eq('token', token)
+        .eq('topic_id', topicId);
   }
 }

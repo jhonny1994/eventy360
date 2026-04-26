@@ -50,7 +50,9 @@ class NotificationController extends _$NotificationController {
     final service = ref.read(pushNotificationServiceProvider);
     final token = await service.getToken();
     if (token == null) {
-      return;
+      throw StateError(
+        'FCM token is unavailable. Notification registration cannot continue.',
+      );
     }
     await service.registerTokenToBackend(token: token, topicId: topicId);
   }
@@ -59,7 +61,9 @@ class NotificationController extends _$NotificationController {
     final service = ref.read(pushNotificationServiceProvider);
     final token = await service.getToken();
     if (token == null) {
-      return;
+      throw StateError(
+        'FCM token is unavailable. Notification unregistration cannot continue.',
+      );
     }
     await service.unregisterTokenFromBackend(token: token, topicId: topicId);
   }

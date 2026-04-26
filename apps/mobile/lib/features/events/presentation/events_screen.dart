@@ -95,6 +95,16 @@ class EventsScreen extends ConsumerWidget {
                     }).toList(),
                   ),
                   const SizedBox(height: 16),
+                  if ((data.errorMessage ?? '').isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Text(
+                        data.errorMessage!,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    ),
                   for (final event in data.events)
                     Card(
                       child: ListTile(

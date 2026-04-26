@@ -23,6 +23,7 @@ _EventsState _$EventsStateFromJson(Map<String, dynamic> json) => _EventsState(
   page: (json['page'] as num).toInt(),
   pageSize: (json['pageSize'] as num).toInt(),
   isLoadingMore: json['isLoadingMore'] as bool,
+  errorMessage: json['errorMessage'] as String?,
 );
 
 Map<String, dynamic> _$EventsStateToJson(_EventsState instance) =>
@@ -35,4 +36,5 @@ Map<String, dynamic> _$EventsStateToJson(_EventsState instance) =>
       'page': instance.page,
       'pageSize': instance.pageSize,
       'isLoadingMore': instance.isLoadingMore,
+      'errorMessage': instance.errorMessage,
     };
