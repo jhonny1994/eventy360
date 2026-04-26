@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:eventy360/core/presentation/app_feedback.dart';
 import 'package:eventy360/core/presentation/widgets/adaptive_page_body.dart';
 import 'package:eventy360/core/presentation/widgets/app_error_view.dart';
 import 'package:eventy360/core/presentation/widgets/app_loading_view.dart';
@@ -36,9 +37,7 @@ class _PaperDetailScreenState extends ConsumerState<PaperDetailScreen> {
     final localizations = S.of(context);
     final fileUrl = paper.fullPaperFileUrl;
     if (fileUrl == null || fileUrl.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(localizations.repositoryNoFileAvailable)),
-      );
+      AppFeedback.showError(localizations.repositoryNoFileAvailable);
       return;
     }
     try {
@@ -52,9 +51,7 @@ class _PaperDetailScreenState extends ConsumerState<PaperDetailScreen> {
       if (!mounted) {
         return;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(localizations.fileOpenFailed)),
-      );
+      AppFeedback.showError(localizations.fileOpenFailed);
     }
   }
 

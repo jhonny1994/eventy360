@@ -9,14 +9,21 @@ enum PushAuthorizationStatus {
 }
 
 class PushNotificationMessage {
-  const PushNotificationMessage({required this.data});
+  const PushNotificationMessage({
+    required this.data,
+    this.title,
+    this.body,
+  });
 
   final Map<String, dynamic> data;
+  final String? title;
+  final String? body;
 }
 
 abstract class PushNotificationService {
   Future<PushAuthorizationStatus> requestPermission();
   Future<String?> getToken();
+  Stream<PushNotificationMessage> onForegroundMessage();
   Stream<PushNotificationMessage> onMessageOpenedApp();
   Future<PushNotificationMessage?> getInitialMessage();
   Future<void> registerTokenToBackend({
@@ -50,9 +57,24 @@ class FirebasePushNotificationService implements PushNotificationService {
   Future<String?> getToken() => _messaging.getToken();
 
   @override
+  Stream<PushNotificationMessage> onForegroundMessage() {
+    return fcm.FirebaseMessaging.onMessage.map(
+      (message) => PushNotificationMessage(
+        data: message.data,
+        title: message.notification?.title,
+        body: message.notification?.body,
+      ),
+    );
+  }
+
+  @override
   Stream<PushNotificationMessage> onMessageOpenedApp() {
     return fcm.FirebaseMessaging.onMessageOpenedApp.map(
-      (message) => PushNotificationMessage(data: message.data),
+      (message) => PushNotificationMessage(
+        data: message.data,
+        title: message.notification?.title,
+        body: message.notification?.body,
+      ),
     );
   }
 
@@ -62,7 +84,11 @@ class FirebasePushNotificationService implements PushNotificationService {
     if (message == null) {
       return null;
     }
-    return PushNotificationMessage(data: message.data);
+    return PushNotificationMessage(
+      data: message.data,
+      title: message.notification?.title,
+      body: message.notification?.body,
+    );
   }
 
   @override
@@ -73,7 +99,9 @@ class FirebasePushNotificationService implements PushNotificationService {
     final client = supabase.Supabase.instance.client;
     final userId = client.auth.currentUser?.id;
     if (userId == null) {
-      throw StateError('User must be authenticated to register a device token.');
+      throw StateError(
+        'User must be authenticated to register a device token.',
+      );
     }
     await client.from('device_tokens').upsert({
       'profile_id': userId,

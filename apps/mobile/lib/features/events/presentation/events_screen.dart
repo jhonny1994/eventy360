@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:eventy360/app/router/route_paths.dart';
 import 'package:eventy360/core/presentation/widgets/adaptive_page_body.dart';
+import 'package:eventy360/core/presentation/widgets/app_error_view.dart';
+import 'package:eventy360/core/presentation/widgets/app_inline_message.dart';
 import 'package:eventy360/core/presentation/widgets/app_loading_view.dart';
 import 'package:eventy360/features/events/application/events_controller.dart';
 import 'package:eventy360/l10n/generated/l10n.dart';
@@ -98,11 +100,8 @@ class EventsScreen extends ConsumerWidget {
                   if ((data.errorMessage ?? '').isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 12),
-                      child: Text(
-                        data.errorMessage!,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
-                        ),
+                      child: AppInlineMessage.error(
+                        message: data.errorMessage!,
                       ),
                     ),
                   for (final event in data.events)
@@ -110,7 +109,7 @@ class EventsScreen extends ConsumerWidget {
                       child: ListTile(
                         contentPadding: const EdgeInsets.all(12),
                         onTap: () =>
-                            context.go('${RoutePaths.events}/${event.id}'),
+                            context.go(RoutePaths.eventDetail(event.id)),
                         title: Text(event.title),
                         subtitle: Text(
                           '${event.location} • ${_formatDate(event.deadline)}',
@@ -156,7 +155,11 @@ class EventsScreen extends ConsumerWidget {
             );
           },
           loading: () => const AppLoadingView(),
-          error: (error, _) => Center(child: Text(error.toString())),
+          error: (error, _) => AppErrorView(
+            message: error.toString(),
+            onRetry: () =>
+                ref.read(eventsControllerProvider.notifier).refresh(),
+          ),
         ),
       ),
     );

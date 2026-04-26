@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:eventy360/core/presentation/widgets/app_inline_message.dart';
 import 'package:eventy360/features/trust/application/trust_controller.dart';
 import 'package:eventy360/features/trust/domain/trust_models.dart';
 import 'package:eventy360/l10n/generated/l10n.dart';
@@ -174,16 +175,14 @@ class _PaymentReportScreenState extends ConsumerState<PaymentReportScreen> {
             Text(_selectedFile?.fileName ?? localizations.noFileSelected),
             if (_localError != null) ...[
               const SizedBox(height: 8),
-              Text(
-                _localError!,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              AppInlineMessage.error(
+                message: _localError!,
               ),
             ],
             if ((state?.errorMessage ?? '').isNotEmpty) ...[
               const SizedBox(height: 8),
-              Text(
-                state!.errorMessage!,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              AppInlineMessage.error(
+                message: state!.errorMessage!,
               ),
             ],
             const SizedBox(height: 16),

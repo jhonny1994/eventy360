@@ -274,7 +274,7 @@ export default function EventCardGrid({
     }
 
     fetchBookmarkStatuses();
-  }, [eventIdsKey]); // Use stable string key instead of events array
+  }, [eventIdsKey, events]); // Guarded by eventIdsKey to avoid duplicate fetches
 
   if (isLoading && events.length === 0) {
     return (

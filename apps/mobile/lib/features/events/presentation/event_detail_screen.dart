@@ -107,7 +107,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
           const SizedBox(height: 8),
           OutlinedButton.icon(
             onPressed: () => context.go(
-              '${RoutePaths.newAbstractSubmission}?eventId=${selectedEvent.id}',
+              RoutePaths.newAbstractSubmissionForEvent(selectedEvent.id),
             ),
             icon: const Icon(Icons.upload_file_outlined),
             label: Text(localizations.submitAbstractAction),

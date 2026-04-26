@@ -1,6 +1,8 @@
 import 'package:eventy360/app/router/route_paths.dart';
+import 'package:eventy360/core/presentation/app_feedback.dart';
 import 'package:eventy360/core/presentation/widgets/adaptive_page_body.dart';
 import 'package:eventy360/core/presentation/widgets/app_error_view.dart';
+import 'package:eventy360/core/presentation/widgets/app_inline_message.dart';
 import 'package:eventy360/core/presentation/widgets/app_loading_view.dart';
 import 'package:eventy360/features/home/application/home_subscription_provider.dart';
 import 'package:eventy360/features/repository/application/repository_controller.dart';
@@ -37,9 +39,7 @@ class _RepositoryScreenState extends ConsumerState<RepositoryScreen> {
     final localizations = S.of(context);
     final fileUrl = paper.fullPaperFileUrl;
     if (fileUrl == null || fileUrl.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(localizations.repositoryNoFileAvailable)),
-      );
+      AppFeedback.showError(localizations.repositoryNoFileAvailable);
       return;
     }
     try {
@@ -53,9 +53,7 @@ class _RepositoryScreenState extends ConsumerState<RepositoryScreen> {
       if (!mounted) {
         return;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(localizations.fileOpenFailed)),
-      );
+      AppFeedback.showError(localizations.fileOpenFailed);
     }
   }
 
@@ -144,11 +142,8 @@ class _RepositoryScreenState extends ConsumerState<RepositoryScreen> {
                       if ((data.errorMessage ?? '').isNotEmpty)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 12),
-                          child: Text(
-                            data.errorMessage!,
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.error,
-                            ),
+                          child: AppInlineMessage.error(
+                            message: data.errorMessage!,
                           ),
                         ),
                       if (data.papers.isEmpty)
@@ -163,7 +158,7 @@ class _RepositoryScreenState extends ConsumerState<RepositoryScreen> {
                           (paper) => _PaperCard(
                             paper: paper,
                             onTap: () => context.push(
-                              '${RoutePaths.repository}/${paper.id}',
+                              RoutePaths.repositoryDetail(paper.id),
                             ),
                             onDownload: paper.fullPaperFileUrl == null
                                 ? null

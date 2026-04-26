@@ -39,6 +39,37 @@ void main() {
     expect(state?.pendingEventId, 'evt-77');
   });
 
+  test(
+    'captures foreground notification message for in-app feedback',
+    () async {
+      final service = _FakePushNotificationService();
+      final container = ProviderContainer(
+        overrides: [
+          pushNotificationServiceProvider.overrideWithValue(service),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await container.read(notificationControllerProvider.future);
+      service.emitForeground(
+        const PushNotificationMessage(
+          data: {'event_id': 'evt-88'},
+          title: 'New event',
+          body: 'Tap to view details',
+        ),
+      );
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+
+      final state = container
+          .read(notificationControllerProvider)
+          .asData
+          ?.value;
+      expect(state?.foregroundTitle, 'New event');
+      expect(state?.foregroundBody, 'Tap to view details');
+      expect(state?.foregroundEventId, 'evt-88');
+    },
+  );
+
   test('updates permission flag when permission is granted', () async {
     final service = _FakePushNotificationService(
       permission: PushAuthorizationStatus.authorized,
@@ -70,10 +101,15 @@ class _FakePushNotificationService implements PushNotificationService {
 
   final PushNotificationMessage? initial;
   final PushAuthorizationStatus permission;
-  final StreamController<PushNotificationMessage> _controller =
+  final StreamController<PushNotificationMessage> _openedController =
+      StreamController<PushNotificationMessage>.broadcast();
+  final StreamController<PushNotificationMessage> _foregroundController =
       StreamController<PushNotificationMessage>.broadcast();
 
-  void emit(PushNotificationMessage message) => _controller.add(message);
+  void emit(PushNotificationMessage message) => _openedController.add(message);
+
+  void emitForeground(PushNotificationMessage message) =>
+      _foregroundController.add(message);
 
   @override
   Future<PushNotificationMessage?> getInitialMessage() async => initial;
@@ -82,7 +118,12 @@ class _FakePushNotificationService implements PushNotificationService {
   Future<String?> getToken() async => 'fake-token';
 
   @override
-  Stream<PushNotificationMessage> onMessageOpenedApp() => _controller.stream;
+  Stream<PushNotificationMessage> onForegroundMessage() =>
+      _foregroundController.stream;
+
+  @override
+  Stream<PushNotificationMessage> onMessageOpenedApp() =>
+      _openedController.stream;
 
   @override
   Future<PushAuthorizationStatus> requestPermission() async => permission;

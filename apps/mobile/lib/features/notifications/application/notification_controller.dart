@@ -14,13 +14,29 @@ PushNotificationService pushNotificationService(Ref ref) {
 @Riverpod(keepAlive: true)
 class NotificationController extends _$NotificationController {
   StreamSubscription<PushNotificationMessage>? _openedSub;
+  StreamSubscription<PushNotificationMessage>? _foregroundSub;
 
   @override
   Future<NotificationState> build() async {
-    ref.onDispose(() => _openedSub?.cancel());
+    ref.onDispose(() {
+      unawaited(_openedSub?.cancel());
+      unawaited(_foregroundSub?.cancel());
+    });
     final service = ref.watch(pushNotificationServiceProvider);
     final initialMessage = await service.getInitialMessage();
     final initialEventId = _extractEventId(initialMessage?.data);
+
+    _foregroundSub = service.onForegroundMessage().listen((message) {
+      final current = state.asData?.value ?? NotificationState.initial();
+      state = AsyncData(
+        current.copyWith(
+          foregroundTitle: message.title,
+          foregroundBody: message.body,
+          foregroundEventId: _extractEventId(message.data),
+          foregroundMessageSerial: current.foregroundMessageSerial + 1,
+        ),
+      );
+    });
 
     _openedSub = service.onMessageOpenedApp().listen((message) {
       final eventId = _extractEventId(message.data);
@@ -74,6 +90,20 @@ class NotificationController extends _$NotificationController {
       return;
     }
     state = AsyncData(current.copyWith(pendingEventId: null));
+  }
+
+  void clearForeground() {
+    final current = state.asData?.value;
+    if (current == null) {
+      return;
+    }
+    state = AsyncData(
+      current.copyWith(
+        foregroundTitle: null,
+        foregroundBody: null,
+        foregroundEventId: null,
+      ),
+    );
   }
 
   String? _extractEventId(Map<String, dynamic>? data) {

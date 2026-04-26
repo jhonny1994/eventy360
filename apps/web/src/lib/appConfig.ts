@@ -14,6 +14,20 @@ interface AppSettingsData {
   discount_annual: number | null;
 }
 
+function normalizeSettingValue(value: string | null): string | null {
+  if (value == null) {
+    return null;
+  }
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return null;
+  }
+  if (trimmed.includes('XXXX')) {
+    return null;
+  }
+  return trimmed;
+}
+
 export interface AppSettings extends AppSettingsData {
   calculated_prices: { // Made non-optional as it will always be populated if data exists
     researcher: {
@@ -84,7 +98,11 @@ export async function getAppSettings(): Promise<AppSettings | null> {
   calculated_prices.organizer.annual = Math.round(bop_monthly * 12 * (1 - da));
 
   return {
-    ...data, // Spreads the original AppSettingsData
+    ...data,
+    bank_name: normalizeSettingValue(data.bank_name),
+    account_holder: normalizeSettingValue(data.account_holder),
+    account_number_rib: normalizeSettingValue(data.account_number_rib),
+    payment_email: normalizeSettingValue(data.payment_email),
     calculated_prices, // Adds the calculated prices
   };
 } 

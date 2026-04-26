@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:eventy360/app/router/route_paths.dart';
+import 'package:eventy360/core/presentation/app_feedback.dart';
 import 'package:eventy360/core/presentation/widgets/adaptive_page_body.dart';
 import 'package:eventy360/core/presentation/widgets/app_error_view.dart';
+import 'package:eventy360/core/presentation/widgets/app_inline_message.dart';
 import 'package:eventy360/core/presentation/widgets/app_loading_view.dart';
 import 'package:eventy360/features/trust/application/trust_controller.dart';
 import 'package:eventy360/features/trust/domain/trust_models.dart';
@@ -76,9 +78,7 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
       if (!mounted) {
         return;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(localizations.fileOpenFailed)),
-      );
+      AppFeedback.showError(localizations.fileOpenFailed);
     }
   }
 
@@ -100,9 +100,7 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
               if (!context.mounted) {
                 return;
               }
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(receipt.message)),
-              );
+              AppFeedback.showSuccess(receipt.message);
             });
           }
           return RefreshIndicator(
@@ -224,11 +222,8 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
                             ),
                             if (_localError != null) ...[
                               const SizedBox(height: 8),
-                              Text(
-                                _localError!,
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.error,
-                                ),
+                              AppInlineMessage.error(
+                                message: _localError!,
                               ),
                             ],
                             const SizedBox(height: 12),
@@ -302,11 +297,8 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
                           if ((state?.errorMessage ?? '').isNotEmpty)
                             Padding(
                               padding: const EdgeInsets.only(bottom: 12),
-                              child: Text(
-                                state!.errorMessage!,
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.error,
-                                ),
+                              child: AppInlineMessage.error(
+                                message: state!.errorMessage!,
                               ),
                             ),
                           if (data.payments.isEmpty)

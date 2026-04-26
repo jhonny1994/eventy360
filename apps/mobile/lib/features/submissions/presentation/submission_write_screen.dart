@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:eventy360/app/router/route_paths.dart';
+import 'package:eventy360/core/presentation/widgets/app_inline_message.dart';
 import 'package:eventy360/features/events/application/events_controller.dart';
 import 'package:eventy360/features/submissions/application/submissions_controller.dart';
 import 'package:eventy360/features/submissions/domain/submission_models.dart';
@@ -245,9 +247,8 @@ class _SubmissionWriteScreenState extends ConsumerState<SubmissionWriteScreen> {
             ],
             const SizedBox(height: 16),
             if ((state.asData?.value.errorMessage ?? '').isNotEmpty)
-              Text(
-                state.asData!.value.errorMessage!,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              AppInlineMessage.error(
+                message: state.asData!.value.errorMessage!,
               ),
             const SizedBox(height: 8),
             FilledButton(
@@ -316,7 +317,7 @@ class _SubmissionWriteScreenState extends ConsumerState<SubmissionWriteScreen> {
                         if (!mounted) {
                           return;
                         }
-                        router.go('/submissions/$selectedId');
+                        router.go(RoutePaths.submissionDetail(selectedId));
                       }
                     },
               child: isSubmitting
@@ -340,7 +341,7 @@ class _SubmissionWriteScreenState extends ConsumerState<SubmissionWriteScreen> {
                   final id = widget.submissionId!;
                   final match = submissions.where((entry) => entry.id == id);
                   if (match.isNotEmpty) {
-                    context.go('/submissions/$id');
+                    context.go(RoutePaths.submissionDetail(id));
                   } else {
                     context.pop();
                   }

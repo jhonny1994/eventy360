@@ -12,7 +12,6 @@ import {
   FileText,
   Calendar,
   Share2,
-  ExternalLink,
   BookmarkPlus,
   BookmarkCheck,
   Loader2,
@@ -132,42 +131,24 @@ export function EventDetailsActions({
     userSubscription?.plan === "professional"; // Owner actions
 
   // TODO: This would be replaced with an actual API call to check if the user has submitted
-  // For now, we'll use a placeholder value
-  // const hasSubmitted = false;
 
   if (userRole === "owner") {
     return (
-      <div className="bg-white rounded-lg shadow-sm border p-6">        <h2 className="text-xl font-semibold text-gray-900 mb-6">
-        {t("header.statistics.title")}
-      </h2>
+      <div className="bg-white rounded-lg shadow-sm border p-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">
+          {t("actions.title")}
+        </h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-blue-600">0</div>
-            <div className="text-sm text-gray-600">
-              {t("header.statistics.registrations")}
-            </div>
-          </div>
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-green-600">0</div>
-            <div className="text-sm text-gray-600">
-              {t("header.statistics.submissions")}
-            </div>
-          </div>
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-purple-600">0</div>
-            <div className="text-sm text-gray-600">{t("header.statistics.views")}</div>
-          </div>
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-orange-600">
-              {event.visibility === "public"
-                ? t("visibility.public")
-                : t("visibility.private")}
-            </div>
-            <div className="text-sm text-gray-600">
-              {t("header.statistics.visibility")}
-            </div>
-          </div>
+        <div className="space-y-4">
+          <Link
+            href={`/${locale}/profile/events/${event.id}/manage`}
+            className="w-full"
+          >
+            <Button color="blue" className="w-full">
+              <Eye className="w-5 h-5 mr-2" />
+              {t("actions.manageEvent")}
+            </Button>
+          </Link>
         </div>
       </div>
     );
@@ -265,24 +246,6 @@ export function EventDetailsActions({
           {t("actions.shareEvent")}
         </Button>
 
-        {/* View Event Website - Assuming event might have a website_url property */}
-        {/* For now, let's use a placeholder condition, replace with event.website_url when available */}
-        {event.id && ( // Placeholder: Replace with actual condition like event.website_url
-          <Link
-            href={`/${locale}/profile/events/${event.id}`} // Placeholder: Replace with event.website_url if it's an external link
-            target="_blank" // Open in new tab if it's an external link
-            rel="noopener noreferrer" // Security for opening in new tab
-            className="w-full"
-          >
-            <Button
-              color="blue"
-              className="w-full"
-            >
-              <ExternalLink className="w-5 h-5 mr-2" />
-              {t("actions.viewWebsite")}
-            </Button>
-          </Link>
-        )}
       </div>
 
       {/* Event Status Information */}
