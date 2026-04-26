@@ -55,6 +55,15 @@ class NotificationController extends _$NotificationController {
     await service.registerTokenToBackend(token: token, topicId: topicId);
   }
 
+  Future<void> unregisterCurrentToken({required String topicId}) async {
+    final service = ref.read(pushNotificationServiceProvider);
+    final token = await service.getToken();
+    if (token == null) {
+      return;
+    }
+    await service.unregisterTokenFromBackend(token: token, topicId: topicId);
+  }
+
   void clearPendingEvent() {
     final current = state.asData?.value;
     if (current == null) {

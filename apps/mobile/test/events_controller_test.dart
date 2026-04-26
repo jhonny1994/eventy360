@@ -91,6 +91,7 @@ void main() {
 class _FakeNotificationController extends NotificationController {
   bool permissionRequested = false;
   String? lastRegisteredTopicId;
+  String? lastUnregisteredTopicId;
 
   @override
   Future<NotificationState> build() async => NotificationState.initial();
@@ -98,6 +99,11 @@ class _FakeNotificationController extends NotificationController {
   @override
   Future<void> registerCurrentToken({required String topicId}) async {
     lastRegisteredTopicId = topicId;
+  }
+
+  @override
+  Future<void> unregisterCurrentToken({required String topicId}) async {
+    lastUnregisteredTopicId = topicId;
   }
 
   @override
@@ -147,6 +153,22 @@ class _FakeEventsRepository implements EventsRepository {
           ),
         )
         .toList();
+  }
+
+  @override
+  Future<EventSummary?> fetchEventById(String eventId) async {
+    final all = await discoverEvents(
+      page: 1,
+      pageSize: 10,
+      query: '',
+      selectedTopicIds: const {},
+    );
+    for (final event in all) {
+      if (event.id == eventId) {
+        return event;
+      }
+    }
+    return null;
   }
 
   @override

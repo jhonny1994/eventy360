@@ -12,6 +12,7 @@ void main() {
         SessionState(
           onboardingCompleted: false,
           profileCompleted: false,
+          isVerified: false,
         ),
       ),
       location: RoutePaths.signIn,
@@ -27,6 +28,7 @@ void main() {
           user: AuthUser(id: '1', email: 'r@e.com', role: 'researcher'),
           onboardingCompleted: true,
           profileCompleted: false,
+          isVerified: false,
         ),
       ),
       location: RoutePaths.home,

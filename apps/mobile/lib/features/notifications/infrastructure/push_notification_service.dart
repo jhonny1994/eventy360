@@ -24,6 +24,10 @@ abstract class PushNotificationService {
     required String token,
     required String topicId,
   });
+  Future<void> unregisterTokenFromBackend({
+    required String token,
+    required String topicId,
+  });
 }
 
 class FirebasePushNotificationService implements PushNotificationService {
@@ -80,6 +84,28 @@ class FirebasePushNotificationService implements PushNotificationService {
       });
     } on Object catch (error) {
       debugPrint('registerTokenToBackend failed: $error');
+    }
+  }
+
+  @override
+  Future<void> unregisterTokenFromBackend({
+    required String token,
+    required String topicId,
+  }) async {
+    try {
+      final client = supabase.Supabase.instance.client;
+      final userId = client.auth.currentUser?.id;
+      if (userId == null) {
+        return;
+      }
+      await client
+          .from('device_tokens')
+          .delete()
+          .eq('profile_id', userId)
+          .eq('token', token)
+          .eq('topic_id', topicId);
+    } on Object catch (error) {
+      debugPrint('unregisterTokenFromBackend failed: $error');
     }
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:eventy360/app/router/route_paths.dart';
 import 'package:eventy360/features/events/application/events_controller.dart';
 import 'package:eventy360/features/events/domain/event_summary.dart';
@@ -6,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class EventDetailScreen extends ConsumerWidget {
+class EventDetailScreen extends ConsumerStatefulWidget {
   const EventDetailScreen({
     required this.eventId,
     super.key,
@@ -15,13 +17,38 @@ class EventDetailScreen extends ConsumerWidget {
   final String eventId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<EventDetailScreen> createState() => _EventDetailScreenState();
+}
+
+class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
+  var _loadingMissingEvent = true;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(
+      Future<void>.microtask(
+        () async {
+          await ref
+              .read(eventsControllerProvider.notifier)
+              .ensureEventLoaded(widget.eventId);
+          if (!mounted) {
+            return;
+          }
+          setState(() => _loadingMissingEvent = false);
+        },
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final localizations = S.of(context);
     final state = ref.watch(eventsControllerProvider);
     final events = state.asData?.value.events ?? const <EventSummary>[];
     EventSummary? event;
     for (final candidate in events) {
-      if (candidate.id == eventId) {
+      if (candidate.id == widget.eventId) {
         event = candidate;
         break;
       }
@@ -29,7 +56,11 @@ class EventDetailScreen extends ConsumerWidget {
     if (event == null) {
       return Scaffold(
         appBar: AppBar(title: Text(localizations.eventDetailsTitle)),
-        body: Center(child: Text(localizations.eventNotFound)),
+        body: Center(
+          child: _loadingMissingEvent
+              ? const CircularProgressIndicator.adaptive()
+              : Text(localizations.eventNotFound),
+        ),
       );
     }
     final selectedEvent = event;

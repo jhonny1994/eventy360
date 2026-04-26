@@ -50,6 +50,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "confirmPassword": MessageLookupByLibrary.simpleMessage("Confirm password"),
     "continueAction": MessageLookupByLibrary.simpleMessage("Continue"),
     "createAccount": MessageLookupByLibrary.simpleMessage("Create account"),
+    "dairaLabel": MessageLookupByLibrary.simpleMessage("Daira"),
     "deadline": MessageLookupByLibrary.simpleMessage("Deadline"),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
     "eventDetailsTitle": MessageLookupByLibrary.simpleMessage("Event Details"),
@@ -62,8 +63,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "eventsTitle": MessageLookupByLibrary.simpleMessage("Discover Events"),
     "exploreEvents": MessageLookupByLibrary.simpleMessage("Explore events"),
-    "fileUrlHint": MessageLookupByLibrary.simpleMessage(
-      "Paste the uploaded file URL from your storage path.",
+    "filePickerHint": MessageLookupByLibrary.simpleMessage(
+      "Choose a PDF, DOC, or DOCX file and we will upload it for you.",
     ),
     "fileUrlLabel": MessageLookupByLibrary.simpleMessage("File URL"),
     "forgotPassword": MessageLookupByLibrary.simpleMessage("Forgot password?"),
@@ -88,12 +89,14 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "newPassword": MessageLookupByLibrary.simpleMessage("New password"),
     "noEventsFound": MessageLookupByLibrary.simpleMessage("No events found."),
+    "noFileSelected": MessageLookupByLibrary.simpleMessage("No file selected"),
     "noSubmissionsFound": MessageLookupByLibrary.simpleMessage(
       "No submissions found.",
     ),
     "noUpcomingDeadline": MessageLookupByLibrary.simpleMessage(
       "No upcoming deadlines",
     ),
+    "notVerifiedStatus": MessageLookupByLibrary.simpleMessage("Not verified"),
     "notificationEducationBody": MessageLookupByLibrary.simpleMessage(
       "We will ask for notification permission only after you subscribe to topics.",
     ),
@@ -116,6 +119,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "passwordsDoNotMatch": MessageLookupByLibrary.simpleMessage(
       "Passwords do not match.",
     ),
+    "pickFileAction": MessageLookupByLibrary.simpleMessage("Choose file"),
     "profileCompleted": MessageLookupByLibrary.simpleMessage(
       "Profile completed",
     ),
@@ -230,5 +234,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "verificationStatusTitle": MessageLookupByLibrary.simpleMessage(
       "Verification status",
     ),
+    "verifiedStatus": MessageLookupByLibrary.simpleMessage("Verified"),
+    "wilayaLabel": MessageLookupByLibrary.simpleMessage("Wilaya"),
   };
 }

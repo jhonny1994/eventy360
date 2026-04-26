@@ -92,4 +92,10 @@ class _FakePushNotificationService implements PushNotificationService {
     required String token,
     required String topicId,
   }) async {}
+
+  @override
+  Future<void> unregisterTokenFromBackend({
+    required String token,
+    required String topicId,
+  }) async {}
 }

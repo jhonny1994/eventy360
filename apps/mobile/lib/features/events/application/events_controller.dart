@@ -131,6 +131,7 @@ class EventsController extends _$EventsController {
       await notifications.registerCurrentToken(topicId: topicId);
     } else {
       updatedSubs.remove(topicId);
+      await notifications.unregisterCurrentToken(topicId: topicId);
     }
 
     state = AsyncData(current.copyWith(subscribedTopicIds: updatedSubs));
@@ -174,5 +175,20 @@ class EventsController extends _$EventsController {
       }
     }
     return null;
+  }
+
+  Future<EventSummary?> ensureEventLoaded(String eventId) async {
+    final existing = findById(eventId);
+    if (existing != null) {
+      return existing;
+    }
+    final repository = ref.read(eventsRepositoryProvider);
+    final fetched = await repository.fetchEventById(eventId);
+    final current = state.asData?.value;
+    if (current != null && fetched != null) {
+      final nextEvents = [...current.events, fetched];
+      state = AsyncData(current.copyWith(events: nextEvents));
+    }
+    return fetched;
   }
 }

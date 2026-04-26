@@ -10,7 +10,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'session_controller.g.dart';
 
 const _onboardingKey = 'auth.onboarding_completed';
-const _profileCompletedPrefix = 'auth.profile_completed.';
 
 @Riverpod(keepAlive: true)
 AuthRepository authRepository(Ref ref) {
@@ -47,25 +46,43 @@ class SessionController extends _$SessionController {
         if (previousData == null) {
           return;
         }
+        var nextUser = user;
+        var profileCompleted = false;
+        var isVerified = false;
+        if (user != null) {
+          final profile = await ref
+              .read(authRepositoryProvider)
+              .getUserProfileStatus(user.id);
+          nextUser = user.copyWith(role: profile.userType);
+          profileCompleted = profile.isExtendedProfileComplete;
+          isVerified = profile.isVerified;
+        }
         state = AsyncData(
           previousData.copyWith(
-            user: user,
-            profileCompleted:
-                user != null &&
-                (prefs.getBool('$_profileCompletedPrefix${user.id}') ?? false),
+            user: nextUser,
+            profileCompleted: profileCompleted,
+            isVerified: isVerified,
           ),
         );
       });
     });
 
-    final profileCompleted =
-        currentUser != null &&
-        (prefs.getBool('$_profileCompletedPrefix${currentUser.id}') ?? false);
+    var profileCompleted = false;
+    var isVerified = false;
+    if (currentUser != null) {
+      final profile = await ref
+          .watch(authRepositoryProvider)
+          .getUserProfileStatus(currentUser.id);
+      currentUser = currentUser.copyWith(role: profile.userType);
+      profileCompleted = profile.isExtendedProfileComplete;
+      isVerified = profile.isVerified;
+    }
 
     return SessionState(
       user: currentUser,
       onboardingCompleted: onboardingCompleted,
       profileCompleted: profileCompleted,
+      isVerified: isVerified,
     );
   }
 
@@ -78,16 +95,35 @@ class SessionController extends _$SessionController {
     state = AsyncData(current.copyWith(onboardingCompleted: value));
   }
 
-  Future<void> setProfileCompleted({required bool value}) async {
+  Future<void> completeResearcherProfile({
+    required String fullName,
+    required String institution,
+    required int wilayaId,
+    required int dairaId,
+  }) async {
     final current = state.asData?.value;
     final user = current?.user;
     if (current == null || user == null) {
       return;
     }
     await ref
-        .read(sharedPreferencesProvider)
-        .setBool('$_profileCompletedPrefix${user.id}', value);
-    state = AsyncData(current.copyWith(profileCompleted: value));
+        .read(authRepositoryProvider)
+        .completeResearcherProfile(
+          fullName: fullName,
+          institution: institution,
+          wilayaId: wilayaId,
+          dairaId: dairaId,
+        );
+    final profile = await ref
+        .read(authRepositoryProvider)
+        .getUserProfileStatus(user.id);
+    state = AsyncData(
+      current.copyWith(
+        user: user.copyWith(role: profile.userType),
+        profileCompleted: profile.isExtendedProfileComplete,
+        isVerified: profile.isVerified,
+      ),
+    );
   }
 
   Future<void> signIn({
@@ -100,18 +136,20 @@ class SessionController extends _$SessionController {
       final user = await ref
           .read(authRepositoryProvider)
           .signIn(email: email, password: password);
-      final prefs = ref.read(sharedPreferencesProvider);
-      final profileCompleted =
-          prefs.getBool('$_profileCompletedPrefix${user.id}') ?? false;
+      final profile = await ref
+          .read(authRepositoryProvider)
+          .getUserProfileStatus(user.id);
       return (previous ??
               const SessionState(
                 onboardingCompleted: true,
                 profileCompleted: false,
+                isVerified: false,
               ))
           .copyWith(
-            user: user,
+            user: user.copyWith(role: profile.userType),
             onboardingCompleted: true,
-            profileCompleted: profileCompleted,
+            profileCompleted: profile.isExtendedProfileComplete,
+            isVerified: profile.isVerified,
           );
     });
   }
@@ -126,15 +164,20 @@ class SessionController extends _$SessionController {
       final user = await ref
           .read(authRepositoryProvider)
           .signUp(email: email, password: password);
+      final profile = await ref
+          .read(authRepositoryProvider)
+          .getUserProfileStatus(user.id);
       return (previous ??
               const SessionState(
                 onboardingCompleted: true,
                 profileCompleted: false,
+                isVerified: false,
               ))
           .copyWith(
-            user: user,
+            user: user.copyWith(role: profile.userType),
             onboardingCompleted: true,
-            profileCompleted: false,
+            profileCompleted: profile.isExtendedProfileComplete,
+            isVerified: profile.isVerified,
           );
     });
   }
@@ -149,6 +192,7 @@ class SessionController extends _$SessionController {
       current.copyWith(
         user: null,
         profileCompleted: false,
+        isVerified: false,
       ),
     );
   }

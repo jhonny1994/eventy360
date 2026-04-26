@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SessionState {
 
- bool get onboardingCompleted; bool get profileCompleted; AuthUser? get user;
+ bool get onboardingCompleted; bool get profileCompleted; bool get isVerified; AuthUser? get user;
 /// Create a copy of SessionState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $SessionStateCopyWith<SessionState> get copyWith => _$SessionStateCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SessionState&&(identical(other.onboardingCompleted, onboardingCompleted) || other.onboardingCompleted == onboardingCompleted)&&(identical(other.profileCompleted, profileCompleted) || other.profileCompleted == profileCompleted)&&(identical(other.user, user) || other.user == user));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SessionState&&(identical(other.onboardingCompleted, onboardingCompleted) || other.onboardingCompleted == onboardingCompleted)&&(identical(other.profileCompleted, profileCompleted) || other.profileCompleted == profileCompleted)&&(identical(other.isVerified, isVerified) || other.isVerified == isVerified)&&(identical(other.user, user) || other.user == user));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,onboardingCompleted,profileCompleted,user);
+int get hashCode => Object.hash(runtimeType,onboardingCompleted,profileCompleted,isVerified,user);
 
 @override
 String toString() {
-  return 'SessionState(onboardingCompleted: $onboardingCompleted, profileCompleted: $profileCompleted, user: $user)';
+  return 'SessionState(onboardingCompleted: $onboardingCompleted, profileCompleted: $profileCompleted, isVerified: $isVerified, user: $user)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $SessionStateCopyWith<$Res>  {
   factory $SessionStateCopyWith(SessionState value, $Res Function(SessionState) _then) = _$SessionStateCopyWithImpl;
 @useResult
 $Res call({
- bool onboardingCompleted, bool profileCompleted, AuthUser? user
+ bool onboardingCompleted, bool profileCompleted, bool isVerified, AuthUser? user
 });
 
 
@@ -65,10 +65,11 @@ class _$SessionStateCopyWithImpl<$Res>
 
 /// Create a copy of SessionState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? onboardingCompleted = null,Object? profileCompleted = null,Object? user = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? onboardingCompleted = null,Object? profileCompleted = null,Object? isVerified = null,Object? user = freezed,}) {
   return _then(_self.copyWith(
 onboardingCompleted: null == onboardingCompleted ? _self.onboardingCompleted : onboardingCompleted // ignore: cast_nullable_to_non_nullable
 as bool,profileCompleted: null == profileCompleted ? _self.profileCompleted : profileCompleted // ignore: cast_nullable_to_non_nullable
+as bool,isVerified: null == isVerified ? _self.isVerified : isVerified // ignore: cast_nullable_to_non_nullable
 as bool,user: freezed == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as AuthUser?,
   ));
@@ -167,10 +168,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool onboardingCompleted,  bool profileCompleted,  AuthUser? user)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool onboardingCompleted,  bool profileCompleted,  bool isVerified,  AuthUser? user)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SessionState() when $default != null:
-return $default(_that.onboardingCompleted,_that.profileCompleted,_that.user);case _:
+return $default(_that.onboardingCompleted,_that.profileCompleted,_that.isVerified,_that.user);case _:
   return orElse();
 
 }
@@ -188,10 +189,10 @@ return $default(_that.onboardingCompleted,_that.profileCompleted,_that.user);cas
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool onboardingCompleted,  bool profileCompleted,  AuthUser? user)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool onboardingCompleted,  bool profileCompleted,  bool isVerified,  AuthUser? user)  $default,) {final _that = this;
 switch (_that) {
 case _SessionState():
-return $default(_that.onboardingCompleted,_that.profileCompleted,_that.user);case _:
+return $default(_that.onboardingCompleted,_that.profileCompleted,_that.isVerified,_that.user);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -208,10 +209,10 @@ return $default(_that.onboardingCompleted,_that.profileCompleted,_that.user);cas
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool onboardingCompleted,  bool profileCompleted,  AuthUser? user)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool onboardingCompleted,  bool profileCompleted,  bool isVerified,  AuthUser? user)?  $default,) {final _that = this;
 switch (_that) {
 case _SessionState() when $default != null:
-return $default(_that.onboardingCompleted,_that.profileCompleted,_that.user);case _:
+return $default(_that.onboardingCompleted,_that.profileCompleted,_that.isVerified,_that.user);case _:
   return null;
 
 }
@@ -223,11 +224,12 @@ return $default(_that.onboardingCompleted,_that.profileCompleted,_that.user);cas
 @JsonSerializable()
 
 class _SessionState extends SessionState {
-  const _SessionState({required this.onboardingCompleted, required this.profileCompleted, this.user}): super._();
+  const _SessionState({required this.onboardingCompleted, required this.profileCompleted, required this.isVerified, this.user}): super._();
   factory _SessionState.fromJson(Map<String, dynamic> json) => _$SessionStateFromJson(json);
 
 @override final  bool onboardingCompleted;
 @override final  bool profileCompleted;
+@override final  bool isVerified;
 @override final  AuthUser? user;
 
 /// Create a copy of SessionState
@@ -243,16 +245,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SessionState&&(identical(other.onboardingCompleted, onboardingCompleted) || other.onboardingCompleted == onboardingCompleted)&&(identical(other.profileCompleted, profileCompleted) || other.profileCompleted == profileCompleted)&&(identical(other.user, user) || other.user == user));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SessionState&&(identical(other.onboardingCompleted, onboardingCompleted) || other.onboardingCompleted == onboardingCompleted)&&(identical(other.profileCompleted, profileCompleted) || other.profileCompleted == profileCompleted)&&(identical(other.isVerified, isVerified) || other.isVerified == isVerified)&&(identical(other.user, user) || other.user == user));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,onboardingCompleted,profileCompleted,user);
+int get hashCode => Object.hash(runtimeType,onboardingCompleted,profileCompleted,isVerified,user);
 
 @override
 String toString() {
-  return 'SessionState(onboardingCompleted: $onboardingCompleted, profileCompleted: $profileCompleted, user: $user)';
+  return 'SessionState(onboardingCompleted: $onboardingCompleted, profileCompleted: $profileCompleted, isVerified: $isVerified, user: $user)';
 }
 
 
@@ -263,7 +265,7 @@ abstract mixin class _$SessionStateCopyWith<$Res> implements $SessionStateCopyWi
   factory _$SessionStateCopyWith(_SessionState value, $Res Function(_SessionState) _then) = __$SessionStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool onboardingCompleted, bool profileCompleted, AuthUser? user
+ bool onboardingCompleted, bool profileCompleted, bool isVerified, AuthUser? user
 });
 
 
@@ -280,10 +282,11 @@ class __$SessionStateCopyWithImpl<$Res>
 
 /// Create a copy of SessionState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? onboardingCompleted = null,Object? profileCompleted = null,Object? user = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? onboardingCompleted = null,Object? profileCompleted = null,Object? isVerified = null,Object? user = freezed,}) {
   return _then(_SessionState(
 onboardingCompleted: null == onboardingCompleted ? _self.onboardingCompleted : onboardingCompleted // ignore: cast_nullable_to_non_nullable
 as bool,profileCompleted: null == profileCompleted ? _self.profileCompleted : profileCompleted // ignore: cast_nullable_to_non_nullable
+as bool,isVerified: null == isVerified ? _self.isVerified : isVerified // ignore: cast_nullable_to_non_nullable
 as bool,user: freezed == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as AuthUser?,
   ));
