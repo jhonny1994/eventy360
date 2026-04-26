@@ -198,9 +198,9 @@ Deno.serve(async (req: Request) => {
     ? await resolveProfileLanguage(supabase, resolvedProfileId)
     : null;
   const resolvedLocale = normalizeLocaleCode(
+    profileLanguage ??
     asString(mergedData.locale) ??
     asString(mergedData.language) ??
-    profileLanguage ??
     "ar",
   );
 
