@@ -16,6 +16,9 @@ _EventsState _$EventsStateFromJson(Map<String, dynamic> json) => _EventsState(
   subscribedTopicIds: (json['subscribedTopicIds'] as List<dynamic>)
       .map((e) => e as String)
       .toSet(),
+  selectedTopicIds: (json['selectedTopicIds'] as List<dynamic>)
+      .map((e) => e as String)
+      .toSet(),
   query: json['query'] as String,
   page: (json['page'] as num).toInt(),
   pageSize: (json['pageSize'] as num).toInt(),
@@ -27,6 +30,7 @@ Map<String, dynamic> _$EventsStateToJson(_EventsState instance) =>
       'events': instance.events,
       'topics': instance.topics,
       'subscribedTopicIds': instance.subscribedTopicIds.toList(),
+      'selectedTopicIds': instance.selectedTopicIds.toList(),
       'query': instance.query,
       'page': instance.page,
       'pageSize': instance.pageSize,

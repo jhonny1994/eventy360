@@ -2,14 +2,13 @@ import 'dart:async';
 
 import 'package:eventy360/features/notifications/application/notification_state.dart';
 import 'package:eventy360/features/notifications/infrastructure/push_notification_service.dart';
-import 'package:firebase_messaging/firebase_messaging.dart' as fcm;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'notification_controller.g.dart';
 
 @Riverpod(keepAlive: true)
 PushNotificationService pushNotificationService(Ref ref) {
-  return PushNotificationService();
+  return FirebasePushNotificationService();
 }
 
 @Riverpod(keepAlive: true)
@@ -39,9 +38,8 @@ class NotificationController extends _$NotificationController {
   Future<void> requestPermissionForTopicIntent() async {
     final current = state.asData?.value ?? NotificationState.initial();
     final settings = await ref.read(pushNotificationServiceProvider).requestPermission();
-    final granted = settings.authorizationStatus ==
-            fcm.AuthorizationStatus.authorized ||
-        settings.authorizationStatus == fcm.AuthorizationStatus.provisional;
+    final granted = settings == PushAuthorizationStatus.authorized ||
+        settings == PushAuthorizationStatus.provisional;
     state = AsyncData(current.copyWith(permissionGranted: granted));
   }
 

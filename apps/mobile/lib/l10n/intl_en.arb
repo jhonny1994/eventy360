@@ -38,6 +38,7 @@
   "exploreEvents": "Explore events",
   "eventsTitle": "Discover Events",
   "eventsSearchHint": "Search events by name or location",
+  "topicSubscriptionHint": "Subscribe to topics to receive push alerts.",
   "addBookmark": "Add bookmark",
   "removeBookmark": "Remove bookmark",
   "loadMore": "Load more",

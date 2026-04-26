@@ -43,8 +43,29 @@ class EventsScreen extends ConsumerWidget {
                     spacing: 8,
                     runSpacing: 8,
                     children: data.topics.map((topic) {
+                      final selected = data.selectedTopicIds.contains(topic.id);
+                      return FilterChip(
+                        label: Text(topic.name),
+                        selected: selected,
+                        onSelected: (_) {
+                          ref.read(eventsControllerProvider.notifier).toggleTopicFilter(topic.id);
+                        },
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    localizations.topicSubscriptionHint,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: data.topics.map((topic) {
                       final subscribed = data.subscribedTopicIds.contains(topic.id);
                       return FilterChip(
+                        selectedColor: Theme.of(context).colorScheme.secondaryContainer,
                         label: Text(topic.name),
                         selected: subscribed,
                         onSelected: (_) {

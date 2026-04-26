@@ -6,6 +6,7 @@ abstract class EventsRepository {
     required int page,
     required int pageSize,
     required String query,
+    required Set<String> selectedTopicIds,
   });
 
   Future<Set<String>> getBookmarkedEventIds();
