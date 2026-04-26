@@ -114,7 +114,7 @@ CREATE POLICY "push_delivery_log_admin_read"
       SELECT 1
       FROM public.profiles p
       WHERE p.id = auth.uid()
-      AND p.role = 'admin'
+      AND p.user_type = 'admin'
     )
   );
 
