@@ -40,6 +40,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "backToSignIn": MessageLookupByLibrary.simpleMessage(
       "العودة إلى تسجيل الدخول",
     ),
+    "billingPeriodAnnual": MessageLookupByLibrary.simpleMessage("سنوي"),
+    "billingPeriodBiannual": MessageLookupByLibrary.simpleMessage("نصف سنوي"),
+    "billingPeriodLabel": MessageLookupByLibrary.simpleMessage("فترة الفوترة"),
+    "billingPeriodMonthly": MessageLookupByLibrary.simpleMessage("شهري"),
+    "billingPeriodQuarterly": MessageLookupByLibrary.simpleMessage("ربع سنوي"),
     "cancelAction": MessageLookupByLibrary.simpleMessage("إلغاء"),
     "completeProfileBody": MessageLookupByLibrary.simpleMessage(
       "قبل استخدام ميزات الباحث، أكمل بيانات ملفك الشخصي.",
@@ -67,8 +72,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "eventsTitle": MessageLookupByLibrary.simpleMessage("استكشاف الفعاليات"),
     "exploreEvents": MessageLookupByLibrary.simpleMessage("استكشف الفعاليات"),
+    "fileOpenFailed": MessageLookupByLibrary.simpleMessage("تعذر فتح الملف."),
     "filePickerHint": MessageLookupByLibrary.simpleMessage(
       "اختر ملف PDF أو DOC أو DOCX وسنقوم برفعه لك.",
+    ),
+    "fileReadFailed": MessageLookupByLibrary.simpleMessage(
+      "تعذر قراءة الملف المحدد.",
     ),
     "fileUrlLabel": MessageLookupByLibrary.simpleMessage("رابط الملف"),
     "forgotPassword": MessageLookupByLibrary.simpleMessage(
@@ -87,6 +96,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "homeTitle": MessageLookupByLibrary.simpleMessage("الصفحة الرئيسية للباحث"),
     "institution": MessageLookupByLibrary.simpleMessage("المؤسسة"),
+    "latestRequestLabel": MessageLookupByLibrary.simpleMessage("آخر طلب"),
     "loadMore": MessageLookupByLibrary.simpleMessage("تحميل المزيد"),
     "loading": MessageLookupByLibrary.simpleMessage("جار التحميل..."),
     "location": MessageLookupByLibrary.simpleMessage("الموقع"),
@@ -96,6 +106,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "newPassword": MessageLookupByLibrary.simpleMessage("كلمة المرور الجديدة"),
     "noEventsFound": MessageLookupByLibrary.simpleMessage("لا توجد فعاليات."),
     "noFileSelected": MessageLookupByLibrary.simpleMessage("لم يتم اختيار ملف"),
+    "noPaymentsFound": MessageLookupByLibrary.simpleMessage(
+      "لا توجد مدفوعات حتى الآن.",
+    ),
     "noSubmissionsFound": MessageLookupByLibrary.simpleMessage(
       "لا توجد ترشيحات.",
     ),
@@ -125,7 +138,31 @@ class MessageLookup extends MessageLookupByLibrary {
     "passwordsDoNotMatch": MessageLookupByLibrary.simpleMessage(
       "كلمتا المرور غير متطابقتين.",
     ),
+    "paymentAmountError": MessageLookupByLibrary.simpleMessage(
+      "أدخل مبلغًا صالحًا أكبر من صفر.",
+    ),
+    "paymentAmountLabel": MessageLookupByLibrary.simpleMessage("المبلغ"),
+    "paymentHistoryTitle": MessageLookupByLibrary.simpleMessage(
+      "سجل المدفوعات",
+    ),
+    "paymentMethodBank": MessageLookupByLibrary.simpleMessage("تحويل بنكي"),
+    "paymentMethodCash": MessageLookupByLibrary.simpleMessage("نقدًا"),
+    "paymentMethodCheck": MessageLookupByLibrary.simpleMessage("شيك"),
+    "paymentMethodLabel": MessageLookupByLibrary.simpleMessage("طريقة الدفع"),
+    "paymentMethodOnline": MessageLookupByLibrary.simpleMessage("دفع إلكتروني"),
+    "paymentNotesLabel": MessageLookupByLibrary.simpleMessage("ملاحظات الدافع"),
+    "paymentPendingStatus": MessageLookupByLibrary.simpleMessage(
+      "بانتظار التحقق",
+    ),
+    "paymentRejectedStatus": MessageLookupByLibrary.simpleMessage("مرفوض"),
+    "paymentVerifiedStatus": MessageLookupByLibrary.simpleMessage("تم التحقق"),
     "pickFileAction": MessageLookupByLibrary.simpleMessage("اختر ملفًا"),
+    "pickProofDocument": MessageLookupByLibrary.simpleMessage(
+      "اختر وثيقة الإثبات",
+    ),
+    "pickVerificationDocument": MessageLookupByLibrary.simpleMessage(
+      "اختر وثيقة التحقق",
+    ),
     "profileCompleted": MessageLookupByLibrary.simpleMessage(
       "الملف الشخصي مكتمل",
     ),
@@ -133,9 +170,54 @@ class MessageLookup extends MessageLookupByLibrary {
       "الملف الشخصي غير مكتمل",
     ),
     "profileStatus": MessageLookupByLibrary.simpleMessage("حالة الملف الشخصي"),
+    "referenceNumberLabel": MessageLookupByLibrary.simpleMessage("رقم المرجع"),
+    "rejectionReasonLabel": MessageLookupByLibrary.simpleMessage("سبب الرفض"),
     "removeBookmark": MessageLookupByLibrary.simpleMessage(
       "إزالة الإشارة المرجعية",
     ),
+    "reportPaymentBody": MessageLookupByLibrary.simpleMessage(
+      "أرسل مبلغ الدفع وطريقته ووثيقة الإثبات حتى يتمكن الفريق من التحقق من وصول اشتراكك.",
+    ),
+    "reportPaymentTitle": MessageLookupByLibrary.simpleMessage(
+      "الإبلاغ عن دفع",
+    ),
+    "reportedAtLabel": MessageLookupByLibrary.simpleMessage("تاريخ الإبلاغ"),
+    "repositoryAbstractTitle": MessageLookupByLibrary.simpleMessage("الملخص"),
+    "repositoryDetailAction": MessageLookupByLibrary.simpleMessage(
+      "عرض التفاصيل",
+    ),
+    "repositoryDetailTitle": MessageLookupByLibrary.simpleMessage(
+      "تفاصيل البحث",
+    ),
+    "repositoryDownloadAction": MessageLookupByLibrary.simpleMessage(
+      "تنزيل البحث",
+    ),
+    "repositoryDownloadSectionTitle": MessageLookupByLibrary.simpleMessage(
+      "التنزيل",
+    ),
+    "repositoryDownloadsLabel": MessageLookupByLibrary.simpleMessage(
+      "التنزيلات",
+    ),
+    "repositoryEmptyState": MessageLookupByLibrary.simpleMessage(
+      "لا توجد أبحاث مطابقة للفلاتر الحالية.",
+    ),
+    "repositoryNoFileAvailable": MessageLookupByLibrary.simpleMessage(
+      "لا يتوفر ملف قابل للتنزيل لهذا البحث.",
+    ),
+    "repositoryPaperFileFallback": MessageLookupByLibrary.simpleMessage(
+      "ملف البحث",
+    ),
+    "repositorySearchHint": MessageLookupByLibrary.simpleMessage(
+      "ابحث في الأبحاث أو الفعاليات أو الباحثين",
+    ),
+    "repositorySubscriptionRequiredBody": MessageLookupByLibrary.simpleMessage(
+      "المستودع مخصص للاشتراكات المميزة أو التجريبية النشطة.",
+    ),
+    "repositorySubscriptionRequiredTitle": MessageLookupByLibrary.simpleMessage(
+      "يتطلب وصولًا مميزًا",
+    ),
+    "repositoryTitle": MessageLookupByLibrary.simpleMessage("مستودع الأبحاث"),
+    "repositoryViewsLabel": MessageLookupByLibrary.simpleMessage("المشاهدات"),
     "requiredField": MessageLookupByLibrary.simpleMessage("هذا الحقل مطلوب."),
     "resetEmailSent": MessageLookupByLibrary.simpleMessage(
       "تم إرسال رسالة إعادة تعيين كلمة المرور.",
@@ -146,6 +228,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "retry": MessageLookupByLibrary.simpleMessage("إعادة المحاولة"),
     "revisionNotesLabel": MessageLookupByLibrary.simpleMessage(
       "ملاحظات المراجعة (اختياري)",
+    ),
+    "secureDocsBody": MessageLookupByLibrary.simpleMessage(
+      "يتم رفع ملفات التحقق والدفع عبر طلبات موثقة، ويتم التحقق منها قبل الرفع، ثم فتحها لاحقًا بروابط موقعة قصيرة العمر.",
+    ),
+    "secureDocsTitle": MessageLookupByLibrary.simpleMessage(
+      "التعامل مع الوثائق الحساسة",
+    ),
+    "secureFileRequiredError": MessageLookupByLibrary.simpleMessage(
+      "اختر ملفًا قبل الإرسال.",
+    ),
+    "secureFileSizeError": MessageLookupByLibrary.simpleMessage(
+      "حجم الملف المحدد يتجاوز 10 ميغابايت.",
+    ),
+    "secureFileTypeError": MessageLookupByLibrary.simpleMessage(
+      "يسمح هنا فقط بملفات PDF أو JPG أو PNG.",
     ),
     "sendResetLink": MessageLookupByLibrary.simpleMessage(
       "إرسال رابط إعادة التعيين",
@@ -207,11 +304,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "submitFullPaperTitle": MessageLookupByLibrary.simpleMessage(
       "تقديم البحث الكامل",
     ),
+    "submitPaymentReportAction": MessageLookupByLibrary.simpleMessage(
+      "إرسال تقرير الدفع",
+    ),
     "submitRevisionAction": MessageLookupByLibrary.simpleMessage(
       "تقديم المراجعة",
     ),
     "submitRevisionTitle": MessageLookupByLibrary.simpleMessage(
       "تقديم المراجعة",
+    ),
+    "submitVerificationRequest": MessageLookupByLibrary.simpleMessage(
+      "إرسال طلب التحقق",
     ),
     "subscriptionActive": MessageLookupByLibrary.simpleMessage(
       "اشتراك مميز نشط",
@@ -225,6 +328,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "topicSubscriptionHint": MessageLookupByLibrary.simpleMessage(
       "اشترك في المواضيع لتصلك تنبيهات فورية.",
     ),
+    "trustCenterTitle": MessageLookupByLibrary.simpleMessage("مركز الثقة"),
     "unsupportedRoleBody": MessageLookupByLibrary.simpleMessage(
       "تطبيق إيفنتي 360 المحمول يدعم حسابات الباحثين فقط حاليًا.",
     ),
@@ -237,10 +341,30 @@ class MessageLookup extends MessageLookupByLibrary {
     "updatePasswordTitle": MessageLookupByLibrary.simpleMessage(
       "تعيين كلمة مرور جديدة",
     ),
+    "verificationApprovedBody": MessageLookupByLibrary.simpleMessage(
+      "تمت الموافقة على توثيقك كباحث، ويمكنك متابعة استخدام المسارات المخصصة للحسابات الموثقة.",
+    ),
+    "verificationCenterTitle": MessageLookupByLibrary.simpleMessage("التحقق"),
+    "verificationPendingBody": MessageLookupByLibrary.simpleMessage(
+      "طلب التحقق الخاص بك قيد المراجعة. سنحتفظ بآخر وثيقة مرفوعة حتى يكتمل التقييم.",
+    ),
+    "verificationPendingStatus": MessageLookupByLibrary.simpleMessage(
+      "قيد المراجعة",
+    ),
+    "verificationRejectedStatus": MessageLookupByLibrary.simpleMessage("مرفوض"),
+    "verificationRequiredBody": MessageLookupByLibrary.simpleMessage(
+      "ارفع وثيقة إثبات واضحة لبدء مراجعة التحقق.",
+    ),
     "verificationStatusTitle": MessageLookupByLibrary.simpleMessage(
       "حالة التحقق",
     ),
     "verifiedStatus": MessageLookupByLibrary.simpleMessage("موثق"),
+    "viewProofDocument": MessageLookupByLibrary.simpleMessage(
+      "عرض وثيقة الإثبات",
+    ),
+    "viewUploadedDocument": MessageLookupByLibrary.simpleMessage(
+      "عرض الوثيقة المرفوعة",
+    ),
     "wilayaLabel": MessageLookupByLibrary.simpleMessage("الولاية"),
   };
 }

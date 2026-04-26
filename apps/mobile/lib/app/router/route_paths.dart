@@ -12,4 +12,7 @@ class RoutePaths {
   static const events = '/events';
   static const submissions = '/submissions';
   static const newAbstractSubmission = '/submissions/new-abstract';
+  static const trust = '/trust';
+  static const reportPayment = '/trust/report-payment';
+  static const repository = '/repository';
 }
