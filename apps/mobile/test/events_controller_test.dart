@@ -10,11 +10,12 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('loads events and toggles bookmark', () async {
     final repository = _FakeEventsRepository();
+    final notificationController = _FakeNotificationController();
     final container = ProviderContainer(
       overrides: [
         eventsRepositoryProvider.overrideWithValue(repository),
         notificationControllerProvider.overrideWith(
-          () => _FakeNotificationController(),
+          () => notificationController,
         ),
       ],
     );
@@ -28,17 +29,46 @@ void main() {
     final updated = container.read(eventsControllerProvider).asData!.value;
     expect(updated.events.first.isBookmarked, isTrue);
   });
+
+  test('requests permission and registers token when subscribing to topic', () async {
+    final repository = _FakeEventsRepository();
+    final notificationController = _FakeNotificationController();
+    final container = ProviderContainer(
+      overrides: [
+        eventsRepositoryProvider.overrideWithValue(repository),
+        notificationControllerProvider.overrideWith(() => notificationController),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await container.read(eventsControllerProvider.future);
+    await container
+        .read(eventsControllerProvider.notifier)
+        .toggleTopicSubscription('ai');
+
+    final updated = container.read(eventsControllerProvider).asData!.value;
+    expect(updated.subscribedTopicIds.contains('ai'), isTrue);
+    expect(notificationController.permissionRequested, isTrue);
+    expect(notificationController.lastRegisteredTopicId, 'ai');
+  });
 }
 
 class _FakeNotificationController extends NotificationController {
+  bool permissionRequested = false;
+  String? lastRegisteredTopicId;
+
   @override
   Future<NotificationState> build() async => NotificationState.initial();
 
   @override
-  Future<void> registerCurrentToken({required String topicId}) async {}
+  Future<void> registerCurrentToken({required String topicId}) async {
+    lastRegisteredTopicId = topicId;
+  }
 
   @override
-  Future<void> requestPermissionForTopicIntent() async {}
+  Future<void> requestPermissionForTopicIntent() async {
+    permissionRequested = true;
+  }
 }
 
 class _FakeEventsRepository implements EventsRepository {
