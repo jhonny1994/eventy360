@@ -25,6 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "accountCreated": MessageLookupByLibrary.simpleMessage(
       "تم إنشاء الحساب بنجاح.",
     ),
+    "addBookmark": MessageLookupByLibrary.simpleMessage("إضافة إشارة مرجعية"),
     "appTitle": MessageLookupByLibrary.simpleMessage("إيفنتي 360"),
     "backToSignIn": MessageLookupByLibrary.simpleMessage(
       "العودة إلى تسجيل الدخول",
@@ -37,7 +38,19 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "continueAction": MessageLookupByLibrary.simpleMessage("متابعة"),
     "createAccount": MessageLookupByLibrary.simpleMessage("إنشاء حساب"),
+    "deadline": MessageLookupByLibrary.simpleMessage("آخر موعد"),
     "email": MessageLookupByLibrary.simpleMessage("البريد الإلكتروني"),
+    "eventDetailsTitle": MessageLookupByLibrary.simpleMessage(
+      "تفاصيل الفعالية",
+    ),
+    "eventNotFound": MessageLookupByLibrary.simpleMessage(
+      "لم يتم العثور على الفعالية.",
+    ),
+    "eventsSearchHint": MessageLookupByLibrary.simpleMessage(
+      "ابحث عن الفعاليات بالاسم أو الموقع",
+    ),
+    "eventsTitle": MessageLookupByLibrary.simpleMessage("استكشاف الفعاليات"),
+    "exploreEvents": MessageLookupByLibrary.simpleMessage("استكشف الفعاليات"),
     "forgotPassword": MessageLookupByLibrary.simpleMessage(
       "هل نسيت كلمة المرور؟",
     ),
@@ -54,7 +67,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "homeTitle": MessageLookupByLibrary.simpleMessage("الصفحة الرئيسية للباحث"),
     "institution": MessageLookupByLibrary.simpleMessage("المؤسسة"),
+    "loadMore": MessageLookupByLibrary.simpleMessage("تحميل المزيد"),
     "loading": MessageLookupByLibrary.simpleMessage("جار التحميل..."),
+    "location": MessageLookupByLibrary.simpleMessage("الموقع"),
+    "noEventsFound": MessageLookupByLibrary.simpleMessage("لا توجد فعاليات."),
     "notificationEducationBody": MessageLookupByLibrary.simpleMessage(
       "سنطلب إذن الإشعارات فقط بعد الاشتراك في المواضيع.",
     ),
@@ -78,6 +94,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "الملف الشخصي غير مكتمل",
     ),
     "profileStatus": MessageLookupByLibrary.simpleMessage("حالة الملف الشخصي"),
+    "removeBookmark": MessageLookupByLibrary.simpleMessage(
+      "إزالة الإشارة المرجعية",
+    ),
     "requiredField": MessageLookupByLibrary.simpleMessage("هذا الحقل مطلوب."),
     "resetEmailSent": MessageLookupByLibrary.simpleMessage(
       "تم إرسال رسالة إعادة تعيين كلمة المرور.",

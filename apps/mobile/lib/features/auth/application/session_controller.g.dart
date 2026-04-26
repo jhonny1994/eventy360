@@ -108,7 +108,7 @@ final class SessionControllerProvider
   SessionController create() => SessionController();
 }
 
-String _$sessionControllerHash() => r'613002816f8832fe6bd02f8ff2d84f4fbcc2c440';
+String _$sessionControllerHash() => r'493bdbc31314e063f6ab7378c3a61a13e8f5b1e9';
 
 abstract class _$SessionController extends $AsyncNotifier<SessionState> {
   FutureOr<SessionState> build();

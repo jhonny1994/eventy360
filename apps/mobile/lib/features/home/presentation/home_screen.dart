@@ -1,8 +1,11 @@
+import 'package:eventy360/app/router/route_paths.dart';
 import 'package:eventy360/app/theme/theme_mode_controller.dart';
+import 'package:eventy360/core/presentation/widgets/adaptive_page_body.dart';
 import 'package:eventy360/features/auth/application/session_controller.dart';
 import 'package:eventy360/l10n/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -31,9 +34,10 @@ class HomeScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
+      body: AdaptivePageBody(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          children: [
           Card(
             child: ListTile(
               title: Text(localizations.signedInAs),
@@ -71,7 +75,18 @@ class HomeScreen extends ConsumerWidget {
               title: Text(localizations.homeSubtitle),
             ),
           ),
+          const SizedBox(height: 12),
+          Semantics(
+            button: true,
+            label: localizations.exploreEvents,
+            child: FilledButton.icon(
+              onPressed: () => context.go(RoutePaths.events),
+              icon: const Icon(Icons.event_note_outlined),
+              label: Text(localizations.exploreEvents),
+            ),
+          ),
         ],
+        ),
       ),
     );
   }
