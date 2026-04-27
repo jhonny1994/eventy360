@@ -137,6 +137,13 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   const Divider(height: 1),
                   _QuickLinkTile(
+                    icon: Icons.bookmarks_outlined,
+                    title: localizations.savedEventsTitle,
+                    subtitle: localizations.homeSavedEventsBody,
+                    onTap: () => context.go(RoutePaths.savedEvents),
+                  ),
+                  const Divider(height: 1),
+                  _QuickLinkTile(
                     icon: Icons.manage_accounts_outlined,
                     title: localizations.accountTitle,
                     subtitle: localizations.homeManageAccountBody,

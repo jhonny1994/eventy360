@@ -122,10 +122,31 @@ class AccountScreen extends ConsumerWidget {
               child: Column(
                 children: [
                   _PreferenceTile(
+                    icon: Icons.person_outline_rounded,
+                    title: localizations.editProfileTitle,
+                    subtitle: localizations.editProfileBody,
+                    onTap: () => context.push(RoutePaths.accountProfile),
+                  ),
+                  const Divider(height: 1),
+                  _PreferenceTile(
+                    icon: Icons.security_outlined,
+                    title: localizations.securityTitle,
+                    subtitle: localizations.securityBody,
+                    onTap: () => context.push(RoutePaths.accountSecurity),
+                  ),
+                  const Divider(height: 1),
+                  _PreferenceTile(
                     icon: Icons.verified_user_outlined,
                     title: localizations.trustCenterTitle,
                     subtitle: localizations.trustOverviewBody,
                     onTap: () => context.push(RoutePaths.trust),
+                  ),
+                  const Divider(height: 1),
+                  _PreferenceTile(
+                    icon: Icons.bookmarks_outlined,
+                    title: localizations.savedEventsTitle,
+                    subtitle: localizations.savedEventsBody,
+                    onTap: () => context.push(RoutePaths.savedEvents),
                   ),
                   const Divider(height: 1),
                   _PreferenceTile(

@@ -101,7 +101,7 @@ class SupabaseSubmissionsRepository implements SubmissionsRepository {
           .select(
             'id,event_id,title_translations,abstract_translations,status,abstract_status,'
             'full_paper_status,submission_date,updated_at,full_paper_file_url,'
-            'current_abstract_version_id,current_full_paper_version_id',
+            'full_paper_file_metadata,current_abstract_version_id,current_full_paper_version_id',
           )
           .eq('id', submissionId)
           .eq('submitted_by', _userId)
@@ -109,10 +109,14 @@ class SupabaseSubmissionsRepository implements SubmissionsRepository {
       final record = _mapSubmissionRecord(row, locale: locale);
 
       var eventTitle = record.eventId;
+      DateTime? abstractDeadline;
+      DateTime? fullPaperDeadline;
       try {
         final eventRow = await _client
             .from('events')
-            .select('event_name_translations')
+            .select(
+              'event_name_translations,abstract_submission_deadline,full_paper_submission_deadline',
+            )
             .eq('id', record.eventId)
             .maybeSingle();
         if (eventRow != null) {
@@ -121,6 +125,12 @@ class SupabaseSubmissionsRepository implements SubmissionsRepository {
                   ?.cast<String, dynamic>() ??
               const <String, dynamic>{};
           eventTitle = _pickTranslation(translations, locale);
+          abstractDeadline = DateTime.tryParse(
+            eventRow['abstract_submission_deadline']?.toString() ?? '',
+          );
+          fullPaperDeadline = DateTime.tryParse(
+            eventRow['full_paper_submission_deadline']?.toString() ?? '',
+          );
         }
       } on Object {
         // Non-blocking read.
@@ -141,6 +151,7 @@ class SupabaseSubmissionsRepository implements SubmissionsRepository {
         ),
       ];
 
+      final feedbackEntries = <SubmissionFeedbackEntry>[];
       final versionIds = <String>[
         if (record.currentAbstractVersionId != null)
           record.currentAbstractVersionId!,
@@ -151,20 +162,28 @@ class SupabaseSubmissionsRepository implements SubmissionsRepository {
         try {
           final feedbackRows = await _client
               .from('submission_feedback')
-              .select('feedback_content,created_at')
+              .select('feedback_content,created_at,role_at_submission')
               .inFilter('submission_version_id', versionIds)
               .order('created_at', ascending: true);
           for (final raw
               in (feedbackRows as List<dynamic>).cast<Map<String, dynamic>>()) {
             final content = raw['feedback_content']?.toString() ?? '';
             if (content.trim().isEmpty) continue;
+            final timestamp =
+                DateTime.tryParse(raw['created_at']?.toString() ?? '') ??
+                DateTime.now();
+            feedbackEntries.add(
+              SubmissionFeedbackEntry(
+                content: content,
+                timestamp: timestamp,
+                role: raw['role_at_submission']?.toString() ?? 'reviewer',
+              ),
+            );
             timeline.add(
               SubmissionTimelineEntry(
                 title: 'Feedback',
                 description: content,
-                timestamp:
-                    DateTime.tryParse(raw['created_at']?.toString() ?? '') ??
-                    DateTime.now(),
+                timestamp: timestamp,
               ),
             );
           }
@@ -174,6 +193,9 @@ class SupabaseSubmissionsRepository implements SubmissionsRepository {
       }
 
       timeline.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+      final fileMetadata =
+          (row['full_paper_file_metadata'] as Map?)?.cast<String, dynamic>() ??
+          const <String, dynamic>{};
       return SubmissionDetail(
         record: SubmissionRecord(
           id: record.id,
@@ -191,6 +213,18 @@ class SupabaseSubmissionsRepository implements SubmissionsRepository {
           currentFullPaperVersionId: record.currentFullPaperVersionId,
         ),
         timeline: timeline,
+        feedback: feedbackEntries,
+        abstractDeadline: abstractDeadline,
+        fullPaperDeadline: fullPaperDeadline,
+        fileDetails: record.fullPaperFileUrl == null
+            ? null
+            : SubmissionFileDetails(
+                fileUrl: record.fullPaperFileUrl!,
+                fileName: fileMetadata['originalName']?.toString(),
+                fileSizeBytes: fileMetadata['size'] as int?,
+                contentType: fileMetadata['type']?.toString(),
+                revisionNotes: fileMetadata['revision_notes']?.toString(),
+              ),
       );
     } on Object catch (error) {
       throw _mapError(error);

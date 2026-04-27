@@ -9,6 +9,7 @@ abstract class EventsRepository {
     required Set<String> selectedTopicIds,
   });
   Future<EventSummary?> fetchEventById(String eventId);
+  Future<List<EventSummary>> fetchBookmarkedEvents();
 
   Future<Set<String>> getBookmarkedEventIds();
   Future<bool> toggleBookmark(String eventId);

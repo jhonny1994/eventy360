@@ -38,6 +38,7 @@ class SubmissionsScreen extends ConsumerWidget {
         data: (data) {
           return AppPageContainer(
             child: ListView(
+              key: const PageStorageKey<String>('submissions-list'),
               padding: const EdgeInsets.symmetric(vertical: 16),
               children: [
                 AppPageHero(
@@ -54,7 +55,7 @@ class SubmissionsScreen extends ConsumerWidget {
                     label: localizations.submitAbstractAction,
                     child: FilledButton.icon(
                       onPressed: () =>
-                          context.go(RoutePaths.newAbstractSubmission),
+                          context.push(RoutePaths.newAbstractSubmission),
                       icon: const Icon(Icons.add_circle_outline),
                       label: Text(localizations.submitAbstractAction),
                     ),
@@ -78,7 +79,7 @@ class SubmissionsScreen extends ConsumerWidget {
                         ),
                         isThreeLine: true,
                         trailing: const Icon(Icons.chevron_right),
-                        onTap: () => context.go(
+                        onTap: () => context.push(
                           RoutePaths.submissionDetail(submission.id),
                         ),
                       ),

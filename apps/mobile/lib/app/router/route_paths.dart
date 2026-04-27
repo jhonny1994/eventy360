@@ -14,15 +14,20 @@ class RoutePaths {
   static const newAbstractSubmission = '/submissions/new-abstract';
   static const repository = '/repository';
   static const account = '/account';
+  static const savedEvents = '/events/saved';
   static const trustSegment = 'trust';
   static const reportPaymentSegment = 'report-payment';
   static const topicsSegment = 'topics';
+  static const profileSegment = 'profile';
+  static const securitySegment = 'security';
 
   static String get trust => '$account/$trustSegment';
 
   static String get reportPayment => '$trust/$reportPaymentSegment';
 
   static String get topics => '$account/$topicsSegment';
+  static String get accountProfile => '$account/$profileSegment';
+  static String get accountSecurity => '$account/$securitySegment';
 
   static String eventDetail(String eventId) => '$events/$eventId';
 

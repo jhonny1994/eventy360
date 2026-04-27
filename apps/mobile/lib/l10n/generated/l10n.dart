@@ -579,6 +579,101 @@ class S {
     );
   }
 
+  /// `Edit profile`
+  String get editProfileTitle {
+    return Intl.message(
+      'Edit profile',
+      name: 'editProfileTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Keep your name, institution, academic role, and location accurate so event and trust workflows stay aligned.`
+  String get editProfileBody {
+    return Intl.message(
+      'Keep your name, institution, academic role, and location accurate so event and trust workflows stay aligned.',
+      name: 'editProfileBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save profile`
+  String get saveProfileAction {
+    return Intl.message(
+      'Save profile',
+      name: 'saveProfileAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile updated successfully.`
+  String get profileSavedSuccess {
+    return Intl.message(
+      'Profile updated successfully.',
+      name: 'profileSavedSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Academic position`
+  String get academicPositionLabel {
+    return Intl.message(
+      'Academic position',
+      name: 'academicPositionLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Short bio`
+  String get profileBioLabel {
+    return Intl.message(
+      'Short bio',
+      name: 'profileBioLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Security`
+  String get securityTitle {
+    return Intl.message('Security', name: 'securityTitle', desc: '', args: []);
+  }
+
+  /// `Protect your account access and keep your credentials current from a dedicated security surface.`
+  String get securityBody {
+    return Intl.message(
+      'Protect your account access and keep your credentials current from a dedicated security surface.',
+      name: 'securityBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send a secure reset link to {email} if you want to change your password from email.`
+  String securityResetBody(Object email) {
+    return Intl.message(
+      'Send a secure reset link to $email if you want to change your password from email.',
+      name: 'securityResetBody',
+      desc: '',
+      args: [email],
+    );
+  }
+
+  /// `If you are already signed in on this device, you can set a new password here immediately.`
+  String get securityDirectPasswordBody {
+    return Intl.message(
+      'If you are already signed in on this device, you can set a new password here immediately.',
+      name: 'securityDirectPasswordBody',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Preferences`
   String get preferencesTitle {
     return Intl.message(
@@ -764,6 +859,36 @@ class S {
     return Intl.message(
       'Manage your research interests and notification topics.',
       name: 'topicSubscriptionsBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Saved events`
+  String get savedEventsTitle {
+    return Intl.message(
+      'Saved events',
+      name: 'savedEventsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Return to the events you shortlisted without rebuilding your search from scratch.`
+  String get savedEventsBody {
+    return Intl.message(
+      'Return to the events you shortlisted without rebuilding your search from scratch.',
+      name: 'savedEventsBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You have not bookmarked any events yet.`
+  String get savedEventsEmptyState {
+    return Intl.message(
+      'You have not bookmarked any events yet.',
+      name: 'savedEventsEmptyState',
       desc: '',
       args: [],
     );
@@ -1034,6 +1159,16 @@ class S {
     );
   }
 
+  /// `Return to the events you bookmarked when you are deciding what to submit next.`
+  String get homeSavedEventsBody {
+    return Intl.message(
+      'Return to the events you bookmarked when you are deciding what to submit next.',
+      name: 'homeSavedEventsBody',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Review submissions`
   String get reviewSubmissionsAction {
     return Intl.message(
@@ -1149,6 +1284,96 @@ class S {
     );
   }
 
+  /// `Before you submit`
+  String get eventDecisionSupportTitle {
+    return Intl.message(
+      'Before you submit',
+      name: 'eventDecisionSupportTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check the deadline, fit, and organizer context first so you do not start the wrong workflow.`
+  String get eventDecisionSupportBody {
+    return Intl.message(
+      'Check the deadline, fit, and organizer context first so you do not start the wrong workflow.',
+      name: 'eventDecisionSupportBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Timeline`
+  String get eventTimelineTitle {
+    return Intl.message(
+      'Timeline',
+      name: 'eventTimelineTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Abstract submissions for this event currently point to {date} as the next visible deadline.`
+  String eventTimelineBody(Object date) {
+    return Intl.message(
+      'Abstract submissions for this event currently point to $date as the next visible deadline.',
+      name: 'eventTimelineBody',
+      desc: '',
+      args: [date],
+    );
+  }
+
+  /// `Eligibility and fit`
+  String get eventEligibilityTitle {
+    return Intl.message(
+      'Eligibility and fit',
+      name: 'eventEligibilityTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use the event topics and location as a quick fit check, then continue only if this call matches your work.`
+  String get eventEligibilityBody {
+    return Intl.message(
+      'Use the event topics and location as a quick fit check, then continue only if this call matches your work.',
+      name: 'eventEligibilityBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Organizer context`
+  String get eventOrganizerTitle {
+    return Intl.message(
+      'Organizer context',
+      name: 'eventOrganizerTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `If anything feels unclear, keep this screen as your source of truth before you commit a submission.`
+  String get eventOrganizerBody {
+    return Intl.message(
+      'If anything feels unclear, keep this screen as your source of truth before you commit a submission.',
+      name: 'eventOrganizerBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You already started a submission for this event, so we took you back to that record instead of creating a duplicate.`
+  String get existingSubmissionRedirectBody {
+    return Intl.message(
+      'You already started a submission for this event, so we took you back to that record instead of creating a duplicate.',
+      name: 'existingSubmissionRedirectBody',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `My Submissions`
   String get submissionsTitle {
     return Intl.message(
@@ -1259,6 +1484,36 @@ class S {
     );
   }
 
+  /// `We restored your in-progress draft so you can continue without rebuilding the form.`
+  String get draftRestoredMessage {
+    return Intl.message(
+      'We restored your in-progress draft so you can continue without rebuilding the form.',
+      name: 'draftRestoredMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start from the right event, keep titles clear, and submit only when this abstract is the one you want tracked for that call.`
+  String get abstractWriteGuidance {
+    return Intl.message(
+      'Start from the right event, keep titles clear, and submit only when this abstract is the one you want tracked for that call.',
+      name: 'abstractWriteGuidance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Upload PDF, DOC, or DOCX only. File guidance, size, and type stay visible here so the submission feels explicit and safe.`
+  String get uploadGuidanceMessage {
+    return Intl.message(
+      'Upload PDF, DOC, or DOCX only. File guidance, size, and type stay visible here so the submission feels explicit and safe.',
+      name: 'uploadGuidanceMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Event`
   String get eventSelectionLabel {
     return Intl.message(
@@ -1314,6 +1569,216 @@ class S {
     return Intl.message(
       'Choose a PDF, DOC, or DOCX file and we will upload it for you.',
       name: 'filePickerHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submitted on`
+  String get submittedOnLabel {
+    return Intl.message(
+      'Submitted on',
+      name: 'submittedOnLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Last updated`
+  String get lastUpdatedLabel {
+    return Intl.message(
+      'Last updated',
+      name: 'lastUpdatedLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Abstract deadline`
+  String get abstractDeadlineLabel {
+    return Intl.message(
+      'Abstract deadline',
+      name: 'abstractDeadlineLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Full-paper deadline`
+  String get fullPaperDeadlineLabel {
+    return Intl.message(
+      'Full-paper deadline',
+      name: 'fullPaperDeadlineLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submission file`
+  String get submissionFilesTitle {
+    return Intl.message(
+      'Submission file',
+      name: 'submissionFilesTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Review the uploaded file details here instead of relying on a raw storage URL.`
+  String get submissionFilesBody {
+    return Intl.message(
+      'Review the uploaded file details here instead of relying on a raw storage URL.',
+      name: 'submissionFilesBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `File size`
+  String get fileSizeLabel {
+    return Intl.message('File size', name: 'fileSizeLabel', desc: '', args: []);
+  }
+
+  /// `File type`
+  String get fileTypeLabel {
+    return Intl.message('File type', name: 'fileTypeLabel', desc: '', args: []);
+  }
+
+  /// `Open uploaded file`
+  String get openSubmissionFileAction {
+    return Intl.message(
+      'Open uploaded file',
+      name: 'openSubmissionFileAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Feedback`
+  String get submissionFeedbackTitle {
+    return Intl.message(
+      'Feedback',
+      name: 'submissionFeedbackTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Keep reviewer feedback separate from your actions so the next step stays clear.`
+  String get submissionFeedbackBody {
+    return Intl.message(
+      'Keep reviewer feedback separate from your actions so the next step stays clear.',
+      name: 'submissionFeedbackBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reviewer note`
+  String get feedbackReviewerLabel {
+    return Intl.message(
+      'Reviewer note',
+      name: 'feedbackReviewerLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Researcher note`
+  String get feedbackResearcherLabel {
+    return Intl.message(
+      'Researcher note',
+      name: 'feedbackResearcherLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your abstract is in review. No additional action is needed until the research team updates the verdict.`
+  String get statusNarrativeAbstractSubmitted {
+    return Intl.message(
+      'Your abstract is in review. No additional action is needed until the research team updates the verdict.',
+      name: 'statusNarrativeAbstractSubmitted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your abstract is approved. The next important action is preparing the full paper before the paper deadline.`
+  String get statusNarrativeAbstractAccepted {
+    return Intl.message(
+      'Your abstract is approved. The next important action is preparing the full paper before the paper deadline.',
+      name: 'statusNarrativeAbstractAccepted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your abstract was not accepted. Review any feedback here before deciding on your next event submission.`
+  String get statusNarrativeAbstractRejected {
+    return Intl.message(
+      'Your abstract was not accepted. Review any feedback here before deciding on your next event submission.',
+      name: 'statusNarrativeAbstractRejected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your full paper is on file and waiting for review. Keep an eye on feedback and deadline updates.`
+  String get statusNarrativeFullPaperSubmitted {
+    return Intl.message(
+      'Your full paper is on file and waiting for review. Keep an eye on feedback and deadline updates.',
+      name: 'statusNarrativeFullPaperSubmitted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your full paper was accepted. This submission is in a healthy state unless the event team contacts you again.`
+  String get statusNarrativeFullPaperAccepted {
+    return Intl.message(
+      'Your full paper was accepted. This submission is in a healthy state unless the event team contacts you again.',
+      name: 'statusNarrativeFullPaperAccepted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your full paper was rejected. Read the notes carefully before investing effort in another upload.`
+  String get statusNarrativeFullPaperRejected {
+    return Intl.message(
+      'Your full paper was rejected. Read the notes carefully before investing effort in another upload.',
+      name: 'statusNarrativeFullPaperRejected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A revision is required. Use the notes below and submit the updated paper from this screen.`
+  String get statusNarrativeRevisionRequested {
+    return Intl.message(
+      'A revision is required. Use the notes below and submit the updated paper from this screen.',
+      name: 'statusNarrativeRevisionRequested',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your revision is uploaded and back under review. The latest notes remain visible below for context.`
+  String get statusNarrativeRevisionUnderReview {
+    return Intl.message(
+      'Your revision is uploaded and back under review. The latest notes remain visible below for context.',
+      name: 'statusNarrativeRevisionUnderReview',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This submission has reached its final completed state. You can keep this page as your record of what was delivered.`
+  String get statusNarrativeCompleted {
+    return Intl.message(
+      'This submission has reached its final completed state. You can keep this page as your record of what was delivered.',
+      name: 'statusNarrativeCompleted',
       desc: '',
       args: [],
     );

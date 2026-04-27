@@ -31,6 +31,7 @@ class EventsScreen extends ConsumerWidget {
                 ref.read(eventsControllerProvider.notifier).refresh(),
             child: AppPageContainer(
               child: ListView(
+                key: const PageStorageKey<String>('events-list'),
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 children: [
                   AppPageHero(
@@ -89,6 +90,12 @@ class EventsScreen extends ConsumerWidget {
                           icon: const Icon(Icons.tune_outlined),
                           label: Text(localizations.manageTopicsAction),
                         ),
+                        const SizedBox(height: 10),
+                        FilledButton.tonalIcon(
+                          onPressed: () => context.push(RoutePaths.savedEvents),
+                          icon: const Icon(Icons.bookmarks_outlined),
+                          label: Text(localizations.savedEventsTitle),
+                        ),
                       ],
                     ),
                   ),
@@ -142,7 +149,7 @@ class _EventCard extends ConsumerWidget {
     final localizations = S.of(context);
     return AppSectionCard(
       child: InkWell(
-        onTap: () => context.go(RoutePaths.eventDetail(event.id)),
+        onTap: () => context.push(RoutePaths.eventDetail(event.id)),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

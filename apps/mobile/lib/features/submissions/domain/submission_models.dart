@@ -116,14 +116,50 @@ class SubmissionTimelineEntry {
   final DateTime timestamp;
 }
 
+class SubmissionFeedbackEntry {
+  const SubmissionFeedbackEntry({
+    required this.content,
+    required this.timestamp,
+    required this.role,
+  });
+
+  final String content;
+  final DateTime timestamp;
+  final String role;
+}
+
+class SubmissionFileDetails {
+  const SubmissionFileDetails({
+    required this.fileUrl,
+    this.fileName,
+    this.fileSizeBytes,
+    this.contentType,
+    this.revisionNotes,
+  });
+
+  final String fileUrl;
+  final String? fileName;
+  final int? fileSizeBytes;
+  final String? contentType;
+  final String? revisionNotes;
+}
+
 class SubmissionDetail {
   const SubmissionDetail({
     required this.record,
     required this.timeline,
+    this.feedback = const <SubmissionFeedbackEntry>[],
+    this.fileDetails,
+    this.abstractDeadline,
+    this.fullPaperDeadline,
   });
 
   final SubmissionRecord record;
   final List<SubmissionTimelineEntry> timeline;
+  final List<SubmissionFeedbackEntry> feedback;
+  final SubmissionFileDetails? fileDetails;
+  final DateTime? abstractDeadline;
+  final DateTime? fullPaperDeadline;
 }
 
 class SubmissionDraft {

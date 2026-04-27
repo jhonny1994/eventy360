@@ -5,6 +5,7 @@ import 'package:eventy360/features/auth/domain/auth_deep_link_intent.dart';
 import 'package:eventy360/features/auth/domain/auth_repository.dart';
 import 'package:eventy360/features/auth/domain/auth_user.dart';
 import 'package:eventy360/features/auth/domain/location_option.dart';
+import 'package:eventy360/features/auth/domain/researcher_profile.dart';
 import 'package:eventy360/features/auth/domain/user_profile_status.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -147,6 +148,17 @@ class _FakeAuthRepository implements AuthRepository {
       const <LocationOption>[];
 
   @override
+  Future<ResearcherProfile> fetchResearcherProfile() async =>
+      const ResearcherProfile(
+        fullName: 'Raouf',
+        institution: 'USTHB',
+        academicPosition: '',
+        bio: '',
+        wilayaId: 16,
+        dairaId: 1601,
+      );
+
+  @override
   Future<AuthUser?> getCurrentUser() async => currentUser;
 
   @override
@@ -173,4 +185,14 @@ class _FakeAuthRepository implements AuthRepository {
 
   @override
   Future<void> updatePassword(String newPassword) async {}
+
+  @override
+  Future<void> updateResearcherProfile({
+    required String fullName,
+    required String institution,
+    required String academicPosition,
+    required String bio,
+    required int wilayaId,
+    required int dairaId,
+  }) async {}
 }

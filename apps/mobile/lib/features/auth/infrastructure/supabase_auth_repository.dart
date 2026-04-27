@@ -3,6 +3,7 @@ import 'package:eventy360/features/auth/domain/auth_exception.dart';
 import 'package:eventy360/features/auth/domain/auth_repository.dart';
 import 'package:eventy360/features/auth/domain/auth_user.dart';
 import 'package:eventy360/features/auth/domain/location_option.dart';
+import 'package:eventy360/features/auth/domain/researcher_profile.dart';
 import 'package:eventy360/features/auth/domain/user_profile_status.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
@@ -125,6 +126,70 @@ class SupabaseAuthRepository implements AuthRepository {
         },
       },
     );
+  }
+
+  @override
+  Future<ResearcherProfile> fetchResearcherProfile() async {
+    final row = await _client
+        .from('researcher_profiles')
+        .select(
+          'name,institution,academic_position,bio_translations,wilaya_id,daira_id',
+        )
+        .eq('profile_id', _auth.currentUser!.id)
+        .single();
+    final locale =
+        _client.auth.currentSession?.user.userMetadata?['locale']?.toString() ??
+        'en';
+    final bioTranslations =
+        (row['bio_translations'] as Map?)?.cast<String, dynamic>() ??
+        const <String, dynamic>{};
+    return ResearcherProfile(
+      fullName: row['name']?.toString() ?? '',
+      institution: row['institution']?.toString() ?? '',
+      academicPosition: row['academic_position']?.toString() ?? '',
+      bio:
+          bioTranslations[locale]?.toString() ??
+          bioTranslations['en']?.toString() ??
+          bioTranslations['ar']?.toString() ??
+          '',
+      wilayaId: row['wilaya_id'] as int?,
+      dairaId: row['daira_id'] as int?,
+    );
+  }
+
+  @override
+  Future<void> updateResearcherProfile({
+    required String fullName,
+    required String institution,
+    required String academicPosition,
+    required String bio,
+    required int wilayaId,
+    required int dairaId,
+  }) async {
+    final existing = await _client
+        .from('researcher_profiles')
+        .select('bio_translations')
+        .eq('profile_id', _auth.currentUser!.id)
+        .single();
+    final currentBio =
+        (existing['bio_translations'] as Map?)?.cast<String, dynamic>() ??
+        const <String, dynamic>{};
+    await _client
+        .from('researcher_profiles')
+        .update({
+          'name': fullName,
+          'institution': institution,
+          'academic_position': academicPosition,
+          'bio_translations': {
+            ...currentBio,
+            'en': bio,
+            'ar': currentBio['ar']?.toString() ?? '',
+          },
+          'wilaya_id': wilayaId,
+          'daira_id': dairaId,
+          'updated_at': DateTime.now().toUtc().toIso8601String(),
+        })
+        .eq('profile_id', _auth.currentUser!.id);
   }
 
   @override
