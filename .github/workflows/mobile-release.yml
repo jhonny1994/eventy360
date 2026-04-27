@@ -6,14 +6,8 @@ on:
       - "mobile-v*"
   workflow_dispatch:
     inputs:
-      publish_release:
-        description: "Create a GitHub Release from this run"
-        required: false
-        default: false
-        type: boolean
       tag_name:
-        description: "Tag name to use for a manually published release (for example
-          mobile-v1.0.0)"
+        description: "Optional release tag for a manual GitHub Release, for example mobile-v1.0.0"
         required: false
         type: string
 
@@ -28,18 +22,12 @@ jobs:
   android-release:
     name: Build Android release artifact
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     defaults:
       run:
         working-directory: apps/mobile
     steps:
       - uses: actions/checkout@v4
-
-      - name: Ensure Flutter app exists
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -f pubspec.yaml
-          test -d lib
 
       - uses: subosito/flutter-action@v2
         with:
@@ -79,18 +67,19 @@ jobs:
           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
         run: |
           set -euo pipefail
-          if [ -n "${ANDROID_KEYSTORE_BASE64:-}" ] && [ -n "${ANDROID_KEY_ALIAS:-}" ] && [ -n "${ANDROID_KEY_PASSWORD:-}" ] && [ -n "${ANDROID_STORE_PASSWORD:-}" ]; then
-            mkdir -p android/keystore
-            echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/keystore/eventy360-release.jks
-            printf '%s\n' \
-              'storeFile=keystore/eventy360-release.jks' \
-              "storePassword=$ANDROID_STORE_PASSWORD" \
-              "keyAlias=$ANDROID_KEY_ALIAS" \
-              "keyPassword=$ANDROID_KEY_PASSWORD" \
-              > android/key.properties
-          else
-            echo "Release signing secrets are not fully configured; build will fall back to debug signing."
+          if [ -z "${ANDROID_KEYSTORE_BASE64:-}" ] || [ -z "${ANDROID_KEY_ALIAS:-}" ] || [ -z "${ANDROID_KEY_PASSWORD:-}" ] || [ -z "${ANDROID_STORE_PASSWORD:-}" ]; then
+            echo "Missing Android release signing secrets."
+            exit 1
           fi
+
+          mkdir -p android/keystore
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/keystore/eventy360-release.jks
+          printf '%s\n' \
+            'storeFile=keystore/eventy360-release.jks' \
+            "storePassword=$ANDROID_STORE_PASSWORD" \
+            "keyAlias=$ANDROID_KEY_ALIAS" \
+            "keyPassword=$ANDROID_KEY_PASSWORD" \
+            > android/key.properties
 
       - name: Build APK
         run: flutter build apk --release
@@ -105,7 +94,7 @@ jobs:
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: mobile-release-${{ github.ref_name }}
+          name: mobile-release-${{ github.run_number }}
           path: |
             apps/mobile/build/app/outputs/flutter-apk/app-release.apk
             apps/mobile/build/app/outputs/flutter-apk/app-release.apk.sha256
@@ -123,8 +112,7 @@ jobs:
           fail_on_unmatched_files: true
 
       - name: Create GitHub release from manual dispatch
-        if: github.event_name == 'workflow_dispatch' && inputs.publish_release &&
-          inputs.tag_name != ''
+        if: github.event_name == 'workflow_dispatch' && inputs.tag_name != ''
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.tag_name }}
