@@ -35,6 +35,7 @@ class AppTheme {
       filledButtonTheme: _filledButtonTheme(colorScheme),
       outlinedButtonTheme: _outlinedButtonTheme(colorScheme),
       chipTheme: _chipTheme(colorScheme),
+      listTileTheme: _listTileTheme(colorScheme),
       snackBarTheme: _snackBarTheme(colorScheme),
       useMaterial3: true,
     );
@@ -130,6 +131,24 @@ class AppTheme {
       labelStyle: TextStyle(color: colorScheme.onSurface),
       secondaryLabelStyle: TextStyle(color: colorScheme.onSecondaryContainer),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+    );
+  }
+
+  static ListTileThemeData _listTileTheme(ColorScheme colorScheme) {
+    return ListTileThemeData(
+      contentPadding: EdgeInsets.zero,
+      minVerticalPadding: 4,
+      titleAlignment: ListTileTitleAlignment.top,
+      titleTextStyle: TextStyle(
+        color: colorScheme.onSurface,
+        fontWeight: FontWeight.w700,
+        height: 1.2,
+      ),
+      subtitleTextStyle: TextStyle(
+        color: colorScheme.onSurfaceVariant,
+        height: 1.3,
+      ),
+      iconColor: colorScheme.onSurfaceVariant,
     );
   }
 

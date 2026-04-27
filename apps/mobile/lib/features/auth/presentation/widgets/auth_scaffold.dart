@@ -62,7 +62,7 @@ class AuthScaffold extends StatelessWidget {
                                       icon: icon,
                                       label: badge!,
                                     ),
-                                    const SizedBox(height: 18),
+                                    const SizedBox(height: 14),
                                   ],
                                   Text(
                                     title,
@@ -70,14 +70,15 @@ class AuthScaffold extends StatelessWidget {
                                         ?.copyWith(
                                           fontWeight: FontWeight.w800,
                                           letterSpacing: -0.5,
+                                          height: 1.12,
                                         ),
                                   ),
-                                  const SizedBox(height: 12),
+                                  const SizedBox(height: 8),
                                   Text(
                                     subtitle,
                                     style: theme.textTheme.bodyLarge?.copyWith(
                                       color: colorScheme.onSurfaceVariant,
-                                      height: 1.45,
+                                      height: 1.34,
                                     ),
                                   ),
                                 ],
@@ -89,7 +90,7 @@ class AuthScaffold extends StatelessWidget {
                             ],
                           ],
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 20),
                         DecoratedBox(
                           decoration: BoxDecoration(
                             color: colorScheme.surface.withValues(alpha: 0.84),
@@ -110,7 +111,7 @@ class AuthScaffold extends StatelessWidget {
                             ],
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.all(22),
+                            padding: const EdgeInsets.all(20),
                             child: child,
                           ),
                         ),

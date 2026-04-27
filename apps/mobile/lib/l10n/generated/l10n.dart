@@ -69,6 +69,36 @@ class S {
     );
   }
 
+  /// `Home`
+  String get navHomeLabel {
+    return Intl.message('Home', name: 'navHomeLabel', desc: '', args: []);
+  }
+
+  /// `Events`
+  String get navEventsLabel {
+    return Intl.message('Events', name: 'navEventsLabel', desc: '', args: []);
+  }
+
+  /// `Work`
+  String get navSubmissionsLabel {
+    return Intl.message(
+      'Work',
+      name: 'navSubmissionsLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Library`
+  String get navLibraryLabel {
+    return Intl.message('Library', name: 'navLibraryLabel', desc: '', args: []);
+  }
+
+  /// `Account`
+  String get navAccountLabel {
+    return Intl.message('Account', name: 'navAccountLabel', desc: '', args: []);
+  }
+
   /// `Your command center is ready.`
   String get homeSubtitle {
     return Intl.message(
@@ -559,110 +589,10 @@ class S {
     );
   }
 
-  /// `Set up your mobile workspace`
-  String get initialSetupTitle {
-    return Intl.message(
-      'Set up your mobile workspace',
-      name: 'initialSetupTitle',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Finish the first-run setup with intention`
-  String get initialSetupHeroTitle {
-    return Intl.message(
-      'Finish the first-run setup with intention',
-      name: 'initialSetupHeroTitle',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Choose how the app should look, read, and notify before you settle into the researcher shell.`
-  String get initialSetupHeroBody {
-    return Intl.message(
-      'Choose how the app should look, read, and notify before you settle into the researcher shell.',
-      name: 'initialSetupHeroBody',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Pick the language you want to use across the mobile app from the first session.`
-  String get initialSetupLanguageBody {
-    return Intl.message(
-      'Pick the language you want to use across the mobile app from the first session.',
-      name: 'initialSetupLanguageBody',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Choose a default appearance now. You can still change it later from Account.`
-  String get initialSetupThemeBody {
-    return Intl.message(
-      'Choose a default appearance now. You can still change it later from Account.',
-      name: 'initialSetupThemeBody',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Subscribe to the topics you care about so discovery and notifications start from your real interests.`
-  String get initialSetupTopicsBody {
-    return Intl.message(
-      'Subscribe to the topics you care about so discovery and notifications start from your real interests.',
-      name: 'initialSetupTopicsBody',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `You can keep refining these topics later without losing progress in the app.`
-  String get initialSetupTopicsFootnote {
-    return Intl.message(
-      'You can keep refining these topics later without losing progress in the app.',
-      name: 'initialSetupTopicsFootnote',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Move into the app shell`
-  String get initialSetupFinishTitle {
-    return Intl.message(
-      'Move into the app shell',
-      name: 'initialSetupFinishTitle',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Once these basics feel right, continue into the full researcher experience with the stable tab bar.`
-  String get initialSetupFinishBody {
-    return Intl.message(
-      'Once these basics feel right, continue into the full researcher experience with the stable tab bar.',
-      name: 'initialSetupFinishBody',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Open my workspace`
-  String get initialSetupContinueAction {
-    return Intl.message(
-      'Open my workspace',
-      name: 'initialSetupContinueAction',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Account overview`
+  /// `Account status`
   String get accountOverviewTitle {
     return Intl.message(
-      'Account overview',
+      'Account status',
       name: 'accountOverviewTitle',
       desc: '',
       args: [],
@@ -874,6 +804,46 @@ class S {
     );
   }
 
+  /// `Language updated.`
+  String get languageUpdatedSuccess {
+    return Intl.message(
+      'Language updated.',
+      name: 'languageUpdatedSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Theme updated.`
+  String get themeUpdatedSuccess {
+    return Intl.message(
+      'Theme updated.',
+      name: 'themeUpdatedSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notification preference updated.`
+  String get notificationPermissionUpdated {
+    return Intl.message(
+      'Notification preference updated.',
+      name: 'notificationPermissionUpdated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System settings opened.`
+  String get openedSystemSettingsMessage {
+    return Intl.message(
+      'System settings opened.',
+      name: 'openedSystemSettingsMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Enable notifications`
   String get enableNotificationsAction {
     return Intl.message(
@@ -924,20 +894,20 @@ class S {
     return Intl.message('Dark', name: 'themeDark', desc: '', args: []);
   }
 
-  /// `Researcher access`
+  /// `Profile and access`
   String get researcherAccessTitle {
     return Intl.message(
-      'Researcher access',
+      'Profile and access',
       name: 'researcherAccessTitle',
       desc: '',
       args: [],
     );
   }
 
-  /// `Review trust and access-related steps in focused screens when you need them.`
+  /// `Open profile, verification, saved events, and security tools from one clear section.`
   String get researcherAccessBody {
     return Intl.message(
-      'Review trust and access-related steps in focused screens when you need them.',
+      'Open profile, verification, saved events, and security tools from one clear section.',
       name: 'researcherAccessBody',
       desc: '',
       args: [],
@@ -1034,6 +1004,41 @@ class S {
     );
   }
 
+  /// `Filter topics`
+  String get filterTopicsAction {
+    return Intl.message(
+      'Filter topics',
+      name: 'filterTopicsAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View topics`
+  String get viewTopicsAction {
+    return Intl.message(
+      'View topics',
+      name: 'viewTopicsAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose the research areas you want to see in discovery. Keep the main feed calm, then refine from here when needed.`
+  String get eventsTopicFilterBody {
+    return Intl.message(
+      'Choose the research areas you want to see in discovery. Keep the main feed calm, then refine from here when needed.',
+      name: 'eventsTopicFilterBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Done`
+  String get doneAction {
+    return Intl.message('Done', name: 'doneAction', desc: '', args: []);
+  }
+
   /// `Profile status`
   String get profileStatus {
     return Intl.message(
@@ -1099,10 +1104,40 @@ class S {
     );
   }
 
-  /// `Understand your current access, renewal urgency, and the right next billing action without leaving account flow.`
+  /// `Action needed`
+  String get homeAttentionTitle {
+    return Intl.message(
+      'Action needed',
+      name: 'homeAttentionTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Verification is still unfinished. Resolve it from Account so trust-gated researcher flows stay available.`
+  String get homeVerificationAttentionBody {
+    return Intl.message(
+      'Verification is still unfinished. Resolve it from Account so trust-gated researcher flows stay available.',
+      name: 'homeVerificationAttentionBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Premium access is not active yet. Resolve billing from Account when you need repository or premium researcher access.`
+  String get homeSubscriptionAttentionBody {
+    return Intl.message(
+      'Premium access is not active yet. Resolve billing from Account when you need repository or premium researcher access.',
+      name: 'homeSubscriptionAttentionBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Review your current access, see whether renewal is needed, and submit the next payment proof without leaving account flow.`
   String get subscriptionOverviewBody {
     return Intl.message(
-      'Understand your current access, renewal urgency, and the right next billing action without leaving account flow.',
+      'Review your current access, see whether renewal is needed, and submit the next payment proof without leaving account flow.',
       name: 'subscriptionOverviewBody',
       desc: '',
       args: [],
@@ -1173,20 +1208,20 @@ class S {
     );
   }
 
-  /// `Current bank reference: {bankName}.`
+  /// `Use bank reference {bankName} when submitting a new payment proof for activation or renewal.`
   String subscriptionBankReference(Object bankName) {
     return Intl.message(
-      'Current bank reference: $bankName.',
+      'Use bank reference $bankName when submitting a new payment proof for activation or renewal.',
       name: 'subscriptionBankReference',
       desc: '',
       args: [bankName],
     );
   }
 
-  /// `Review history`
+  /// `Billing history`
   String get subscriptionHistoryAction {
     return Intl.message(
-      'Review history',
+      'Billing history',
       name: 'subscriptionHistoryAction',
       desc: '',
       args: [],
@@ -1283,10 +1318,10 @@ class S {
     );
   }
 
-  /// `Current status summary`
+  /// `Status`
   String get homeStateSummaryTitle {
     return Intl.message(
-      'Current status summary',
+      'Status',
       name: 'homeStateSummaryTitle',
       desc: '',
       args: [],
@@ -1383,20 +1418,15 @@ class S {
     );
   }
 
-  /// `Discover Events`
+  /// `Events`
   String get eventsTitle {
-    return Intl.message(
-      'Discover Events',
-      name: 'eventsTitle',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Events', name: 'eventsTitle', desc: '', args: []);
   }
 
-  /// `Browse upcoming calls, filter by topic, subscribe to what matters, and keep your shortlist moving.`
+  /// `Browse upcoming calls, narrow the list to the right topics, and open a specific event when you are ready to submit.`
   String get eventsOverviewBody {
     return Intl.message(
-      'Browse upcoming calls, filter by topic, subscribe to what matters, and keep your shortlist moving.',
+      'Browse upcoming calls, narrow the list to the right topics, and open a specific event when you are ready to submit.',
       name: 'eventsOverviewBody',
       desc: '',
       args: [],
@@ -1423,6 +1453,39 @@ class S {
     );
   }
 
+  /// `Saved`
+  String get savedEventsShortTitle {
+    return Intl.message(
+      'Saved',
+      name: 'savedEventsShortTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count, plural, =0{No topic filters} =1{1 topic filter active} other{{count} topic filters active}}`
+  String selectedTopicsCount(int count) {
+    return Intl.plural(
+      count,
+      zero: 'No topic filters',
+      one: '1 topic filter active',
+      other: '$count topic filters active',
+      name: 'selectedTopicsCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `All topics available ({count})`
+  String allTopicsSummary(int count) {
+    return Intl.message(
+      'All topics available ($count)',
+      name: 'allTopicsSummary',
+      desc: '',
+      args: [count],
+    );
+  }
+
   /// `Add bookmark`
   String get addBookmark {
     return Intl.message(
@@ -1438,6 +1501,26 @@ class S {
     return Intl.message(
       'Remove bookmark',
       name: 'removeBookmark',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Event saved.`
+  String get bookmarkAddedSuccess {
+    return Intl.message(
+      'Event saved.',
+      name: 'bookmarkAddedSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Event removed from saved list.`
+  String get bookmarkRemovedSuccess {
+    return Intl.message(
+      'Event removed from saved list.',
+      name: 'bookmarkRemovedSuccess',
       desc: '',
       args: [],
     );
@@ -1476,6 +1559,371 @@ class S {
       desc: '',
       args: [],
     );
+  }
+
+  /// `Review the event owner, core metadata, status, and cost before moving deeper into the call details.`
+  String get eventHeaderSummaryBody {
+    return Intl.message(
+      'Review the event owner, core metadata, status, and cost before moving deeper into the call details.',
+      name: 'eventHeaderSummaryBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Created`
+  String get eventCreatedLabel {
+    return Intl.message(
+      'Created',
+      name: 'eventCreatedLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Event type`
+  String get eventTypeLabel {
+    return Intl.message(
+      'Event type',
+      name: 'eventTypeLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Status`
+  String get eventStatusLabel {
+    return Intl.message('Status', name: 'eventStatusLabel', desc: '', args: []);
+  }
+
+  /// `Format`
+  String get eventFormatLabel {
+    return Intl.message('Format', name: 'eventFormatLabel', desc: '', args: []);
+  }
+
+  /// `Fee`
+  String get eventFeeLabel {
+    return Intl.message('Fee', name: 'eventFeeLabel', desc: '', args: []);
+  }
+
+  /// `Free`
+  String get eventFreeLabel {
+    return Intl.message('Free', name: 'eventFreeLabel', desc: '', args: []);
+  }
+
+  /// `Timeline`
+  String get eventTimelineSectionTitle {
+    return Intl.message(
+      'Timeline',
+      name: 'eventTimelineSectionTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check every important date tied to this event before you submit or wait on a result.`
+  String get eventTimelineSectionBody {
+    return Intl.message(
+      'Check every important date tied to this event before you submit or wait on a result.',
+      name: 'eventTimelineSectionBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Event starts`
+  String get eventStartsLabel {
+    return Intl.message(
+      'Event starts',
+      name: 'eventStartsLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Event ends`
+  String get eventEndsLabel {
+    return Intl.message(
+      'Event ends',
+      name: 'eventEndsLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Abstract review result`
+  String get eventReviewResultLabel {
+    return Intl.message(
+      'Abstract review result',
+      name: 'eventReviewResultLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Final verdict deadline`
+  String get eventVerdictDeadlineLabel {
+    return Intl.message(
+      'Final verdict deadline',
+      name: 'eventVerdictDeadlineLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Location`
+  String get eventLocationSectionTitle {
+    return Intl.message(
+      'Location',
+      name: 'eventLocationSectionTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get directions`
+  String get getDirectionsAction {
+    return Intl.message(
+      'Get directions',
+      name: 'getDirectionsAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Copy location`
+  String get copyLocationAction {
+    return Intl.message(
+      'Copy location',
+      name: 'copyLocationAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Location copied.`
+  String get locationCopiedSuccess {
+    return Intl.message(
+      'Location copied.',
+      name: 'locationCopiedSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Who organizes this event`
+  String get eventWhoOrganizesTitle {
+    return Intl.message(
+      'Who organizes this event',
+      name: 'eventWhoOrganizesTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Problem statement`
+  String get eventProblemStatementTitle {
+    return Intl.message(
+      'Problem statement',
+      name: 'eventProblemStatementTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Objectives`
+  String get eventObjectivesTitle {
+    return Intl.message(
+      'Objectives',
+      name: 'eventObjectivesTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Event axes`
+  String get eventAxesSectionTitle {
+    return Intl.message(
+      'Event axes',
+      name: 'eventAxesSectionTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Topics`
+  String get eventTopicsSectionTitle {
+    return Intl.message(
+      'Topics',
+      name: 'eventTopicsSectionTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submission guidelines`
+  String get eventSubmissionGuidelinesTitle {
+    return Intl.message(
+      'Submission guidelines',
+      name: 'eventSubmissionGuidelinesTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Target audience`
+  String get eventTargetAudienceTitle {
+    return Intl.message(
+      'Target audience',
+      name: 'eventTargetAudienceTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scientific committee`
+  String get eventScientificCommitteeTitle {
+    return Intl.message(
+      'Scientific committee',
+      name: 'eventScientificCommitteeTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Speakers and keynotes`
+  String get eventSpeakersTitle {
+    return Intl.message(
+      'Speakers and keynotes',
+      name: 'eventSpeakersTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Event assets`
+  String get eventAssetsSectionTitle {
+    return Intl.message(
+      'Event assets',
+      name: 'eventAssetsSectionTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open the event visuals and supporting material that the web page already exposes.`
+  String get eventAssetsSectionBody {
+    return Intl.message(
+      'Open the event visuals and supporting material that the web page already exposes.',
+      name: 'eventAssetsSectionBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Event logo`
+  String get eventLogoTitle {
+    return Intl.message(
+      'Event logo',
+      name: 'eventLogoTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `QR code`
+  String get eventQrTitle {
+    return Intl.message('QR code', name: 'eventQrTitle', desc: '', args: []);
+  }
+
+  /// `Open brochure`
+  String get eventBrochureAction {
+    return Intl.message(
+      'Open brochure',
+      name: 'eventBrochureAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Contact and links`
+  String get eventContactSectionTitle {
+    return Intl.message(
+      'Contact and links',
+      name: 'eventContactSectionTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use the direct contact channels and website tied to this event.`
+  String get eventContactSectionBody {
+    return Intl.message(
+      'Use the direct contact channels and website tied to this event.',
+      name: 'eventContactSectionBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Actions`
+  String get eventActionsSectionTitle {
+    return Intl.message(
+      'Actions',
+      name: 'eventActionsSectionTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save this event or continue into the event-specific submission path.`
+  String get eventActionsSectionBody {
+    return Intl.message(
+      'Save this event or continue into the event-specific submission path.',
+      name: 'eventActionsSectionBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View submission`
+  String get viewSubmissionAction {
+    return Intl.message(
+      'View submission',
+      name: 'viewSubmissionAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Organizer`
+  String get organizerLabel {
+    return Intl.message(
+      'Organizer',
+      name: 'organizerLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Image unavailable`
+  String get imageUnavailableLabel {
+    return Intl.message(
+      'Image unavailable',
+      name: 'imageUnavailableLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Phone`
+  String get phoneLabel {
+    return Intl.message('Phone', name: 'phoneLabel', desc: '', args: []);
+  }
+
+  /// `Website`
+  String get websiteLabel {
+    return Intl.message('Website', name: 'websiteLabel', desc: '', args: []);
   }
 
   /// `Before you submit`
@@ -1568,21 +2016,31 @@ class S {
     );
   }
 
-  /// `My Submissions`
+  /// `Submissions`
   String get submissionsTitle {
     return Intl.message(
-      'My Submissions',
+      'Submissions',
       name: 'submissionsTitle',
       desc: '',
       args: [],
     );
   }
 
-  /// `Review active work, understand each status quickly, and keep your next submission action obvious.`
+  /// `Track your active records, see what changed, and continue only the submission that needs work now.`
   String get submissionsOverviewBody {
     return Intl.message(
-      'Review active work, understand each status quickly, and keep your next submission action obvious.',
+      'Track your active records, see what changed, and continue only the submission that needs work now.',
       name: 'submissionsOverviewBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start every new abstract from the event that owns it, so the call, deadline, and context stay tied to the submission from the beginning.`
+  String get submissionsStartFromEventBody {
+    return Intl.message(
+      'Start every new abstract from the event that owns it, so the call, deadline, and context stay tied to the submission from the beginning.',
+      name: 'submissionsStartFromEventBody',
       desc: '',
       args: [],
     );
@@ -2158,30 +2616,30 @@ class S {
     );
   }
 
-  /// `See the full lifecycle of this submission, including current status, abstract content, files, and timeline history.`
+  /// `Review this submission record, its deadlines, uploaded files, reviewer notes, and next required step.`
   String get submissionDetailOverviewBody {
     return Intl.message(
-      'See the full lifecycle of this submission, including current status, abstract content, files, and timeline history.',
+      'Review this submission record, its deadlines, uploaded files, reviewer notes, and next required step.',
       name: 'submissionDetailOverviewBody',
       desc: '',
       args: [],
     );
   }
 
-  /// `Trust Center`
+  /// `Verification & Billing`
   String get trustCenterTitle {
     return Intl.message(
-      'Trust Center',
+      'Verification & Billing',
       name: 'trustCenterTitle',
       desc: '',
       args: [],
     );
   }
 
-  /// `Handle verification and payment evidence in a secure, transparent flow designed for researcher trust operations.`
+  /// `Upload verification documents, review payment reports, and keep premium access moving from one secure place.`
   String get trustOverviewBody {
     return Intl.message(
-      'Handle verification and payment evidence in a secure, transparent flow designed for researcher trust operations.',
+      'Upload verification documents, review payment reports, and keep premium access moving from one secure place.',
       name: 'trustOverviewBody',
       desc: '',
       args: [],
@@ -2338,10 +2796,10 @@ class S {
     );
   }
 
-  /// `Report Payment`
+  /// `Submit Payment Proof`
   String get reportPaymentTitle {
     return Intl.message(
-      'Report Payment',
+      'Submit Payment Proof',
       name: 'reportPaymentTitle',
       desc: '',
       args: [],
@@ -2428,10 +2886,10 @@ class S {
     );
   }
 
-  /// `Use this space to understand your current subscription state first, then report payment only when you have the right proof ready.`
+  /// `Use this space to review your current subscription state, then submit a new payment proof whenever you need to activate or renew access.`
   String get paymentTrustFlowHint {
     return Intl.message(
-      'Use this space to understand your current subscription state first, then report payment only when you have the right proof ready.',
+      'Use this space to review your current subscription state, then submit a new payment proof whenever you need to activate or renew access.',
       name: 'paymentTrustFlowHint',
       desc: '',
       args: [],
@@ -2663,20 +3121,15 @@ class S {
     );
   }
 
-  /// `Research Repository`
+  /// `Library`
   String get repositoryTitle {
-    return Intl.message(
-      'Research Repository',
-      name: 'repositoryTitle',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Library', name: 'repositoryTitle', desc: '', args: []);
   }
 
-  /// `Search premium research material, narrow by topic, and move from discovery to download without friction.`
+  /// `Search papers, filter by topic or author, and open the material that matters without clutter.`
   String get repositoryOverviewBody {
     return Intl.message(
-      'Search premium research material, narrow by topic, and move from discovery to download without friction.',
+      'Search papers, filter by topic or author, and open the material that matters without clutter.',
       name: 'repositoryOverviewBody',
       desc: '',
       args: [],
@@ -2693,20 +3146,20 @@ class S {
     );
   }
 
-  /// `The repository is reserved for active premium or trial subscriptions.`
+  /// `The repository is available only while premium or trial access is active.`
   String get repositorySubscriptionRequiredBody {
     return Intl.message(
-      'The repository is reserved for active premium or trial subscriptions.',
+      'The repository is available only while premium or trial access is active.',
       name: 'repositorySubscriptionRequiredBody',
       desc: '',
       args: [],
     );
   }
 
-  /// `Unlock repository access from Account, then return here once payment and review are in motion.`
+  /// `Open Account, review your subscription state, then submit a payment proof to activate or renew access before returning here.`
   String get repositoryPremiumContextBody {
     return Intl.message(
-      'Unlock repository access from Account, then return here once payment and review are in motion.',
+      'Open Account, review your subscription state, then submit a payment proof to activate or renew access before returning here.',
       name: 'repositoryPremiumContextBody',
       desc: '',
       args: [],

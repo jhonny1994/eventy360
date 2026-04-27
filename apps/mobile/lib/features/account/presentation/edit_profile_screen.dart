@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:eventy360/core/presentation/app_feedback.dart';
 import 'package:eventy360/features/auth/application/session_controller.dart';
 import 'package:eventy360/features/auth/domain/location_option.dart';
 import 'package:eventy360/features/auth/domain/researcher_profile.dart';
@@ -172,7 +173,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                             ? const SizedBox(
                                 width: 18,
                                 height: 18,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
                               )
                             : const Icon(Icons.save_outlined),
                         label: Text(localizations.saveProfileAction),
@@ -186,7 +189,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   }
 
   Future<void> _loadProfile() async {
-    final localeCode = WidgetsBinding.instance.platformDispatcher.locale.languageCode;
+    final localeCode =
+        WidgetsBinding.instance.platformDispatcher.locale.languageCode;
     final repository = ref.read(authRepositoryProvider);
     try {
       final results = await Future.wait<Object>([
@@ -227,13 +231,16 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   }
 
   Future<void> _loadDairas(int wilayaId) async {
-    final localeCode = WidgetsBinding.instance.platformDispatcher.locale.languageCode;
+    final localeCode =
+        WidgetsBinding.instance.platformDispatcher.locale.languageCode;
     setState(() => _loadingDairas = true);
     try {
-      final dairas = await ref.read(authRepositoryProvider).fetchDairas(
-        wilayaId: wilayaId,
-        localeCode: localeCode,
-      );
+      final dairas = await ref
+          .read(authRepositoryProvider)
+          .fetchDairas(
+            wilayaId: wilayaId,
+            localeCode: localeCode,
+          );
       if (!mounted) {
         return;
       }
@@ -267,20 +274,20 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       _errorMessage = null;
     });
     try {
-      await ref.read(authRepositoryProvider).updateResearcherProfile(
-        fullName: _fullNameController.text.trim(),
-        institution: _institutionController.text.trim(),
-        academicPosition: _academicPositionController.text.trim(),
-        bio: _bioController.text.trim(),
-        wilayaId: wilayaId,
-        dairaId: dairaId,
-      );
+      await ref
+          .read(authRepositoryProvider)
+          .updateResearcherProfile(
+            fullName: _fullNameController.text.trim(),
+            institution: _institutionController.text.trim(),
+            academicPosition: _academicPositionController.text.trim(),
+            bio: _bioController.text.trim(),
+            wilayaId: wilayaId,
+            dairaId: dairaId,
+          );
       if (!mounted) {
         return;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(localizations.profileSavedSuccess)),
-      );
+      AppFeedback.showSuccess(localizations.profileSavedSuccess);
       Navigator.of(context).pop();
     } on Object catch (error) {
       if (!mounted) {

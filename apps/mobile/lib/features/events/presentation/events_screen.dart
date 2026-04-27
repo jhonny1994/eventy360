@@ -1,12 +1,15 @@
 import 'dart:async';
 
 import 'package:eventy360/app/router/route_paths.dart';
+import 'package:eventy360/core/presentation/app_feedback.dart';
 import 'package:eventy360/core/presentation/widgets/app_error_view.dart';
 import 'package:eventy360/core/presentation/widgets/app_inline_message.dart';
 import 'package:eventy360/core/presentation/widgets/app_loading_view.dart';
 import 'package:eventy360/core/presentation/widgets/app_page_scaffold.dart';
 import 'package:eventy360/features/events/application/events_controller.dart';
+import 'package:eventy360/features/events/application/events_state.dart';
 import 'package:eventy360/features/events/domain/event_summary.dart';
+import 'package:eventy360/features/events/presentation/saved_events_screen.dart';
 import 'package:eventy360/l10n/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -64,37 +67,40 @@ class EventsScreen extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(height: 14),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: data.topics.map((topic) {
-                            final selected = data.selectedTopicIds.contains(
-                              topic.id,
-                            );
-                            return FilterChip(
-                              label: Text(topic.name),
-                              selected: selected,
-                              onSelected: (_) {
-                                unawaited(
-                                  ref
-                                      .read(eventsControllerProvider.notifier)
-                                      .toggleTopicFilter(topic.id),
-                                );
-                              },
-                            );
-                          }).toList(),
+                        _FilterSummaryRow(
+                          selectedCount: data.selectedTopicIds.length,
+                          topicCount: data.topics.length,
                         ),
                         const SizedBox(height: 14),
-                        OutlinedButton.icon(
-                          onPressed: () => context.push(RoutePaths.topics),
-                          icon: const Icon(Icons.tune_outlined),
-                          label: Text(localizations.manageTopicsAction),
-                        ),
-                        const SizedBox(height: 10),
-                        FilledButton.tonalIcon(
-                          onPressed: () => context.push(RoutePaths.savedEvents),
-                          icon: const Icon(Icons.bookmarks_outlined),
-                          label: Text(localizations.savedEventsTitle),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                onPressed: () => _showTopicFilters(
+                                  context,
+                                  ref,
+                                  data: data,
+                                ),
+                                icon: const Icon(Icons.filter_list_rounded),
+                                label: Text(localizations.filterTopicsAction),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: FilledButton.tonalIcon(
+                                onPressed: () async {
+                                  await context.push(RoutePaths.savedEvents);
+                                  ref
+                                    ..invalidate(eventsControllerProvider)
+                                    ..invalidate(bookmarkedEventsProvider);
+                                },
+                                icon: const Icon(Icons.bookmarks_outlined),
+                                label: Text(
+                                  localizations.savedEventsShortTitle,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -139,6 +145,86 @@ class EventsScreen extends ConsumerWidget {
   }
 }
 
+Future<void> _showTopicFilters(
+  BuildContext context,
+  WidgetRef ref, {
+  required EventsState data,
+}) async {
+  final localizations = S.of(context);
+  await showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    showDragHandle: true,
+    builder: (context) {
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                localizations.filterTopicsAction,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                localizations.eventsTopicFilterBody,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: SingleChildScrollView(
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: data.topics.map((topic) {
+                      final selected = data.selectedTopicIds.contains(topic.id);
+                      return FilterChip(
+                        label: Text(topic.name),
+                        selected: selected,
+                        onSelected: (_) {
+                          unawaited(
+                            ref
+                                .read(eventsControllerProvider.notifier)
+                                .toggleTopicFilter(topic.id),
+                          );
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => context.push(RoutePaths.topics),
+                      icon: const Icon(Icons.tune_outlined),
+                      label: Text(localizations.manageTopicsAction),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: FilledButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text(localizations.doneAction),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
 class _EventCard extends ConsumerWidget {
   const _EventCard({required this.event});
 
@@ -149,7 +235,12 @@ class _EventCard extends ConsumerWidget {
     final localizations = S.of(context);
     return AppSectionCard(
       child: InkWell(
-        onTap: () => context.push(RoutePaths.eventDetail(event.id)),
+        onTap: () async {
+          await context.push(RoutePaths.eventDetail(event.id));
+          ref
+            ..invalidate(eventsControllerProvider)
+            ..invalidate(bookmarkedEventsProvider);
+        },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -188,9 +279,20 @@ class _EventCard extends ConsumerWidget {
                   : localizations.addBookmark,
               button: true,
               child: IconButton(
-                onPressed: () => ref
-                    .read(eventsControllerProvider.notifier)
-                    .toggleBookmark(event.id),
+                onPressed: () async {
+                  await ref
+                      .read(eventsControllerProvider.notifier)
+                      .toggleBookmark(event.id);
+                  ref.invalidate(bookmarkedEventsProvider);
+                  if (!context.mounted) {
+                    return;
+                  }
+                  AppFeedback.showSuccess(
+                    event.isBookmarked
+                        ? localizations.removeBookmark
+                        : localizations.addBookmark,
+                  );
+                },
                 icon: Icon(
                   event.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
                 ),
@@ -199,6 +301,41 @@ class _EventCard extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _FilterSummaryRow extends StatelessWidget {
+  const _FilterSummaryRow({
+    required this.selectedCount,
+    required this.topicCount,
+  });
+
+  final int selectedCount;
+  final int topicCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final localizations = S.of(context);
+    final summary = selectedCount > 0
+        ? localizations.selectedTopicsCount(selectedCount)
+        : localizations.allTopicsSummary(topicCount);
+
+    return Row(
+      children: [
+        Icon(
+          Icons.filter_alt_outlined,
+          size: 18,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            summary,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -17,7 +17,6 @@ void main() {
         ),
       ),
       location: RoutePaths.signIn,
-      initialSetupCompleted: true,
     );
 
     expect(redirect, RoutePaths.home);
@@ -33,7 +32,6 @@ void main() {
         ),
       ),
       location: RoutePaths.signIn,
-      initialSetupCompleted: false,
     );
 
     expect(redirect, RoutePaths.onboarding);
@@ -50,7 +48,6 @@ void main() {
         ),
       ),
       location: RoutePaths.home,
-      initialSetupCompleted: true,
     );
 
     expect(redirect, RoutePaths.profileGate);
@@ -67,7 +64,6 @@ void main() {
         ),
       ),
       location: RoutePaths.home,
-      initialSetupCompleted: true,
     );
 
     expect(redirect, RoutePaths.unsupportedRole);
@@ -77,26 +73,8 @@ void main() {
     final redirect = appRedirect(
       session: const AsyncLoading(),
       location: RoutePaths.splash,
-      initialSetupCompleted: false,
     );
 
     expect(redirect, isNull);
-  });
-
-  test('redirects completed profiles into initial setup until finished', () {
-    final redirect = appRedirect(
-      session: const AsyncData(
-        SessionState(
-          user: AuthUser(id: '1', email: 'r@e.com', role: 'researcher'),
-          onboardingCompleted: true,
-          profileCompleted: true,
-          isVerified: true,
-        ),
-      ),
-      location: RoutePaths.home,
-      initialSetupCompleted: false,
-    );
-
-    expect(redirect, RoutePaths.initialSetup);
   });
 }

@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // START: FlutterFire Configuration
@@ -7,6 +9,34 @@ plugins {
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.inputStream().use { stream ->
+        keystoreProperties.load(stream)
+    }
+}
+
+fun signingValue(key: String): String? {
+    val envName = when (key) {
+        "storeFile" -> "ANDROID_STORE_FILE"
+        "storePassword" -> "ANDROID_STORE_PASSWORD"
+        "keyAlias" -> "ANDROID_KEY_ALIAS"
+        "keyPassword" -> "ANDROID_KEY_PASSWORD"
+        else -> null
+    }
+    val envValue = envName?.let { providers.environmentVariable(it).orNull }
+    return envValue ?: keystoreProperties.getProperty(key)
+}
+
+val releaseStoreFile = signingValue("storeFile")
+val hasReleaseSigning =
+    !releaseStoreFile.isNullOrBlank() &&
+    !signingValue("storePassword").isNullOrBlank() &&
+    !signingValue("keyAlias").isNullOrBlank() &&
+    !signingValue("keyPassword").isNullOrBlank()
 
 android {
     namespace = "com.carbodex.eventy360"
@@ -33,11 +63,24 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        create("release") {
+            if (hasReleaseSigning) {
+                storeFile = rootProject.file(releaseStoreFile!!)
+                storePassword = signingValue("storePassword")
+                keyAlias = signingValue("keyAlias")
+                keyPassword = signingValue("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (hasReleaseSigning) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
         }
     }
 }

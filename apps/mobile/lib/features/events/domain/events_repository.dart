@@ -1,3 +1,4 @@
+import 'package:eventy360/features/events/domain/event_detail.dart';
 import 'package:eventy360/features/events/domain/event_summary.dart';
 import 'package:eventy360/features/events/domain/topic_item.dart';
 
@@ -9,6 +10,7 @@ abstract class EventsRepository {
     required Set<String> selectedTopicIds,
   });
   Future<EventSummary?> fetchEventById(String eventId);
+  Future<EventDetail?> fetchEventDetail(String eventId);
   Future<List<EventSummary>> fetchBookmarkedEvents();
 
   Future<Set<String>> getBookmarkedEventIds();

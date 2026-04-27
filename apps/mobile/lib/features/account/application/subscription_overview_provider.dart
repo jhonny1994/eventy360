@@ -42,6 +42,10 @@ class SubscriptionOverview {
   final DateTime? trialEndsAt;
   final DateTime? endDate;
   final SubscriptionPricing? pricing;
+
+  bool get isTrial => status == 'trial';
+
+  bool get hasPremiumAccess => isActive || isTrial;
 }
 
 @riverpod
@@ -63,8 +67,7 @@ Future<SubscriptionOverview> subscriptionOverview(Ref ref) async {
   final profile =
       (data['profile'] as Map?)?.cast<String, dynamic>() ??
       const <String, dynamic>{};
-  final subscription =
-      (data['subscription'] as Map?)?.cast<String, dynamic>();
+  final subscription = (data['subscription'] as Map?)?.cast<String, dynamic>();
   final pricing = (data['pricing'] as Map?)?.cast<String, dynamic>();
 
   return SubscriptionOverview(
@@ -75,7 +78,9 @@ Future<SubscriptionOverview> subscriptionOverview(Ref ref) async {
     status: subscription?['status']?.toString(),
     daysRemaining: (subscription?['days_remaining'] as num?)?.toInt(),
     isActive: subscription?['is_active'] == true,
-    trialEndsAt: DateTime.tryParse(subscription?['trial_ends_at']?.toString() ?? ''),
+    trialEndsAt: DateTime.tryParse(
+      subscription?['trial_ends_at']?.toString() ?? '',
+    ),
     endDate: DateTime.tryParse(subscription?['end_date']?.toString() ?? ''),
     pricing: pricing == null
         ? null

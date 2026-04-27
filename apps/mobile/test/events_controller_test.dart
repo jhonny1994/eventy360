@@ -1,4 +1,5 @@
 import 'package:eventy360/features/events/application/events_controller.dart';
+import 'package:eventy360/features/events/domain/event_detail.dart';
 import 'package:eventy360/features/events/domain/event_summary.dart';
 import 'package:eventy360/features/events/domain/events_repository.dart';
 import 'package:eventy360/features/events/domain/topic_item.dart';
@@ -224,6 +225,28 @@ class _FakeEventsRepository implements EventsRepository {
       }
     }
     return null;
+  }
+
+  @override
+  Future<EventDetail?> fetchEventDetail(String eventId) async {
+    final summary = await fetchEventById(eventId);
+    if (summary == null) {
+      return null;
+    }
+    return EventDetail(
+      id: summary.id,
+      title: summary.title,
+      isBookmarked: summary.isBookmarked,
+      eventType: 'conference',
+      eventDate: summary.deadline,
+      status: 'published',
+      format: 'in_person',
+      email: 'events@example.com',
+      phone: '+213000000000',
+      createdAt: DateTime(2026),
+      location: summary.location,
+      topics: summary.topics,
+    );
   }
 
   @override

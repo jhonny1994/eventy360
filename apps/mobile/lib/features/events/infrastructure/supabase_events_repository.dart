@@ -1,4 +1,5 @@
 import 'package:eventy360/app/providers.dart';
+import 'package:eventy360/features/events/domain/event_detail.dart';
 import 'package:eventy360/features/events/domain/event_summary.dart';
 import 'package:eventy360/features/events/domain/events_repository.dart';
 import 'package:eventy360/features/events/domain/topic_item.dart';
@@ -23,6 +24,109 @@ class SupabaseEventsRepository implements EventsRepository {
 
   String? get _userId => _client?.auth.currentUser?.id;
 
+  String? _localizedText(
+    Map<String, dynamic>? translations,
+    String locale, {
+    String? fallback,
+  }) {
+    if (translations == null) {
+      return fallback;
+    }
+    for (final key in [locale, 'en', 'ar', 'fr']) {
+      final text = translations[key]?.toString().trim();
+      if (text != null && text.isNotEmpty) {
+        return text;
+      }
+    }
+    return fallback;
+  }
+
+  String? _localizedTextFromDynamic(
+    dynamic source,
+    String locale, {
+    String? fallback,
+  }) {
+    final map = (source as Map?)?.cast<String, dynamic>();
+    return _localizedText(map, locale, fallback: fallback);
+  }
+
+  String? _localizedAxisText(dynamic source, String locale) {
+    final map = (source as Map?)?.cast<String, dynamic>();
+    if (map == null) {
+      return null;
+    }
+    for (final key in [locale, 'en', 'ar', 'fr']) {
+      final value = map[key];
+      if (value is List) {
+        final items = value
+            .map((item) => item.toString().trim())
+            .where((item) => item.isNotEmpty)
+            .toList();
+        if (items.isNotEmpty) {
+          return items.join('\n');
+        }
+      }
+      final text = value?.toString().trim();
+      if (text != null && text.isNotEmpty) {
+        return text;
+      }
+    }
+    return null;
+  }
+
+  String _eventTitleFromRow(
+    Map<String, dynamic> json, {
+    required String locale,
+  }) {
+    final directCandidates = [
+      json['event_name'],
+      json['title'],
+      json['name'],
+    ];
+    for (final candidate in directCandidates) {
+      final text = candidate?.toString().trim();
+      if (text != null && text.isNotEmpty) {
+        return text;
+      }
+    }
+
+    final translationMaps = [
+      (json['event_name_translations'] as Map?)?.cast<String, dynamic>(),
+      (json['name_translations'] as Map?)?.cast<String, dynamic>(),
+    ];
+    for (final translations in translationMaps) {
+      if (translations == null) {
+        continue;
+      }
+      for (final key in [locale, 'en', 'ar', 'fr']) {
+        final text = translations[key]?.toString().trim();
+        if (text != null && text.isNotEmpty) {
+          return text;
+        }
+      }
+    }
+
+    return 'Event';
+  }
+
+  DateTime _eventDeadlineFromRow(Map<String, dynamic> json) {
+    final directCandidates = [
+      json['abstract_submission_deadline'],
+      json['submission_deadline'],
+      json['end_date'],
+      json['event_end_date'],
+      json['event_date'],
+    ];
+    for (final candidate in directCandidates) {
+      final parsed = DateTime.tryParse(candidate?.toString() ?? '');
+      if (parsed != null) {
+        return parsed;
+      }
+    }
+
+    return DateTime.now().add(const Duration(days: 10));
+  }
+
   @override
   Future<List<EventSummary>> discoverEvents({
     required int page,
@@ -40,6 +144,9 @@ class SupabaseEventsRepository implements EventsRepository {
     }
 
     try {
+      final locale =
+          ref.read(sharedPreferencesProvider).getString('app.locale_code') ??
+          'en';
       final response = await client.rpc<List<dynamic>>(
         'discover_events',
         params: {
@@ -64,14 +171,8 @@ class SupabaseEventsRepository implements EventsRepository {
           .map(
             (json) => EventSummary(
               id: (json['id'] ?? '').toString(),
-              title: (json['title'] ?? json['name'] ?? 'Untitled event')
-                  .toString(),
-              deadline:
-                  DateTime.tryParse(
-                    (json['submission_deadline'] ?? json['end_date'] ?? '')
-                        .toString(),
-                  ) ??
-                  DateTime.now().add(const Duration(days: 10)),
+              title: _eventTitleFromRow(json, locale: locale),
+              deadline: _eventDeadlineFromRow(json),
               location: (json['location'] ?? json['wilaya_name'] ?? 'Algeria')
                   .toString(),
               topics: ((json['topics'] as List<dynamic>?) ?? const [])
@@ -166,7 +267,7 @@ class SupabaseEventsRepository implements EventsRepository {
             translations[locale]?.toString() ??
             translations['en']?.toString() ??
             translations['ar']?.toString() ??
-            'Untitled event',
+            'Event',
         deadline:
             DateTime.tryParse(
               eventRow['abstract_submission_deadline']?.toString() ?? '',
@@ -174,6 +275,213 @@ class SupabaseEventsRepository implements EventsRepository {
             DateTime.now().add(const Duration(days: 10)),
         location: location,
         topics: topics,
+        isBookmarked: bookmarkedIds.contains(eventId),
+      );
+    } on Object catch (error) {
+      throw EventsRepositoryError('Event detail lookup failed: $error');
+    }
+  }
+
+  @override
+  Future<EventDetail?> fetchEventDetail(String eventId) async {
+    final client = _client;
+    if (client == null) {
+      throw EventsRepositoryError(
+        'Supabase client is not initialized for event details.',
+      );
+    }
+
+    try {
+      final locale =
+          ref.read(sharedPreferencesProvider).getString('app.locale_code') ??
+          'en';
+      final eventRow = await client
+          .from('events')
+          .select(
+            '''
+            id,
+            event_name_translations,
+            event_objectives_translations,
+            event_subtitle_translations,
+            event_type,
+            event_date,
+            event_end_date,
+            abstract_submission_deadline,
+            full_paper_submission_deadline,
+            submission_verdict_deadline,
+            abstract_review_result_date,
+            price,
+            status,
+            format,
+            created_at,
+            created_by,
+            email,
+            phone,
+            website,
+            logo_url,
+            event_axes_translations,
+            brochure_url,
+            problem_statement_translations,
+            qr_code_url,
+            scientific_committees_translations,
+            speakers_keynotes_translations,
+            submission_guidelines_translations,
+            target_audience_translations,
+            who_organizes_translations,
+            wilayas(name_ar,name_other),
+            dairas(name_ar,name_other)
+            ''',
+          )
+          .eq('id', eventId)
+          .maybeSingle();
+      if (eventRow == null) {
+        return null;
+      }
+
+      final topicRows = await client
+          .from('event_topics')
+          .select('topics(name_translations)')
+          .eq('event_id', eventId);
+      final topics = (topicRows as List<dynamic>)
+          .map((row) => row as Map<String, dynamic>)
+          .map((row) {
+            final topic = row['topics'] as Map<String, dynamic>?;
+            return _localizedTextFromDynamic(
+              topic?['name_translations'],
+              locale,
+              fallback: 'Topic',
+            );
+          })
+          .whereType<String>()
+          .toList();
+
+      EventOrganizerDetail? organizer;
+      final createdBy = eventRow['created_by']?.toString();
+      if (createdBy != null && createdBy.isNotEmpty) {
+        final organizerRow = await client
+            .from('organizer_profiles')
+            .select(
+              '''
+              profile_id,
+              name_translations,
+              bio_translations,
+              profile_picture_url,
+              institution_type,
+              profiles!inner(is_verified)
+              ''',
+            )
+            .eq('profile_id', createdBy)
+            .maybeSingle();
+        if (organizerRow != null) {
+          organizer = EventOrganizerDetail(
+            id: organizerRow['profile_id'].toString(),
+            displayName: _localizedTextFromDynamic(
+              organizerRow['name_translations'],
+              locale,
+            ),
+            bio: _localizedTextFromDynamic(
+              organizerRow['bio_translations'],
+              locale,
+            ),
+            institutionType: organizerRow['institution_type']?.toString(),
+            profilePictureUrl: organizerRow['profile_picture_url']?.toString(),
+            isVerified:
+                (organizerRow['profiles'] as Map<String, dynamic>?)?['is_verified'] ==
+                true,
+          );
+        }
+      }
+
+      final wilaya = eventRow['wilayas'] as Map<String, dynamic>?;
+      final daira = eventRow['dairas'] as Map<String, dynamic>?;
+      final locationParts = [
+        _localizedText({
+          'ar': wilaya?['name_ar'],
+          'en': wilaya?['name_other'],
+        }, locale),
+        _localizedText({
+          'ar': daira?['name_ar'],
+          'en': daira?['name_other'],
+        }, locale),
+      ].whereType<String>().where((value) => value.trim().isNotEmpty).toList();
+
+      final bookmarkedIds = await getBookmarkedEventIds();
+      final translations =
+          (eventRow['event_name_translations'] as Map?)?.cast<String, dynamic>();
+      return EventDetail(
+        id: eventRow['id'].toString(),
+        title:
+            _localizedText(translations, locale, fallback: 'Event') ?? 'Event',
+        subtitle: _localizedTextFromDynamic(
+          eventRow['event_subtitle_translations'],
+          locale,
+        ),
+        description: _localizedTextFromDynamic(
+          eventRow['event_objectives_translations'],
+          locale,
+        ),
+        eventType: eventRow['event_type']?.toString() ?? '',
+        eventDate:
+            DateTime.tryParse(eventRow['event_date']?.toString() ?? '') ??
+            DateTime.now(),
+        eventEndDate: DateTime.tryParse(
+          eventRow['event_end_date']?.toString() ?? '',
+        ),
+        abstractSubmissionDeadline: DateTime.tryParse(
+          eventRow['abstract_submission_deadline']?.toString() ?? '',
+        ),
+        fullPaperSubmissionDeadline: DateTime.tryParse(
+          eventRow['full_paper_submission_deadline']?.toString() ?? '',
+        ),
+        submissionVerdictDeadline: DateTime.tryParse(
+          eventRow['submission_verdict_deadline']?.toString() ?? '',
+        ),
+        abstractReviewResultDate: DateTime.tryParse(
+          eventRow['abstract_review_result_date']?.toString() ?? '',
+        ),
+        location: locationParts.isEmpty ? null : locationParts.join(', '),
+        topics: topics,
+        price: (eventRow['price'] as num?)?.toDouble(),
+        status: eventRow['status']?.toString() ?? '',
+        format: eventRow['format']?.toString() ?? '',
+        problemStatement: _localizedTextFromDynamic(
+          eventRow['problem_statement_translations'],
+          locale,
+        ),
+        targetAudience: _localizedTextFromDynamic(
+          eventRow['target_audience_translations'],
+          locale,
+        ),
+        scientificCommittees: _localizedTextFromDynamic(
+          eventRow['scientific_committees_translations'],
+          locale,
+        ),
+        speakersKeynotes: _localizedTextFromDynamic(
+          eventRow['speakers_keynotes_translations'],
+          locale,
+        ),
+        submissionGuidelines: _localizedTextFromDynamic(
+          eventRow['submission_guidelines_translations'],
+          locale,
+        ),
+        whoOrganizes: _localizedTextFromDynamic(
+          eventRow['who_organizes_translations'],
+          locale,
+        ),
+        website: eventRow['website']?.toString(),
+        email: eventRow['email']?.toString() ?? '',
+        phone: eventRow['phone']?.toString() ?? '',
+        logoUrl: eventRow['logo_url']?.toString(),
+        qrCodeUrl: eventRow['qr_code_url']?.toString(),
+        brochureUrl: eventRow['brochure_url']?.toString(),
+        eventAxes: _localizedAxisText(
+          eventRow['event_axes_translations'],
+          locale,
+        ),
+        createdAt:
+            DateTime.tryParse(eventRow['created_at']?.toString() ?? '') ??
+            DateTime.now(),
+        organizer: organizer,
         isBookmarked: bookmarkedIds.contains(eventId),
       );
     } on Object catch (error) {
@@ -194,7 +502,9 @@ class SupabaseEventsRepository implements EventsRepository {
           'en';
       final bookmarks = await client
           .from('bookmarks')
-          .select('event_id, events!inner(id,event_name_translations,abstract_submission_deadline,wilaya_id)')
+          .select(
+            'event_id, events!inner(id,event_name_translations,abstract_submission_deadline,wilaya_id)',
+          )
           .eq('profile_id', userId);
       final rows = (bookmarks as List<dynamic>).cast<Map<String, dynamic>>();
       final wilayaIds = rows
@@ -222,7 +532,8 @@ class SupabaseEventsRepository implements EventsRepository {
       return rows.map((row) {
         final event = row['events'] as Map<String, dynamic>;
         final translations =
-            (event['event_name_translations'] as Map?)?.cast<String, dynamic>() ??
+            (event['event_name_translations'] as Map?)
+                ?.cast<String, dynamic>() ??
             const <String, dynamic>{};
         final wilayaId = event['wilaya_id'] as int?;
         return EventSummary(
@@ -231,13 +542,15 @@ class SupabaseEventsRepository implements EventsRepository {
               translations[locale]?.toString() ??
               translations['en']?.toString() ??
               translations['ar']?.toString() ??
-              'Untitled event',
+              'Event',
           deadline:
               DateTime.tryParse(
                 event['abstract_submission_deadline']?.toString() ?? '',
               ) ??
               DateTime.now().add(const Duration(days: 10)),
-          location: wilayaId == null ? 'Algeria' : (wilayaNames[wilayaId] ?? 'Algeria'),
+          location: wilayaId == null
+              ? 'Algeria'
+              : (wilayaNames[wilayaId] ?? 'Algeria'),
           topics: const <String>[],
           isBookmarked: true,
         );

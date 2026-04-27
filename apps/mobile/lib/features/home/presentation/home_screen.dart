@@ -23,7 +23,6 @@ class HomeScreen extends ConsumerWidget {
         .asData
         ?.value;
     final subscriptionState = ref.watch(homeSubscriptionStatusProvider);
-    final userEmail = session?.user?.email ?? '-';
     final hasPremiumSubscription =
         subscriptionState.asData?.value.isActive == true ||
         subscriptionState.asData?.value.isTrial == true;
@@ -41,161 +40,115 @@ class HomeScreen extends ConsumerWidget {
     final nextActionDescription = activeSubmissionCount > 0
         ? localizations.homeResumeSubmissionBody
         : localizations.homeDiscoverEventsBody;
+    final needsVerification = session?.isVerified != true;
+    final needsSubscription = !hasPremiumSubscription;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(localizations.homeTitle),
       ),
-      body: AppPageContainer(
-        child: ListView(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          children: [
-            AppPageHero(
-              badge: localizations.authResearcherBadge,
-              icon: Icons.space_dashboard_outlined,
-              title: localizations.homeHeroTitle,
-              subtitle: localizations.homeHeroBody,
-            ),
-            AppSectionCard(
-              title: localizations.homeNextActionTitle,
-              subtitle: nextActionDescription,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  FilledButton.icon(
-                    onPressed: () => context.go(nextActionRoute),
-                    icon: Icon(
-                      activeSubmissionCount > 0
-                          ? Icons.assignment_outlined
-                          : Icons.travel_explore_outlined,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          ref
+            ..invalidate(sessionControllerProvider)
+            ..invalidate(eventsControllerProvider)
+            ..invalidate(submissionsControllerProvider)
+            ..invalidate(homeSubscriptionStatusProvider);
+        },
+        child: AppPageContainer(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            children: [
+              AppPageHero(
+                badge: localizations.authResearcherBadge,
+                icon: Icons.space_dashboard_outlined,
+                title: localizations.homeHeroTitle,
+                subtitle: localizations.homeHeroBody,
+              ),
+              AppSectionCard(
+                title: localizations.homeNextActionTitle,
+                subtitle: nextActionDescription,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    FilledButton.icon(
+                      onPressed: () => context.go(nextActionRoute),
+                      icon: Icon(
+                        activeSubmissionCount > 0
+                            ? Icons.assignment_outlined
+                            : Icons.travel_explore_outlined,
+                      ),
+                      label: Text(nextActionLabel),
                     ),
-                    label: Text(nextActionLabel),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    userEmail,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            AppSectionCard(
-              title: localizations.homeStateSummaryTitle,
-              subtitle: localizations.homeStateSummaryBody,
-              child: Column(
-                children: [
-                  _MetricRow(
-                    icon: Icons.verified_user_outlined,
-                    label: localizations.verificationStatusTitle,
-                    value: verificationStatus,
+              if (needsVerification || needsSubscription)
+                AppSectionCard(
+                  title: localizations.homeAttentionTitle,
+                  subtitle: needsVerification
+                      ? localizations.homeVerificationAttentionBody
+                      : localizations.homeSubscriptionAttentionBody,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      FilledButton.tonalIcon(
+                        onPressed: () => context.go(RoutePaths.account),
+                        icon: Icon(
+                          needsVerification
+                              ? Icons.verified_user_outlined
+                              : Icons.workspace_premium_outlined,
+                        ),
+                        label: Text(
+                          needsVerification
+                              ? localizations.trustCenterTitle
+                              : localizations.accountTitle,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 12),
-                  _MetricRow(
-                    icon: Icons.workspace_premium_outlined,
-                    label: localizations.subscriptionStatusTitle,
-                    value: hasPremiumSubscription
-                        ? localizations.subscriptionActive
-                        : localizations.subscriptionInactive,
-                  ),
-                  const SizedBox(height: 12),
-                  _MetricRow(
-                    icon: Icons.event_available_outlined,
-                    label: localizations.nearestDeadlineTitle,
-                    value: nearestDeadline == null
-                        ? localizations.noUpcomingDeadline
-                        : _formatDate(nearestDeadline),
-                  ),
-                  const SizedBox(height: 12),
-                  _MetricRow(
-                    icon: Icons.description_outlined,
-                    label: localizations.activeSubmissionsTitle,
-                    value: localizations.activeSubmissionsCount(
-                      activeSubmissionCount,
+                ),
+              AppSectionCard(
+                title: localizations.homeStateSummaryTitle,
+                subtitle: localizations.homeStateSummaryBody,
+                child: Column(
+                  children: [
+                    _MetricRow(
+                      icon: Icons.verified_user_outlined,
+                      label: localizations.verificationStatusTitle,
+                      value: verificationStatus,
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 12),
+                    _MetricRow(
+                      icon: Icons.workspace_premium_outlined,
+                      label: localizations.subscriptionStatusTitle,
+                      value: hasPremiumSubscription
+                          ? localizations.subscriptionActive
+                          : localizations.subscriptionInactive,
+                    ),
+                    const SizedBox(height: 12),
+                    _MetricRow(
+                      icon: Icons.event_available_outlined,
+                      label: localizations.nearestDeadlineTitle,
+                      value: nearestDeadline == null
+                          ? localizations.noUpcomingDeadline
+                          : _formatDate(nearestDeadline),
+                    ),
+                    const SizedBox(height: 12),
+                    _MetricRow(
+                      icon: Icons.description_outlined,
+                      label: localizations.activeSubmissionsTitle,
+                      value: localizations.activeSubmissionsCount(
+                        activeSubmissionCount,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            AppSectionCard(
-              title: localizations.homeQuickLinksTitle,
-              subtitle: localizations.homeQuickLinksBody,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _QuickLinkTile(
-                    icon: Icons.event_note_outlined,
-                    title: localizations.exploreEvents,
-                    subtitle: localizations.homeDiscoverEventsBody,
-                    onTap: () => context.go(RoutePaths.events),
-                  ),
-                  const Divider(height: 1),
-                  _QuickLinkTile(
-                    icon: Icons.description_outlined,
-                    title: localizations.submissionsTitle,
-                    subtitle: localizations.homeResumeSubmissionBody,
-                    onTap: () => context.go(RoutePaths.submissions),
-                  ),
-                  const Divider(height: 1),
-                  _QuickLinkTile(
-                    icon: Icons.bookmarks_outlined,
-                    title: localizations.savedEventsTitle,
-                    subtitle: localizations.homeSavedEventsBody,
-                    onTap: () => context.go(RoutePaths.savedEvents),
-                  ),
-                  const Divider(height: 1),
-                  _QuickLinkTile(
-                    icon: Icons.manage_accounts_outlined,
-                    title: localizations.accountTitle,
-                    subtitle: localizations.homeManageAccountBody,
-                    onTap: () => context.go(RoutePaths.account),
-                  ),
-                ],
-              ),
-            ),
-            AppSectionCard(
-              title: localizations.notificationEducationTitle,
-              subtitle: localizations.notificationEducationBody,
-              leading: const Icon(Icons.notifications_active_outlined),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  OutlinedButton.icon(
-                    onPressed: () => context.go(RoutePaths.account),
-                    icon: const Icon(Icons.tune_outlined),
-                    label: Text(localizations.notificationPreferencesTitle),
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    );
-  }
-}
-
-class _QuickLinkTile extends StatelessWidget {
-  const _QuickLinkTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Icon(icon),
-      title: Text(title),
-      subtitle: Text(subtitle),
-      trailing: const Icon(Icons.chevron_right_rounded),
-      onTap: onTap,
     );
   }
 }

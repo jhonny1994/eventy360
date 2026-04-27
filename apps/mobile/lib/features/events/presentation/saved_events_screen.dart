@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-final bookmarkedEventsProvider = FutureProvider<List<EventSummary>>((ref) async {
+final bookmarkedEventsProvider = FutureProvider<List<EventSummary>>((
+  ref,
+) async {
   return ref.watch(eventsRepositoryProvider).fetchBookmarkedEvents();
 });
 
@@ -25,38 +27,44 @@ class SavedEventsScreen extends ConsumerWidget {
         title: Text(localizations.savedEventsTitle),
       ),
       body: bookmarks.when(
-        data: (events) => AppPageContainer(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            children: [
-              AppPageHero(
-                badge: localizations.savedEventsTitle,
-                icon: Icons.bookmarks_outlined,
-                title: localizations.savedEventsTitle,
-                subtitle: localizations.savedEventsBody,
-              ),
-              if (events.isEmpty)
-                AppEmptyState(
-                  icon: Icons.bookmark_border_outlined,
+        data: (events) => RefreshIndicator(
+          onRefresh: () async {
+            ref.invalidate(bookmarkedEventsProvider);
+            await ref.read(bookmarkedEventsProvider.future);
+          },
+          child: AppPageContainer(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              children: [
+                AppPageHero(
+                  badge: localizations.savedEventsTitle,
+                  icon: Icons.bookmarks_outlined,
                   title: localizations.savedEventsTitle,
-                  body: localizations.savedEventsEmptyState,
-                )
-              else
-                ...events.map(
-                  (event) => AppSectionCard(
-                    child: ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(event.title),
-                      subtitle: Text(
-                        '${event.location}\n${localizations.deadline}: ${_formatDate(event.deadline)}',
+                  subtitle: localizations.savedEventsBody,
+                ),
+                if (events.isEmpty)
+                  AppEmptyState(
+                    icon: Icons.bookmark_border_outlined,
+                    title: localizations.savedEventsTitle,
+                    body: localizations.savedEventsEmptyState,
+                  )
+                else
+                  ...events.map(
+                    (event) => AppSectionCard(
+                      child: AppListRow(
+                        title: event.title,
+                        subtitle:
+                            '${event.location}\n${localizations.deadline}: ${_formatDate(event.deadline)}',
+                        trailing: const Icon(Icons.chevron_right_rounded),
+                        onTap: () async {
+                          await context.push(RoutePaths.eventDetail(event.id));
+                          ref.invalidate(bookmarkedEventsProvider);
+                        },
                       ),
-                      isThreeLine: true,
-                      trailing: const Icon(Icons.chevron_right_rounded),
-                      onTap: () => context.push(RoutePaths.eventDetail(event.id)),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
         error: (error, _) => AppErrorView(
