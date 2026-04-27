@@ -590,14 +590,17 @@ function getNestedValue(source: Record<string, unknown>, path: string): unknown 
 }
 
 function stripHtml(input: string): string {
-  return input
-    .replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, " ")
-    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, " ")
-    .replace(/<\/?[^>]+(>|$)/g, " ")
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&amp;/gi, "&")
-    .replace(/&lt;/gi, "<")
-    .replace(/&gt;/gi, ">")
+  const document = new DOMParser().parseFromString(input, "text/html");
+  if (!document) {
+    return input.replace(/\s+/g, " ").trim();
+  }
+
+  for (const selector of ["script", "style", "noscript", "template"]) {
+    document.querySelectorAll(selector).forEach((node) => node.remove());
+  }
+
+  return (document.body.textContent ?? "")
+    .replace(/\u00a0/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
