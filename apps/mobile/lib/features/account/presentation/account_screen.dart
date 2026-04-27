@@ -1,7 +1,9 @@
+import 'package:eventy360/app/application/app_settings_provider.dart';
 import 'package:eventy360/app/localization/locale_controller.dart';
 import 'package:eventy360/app/router/route_paths.dart';
 import 'package:eventy360/app/theme/theme_mode_controller.dart';
 import 'package:eventy360/core/presentation/widgets/app_page_scaffold.dart';
+import 'package:eventy360/features/account/application/subscription_overview_provider.dart';
 import 'package:eventy360/features/auth/application/session_controller.dart';
 import 'package:eventy360/features/home/application/home_subscription_provider.dart';
 import 'package:eventy360/features/notifications/application/notification_controller.dart';
@@ -22,6 +24,8 @@ class AccountScreen extends ConsumerWidget {
     final themeMode = ref.watch(themeModeControllerProvider);
     final locale = ref.watch(localeControllerProvider);
     final notificationState = ref.watch(notificationControllerProvider);
+    final subscriptionOverview = ref.watch(subscriptionOverviewProvider);
+    final appSettings = ref.watch(appPaymentSettingsProvider);
 
     final isVerified = session?.isVerified == true;
     final email = session?.user?.email ?? '-';
@@ -78,6 +82,73 @@ class AccountScreen extends ConsumerWidget {
                         : AppStatusTone.neutral,
                   ),
                 ],
+              ),
+            ),
+            AppSectionCard(
+              title: localizations.subscriptionStatusTitle,
+              subtitle: localizations.subscriptionOverviewBody,
+              child: subscriptionOverview.when(
+                data: (overview) {
+                  final bankName = appSettings.asData?.value?.bankName;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _subscriptionHeadline(localizations, overview),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      if ((overview.daysRemaining ?? 0) > 0) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          localizations.subscriptionDaysRemaining(
+                            overview.daysRemaining!,
+                          ),
+                        ),
+                      ],
+                      if (overview.pricing != null) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          localizations.subscriptionRecommendedPrice(
+                            overview.pricing!.finalPrice.toStringAsFixed(0),
+                            overview.pricing!.currency,
+                            overview.pricing!.billingPeriod,
+                          ),
+                        ),
+                      ],
+                      if ((bankName ?? '').isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          localizations.subscriptionBankReference(bankName!),
+                        ),
+                      ],
+                      const SizedBox(height: 14),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: FilledButton.tonalIcon(
+                              onPressed: () => context.push(RoutePaths.trust),
+                              icon: const Icon(Icons.receipt_long_outlined),
+                              label: Text(localizations.subscriptionHistoryAction),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: FilledButton.icon(
+                              onPressed: () =>
+                                  context.push(RoutePaths.reportPayment),
+                              icon: const Icon(Icons.upload_file_outlined),
+                              label: Text(localizations.reportPaymentTitle),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
+                error: (error, _) => Text(error.toString()),
+                loading: () => const LinearProgressIndicator(),
               ),
             ),
             AppSectionCard(
@@ -357,6 +428,19 @@ class AccountScreen extends ConsumerWidget {
       ThemeMode.system => localizations.themeSystem,
       ThemeMode.light => localizations.themeLight,
       ThemeMode.dark => localizations.themeDark,
+    };
+  }
+
+  String _subscriptionHeadline(S localizations, SubscriptionOverview overview) {
+    if (!overview.hasSubscription) {
+      return localizations.subscriptionInactive;
+    }
+    return switch (overview.status) {
+      'trial' => localizations.subscriptionTrialHeadline,
+      'active' => localizations.subscriptionActiveHeadline,
+      'expired' => localizations.subscriptionExpiredHeadline,
+      'cancelled' => localizations.subscriptionCancelledHeadline,
+      _ => localizations.subscriptionInactive,
     };
   }
 }

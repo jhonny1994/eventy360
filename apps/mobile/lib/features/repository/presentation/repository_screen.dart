@@ -22,16 +22,19 @@ class RepositoryScreen extends ConsumerStatefulWidget {
 
 class _RepositoryScreenState extends ConsumerState<RepositoryScreen> {
   late final TextEditingController _searchController;
+  late final TextEditingController _authorController;
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
+    _authorController = TextEditingController();
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _authorController.dispose();
     super.dispose();
   }
 
@@ -83,6 +86,27 @@ class _RepositoryScreenState extends ConsumerState<RepositoryScreen> {
                     title: localizations.repositorySubscriptionRequiredTitle,
                     body: localizations.repositorySubscriptionRequiredBody,
                   ),
+                  const SizedBox(height: 12),
+                  AppSectionCard(
+                    title: localizations.subscriptionStatusTitle,
+                    subtitle: localizations.repositoryPremiumContextBody,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        FilledButton.icon(
+                          onPressed: () => context.go(RoutePaths.account),
+                          icon: const Icon(Icons.manage_accounts_outlined),
+                          label: Text(localizations.accountTitle),
+                        ),
+                        const SizedBox(height: 10),
+                        OutlinedButton.icon(
+                          onPressed: () => context.go(RoutePaths.reportPayment),
+                          icon: const Icon(Icons.upload_file_outlined),
+                          label: Text(localizations.reportPaymentTitle),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             );
@@ -92,6 +116,13 @@ class _RepositoryScreenState extends ConsumerState<RepositoryScreen> {
               _searchController.value = _searchController.value.copyWith(
                 text: data.query,
                 selection: TextSelection.collapsed(offset: data.query.length),
+                composing: TextRange.empty,
+              );
+              _authorController.value = _authorController.value.copyWith(
+                text: data.authorQuery,
+                selection: TextSelection.collapsed(
+                  offset: data.authorQuery.length,
+                ),
                 composing: TextRange.empty,
               );
               return RefreshIndicator(
@@ -109,7 +140,7 @@ class _RepositoryScreenState extends ConsumerState<RepositoryScreen> {
                       ),
                       AppSectionCard(
                         title: localizations.repositorySearchHint,
-                        subtitle: localizations.repositoryOverviewBody,
+                        subtitle: localizations.repositoryFilterBody,
                         child: Column(
                           children: [
                             TextField(
@@ -122,6 +153,43 @@ class _RepositoryScreenState extends ConsumerState<RepositoryScreen> {
                               onSubmitted: (value) => ref
                                   .read(repositoryControllerProvider.notifier)
                                   .updateQuery(value),
+                            ),
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: _authorController,
+                              decoration: InputDecoration(
+                                hintText: localizations.repositoryAuthorHint,
+                                prefixIcon: const Icon(
+                                  Icons.person_search_outlined,
+                                ),
+                              ),
+                              textInputAction: TextInputAction.search,
+                              onSubmitted: (value) => ref
+                                  .read(repositoryControllerProvider.notifier)
+                                  .updateAuthorQuery(value),
+                            ),
+                            const SizedBox(height: 12),
+                            DropdownButtonFormField<int?>(
+                              initialValue: data.selectedWilayaId,
+                              items: [
+                                DropdownMenuItem<int?>(
+                                  child: Text(
+                                    localizations.repositoryAllWilayas,
+                                  ),
+                                ),
+                                ...data.wilayas.map(
+                                  (wilaya) => DropdownMenuItem<int?>(
+                                    value: wilaya.id,
+                                    child: Text(wilaya.name),
+                                  ),
+                                ),
+                              ],
+                              onChanged: (value) => ref
+                                  .read(repositoryControllerProvider.notifier)
+                                  .updateWilayaFilter(value),
+                              decoration: InputDecoration(
+                                labelText: localizations.wilayaLabel,
+                              ),
                             ),
                             const SizedBox(height: 12),
                             Wrap(
@@ -239,6 +307,8 @@ class _PaperCard extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(paper.eventName),
+            const SizedBox(height: 4),
+            Text(_formatDate(paper.submissionDate)),
             if (paper.wilayaName != null)
               Padding(
                 padding: const EdgeInsets.only(top: 4),
@@ -256,6 +326,26 @@ class _PaperCard extends StatelessWidget {
                   .take(3)
                   .map((name) => Chip(label: Text(name)))
                   .toList(),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                AppStatusBadge(
+                  label: paper.hasDownloadableFile
+                      ? localizations.repositoryReadyToDownload
+                      : localizations.repositoryNoFileAvailable,
+                  tone: paper.hasDownloadableFile
+                      ? AppStatusTone.success
+                      : AppStatusTone.neutral,
+                ),
+                if ((paper.fileContentType ?? '').isNotEmpty)
+                  AppStatusBadge(
+                    label: paper.fileContentType!,
+                    tone: AppStatusTone.info,
+                  ),
+              ],
             ),
             const SizedBox(height: 12),
             Row(
@@ -283,4 +373,10 @@ class _PaperCard extends StatelessWidget {
       ),
     );
   }
+}
+
+String _formatDate(DateTime date) {
+  final mm = date.month.toString().padLeft(2, '0');
+  final dd = date.day.toString().padLeft(2, '0');
+  return '${date.year}-$mm-$dd';
 }

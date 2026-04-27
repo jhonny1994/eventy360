@@ -28,6 +28,13 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m2(email) =>
       "Send a secure reset link to ${email} if you want to change your password from email.";
 
+  static String m3(bankName) => "Current bank reference: ${bankName}.";
+
+  static String m4(count) => "${count} days remaining";
+
+  static String m5(amount, currency, billingPeriod) =>
+      "Recommended amount: ${amount} ${currency} for ${billingPeriod}.";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "abstractArLabel": MessageLookupByLibrary.simpleMessage(
@@ -211,6 +218,36 @@ class MessageLookup extends MessageLookupByLibrary {
       "Your command center is ready.",
     ),
     "homeTitle": MessageLookupByLibrary.simpleMessage("Researcher Home"),
+    "initialSetupContinueAction": MessageLookupByLibrary.simpleMessage(
+      "Open my workspace",
+    ),
+    "initialSetupFinishBody": MessageLookupByLibrary.simpleMessage(
+      "Once these basics feel right, continue into the full researcher experience with the stable tab bar.",
+    ),
+    "initialSetupFinishTitle": MessageLookupByLibrary.simpleMessage(
+      "Move into the app shell",
+    ),
+    "initialSetupHeroBody": MessageLookupByLibrary.simpleMessage(
+      "Choose how the app should look, read, and notify before you settle into the researcher shell.",
+    ),
+    "initialSetupHeroTitle": MessageLookupByLibrary.simpleMessage(
+      "Finish the first-run setup with intention",
+    ),
+    "initialSetupLanguageBody": MessageLookupByLibrary.simpleMessage(
+      "Pick the language you want to use across the mobile app from the first session.",
+    ),
+    "initialSetupThemeBody": MessageLookupByLibrary.simpleMessage(
+      "Choose a default appearance now. You can still change it later from Account.",
+    ),
+    "initialSetupTitle": MessageLookupByLibrary.simpleMessage(
+      "Set up your mobile workspace",
+    ),
+    "initialSetupTopicsBody": MessageLookupByLibrary.simpleMessage(
+      "Subscribe to the topics you care about so discovery and notifications start from your real interests.",
+    ),
+    "initialSetupTopicsFootnote": MessageLookupByLibrary.simpleMessage(
+      "You can keep refining these topics later without losing progress in the app.",
+    ),
     "institution": MessageLookupByLibrary.simpleMessage("Institution"),
     "languageArabic": MessageLookupByLibrary.simpleMessage("Arabic"),
     "languageEnglish": MessageLookupByLibrary.simpleMessage("English"),
@@ -309,8 +346,23 @@ class MessageLookup extends MessageLookupByLibrary {
       "Enter a valid amount greater than zero.",
     ),
     "paymentAmountLabel": MessageLookupByLibrary.simpleMessage("Amount"),
+    "paymentHistoryBody": MessageLookupByLibrary.simpleMessage(
+      "These are the proofs you already submitted and the review decisions attached to each one.",
+    ),
     "paymentHistoryTitle": MessageLookupByLibrary.simpleMessage(
       "Payment History",
+    ),
+    "paymentInstructionAccountHolderLabel":
+        MessageLookupByLibrary.simpleMessage("Account holder"),
+    "paymentInstructionBankLabel": MessageLookupByLibrary.simpleMessage("Bank"),
+    "paymentInstructionEmailLabel": MessageLookupByLibrary.simpleMessage(
+      "Payment contact email",
+    ),
+    "paymentInstructionRibLabel": MessageLookupByLibrary.simpleMessage(
+      "RIB / account number",
+    ),
+    "paymentInstructionsTitle": MessageLookupByLibrary.simpleMessage(
+      "Payment instructions",
     ),
     "paymentMethodBank": MessageLookupByLibrary.simpleMessage("Bank transfer"),
     "paymentMethodCash": MessageLookupByLibrary.simpleMessage("Cash"),
@@ -326,6 +378,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "Pending verification",
     ),
     "paymentRejectedStatus": MessageLookupByLibrary.simpleMessage("Rejected"),
+    "paymentReportActivationHint": MessageLookupByLibrary.simpleMessage(
+      "This payment report will help activate premium access after verification is complete.",
+    ),
+    "paymentReportRenewalHint": MessageLookupByLibrary.simpleMessage(
+      "This payment report will be treated as a renewal or continuity action for your current subscription.",
+    ),
+    "paymentTrustFlowHint": MessageLookupByLibrary.simpleMessage(
+      "Use this space to understand your current subscription state first, then report payment only when you have the right proof ready.",
+    ),
     "paymentVerifiedStatus": MessageLookupByLibrary.simpleMessage("Verified"),
     "pickFileAction": MessageLookupByLibrary.simpleMessage("Choose file"),
     "pickProofDocument": MessageLookupByLibrary.simpleMessage(
@@ -367,6 +428,16 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "reportedAtLabel": MessageLookupByLibrary.simpleMessage("Reported at"),
     "repositoryAbstractTitle": MessageLookupByLibrary.simpleMessage("Abstract"),
+    "repositoryAllWilayas": MessageLookupByLibrary.simpleMessage("All wilayas"),
+    "repositoryAuthorHint": MessageLookupByLibrary.simpleMessage(
+      "Filter by author name",
+    ),
+    "repositoryBackAction": MessageLookupByLibrary.simpleMessage(
+      "Back to repository",
+    ),
+    "repositoryContextTitle": MessageLookupByLibrary.simpleMessage(
+      "Repository context",
+    ),
     "repositoryDetailAction": MessageLookupByLibrary.simpleMessage(
       "View details",
     ),
@@ -379,6 +450,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "repositoryDownloadAction": MessageLookupByLibrary.simpleMessage(
       "Download paper",
     ),
+    "repositoryDownloadConfidenceBody": MessageLookupByLibrary.simpleMessage(
+      "Use this screen to confirm the paper identity, file shape, and tracked usage before downloading.",
+    ),
     "repositoryDownloadSectionTitle": MessageLookupByLibrary.simpleMessage(
       "Download",
     ),
@@ -388,6 +462,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "repositoryEmptyState": MessageLookupByLibrary.simpleMessage(
       "No papers matched your current filters.",
     ),
+    "repositoryFilterBody": MessageLookupByLibrary.simpleMessage(
+      "Filter by search, author, topic, and wilaya so the repository feels curated instead of noisy.",
+    ),
     "repositoryNoFileAvailable": MessageLookupByLibrary.simpleMessage(
       "No downloadable file is available for this paper.",
     ),
@@ -396,6 +473,15 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "repositoryPaperFileFallback": MessageLookupByLibrary.simpleMessage(
       "Paper file",
+    ),
+    "repositoryPremiumContextBody": MessageLookupByLibrary.simpleMessage(
+      "Unlock repository access from Account, then return here once payment and review are in motion.",
+    ),
+    "repositoryProtectedDownloadBody": MessageLookupByLibrary.simpleMessage(
+      "Downloads are tracked and opened from a protected file reference so access remains consistent with subscription rules.",
+    ),
+    "repositoryReadyToDownload": MessageLookupByLibrary.simpleMessage(
+      "Ready to download",
     ),
     "repositorySearchHint": MessageLookupByLibrary.simpleMessage(
       "Search papers, events, or authors",
@@ -607,11 +693,32 @@ class MessageLookup extends MessageLookupByLibrary {
     "subscriptionActive": MessageLookupByLibrary.simpleMessage(
       "Premium subscription active",
     ),
+    "subscriptionActiveHeadline": MessageLookupByLibrary.simpleMessage(
+      "Your premium access is active.",
+    ),
+    "subscriptionBankReference": m3,
+    "subscriptionCancelledHeadline": MessageLookupByLibrary.simpleMessage(
+      "Your subscription was cancelled.",
+    ),
+    "subscriptionDaysRemaining": m4,
+    "subscriptionExpiredHeadline": MessageLookupByLibrary.simpleMessage(
+      "Your premium access has expired.",
+    ),
+    "subscriptionHistoryAction": MessageLookupByLibrary.simpleMessage(
+      "Review history",
+    ),
     "subscriptionInactive": MessageLookupByLibrary.simpleMessage(
       "No active premium subscription",
     ),
+    "subscriptionOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "Understand your current access, renewal urgency, and the right next billing action without leaving account flow.",
+    ),
+    "subscriptionRecommendedPrice": m5,
     "subscriptionStatusTitle": MessageLookupByLibrary.simpleMessage(
       "Subscription status",
+    ),
+    "subscriptionTrialHeadline": MessageLookupByLibrary.simpleMessage(
+      "Your trial access is active.",
     ),
     "themeDark": MessageLookupByLibrary.simpleMessage("Dark"),
     "themeLight": MessageLookupByLibrary.simpleMessage("Light"),

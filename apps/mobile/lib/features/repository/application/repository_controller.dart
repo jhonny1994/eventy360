@@ -16,14 +16,18 @@ class RepositoryController extends _$RepositoryController {
   Future<RepositoryState> build() async {
     final repository = ref.watch(repositoryRepositoryProvider);
     final topics = await repository.fetchTopics();
+    final wilayas = await repository.fetchWilayas();
     final firstPage = await repository.fetchPapers(
       page: 1,
       pageSize: 12,
       query: '',
       selectedTopicIds: const <String>{},
+      authorQuery: '',
+      selectedWilayaId: null,
     );
     return RepositoryState(
       topics: topics,
+      wilayas: wilayas,
       papers: firstPage.items,
       page: firstPage.page,
       pageSize: firstPage.pageSize,
@@ -37,14 +41,18 @@ class RepositoryController extends _$RepositoryController {
     state = await AsyncValue.guard(() async {
       final repository = ref.read(repositoryRepositoryProvider);
       final topics = await repository.fetchTopics();
+      final wilayas = await repository.fetchWilayas();
       final page = await repository.fetchPapers(
         page: 1,
         pageSize: current.pageSize,
         query: current.query,
         selectedTopicIds: current.selectedTopicIds,
+        authorQuery: current.authorQuery,
+        selectedWilayaId: current.selectedWilayaId,
       );
       return current.copyWith(
         topics: topics,
+        wilayas: wilayas,
         papers: page.items,
         page: page.page,
         pageSize: page.pageSize,
@@ -63,10 +71,57 @@ class RepositoryController extends _$RepositoryController {
       pageSize: current.pageSize,
       query: query,
       selectedTopicIds: current.selectedTopicIds,
+      authorQuery: current.authorQuery,
+      selectedWilayaId: current.selectedWilayaId,
     );
     state = AsyncData(
       current.copyWith(
         query: query,
+        papers: page.items,
+        page: page.page,
+        hasMore: page.hasMore,
+        clearError: true,
+      ),
+    );
+  }
+
+  Future<void> updateAuthorQuery(String authorQuery) async {
+    final current = state.asData?.value ?? const RepositoryState();
+    final repository = ref.read(repositoryRepositoryProvider);
+    final page = await repository.fetchPapers(
+      page: 1,
+      pageSize: current.pageSize,
+      query: current.query,
+      selectedTopicIds: current.selectedTopicIds,
+      authorQuery: authorQuery,
+      selectedWilayaId: current.selectedWilayaId,
+    );
+    state = AsyncData(
+      current.copyWith(
+        authorQuery: authorQuery,
+        papers: page.items,
+        page: page.page,
+        hasMore: page.hasMore,
+        clearError: true,
+      ),
+    );
+  }
+
+  Future<void> updateWilayaFilter(int? wilayaId) async {
+    final current = state.asData?.value ?? const RepositoryState();
+    final repository = ref.read(repositoryRepositoryProvider);
+    final page = await repository.fetchPapers(
+      page: 1,
+      pageSize: current.pageSize,
+      query: current.query,
+      selectedTopicIds: current.selectedTopicIds,
+      authorQuery: current.authorQuery,
+      selectedWilayaId: wilayaId,
+    );
+    state = AsyncData(
+      current.copyWith(
+        selectedWilayaId: wilayaId,
+        clearSelectedWilayaId: wilayaId == null,
         papers: page.items,
         page: page.page,
         hasMore: page.hasMore,
@@ -89,6 +144,8 @@ class RepositoryController extends _$RepositoryController {
       pageSize: current.pageSize,
       query: current.query,
       selectedTopicIds: nextTopics,
+      authorQuery: current.authorQuery,
+      selectedWilayaId: current.selectedWilayaId,
     );
     state = AsyncData(
       current.copyWith(
@@ -115,6 +172,8 @@ class RepositoryController extends _$RepositoryController {
         pageSize: current.pageSize,
         query: current.query,
         selectedTopicIds: current.selectedTopicIds,
+        authorQuery: current.authorQuery,
+        selectedWilayaId: current.selectedWilayaId,
       );
       state = AsyncData(
         current.copyWith(

@@ -1,3 +1,4 @@
+import 'package:eventy360/features/auth/domain/location_option.dart';
 import 'package:eventy360/features/events/domain/topic_item.dart';
 import 'package:eventy360/features/repository/application/repository_controller.dart';
 import 'package:eventy360/features/repository/domain/repository_models.dart';
@@ -118,6 +119,8 @@ class _FakeRepositoryRepository implements RepositoryRepository {
     required int pageSize,
     required String query,
     required Set<String> selectedTopicIds,
+    required String authorQuery,
+    required int? selectedWilayaId,
   }) async {
     lastQuery = query;
     return RepositoryPage(
@@ -133,6 +136,13 @@ class _FakeRepositoryRepository implements RepositoryRepository {
     return const <TopicItem>[
       TopicItem(id: 't1', name: 'AI'),
       TopicItem(id: 't2', name: 'Vision'),
+    ];
+  }
+
+  @override
+  Future<List<LocationOption>> fetchWilayas() async {
+    return const <LocationOption>[
+      LocationOption(id: 16, name: 'Algiers'),
     ];
   }
 

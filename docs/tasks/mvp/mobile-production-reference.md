@@ -75,6 +75,7 @@ Current mobile now implements this shell, and the remaining work is about deep p
 Defined routes today:
 
 - `/onboarding`
+- `/initial-setup`
 - `/auth/sign-in`
 - `/auth/sign-up`
 - `/auth/reset`
@@ -102,6 +103,7 @@ Important reality:
 - account now exists as a first-class top-level destination,
 - the bottom navigation shell exists,
 - trust is now housed under account,
+- first authenticated completion now routes through a dedicated initial setup screen for language, theme, and topics,
 - remaining work is about parity depth rather than missing shell architecture.
 
 ## What Exists In Mobile Today
@@ -155,43 +157,20 @@ Important reality:
 
 These capabilities are already present in code but are not properly exposed to the user:
 
-### Theme
+### Theme, language, and notifications
 
-- persistent theme mode controller exists
-- user-facing control is only a home app-bar toggle
-- required destination-level settings UX does not exist
-
-Source:
-
-- `apps/mobile/lib/app/theme/theme_mode_controller.dart`
-- `apps/mobile/lib/features/home/presentation/home_screen.dart`
-
-### Language
-
-- locale controller exists
-- English and Arabic are wired
-- no in-app language switch exists
-
-Source:
-
-- `apps/mobile/lib/app/localization/locale_controller.dart`
-
-### Notifications
-
-- notification permission and topic flows exist
-- no user-facing notification preferences destination exists
-- no clear platform-settings handoff surface exists
+- persistent theme mode controller exists and is now exposed through account/preferences and first-run setup
+- locale controller exists and is now exposed through account/preferences and first-run setup
+- notification permission and topic flows exist and are now surfaced through account/preferences and first-run setup
+- platform-settings handoff exists for notification recovery
 
 ## Core Product Gaps
 
 ### Release-blocking gaps
 
-1. no persistent app shell
-2. no `Account` or `Settings` destination
-3. no in-app language switching
-4. theme control is in the wrong place
-5. notification preferences are not discoverable
-6. home is overloaded and acting as substitute navigation
+1. phase-6 manual validation for settings, route parity, and release confidence is still pending
+2. event detail still needs richer web-level context depth
+3. release packaging and artifact publication are still pending phase-7 work
 
 ### High-priority parity gaps
 
@@ -212,10 +191,7 @@ Current mobile:
 
 Must-have missing:
 
-- flow into language selection
-- flow into theme selection
-- flow into topic setup
-- flow into stable tabbed shell
+- none at the shell level; this now hands off into a dedicated first-run setup flow after authentication and profile completion
 
 Reference:
 

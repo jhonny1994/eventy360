@@ -1,3 +1,4 @@
+import 'package:eventy360/features/auth/domain/location_option.dart';
 import 'package:eventy360/features/events/domain/topic_item.dart';
 
 class RepositoryPaper {
@@ -18,6 +19,7 @@ class RepositoryPaper {
     this.fileName,
     this.fileSizeBytes,
     this.fileContentType,
+    this.hasDownloadableFile = false,
   });
 
   final String id;
@@ -36,6 +38,7 @@ class RepositoryPaper {
   final String? fileName;
   final int? fileSizeBytes;
   final String? fileContentType;
+  final bool hasDownloadableFile;
 }
 
 class RepositoryPage {
@@ -57,11 +60,15 @@ class RepositoryPage {
 abstract class RepositoryRepository {
   Future<List<TopicItem>> fetchTopics();
 
+  Future<List<LocationOption>> fetchWilayas();
+
   Future<RepositoryPage> fetchPapers({
     required int page,
     required int pageSize,
     required String query,
     required Set<String> selectedTopicIds,
+    required String authorQuery,
+    required int? selectedWilayaId,
   });
 
   Future<RepositoryPaper?> fetchPaperDetail(String paperId);

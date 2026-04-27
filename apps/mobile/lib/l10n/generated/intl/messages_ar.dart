@@ -28,6 +28,13 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m2(email) =>
       "أرسل رابط إعادة تعيين آمن إلى ${email} إذا أردت تغيير كلمة المرور عبر البريد الإلكتروني.";
 
+  static String m3(bankName) => "مرجع البنك الحالي: ${bankName}.";
+
+  static String m4(count) => "المتبقي ${count} يوم";
+
+  static String m5(amount, currency, billingPeriod) =>
+      "المبلغ المقترح: ${amount} ${currency} لفترة ${billingPeriod}.";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "abstractArLabel": MessageLookupByLibrary.simpleMessage("الملخص (العربية)"),
@@ -213,6 +220,36 @@ class MessageLookup extends MessageLookupByLibrary {
       "لوحة التحكم الخاصة بك جاهزة.",
     ),
     "homeTitle": MessageLookupByLibrary.simpleMessage("الصفحة الرئيسية للباحث"),
+    "initialSetupContinueAction": MessageLookupByLibrary.simpleMessage(
+      "فتح مساحة العمل",
+    ),
+    "initialSetupFinishBody": MessageLookupByLibrary.simpleMessage(
+      "عندما تصبح هذه الأساسيات مناسبة لك، تابع إلى تجربة الباحث الكاملة مع شريط التنقل الثابت.",
+    ),
+    "initialSetupFinishTitle": MessageLookupByLibrary.simpleMessage(
+      "الدخول إلى واجهة التطبيق",
+    ),
+    "initialSetupHeroBody": MessageLookupByLibrary.simpleMessage(
+      "اختر كيف يبدو التطبيق وكيف يقرأ وكيف ينبهك قبل الدخول إلى واجهة الباحث الأساسية.",
+    ),
+    "initialSetupHeroTitle": MessageLookupByLibrary.simpleMessage(
+      "أكمل إعداد البداية بشكل مقصود",
+    ),
+    "initialSetupLanguageBody": MessageLookupByLibrary.simpleMessage(
+      "اختر اللغة التي تريد استخدامها في تطبيق الهاتف من أول جلسة.",
+    ),
+    "initialSetupThemeBody": MessageLookupByLibrary.simpleMessage(
+      "اختر المظهر الافتراضي الآن، ويمكنك تغييره لاحقاً من الحساب.",
+    ),
+    "initialSetupTitle": MessageLookupByLibrary.simpleMessage(
+      "إعداد مساحة العمل على الهاتف",
+    ),
+    "initialSetupTopicsBody": MessageLookupByLibrary.simpleMessage(
+      "اشترك في المواضيع التي تهمك حتى تبدأ الاكتشافات والتنبيهات من اهتماماتك الحقيقية.",
+    ),
+    "initialSetupTopicsFootnote": MessageLookupByLibrary.simpleMessage(
+      "يمكنك تعديل هذه المواضيع لاحقاً من دون فقدان تقدمك داخل التطبيق.",
+    ),
     "institution": MessageLookupByLibrary.simpleMessage("المؤسسة"),
     "languageArabic": MessageLookupByLibrary.simpleMessage("العربية"),
     "languageEnglish": MessageLookupByLibrary.simpleMessage("الإنجليزية"),
@@ -309,8 +346,25 @@ class MessageLookup extends MessageLookupByLibrary {
       "أدخل مبلغًا صالحًا أكبر من صفر.",
     ),
     "paymentAmountLabel": MessageLookupByLibrary.simpleMessage("المبلغ"),
+    "paymentHistoryBody": MessageLookupByLibrary.simpleMessage(
+      "هذه هي إثباتات الدفع التي أرسلتها مسبقاً وقرارات المراجعة المرتبطة بكل منها.",
+    ),
     "paymentHistoryTitle": MessageLookupByLibrary.simpleMessage(
       "سجل المدفوعات",
+    ),
+    "paymentInstructionAccountHolderLabel":
+        MessageLookupByLibrary.simpleMessage("صاحب الحساب"),
+    "paymentInstructionBankLabel": MessageLookupByLibrary.simpleMessage(
+      "البنك",
+    ),
+    "paymentInstructionEmailLabel": MessageLookupByLibrary.simpleMessage(
+      "بريد متابعة الدفع",
+    ),
+    "paymentInstructionRibLabel": MessageLookupByLibrary.simpleMessage(
+      "رقم الحساب / RIB",
+    ),
+    "paymentInstructionsTitle": MessageLookupByLibrary.simpleMessage(
+      "تعليمات الدفع",
     ),
     "paymentMethodBank": MessageLookupByLibrary.simpleMessage("تحويل بنكي"),
     "paymentMethodCash": MessageLookupByLibrary.simpleMessage("نقدًا"),
@@ -322,6 +376,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "بانتظار التحقق",
     ),
     "paymentRejectedStatus": MessageLookupByLibrary.simpleMessage("مرفوض"),
+    "paymentReportActivationHint": MessageLookupByLibrary.simpleMessage(
+      "سيساعد هذا البلاغ على تفعيل الوصول المميز بعد اكتمال التحقق.",
+    ),
+    "paymentReportRenewalHint": MessageLookupByLibrary.simpleMessage(
+      "سيُعامل هذا البلاغ كعملية تجديد أو استمرار لاشتراكك الحالي.",
+    ),
+    "paymentTrustFlowHint": MessageLookupByLibrary.simpleMessage(
+      "استخدم هذه المساحة أولاً لفهم حالة اشتراكك الحالية، ثم أبلغ عن الدفع فقط عندما يكون إثباتك جاهزاً.",
+    ),
     "paymentVerifiedStatus": MessageLookupByLibrary.simpleMessage("تم التحقق"),
     "pickFileAction": MessageLookupByLibrary.simpleMessage("اختر ملفًا"),
     "pickProofDocument": MessageLookupByLibrary.simpleMessage(
@@ -361,6 +424,16 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "reportedAtLabel": MessageLookupByLibrary.simpleMessage("تاريخ الإبلاغ"),
     "repositoryAbstractTitle": MessageLookupByLibrary.simpleMessage("الملخص"),
+    "repositoryAllWilayas": MessageLookupByLibrary.simpleMessage("كل الولايات"),
+    "repositoryAuthorHint": MessageLookupByLibrary.simpleMessage(
+      "تصفية حسب اسم المؤلف",
+    ),
+    "repositoryBackAction": MessageLookupByLibrary.simpleMessage(
+      "العودة إلى المستودع",
+    ),
+    "repositoryContextTitle": MessageLookupByLibrary.simpleMessage(
+      "سياق المستودع",
+    ),
     "repositoryDetailAction": MessageLookupByLibrary.simpleMessage(
       "عرض التفاصيل",
     ),
@@ -373,6 +446,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "repositoryDownloadAction": MessageLookupByLibrary.simpleMessage(
       "تنزيل البحث",
     ),
+    "repositoryDownloadConfidenceBody": MessageLookupByLibrary.simpleMessage(
+      "استخدم هذه الشاشة لتأكيد هوية البحث وطبيعة الملف وتتبع الاستخدام قبل التنزيل.",
+    ),
     "repositoryDownloadSectionTitle": MessageLookupByLibrary.simpleMessage(
       "التنزيل",
     ),
@@ -382,6 +458,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "repositoryEmptyState": MessageLookupByLibrary.simpleMessage(
       "لا توجد أبحاث مطابقة للفلاتر الحالية.",
     ),
+    "repositoryFilterBody": MessageLookupByLibrary.simpleMessage(
+      "رشّح حسب البحث أو المؤلف أو الموضوع أو الولاية حتى يبدو المستودع منسقاً لا مزدحماً.",
+    ),
     "repositoryNoFileAvailable": MessageLookupByLibrary.simpleMessage(
       "لا يتوفر ملف قابل للتنزيل لهذا البحث.",
     ),
@@ -390,6 +469,15 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "repositoryPaperFileFallback": MessageLookupByLibrary.simpleMessage(
       "ملف البحث",
+    ),
+    "repositoryPremiumContextBody": MessageLookupByLibrary.simpleMessage(
+      "فعّل الوصول إلى المستودع من الحساب ثم عد إلى هنا بعد بدء الدفع والمراجعة.",
+    ),
+    "repositoryProtectedDownloadBody": MessageLookupByLibrary.simpleMessage(
+      "تُتبع التنزيلات وتُفتح من مرجع ملف محمي حتى يبقى الوصول متوافقاً مع قواعد الاشتراك.",
+    ),
+    "repositoryReadyToDownload": MessageLookupByLibrary.simpleMessage(
+      "جاهز للتنزيل",
     ),
     "repositorySearchHint": MessageLookupByLibrary.simpleMessage(
       "ابحث في الأبحاث أو الفعاليات أو الباحثين",
@@ -603,11 +691,32 @@ class MessageLookup extends MessageLookupByLibrary {
     "subscriptionActive": MessageLookupByLibrary.simpleMessage(
       "اشتراك مميز نشط",
     ),
+    "subscriptionActiveHeadline": MessageLookupByLibrary.simpleMessage(
+      "وصولك المميز نشط.",
+    ),
+    "subscriptionBankReference": m3,
+    "subscriptionCancelledHeadline": MessageLookupByLibrary.simpleMessage(
+      "تم إلغاء اشتراكك.",
+    ),
+    "subscriptionDaysRemaining": m4,
+    "subscriptionExpiredHeadline": MessageLookupByLibrary.simpleMessage(
+      "انتهت صلاحية الوصول المميز.",
+    ),
+    "subscriptionHistoryAction": MessageLookupByLibrary.simpleMessage(
+      "مراجعة السجل",
+    ),
     "subscriptionInactive": MessageLookupByLibrary.simpleMessage(
       "لا يوجد اشتراك مميز نشط",
     ),
+    "subscriptionOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "افهم مستوى الوصول الحالي ومدى الحاجة إلى التجديد وأفضل خطوة دفع تالية من دون مغادرة مسار الحساب.",
+    ),
+    "subscriptionRecommendedPrice": m5,
     "subscriptionStatusTitle": MessageLookupByLibrary.simpleMessage(
       "حالة الاشتراك",
+    ),
+    "subscriptionTrialHeadline": MessageLookupByLibrary.simpleMessage(
+      "فترة التجربة لديك نشطة.",
     ),
     "themeDark": MessageLookupByLibrary.simpleMessage("داكن"),
     "themeLight": MessageLookupByLibrary.simpleMessage("فاتح"),

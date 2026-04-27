@@ -559,6 +559,106 @@ class S {
     );
   }
 
+  /// `Set up your mobile workspace`
+  String get initialSetupTitle {
+    return Intl.message(
+      'Set up your mobile workspace',
+      name: 'initialSetupTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Finish the first-run setup with intention`
+  String get initialSetupHeroTitle {
+    return Intl.message(
+      'Finish the first-run setup with intention',
+      name: 'initialSetupHeroTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose how the app should look, read, and notify before you settle into the researcher shell.`
+  String get initialSetupHeroBody {
+    return Intl.message(
+      'Choose how the app should look, read, and notify before you settle into the researcher shell.',
+      name: 'initialSetupHeroBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pick the language you want to use across the mobile app from the first session.`
+  String get initialSetupLanguageBody {
+    return Intl.message(
+      'Pick the language you want to use across the mobile app from the first session.',
+      name: 'initialSetupLanguageBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose a default appearance now. You can still change it later from Account.`
+  String get initialSetupThemeBody {
+    return Intl.message(
+      'Choose a default appearance now. You can still change it later from Account.',
+      name: 'initialSetupThemeBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subscribe to the topics you care about so discovery and notifications start from your real interests.`
+  String get initialSetupTopicsBody {
+    return Intl.message(
+      'Subscribe to the topics you care about so discovery and notifications start from your real interests.',
+      name: 'initialSetupTopicsBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You can keep refining these topics later without losing progress in the app.`
+  String get initialSetupTopicsFootnote {
+    return Intl.message(
+      'You can keep refining these topics later without losing progress in the app.',
+      name: 'initialSetupTopicsFootnote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Move into the app shell`
+  String get initialSetupFinishTitle {
+    return Intl.message(
+      'Move into the app shell',
+      name: 'initialSetupFinishTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Once these basics feel right, continue into the full researcher experience with the stable tab bar.`
+  String get initialSetupFinishBody {
+    return Intl.message(
+      'Once these basics feel right, continue into the full researcher experience with the stable tab bar.',
+      name: 'initialSetupFinishBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open my workspace`
+  String get initialSetupContinueAction {
+    return Intl.message(
+      'Open my workspace',
+      name: 'initialSetupContinueAction',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Account overview`
   String get accountOverviewTitle {
     return Intl.message(
@@ -994,6 +1094,100 @@ class S {
     return Intl.message(
       'No active premium subscription',
       name: 'subscriptionInactive',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Understand your current access, renewal urgency, and the right next billing action without leaving account flow.`
+  String get subscriptionOverviewBody {
+    return Intl.message(
+      'Understand your current access, renewal urgency, and the right next billing action without leaving account flow.',
+      name: 'subscriptionOverviewBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your trial access is active.`
+  String get subscriptionTrialHeadline {
+    return Intl.message(
+      'Your trial access is active.',
+      name: 'subscriptionTrialHeadline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your premium access is active.`
+  String get subscriptionActiveHeadline {
+    return Intl.message(
+      'Your premium access is active.',
+      name: 'subscriptionActiveHeadline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your premium access has expired.`
+  String get subscriptionExpiredHeadline {
+    return Intl.message(
+      'Your premium access has expired.',
+      name: 'subscriptionExpiredHeadline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your subscription was cancelled.`
+  String get subscriptionCancelledHeadline {
+    return Intl.message(
+      'Your subscription was cancelled.',
+      name: 'subscriptionCancelledHeadline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} days remaining`
+  String subscriptionDaysRemaining(int count) {
+    return Intl.message(
+      '$count days remaining',
+      name: 'subscriptionDaysRemaining',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Recommended amount: {amount} {currency} for {billingPeriod}.`
+  String subscriptionRecommendedPrice(
+    Object amount,
+    Object currency,
+    Object billingPeriod,
+  ) {
+    return Intl.message(
+      'Recommended amount: $amount $currency for $billingPeriod.',
+      name: 'subscriptionRecommendedPrice',
+      desc: '',
+      args: [amount, currency, billingPeriod],
+    );
+  }
+
+  /// `Current bank reference: {bankName}.`
+  String subscriptionBankReference(Object bankName) {
+    return Intl.message(
+      'Current bank reference: $bankName.',
+      name: 'subscriptionBankReference',
+      desc: '',
+      args: [bankName],
+    );
+  }
+
+  /// `Review history`
+  String get subscriptionHistoryAction {
+    return Intl.message(
+      'Review history',
+      name: 'subscriptionHistoryAction',
       desc: '',
       args: [],
     );
@@ -2134,6 +2328,16 @@ class S {
     );
   }
 
+  /// `These are the proofs you already submitted and the review decisions attached to each one.`
+  String get paymentHistoryBody {
+    return Intl.message(
+      'These are the proofs you already submitted and the review decisions attached to each one.',
+      name: 'paymentHistoryBody',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Report Payment`
   String get reportPaymentTitle {
     return Intl.message(
@@ -2149,6 +2353,86 @@ class S {
     return Intl.message(
       'Submit billing details and proof once so the team can validate your subscription access quickly and accurately.',
       name: 'reportPaymentOverviewBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payment instructions`
+  String get paymentInstructionsTitle {
+    return Intl.message(
+      'Payment instructions',
+      name: 'paymentInstructionsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bank`
+  String get paymentInstructionBankLabel {
+    return Intl.message(
+      'Bank',
+      name: 'paymentInstructionBankLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Account holder`
+  String get paymentInstructionAccountHolderLabel {
+    return Intl.message(
+      'Account holder',
+      name: 'paymentInstructionAccountHolderLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `RIB / account number`
+  String get paymentInstructionRibLabel {
+    return Intl.message(
+      'RIB / account number',
+      name: 'paymentInstructionRibLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payment contact email`
+  String get paymentInstructionEmailLabel {
+    return Intl.message(
+      'Payment contact email',
+      name: 'paymentInstructionEmailLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This payment report will be treated as a renewal or continuity action for your current subscription.`
+  String get paymentReportRenewalHint {
+    return Intl.message(
+      'This payment report will be treated as a renewal or continuity action for your current subscription.',
+      name: 'paymentReportRenewalHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This payment report will help activate premium access after verification is complete.`
+  String get paymentReportActivationHint {
+    return Intl.message(
+      'This payment report will help activate premium access after verification is complete.',
+      name: 'paymentReportActivationHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use this space to understand your current subscription state first, then report payment only when you have the right proof ready.`
+  String get paymentTrustFlowHint {
+    return Intl.message(
+      'Use this space to understand your current subscription state first, then report payment only when you have the right proof ready.',
+      name: 'paymentTrustFlowHint',
       desc: '',
       args: [],
     );
@@ -2419,11 +2703,51 @@ class S {
     );
   }
 
+  /// `Unlock repository access from Account, then return here once payment and review are in motion.`
+  String get repositoryPremiumContextBody {
+    return Intl.message(
+      'Unlock repository access from Account, then return here once payment and review are in motion.',
+      name: 'repositoryPremiumContextBody',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Search papers, events, or authors`
   String get repositorySearchHint {
     return Intl.message(
       'Search papers, events, or authors',
       name: 'repositorySearchHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Filter by search, author, topic, and wilaya so the repository feels curated instead of noisy.`
+  String get repositoryFilterBody {
+    return Intl.message(
+      'Filter by search, author, topic, and wilaya so the repository feels curated instead of noisy.',
+      name: 'repositoryFilterBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Filter by author name`
+  String get repositoryAuthorHint {
+    return Intl.message(
+      'Filter by author name',
+      name: 'repositoryAuthorHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All wilayas`
+  String get repositoryAllWilayas {
+    return Intl.message(
+      'All wilayas',
+      name: 'repositoryAllWilayas',
       desc: '',
       args: [],
     );
@@ -2479,6 +2803,16 @@ class S {
     );
   }
 
+  /// `Ready to download`
+  String get repositoryReadyToDownload {
+    return Intl.message(
+      'Ready to download',
+      name: 'repositoryReadyToDownload',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Paper Details`
   String get repositoryDetailTitle {
     return Intl.message(
@@ -2494,6 +2828,36 @@ class S {
     return Intl.message(
       'Review the paper context, abstract, and download package before opening the full document.',
       name: 'repositoryDetailOverviewBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Repository context`
+  String get repositoryContextTitle {
+    return Intl.message(
+      'Repository context',
+      name: 'repositoryContextTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use this screen to confirm the paper identity, file shape, and tracked usage before downloading.`
+  String get repositoryDownloadConfidenceBody {
+    return Intl.message(
+      'Use this screen to confirm the paper identity, file shape, and tracked usage before downloading.',
+      name: 'repositoryDownloadConfidenceBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Back to repository`
+  String get repositoryBackAction {
+    return Intl.message(
+      'Back to repository',
+      name: 'repositoryBackAction',
       desc: '',
       args: [],
     );
@@ -2524,6 +2888,16 @@ class S {
     return Intl.message(
       'Paper file',
       name: 'repositoryPaperFileFallback',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Downloads are tracked and opened from a protected file reference so access remains consistent with subscription rules.`
+  String get repositoryProtectedDownloadBody {
+    return Intl.message(
+      'Downloads are tracked and opened from a protected file reference so access remains consistent with subscription rules.',
+      name: 'repositoryProtectedDownloadBody',
       desc: '',
       args: [],
     );

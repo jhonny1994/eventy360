@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:eventy360/features/auth/domain/location_option.dart';
 import 'package:eventy360/features/events/domain/topic_item.dart';
 import 'package:eventy360/features/repository/domain/repository_models.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -35,11 +36,31 @@ class SupabaseRepositoryRepository implements RepositoryRepository {
   }
 
   @override
+  Future<List<LocationOption>> fetchWilayas() async {
+    try {
+      final rows = await _client
+          .from('wilayas')
+          .select('id,name_ar,name_other')
+          .order('id');
+      return (rows as List<dynamic>).cast<Map<String, dynamic>>().map((row) {
+        return LocationOption(
+          id: row['id'] as int,
+          name: _localizedLocationName(row),
+        );
+      }).toList();
+    } on Object catch (error) {
+      throw _mapError(error);
+    }
+  }
+
+  @override
   Future<RepositoryPage> fetchPapers({
     required int page,
     required int pageSize,
     required String query,
     required Set<String> selectedTopicIds,
+    required String authorQuery,
+    required int? selectedWilayaId,
   }) async {
     try {
       final offset = max(0, (page - 1) * pageSize);
@@ -50,11 +71,13 @@ class SupabaseRepositoryRepository implements RepositoryRepository {
           'topic_ids': selectedTopicIds.isEmpty
               ? null
               : selectedTopicIds.toList(),
-          'wilaya_id_param': null,
+          'wilaya_id_param': selectedWilayaId,
           'daira_id_param': null,
           'start_date': null,
           'end_date': null,
-          'author_name_filter': null,
+          'author_name_filter': authorQuery.trim().isEmpty
+              ? null
+              : authorQuery.trim(),
           'organizer_id': null,
           'limit_count': pageSize,
           'offset_count': offset,
@@ -259,6 +282,8 @@ class SupabaseRepositoryRepository implements RepositoryRepository {
         fileName: fileMetadata?['name']?.toString(),
         fileSizeBytes: (fileMetadata?['size'] as num?)?.toInt(),
         fileContentType: fileMetadata?['contentType']?.toString(),
+        hasDownloadableFile:
+            row['full_paper_file_url']?.toString().isNotEmpty ?? false,
       );
     }).toList();
   }

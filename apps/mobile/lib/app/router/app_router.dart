@@ -1,7 +1,9 @@
+import 'package:eventy360/app/application/initial_setup_controller.dart';
 import 'package:eventy360/app/router/app_shell.dart';
 import 'package:eventy360/app/router/route_paths.dart';
 import 'package:eventy360/features/account/presentation/account_screen.dart';
 import 'package:eventy360/features/account/presentation/edit_profile_screen.dart';
+import 'package:eventy360/features/account/presentation/initial_setup_screen.dart';
 import 'package:eventy360/features/account/presentation/security_screen.dart';
 import 'package:eventy360/features/account/presentation/topic_subscriptions_screen.dart';
 import 'package:eventy360/features/auth/application/session_controller.dart';
@@ -29,11 +31,13 @@ import 'package:go_router/go_router.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final session = ref.watch(sessionControllerProvider);
+  final initialSetupCompleted = ref.watch(initialSetupControllerProvider);
   return GoRouter(
     initialLocation: RoutePaths.splash,
     redirect: (context, state) => appRedirect(
       session: session,
       location: state.matchedLocation,
+      initialSetupCompleted: initialSetupCompleted,
     ),
     routes: [
       GoRoute(
@@ -43,6 +47,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RoutePaths.onboarding,
         builder: (context, state) => const OnboardingScreen(),
+      ),
+      GoRoute(
+        path: RoutePaths.initialSetup,
+        builder: (context, state) => const InitialSetupScreen(),
       ),
       GoRoute(
         path: RoutePaths.signIn,
@@ -205,6 +213,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 String? appRedirect({
   required AsyncValue<SessionState> session,
   required String location,
+  required bool initialSetupCompleted,
 }) {
   if (session.isLoading) {
     return location == RoutePaths.splash ? null : RoutePaths.splash;
@@ -236,6 +245,18 @@ String? appRedirect({
 
   if (!current.profileCompleted && location != RoutePaths.profileGate) {
     return RoutePaths.profileGate;
+  }
+
+  if (current.profileCompleted &&
+      !initialSetupCompleted &&
+      location != RoutePaths.initialSetup) {
+    return RoutePaths.initialSetup;
+  }
+
+  if (current.profileCompleted &&
+      initialSetupCompleted &&
+      location == RoutePaths.initialSetup) {
+    return RoutePaths.home;
   }
 
   if (location == RoutePaths.splash ||
