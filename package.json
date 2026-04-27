@@ -10,7 +10,7 @@
     "typecheck:web": "pnpm --dir apps/web typecheck",
     "build:web": "pnpm --dir apps/web build",
     "check:web": "pnpm --dir apps/web lint && pnpm --dir apps/web typecheck && pnpm --dir apps/web build",
-    "check:repo": "node -e \"const fs=require('fs'); ['apps/web/package.json','apps/mobile/.gitkeep','supabase/config.toml','docs/architecture.md','.github/workflows/ci.yml'].forEach((p)=>{ if(!fs.existsSync(p)){ console.error('Missing '+p); process.exitCode=1; }});\""
+    "check:repo": "node -e \"const fs=require('fs'); ['apps/web/package.json','apps/mobile/pubspec.yaml','supabase/config.toml','docs/architecture.md','.github/workflows/ci.yml'].forEach((p)=>{ if(!fs.existsSync(p)){ console.error('Missing '+p); process.exitCode=1; }});\""
   },
   "packageManager": "pnpm@10.23.0+sha512.21c4e5698002ade97e4efe8b8b4a89a8de3c85a37919f957e7a0f30f38fbc5bbdd05980ffe29179b2fb6e6e691242e098d945d1601772cad0fef5fb6411e2a4b",
   "engines": {

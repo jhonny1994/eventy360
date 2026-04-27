@@ -174,7 +174,7 @@ export default async function EventManagementPage({ params }: EventManagementPag
       profiles: {
         id: item.submitted_by,
         full_name: researcherNamesMap.get(item.submitted_by),
-        email: `user-${item.submitted_by.substring(0, 8)}@example.com` // Placeholder email
+        email: '',
       }
     }));
   }
