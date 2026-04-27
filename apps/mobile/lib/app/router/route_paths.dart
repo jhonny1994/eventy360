@@ -3,6 +3,7 @@ class RoutePaths {
 
   static const splash = '/splash';
   static const onboarding = '/onboarding';
+  static const initialSetup = '/initial-setup';
   static const signIn = '/auth/sign-in';
   static const signUp = '/auth/sign-up';
   static const resetPassword = '/auth/reset';

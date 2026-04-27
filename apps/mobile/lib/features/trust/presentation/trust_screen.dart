@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:eventy360/app/application/app_settings_provider.dart';
 import 'package:eventy360/app/router/route_paths.dart';
 import 'package:eventy360/core/presentation/app_feedback.dart';
 import 'package:eventy360/core/presentation/widgets/app_error_view.dart';
 import 'package:eventy360/core/presentation/widgets/app_inline_message.dart';
 import 'package:eventy360/core/presentation/widgets/app_loading_view.dart';
 import 'package:eventy360/core/presentation/widgets/app_page_scaffold.dart';
+import 'package:eventy360/features/account/application/subscription_overview_provider.dart';
 import 'package:eventy360/features/trust/application/trust_controller.dart';
 import 'package:eventy360/features/trust/domain/trust_models.dart';
 import 'package:eventy360/l10n/generated/l10n.dart';
@@ -86,6 +88,8 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
   Widget build(BuildContext context) {
     final localizations = S.of(context);
     final trustState = ref.watch(trustControllerProvider);
+    final subscriptionOverview = ref.watch(subscriptionOverviewProvider);
+    final appSettings = ref.watch(appPaymentSettingsProvider).asData?.value;
     final state = trustState.asData?.value;
     final controller = ref.read(trustControllerProvider.notifier);
 
@@ -119,6 +123,69 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
                     title: localizations.secureDocsTitle,
                     subtitle: localizations.secureDocsBody,
                     child: const SizedBox.shrink(),
+                  ),
+                  AppSectionCard(
+                    title: localizations.subscriptionStatusTitle,
+                    subtitle: localizations.subscriptionOverviewBody,
+                    child: subscriptionOverview.when(
+                      data: (overview) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            overview.hasSubscription
+                                ? _subscriptionStatusLabel(
+                                    localizations,
+                                    overview.status,
+                                  )
+                                : localizations.subscriptionInactive,
+                            style: Theme.of(context).textTheme.titleSmall
+                                ?.copyWith(fontWeight: FontWeight.w700),
+                          ),
+                          if ((overview.daysRemaining ?? 0) > 0) ...[
+                            const SizedBox(height: 6),
+                            Text(
+                              localizations.subscriptionDaysRemaining(
+                                overview.daysRemaining!,
+                              ),
+                            ),
+                          ],
+                          if (appSettings != null) ...[
+                            const SizedBox(height: 10),
+                            Text(
+                              localizations.paymentTrustFlowHint,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ],
+                          const SizedBox(height: 14),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: FilledButton.icon(
+                                  onPressed: () =>
+                                      context.push(RoutePaths.reportPayment),
+                                  icon: const Icon(
+                                    Icons.upload_file_outlined,
+                                  ),
+                                  label: Text(
+                                    localizations.reportPaymentTitle,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: FilledButton.tonalIcon(
+                                  onPressed: () => context.push(RoutePaths.account),
+                                  icon: const Icon(Icons.manage_accounts_outlined),
+                                  label: Text(localizations.accountTitle),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      error: (error, _) => Text(error.toString()),
+                      loading: () => const LinearProgressIndicator(),
+                    ),
                   ),
                   AppSectionCard(
                     title: localizations.verificationCenterTitle,
@@ -227,7 +294,7 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
                   ),
                   AppSectionCard(
                     title: localizations.paymentHistoryTitle,
-                    subtitle: localizations.reportPaymentOverviewBody,
+                    subtitle: localizations.paymentHistoryBody,
                     trailing: FilledButton.tonalIcon(
                       onPressed: () => context.push(RoutePaths.reportPayment),
                       icon: const Icon(Icons.receipt_long_outlined),
@@ -432,4 +499,14 @@ String _formatDate(DateTime date) {
   final mm = date.month.toString().padLeft(2, '0');
   final dd = date.day.toString().padLeft(2, '0');
   return '${date.year}-$mm-$dd';
+}
+
+String _subscriptionStatusLabel(S localizations, String? status) {
+  return switch (status) {
+    'trial' => localizations.subscriptionTrialHeadline,
+    'active' => localizations.subscriptionActiveHeadline,
+    'expired' => localizations.subscriptionExpiredHeadline,
+    'cancelled' => localizations.subscriptionCancelledHeadline,
+    _ => localizations.subscriptionInactive,
+  };
 }

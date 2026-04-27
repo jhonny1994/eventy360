@@ -61,7 +61,7 @@
   - [x] 2.5.7 Add account overview sections for profile state, verification state, subscription state, and sign out
   - [x] 2.5.8 Add dedicated profile edit flow from mobile account area
   - [x] 2.5.9 Add dedicated security entry point from mobile account area
-  - [ ] 2.5.10 Revisit onboarding completion so first-run flow leads into language/theme/topics/account-aware shell
+  - [x] 2.5.10 Revisit onboarding completion so first-run flow leads into language/theme/topics/account-aware shell
   - [x] 2.6 Add auth/home tests: provider tests, widget flow tests, and basic navigation tests
   - [ ] 2.7 Run milestone manual validation #1: auth, onboarding, profile gate, home
 
@@ -107,11 +107,11 @@
   - [x] 5.5 Add secure handling UX for sensitive docs and file operation errors
   - [x] 5.6 Add trust/repository tests including edge and error paths
   - [x] 5.6.1 Re-house trust flows under account while preserving clear verification and payment entry points
-  - [ ] 5.6.2 Add subscription overview and subscription resolution path in mobile account UX
-  - [ ] 5.6.3 Add payment history/report split that matches current product semantics
-  - [ ] 5.6.4 Add payment instructions and expectations before proof submission
-  - [ ] 5.6.5 Expand repository filters and repository detail metadata toward web parity
-  - [ ] 5.6.6 Add repository back-navigation, premium-context messaging, and download confidence cues
+  - [x] 5.6.2 Add subscription overview and subscription resolution path in mobile account UX
+  - [x] 5.6.3 Add payment history/report split that matches current product semantics
+  - [x] 5.6.4 Add payment instructions and expectations before proof submission
+  - [x] 5.6.5 Expand repository filters and repository detail metadata toward web parity
+  - [x] 5.6.6 Add repository back-navigation, premium-context messaging, and download confidence cues
   - [ ] 5.7 Run milestone manual validation #4: verification, payment, repository
 
 - [ ] 6.0 Add phase-by-phase automated checks and milestone manual validation

@@ -82,7 +82,7 @@ final class RepositoryControllerProvider
 }
 
 String _$repositoryControllerHash() =>
-    r'94191aaabbaeca70c7642e15b8dd5e17ff8da609';
+    r'd697e156f2476551c7cadc47f88f56b461ec93c5';
 
 abstract class _$RepositoryController extends $AsyncNotifier<RepositoryState> {
   FutureOr<RepositoryState> build();
