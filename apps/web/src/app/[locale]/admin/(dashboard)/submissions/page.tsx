@@ -242,34 +242,37 @@ export default async function AdminSubmissionsPage({
         { data: eventsData, error: eventsError },
         { data: feedbackData, error: feedbackError },
       ] = await Promise.all([
-        supabase
-          .from("profiles")
-          .select(
-            `
-            id,
-            researcher_profiles(
-              name,
-              profile_picture_url
-            )
-          `
-          )
-          .in("id", researcherIds.length ? researcherIds : ['placeholder-id']),
-        supabase
-          .from("events")
-          .select(
-            `
-            id,
-            event_name_translations
-          `
-          )
-          .in("id", eventIds.length ? eventIds : ['placeholder-id']),
-        supabase
-          .from("submission_feedback")
-          .select("*")
-          .in(
-            "submission_version_id",
-            versionIds.length ? versionIds : ['placeholder-id']
-          ),
+        researcherIds.length === 0
+          ? Promise.resolve({ data: [], error: null })
+          : supabase
+              .from("profiles")
+              .select(
+                `
+                id,
+                researcher_profiles(
+                  name,
+                  profile_picture_url
+                )
+              `
+              )
+              .in("id", researcherIds),
+        eventIds.length === 0
+          ? Promise.resolve({ data: [], error: null })
+          : supabase
+              .from("events")
+              .select(
+                `
+                id,
+                event_name_translations
+              `
+              )
+              .in("id", eventIds),
+        versionIds.length === 0
+          ? Promise.resolve({ data: [], error: null })
+          : supabase
+              .from("submission_feedback")
+              .select("*")
+              .in("submission_version_id", versionIds),
       ]);
 
       if (researchersError) {
@@ -284,8 +287,8 @@ export default async function AdminSubmissionsPage({
         // Continue with partial data
       }
 
-      // Transform data only if we have valid related data
-      if (researchersData && eventsData) {
+        // Transform data only if we have valid related data
+        if (researchersData && eventsData) {
         // Transform data to include researcher names, event names, and feedback
         submissionsData.forEach(submission => {
           const researcher = researchersData.find(
@@ -365,7 +368,7 @@ export default async function AdminSubmissionsPage({
             file_url: submission.full_paper_file_url,
           });
         });
-      }
+        }
     } catch {
       // Error processing data - UI shows empty state
     }

@@ -1,0 +1,145 @@
+import 'package:firebase_messaging/firebase_messaging.dart' as fcm;
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+
+enum PushAuthorizationStatus {
+  authorized,
+  provisional,
+  denied,
+  notDetermined,
+}
+
+class PushNotificationMessage {
+  const PushNotificationMessage({
+    required this.data,
+    this.title,
+    this.body,
+  });
+
+  final Map<String, dynamic> data;
+  final String? title;
+  final String? body;
+}
+
+abstract class PushNotificationService {
+  Future<PushAuthorizationStatus> getPermissionStatus();
+  Future<PushAuthorizationStatus> requestPermission();
+  Future<String?> getToken();
+  Stream<PushNotificationMessage> onForegroundMessage();
+  Stream<PushNotificationMessage> onMessageOpenedApp();
+  Future<PushNotificationMessage?> getInitialMessage();
+  Future<void> registerTokenToBackend({
+    required String token,
+    required String topicId,
+  });
+  Future<void> unregisterTokenFromBackend({
+    required String token,
+    required String topicId,
+  });
+}
+
+class FirebasePushNotificationService implements PushNotificationService {
+  FirebasePushNotificationService();
+
+  fcm.FirebaseMessaging get _messaging => fcm.FirebaseMessaging.instance;
+
+  @override
+  Future<PushAuthorizationStatus> getPermissionStatus() async {
+    final settings = await _messaging.getNotificationSettings();
+    return switch (settings.authorizationStatus) {
+      fcm.AuthorizationStatus.authorized => PushAuthorizationStatus.authorized,
+      fcm.AuthorizationStatus.provisional =>
+        PushAuthorizationStatus.provisional,
+      fcm.AuthorizationStatus.denied => PushAuthorizationStatus.denied,
+      _ => PushAuthorizationStatus.notDetermined,
+    };
+  }
+
+  @override
+  Future<PushAuthorizationStatus> requestPermission() async {
+    final settings = await _messaging.requestPermission();
+    return switch (settings.authorizationStatus) {
+      fcm.AuthorizationStatus.authorized => PushAuthorizationStatus.authorized,
+      fcm.AuthorizationStatus.provisional =>
+        PushAuthorizationStatus.provisional,
+      fcm.AuthorizationStatus.denied => PushAuthorizationStatus.denied,
+      _ => PushAuthorizationStatus.notDetermined,
+    };
+  }
+
+  @override
+  Future<String?> getToken() => _messaging.getToken();
+
+  @override
+  Stream<PushNotificationMessage> onForegroundMessage() {
+    return fcm.FirebaseMessaging.onMessage.map(
+      (message) => PushNotificationMessage(
+        data: message.data,
+        title: message.notification?.title,
+        body: message.notification?.body,
+      ),
+    );
+  }
+
+  @override
+  Stream<PushNotificationMessage> onMessageOpenedApp() {
+    return fcm.FirebaseMessaging.onMessageOpenedApp.map(
+      (message) => PushNotificationMessage(
+        data: message.data,
+        title: message.notification?.title,
+        body: message.notification?.body,
+      ),
+    );
+  }
+
+  @override
+  Future<PushNotificationMessage?> getInitialMessage() async {
+    final message = await _messaging.getInitialMessage();
+    if (message == null) {
+      return null;
+    }
+    return PushNotificationMessage(
+      data: message.data,
+      title: message.notification?.title,
+      body: message.notification?.body,
+    );
+  }
+
+  @override
+  Future<void> registerTokenToBackend({
+    required String token,
+    required String topicId,
+  }) async {
+    final client = supabase.Supabase.instance.client;
+    final userId = client.auth.currentUser?.id;
+    if (userId == null) {
+      throw StateError(
+        'User must be authenticated to register a device token.',
+      );
+    }
+    await client.from('device_tokens').upsert({
+      'profile_id': userId,
+      'token': token,
+      'topic_id': topicId,
+    });
+  }
+
+  @override
+  Future<void> unregisterTokenFromBackend({
+    required String token,
+    required String topicId,
+  }) async {
+    final client = supabase.Supabase.instance.client;
+    final userId = client.auth.currentUser?.id;
+    if (userId == null) {
+      throw StateError(
+        'User must be authenticated to unregister a device token.',
+      );
+    }
+    await client
+        .from('device_tokens')
+        .delete()
+        .eq('profile_id', userId)
+        .eq('token', token)
+        .eq('topic_id', topicId);
+  }
+}

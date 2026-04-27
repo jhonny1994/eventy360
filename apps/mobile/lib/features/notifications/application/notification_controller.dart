@@ -1,0 +1,124 @@
+import 'dart:async';
+
+import 'package:eventy360/features/notifications/application/notification_state.dart';
+import 'package:eventy360/features/notifications/infrastructure/push_notification_service.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'notification_controller.g.dart';
+
+@Riverpod(keepAlive: true)
+PushNotificationService pushNotificationService(Ref ref) {
+  return FirebasePushNotificationService();
+}
+
+@Riverpod(keepAlive: true)
+class NotificationController extends _$NotificationController {
+  StreamSubscription<PushNotificationMessage>? _openedSub;
+  StreamSubscription<PushNotificationMessage>? _foregroundSub;
+
+  @override
+  Future<NotificationState> build() async {
+    ref.onDispose(() {
+      unawaited(_openedSub?.cancel());
+      unawaited(_foregroundSub?.cancel());
+    });
+    final service = ref.watch(pushNotificationServiceProvider);
+    final initialMessage = await service.getInitialMessage();
+    final initialEventId = _extractEventId(initialMessage?.data);
+    final currentSettings = await service.getPermissionStatus();
+    final permissionGranted =
+        currentSettings == PushAuthorizationStatus.authorized ||
+        currentSettings == PushAuthorizationStatus.provisional;
+
+    _foregroundSub = service.onForegroundMessage().listen((message) {
+      final current = state.asData?.value ?? NotificationState.initial();
+      state = AsyncData(
+        current.copyWith(
+          foregroundTitle: message.title,
+          foregroundBody: message.body,
+          foregroundEventId: _extractEventId(message.data),
+          foregroundMessageSerial: current.foregroundMessageSerial + 1,
+        ),
+      );
+    });
+
+    _openedSub = service.onMessageOpenedApp().listen((message) {
+      final eventId = _extractEventId(message.data);
+      if (eventId != null) {
+        final current = state.asData?.value ?? NotificationState.initial();
+        state = AsyncData(current.copyWith(pendingEventId: eventId));
+      }
+    });
+
+    return NotificationState.initial().copyWith(
+      pendingEventId: initialEventId,
+      permissionGranted: permissionGranted,
+    );
+  }
+
+  Future<void> requestPermissionForTopicIntent() async {
+    final current = state.asData?.value ?? NotificationState.initial();
+    final settings = await ref
+        .read(pushNotificationServiceProvider)
+        .requestPermission();
+    final granted =
+        settings == PushAuthorizationStatus.authorized ||
+        settings == PushAuthorizationStatus.provisional;
+    state = AsyncData(current.copyWith(permissionGranted: granted));
+  }
+
+  Future<void> registerCurrentToken({required String topicId}) async {
+    final service = ref.read(pushNotificationServiceProvider);
+    final token = await service.getToken();
+    if (token == null) {
+      throw StateError(
+        'FCM token is unavailable. Notification registration cannot continue.',
+      );
+    }
+    await service.registerTokenToBackend(token: token, topicId: topicId);
+  }
+
+  Future<void> unregisterCurrentToken({required String topicId}) async {
+    final service = ref.read(pushNotificationServiceProvider);
+    final token = await service.getToken();
+    if (token == null) {
+      throw StateError(
+        'FCM token is unavailable. Notification unregistration cannot continue.',
+      );
+    }
+    await service.unregisterTokenFromBackend(token: token, topicId: topicId);
+  }
+
+  void clearPendingEvent() {
+    final current = state.asData?.value;
+    if (current == null) {
+      return;
+    }
+    state = AsyncData(current.copyWith(pendingEventId: null));
+  }
+
+  void clearForeground() {
+    final current = state.asData?.value;
+    if (current == null) {
+      return;
+    }
+    state = AsyncData(
+      current.copyWith(
+        foregroundTitle: null,
+        foregroundBody: null,
+        foregroundEventId: null,
+      ),
+    );
+  }
+
+  String? _extractEventId(Map<String, dynamic>? data) {
+    if (data == null) {
+      return null;
+    }
+    final eventId = data['event_id']?.toString();
+    if (eventId == null || eventId.isEmpty) {
+      return null;
+    }
+    return eventId;
+  }
+}
