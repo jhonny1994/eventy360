@@ -21,6 +21,7 @@ class PushNotificationMessage {
 }
 
 abstract class PushNotificationService {
+  Future<PushAuthorizationStatus> getPermissionStatus();
   Future<PushAuthorizationStatus> requestPermission();
   Future<String?> getToken();
   Stream<PushNotificationMessage> onForegroundMessage();
@@ -40,6 +41,18 @@ class FirebasePushNotificationService implements PushNotificationService {
   FirebasePushNotificationService();
 
   fcm.FirebaseMessaging get _messaging => fcm.FirebaseMessaging.instance;
+
+  @override
+  Future<PushAuthorizationStatus> getPermissionStatus() async {
+    final settings = await _messaging.getNotificationSettings();
+    return switch (settings.authorizationStatus) {
+      fcm.AuthorizationStatus.authorized => PushAuthorizationStatus.authorized,
+      fcm.AuthorizationStatus.provisional =>
+        PushAuthorizationStatus.provisional,
+      fcm.AuthorizationStatus.denied => PushAuthorizationStatus.denied,
+      _ => PushAuthorizationStatus.notDetermined,
+    };
+  }
 
   @override
   Future<PushAuthorizationStatus> requestPermission() async {

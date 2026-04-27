@@ -30,9 +30,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "abstractEnLabel": MessageLookupByLibrary.simpleMessage(
       "Abstract (English, optional)",
     ),
+    "accountActionsTitle": MessageLookupByLibrary.simpleMessage(
+      "Account actions",
+    ),
     "accountCreated": MessageLookupByLibrary.simpleMessage(
       "Account created successfully.",
     ),
+    "accountHeroBody": MessageLookupByLibrary.simpleMessage(
+      "Manage trust, preferences, language, theme, and alerts from one clear place.",
+    ),
+    "accountHeroTitle": MessageLookupByLibrary.simpleMessage(
+      "Control your researcher experience",
+    ),
+    "accountOverviewTitle": MessageLookupByLibrary.simpleMessage(
+      "Account overview",
+    ),
+    "accountTitle": MessageLookupByLibrary.simpleMessage("Account"),
     "activeSubmissionsCount": m0,
     "activeSubmissionsTitle": MessageLookupByLibrary.simpleMessage(
       "Active submissions",
@@ -66,6 +79,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "dairaLabel": MessageLookupByLibrary.simpleMessage("Daira"),
     "deadline": MessageLookupByLibrary.simpleMessage("Deadline"),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
+    "enableNotificationsAction": MessageLookupByLibrary.simpleMessage(
+      "Enable notifications",
+    ),
     "eventDetailsOverviewBody": MessageLookupByLibrary.simpleMessage(
       "Review the event timing, location, topics, and next actions before bookmarking or submitting.",
     ),
@@ -101,14 +117,45 @@ class MessageLookup extends MessageLookupByLibrary {
     "haveAccountSignIn": MessageLookupByLibrary.simpleMessage(
       "Already have an account? Sign in",
     ),
+    "homeDiscoverEventsBody": MessageLookupByLibrary.simpleMessage(
+      "Browse live opportunities, bookmark what matters, and start a submission from the right event.",
+    ),
+    "homeHeroBody": MessageLookupByLibrary.simpleMessage(
+      "See what needs attention now, continue your current work, and move into the right workflow without clutter.",
+    ),
+    "homeHeroTitle": MessageLookupByLibrary.simpleMessage(
+      "Your research day is organized",
+    ),
+    "homeManageAccountBody": MessageLookupByLibrary.simpleMessage(
+      "Adjust preferences, trust status, and sign-in settings from one stable destination.",
+    ),
+    "homeNextActionTitle": MessageLookupByLibrary.simpleMessage(
+      "Next best action",
+    ),
     "homeOverviewBody": MessageLookupByLibrary.simpleMessage(
       "Track your account health, critical deadlines, submissions, and researcher tools from one calm control center.",
+    ),
+    "homeQuickLinksBody": MessageLookupByLibrary.simpleMessage(
+      "Jump into your core researcher areas without turning home into a crowded menu.",
+    ),
+    "homeQuickLinksTitle": MessageLookupByLibrary.simpleMessage("Quick links"),
+    "homeResumeSubmissionBody": MessageLookupByLibrary.simpleMessage(
+      "Review your active submissions and continue the next required step.",
+    ),
+    "homeStateSummaryBody": MessageLookupByLibrary.simpleMessage(
+      "Keep your trust, subscription, deadline, and submission state visible at a glance.",
+    ),
+    "homeStateSummaryTitle": MessageLookupByLibrary.simpleMessage(
+      "Current status summary",
     ),
     "homeSubtitle": MessageLookupByLibrary.simpleMessage(
       "Your command center is ready.",
     ),
     "homeTitle": MessageLookupByLibrary.simpleMessage("Researcher Home"),
     "institution": MessageLookupByLibrary.simpleMessage("Institution"),
+    "languageArabic": MessageLookupByLibrary.simpleMessage("Arabic"),
+    "languageEnglish": MessageLookupByLibrary.simpleMessage("English"),
+    "languagePreferenceTitle": MessageLookupByLibrary.simpleMessage("Language"),
     "latestRequestLabel": MessageLookupByLibrary.simpleMessage(
       "Latest request",
     ),
@@ -137,6 +184,24 @@ class MessageLookup extends MessageLookupByLibrary {
     "notificationEducationTitle": MessageLookupByLibrary.simpleMessage(
       "Notification setup",
     ),
+    "notificationPreferencesBody": MessageLookupByLibrary.simpleMessage(
+      "Control how the app handles topic alerts and open system settings if Android has already blocked notifications.",
+    ),
+    "notificationPreferencesTitle": MessageLookupByLibrary.simpleMessage(
+      "Notification preferences",
+    ),
+    "notificationsDisabledBody": MessageLookupByLibrary.simpleMessage(
+      "Enable notifications so important topic alerts can reach you on time.",
+    ),
+    "notificationsEnabledBody": MessageLookupByLibrary.simpleMessage(
+      "Topic alerts are available when you subscribe to relevant subjects.",
+    ),
+    "notificationsEnabledStatus": MessageLookupByLibrary.simpleMessage(
+      "Notifications enabled",
+    ),
+    "notificationsNotEnabledStatus": MessageLookupByLibrary.simpleMessage(
+      "Notifications not enabled",
+    ),
     "onboardingBody": MessageLookupByLibrary.simpleMessage(
       "Complete your researcher workflow from mobile with fewer steps.",
     ),
@@ -160,6 +225,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "onboardingTitle": MessageLookupByLibrary.simpleMessage(
       "Welcome to Eventy360",
+    ),
+    "openSystemSettingsAction": MessageLookupByLibrary.simpleMessage(
+      "Open system settings",
     ),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
     "passwordTooShort": MessageLookupByLibrary.simpleMessage(
@@ -200,6 +268,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "pickVerificationDocument": MessageLookupByLibrary.simpleMessage(
       "Choose verification document",
     ),
+    "preferencesBody": MessageLookupByLibrary.simpleMessage(
+      "Adjust appearance, language, and alert behavior without leaving the app flow.",
+    ),
+    "preferencesTitle": MessageLookupByLibrary.simpleMessage("Preferences"),
     "profileCompleted": MessageLookupByLibrary.simpleMessage(
       "Profile completed",
     ),
@@ -271,6 +343,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "requiredField": MessageLookupByLibrary.simpleMessage(
       "This field is required.",
     ),
+    "researcherAccessBody": MessageLookupByLibrary.simpleMessage(
+      "Review trust and access-related steps in focused screens when you need them.",
+    ),
+    "researcherAccessTitle": MessageLookupByLibrary.simpleMessage(
+      "Researcher access",
+    ),
     "resetEmailSent": MessageLookupByLibrary.simpleMessage(
       "Password reset email was sent.",
     ),
@@ -279,6 +357,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Recover access securely with a reset link, or finish a password recovery session without losing context.",
     ),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
+    "reviewSubmissionsAction": MessageLookupByLibrary.simpleMessage(
+      "Review submissions",
+    ),
     "revisionNotesLabel": MessageLookupByLibrary.simpleMessage(
       "Revision notes (optional)",
     ),
@@ -408,8 +489,27 @@ class MessageLookup extends MessageLookupByLibrary {
     "subscriptionStatusTitle": MessageLookupByLibrary.simpleMessage(
       "Subscription status",
     ),
+    "themeDark": MessageLookupByLibrary.simpleMessage("Dark"),
+    "themeLight": MessageLookupByLibrary.simpleMessage("Light"),
+    "themePreferenceTitle": MessageLookupByLibrary.simpleMessage("Theme"),
+    "themeSystem": MessageLookupByLibrary.simpleMessage("Follow system"),
     "topicSubscriptionHint": MessageLookupByLibrary.simpleMessage(
       "Subscribe to topics to receive push alerts.",
+    ),
+    "topicSubscriptionsBody": MessageLookupByLibrary.simpleMessage(
+      "Manage your research interests and notification topics.",
+    ),
+    "topicSubscriptionsEmptyState": MessageLookupByLibrary.simpleMessage(
+      "No topics are available right now.",
+    ),
+    "topicSubscriptionsManageBody": MessageLookupByLibrary.simpleMessage(
+      "Choose the topics you want to follow. We request notification permission when you subscribe so prompts stay contextual.",
+    ),
+    "topicSubscriptionsManageTitle": MessageLookupByLibrary.simpleMessage(
+      "Manage alert topics",
+    ),
+    "topicSubscriptionsTitle": MessageLookupByLibrary.simpleMessage(
+      "Topic subscriptions",
     ),
     "trustCenterTitle": MessageLookupByLibrary.simpleMessage("Trust Center"),
     "trustOverviewBody": MessageLookupByLibrary.simpleMessage(

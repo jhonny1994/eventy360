@@ -115,6 +115,9 @@ class _FakePushNotificationService implements PushNotificationService {
   Future<PushNotificationMessage?> getInitialMessage() async => initial;
 
   @override
+  Future<PushAuthorizationStatus> getPermissionStatus() async => permission;
+
+  @override
   Future<String?> getToken() async => 'fake-token';
 
   @override

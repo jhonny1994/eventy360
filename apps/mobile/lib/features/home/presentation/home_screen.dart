@@ -1,5 +1,4 @@
 import 'package:eventy360/app/router/route_paths.dart';
-import 'package:eventy360/app/theme/theme_mode_controller.dart';
 import 'package:eventy360/core/presentation/widgets/app_page_scaffold.dart';
 import 'package:eventy360/features/auth/application/session_controller.dart';
 import 'package:eventy360/features/events/application/events_controller.dart';
@@ -33,26 +32,19 @@ class HomeScreen extends ConsumerWidget {
         : localizations.notVerifiedStatus;
     final nearestDeadline = _nearestDeadline(eventsState?.events ?? const []);
     final activeSubmissionCount = submissionsState?.submissions.length ?? 0;
+    final nextActionRoute = activeSubmissionCount > 0
+        ? RoutePaths.submissions
+        : RoutePaths.events;
+    final nextActionLabel = activeSubmissionCount > 0
+        ? localizations.reviewSubmissionsAction
+        : localizations.exploreEvents;
+    final nextActionDescription = activeSubmissionCount > 0
+        ? localizations.homeResumeSubmissionBody
+        : localizations.homeDiscoverEventsBody;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(localizations.homeTitle),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              final current = ref.read(themeModeControllerProvider);
-              final next = switch (current) {
-                ThemeMode.system => ThemeMode.light,
-                ThemeMode.light => ThemeMode.dark,
-                ThemeMode.dark => ThemeMode.system,
-              };
-              await ref
-                  .read(themeModeControllerProvider.notifier)
-                  .setThemeMode(next);
-            },
-            icon: const Icon(Icons.brightness_6_outlined),
-          ),
-        ],
       ),
       body: AppPageContainer(
         child: ListView(
@@ -61,42 +53,35 @@ class HomeScreen extends ConsumerWidget {
             AppPageHero(
               badge: localizations.authResearcherBadge,
               icon: Icons.space_dashboard_outlined,
-              title: localizations.homeSubtitle,
-              subtitle: localizations.homeOverviewBody,
-              trailing: OutlinedButton(
-                onPressed: () =>
-                    ref.read(sessionControllerProvider.notifier).signOut(),
-                child: Text(localizations.signOut),
-              ),
+              title: localizations.homeHeroTitle,
+              subtitle: localizations.homeHeroBody,
             ),
             AppSectionCard(
-              title: localizations.signedInAs,
-              subtitle: userEmail,
-              leading: const Icon(Icons.alternate_email_rounded),
-              child: Wrap(
-                spacing: 12,
-                runSpacing: 12,
+              title: localizations.homeNextActionTitle,
+              subtitle: nextActionDescription,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  AppStatusBadge(
-                    label: verificationStatus,
-                    tone: session?.isVerified == true
-                        ? AppStatusTone.success
-                        : AppStatusTone.neutral,
+                  FilledButton.icon(
+                    onPressed: () => context.go(nextActionRoute),
+                    icon: Icon(
+                      activeSubmissionCount > 0
+                          ? Icons.assignment_outlined
+                          : Icons.travel_explore_outlined,
+                    ),
+                    label: Text(nextActionLabel),
                   ),
-                  AppStatusBadge(
-                    label: hasPremiumSubscription
-                        ? localizations.subscriptionActive
-                        : localizations.subscriptionInactive,
-                    tone: hasPremiumSubscription
-                        ? AppStatusTone.info
-                        : AppStatusTone.neutral,
+                  const SizedBox(height: 12),
+                  Text(
+                    userEmail,
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
               ),
             ),
             AppSectionCard(
-              title: localizations.homeTitle,
-              subtitle: localizations.homeOverviewBody,
+              title: localizations.homeStateSummaryTitle,
+              subtitle: localizations.homeStateSummaryBody,
               child: Column(
                 children: [
                   _MetricRow(
@@ -132,55 +117,45 @@ class HomeScreen extends ConsumerWidget {
               ),
             ),
             AppSectionCard(
-              title: localizations.notificationEducationTitle,
-              subtitle: localizations.notificationEducationBody,
-              leading: const Icon(Icons.notifications_active_outlined),
-              child: const SizedBox.shrink(),
-            ),
-            AppSectionCard(
-              title: localizations.exploreEvents,
-              subtitle: localizations.homeSubtitle,
+              title: localizations.homeQuickLinksTitle,
+              subtitle: localizations.homeQuickLinksBody,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Semantics(
-                    button: true,
-                    label: localizations.exploreEvents,
-                    child: FilledButton.icon(
-                      onPressed: () => context.go(RoutePaths.events),
-                      icon: const Icon(Icons.event_note_outlined),
-                      label: Text(localizations.exploreEvents),
-                    ),
+                  _QuickLinkTile(
+                    icon: Icons.event_note_outlined,
+                    title: localizations.exploreEvents,
+                    subtitle: localizations.homeDiscoverEventsBody,
+                    onTap: () => context.go(RoutePaths.events),
                   ),
-                  const SizedBox(height: 10),
-                  Semantics(
-                    button: true,
-                    label: localizations.submissionsTitle,
-                    child: OutlinedButton.icon(
-                      onPressed: () => context.go(RoutePaths.submissions),
-                      icon: const Icon(Icons.description_outlined),
-                      label: Text(localizations.submissionsTitle),
-                    ),
+                  const Divider(height: 1),
+                  _QuickLinkTile(
+                    icon: Icons.description_outlined,
+                    title: localizations.submissionsTitle,
+                    subtitle: localizations.homeResumeSubmissionBody,
+                    onTap: () => context.go(RoutePaths.submissions),
                   ),
-                  const SizedBox(height: 10),
-                  Semantics(
-                    button: true,
-                    label: localizations.trustCenterTitle,
-                    child: OutlinedButton.icon(
-                      onPressed: () => context.go(RoutePaths.trust),
-                      icon: const Icon(Icons.verified_user_outlined),
-                      label: Text(localizations.trustCenterTitle),
-                    ),
+                  const Divider(height: 1),
+                  _QuickLinkTile(
+                    icon: Icons.manage_accounts_outlined,
+                    title: localizations.accountTitle,
+                    subtitle: localizations.homeManageAccountBody,
+                    onTap: () => context.go(RoutePaths.account),
                   ),
-                  const SizedBox(height: 10),
-                  Semantics(
-                    button: true,
-                    label: localizations.repositoryTitle,
-                    child: OutlinedButton.icon(
-                      onPressed: () => context.go(RoutePaths.repository),
-                      icon: const Icon(Icons.menu_book_outlined),
-                      label: Text(localizations.repositoryTitle),
-                    ),
+                ],
+              ),
+            ),
+            AppSectionCard(
+              title: localizations.notificationEducationTitle,
+              subtitle: localizations.notificationEducationBody,
+              leading: const Icon(Icons.notifications_active_outlined),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: () => context.go(RoutePaths.account),
+                    icon: const Icon(Icons.tune_outlined),
+                    label: Text(localizations.notificationPreferencesTitle),
                   ),
                 ],
               ),
@@ -188,6 +163,32 @@ class HomeScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _QuickLinkTile extends StatelessWidget {
+  const _QuickLinkTile({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: Icon(icon),
+      title: Text(title),
+      subtitle: Text(subtitle),
+      trailing: const Icon(Icons.chevron_right_rounded),
+      onTap: onTap,
     );
   }
 }

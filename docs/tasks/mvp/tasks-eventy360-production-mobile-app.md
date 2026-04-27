@@ -51,14 +51,14 @@
   - [x] 2.3 Build onboarding flow with contextual notification education (no first-launch permission prompt)
   - [x] 2.4 Implement researcher profile completion gate aligned with existing semantics
   - [x] 2.5 Build home dashboard with profile/verification/subscription/deadline/active-submission states
-  - [ ] 2.5.0 Re-architect post-auth mobile shell around stable top-level navigation
-  - [ ] 2.5.1 Replace stacked dashboard home with a task-first mobile home aligned to persistent app navigation
-  - [ ] 2.5.2 Add persistent bottom navigation for top-level researcher destinations
-  - [ ] 2.5.3 Add a dedicated settings/account destination for user preferences and account actions
-  - [ ] 2.5.4 Add in-app language switching wired to `localeControllerProvider`
-  - [ ] 2.5.5 Add discoverable theme controls inside settings/account instead of relying on home app-bar toggle
-  - [ ] 2.5.6 Add notification preferences visibility and platform-settings handoff in settings/account
-  - [ ] 2.5.7 Add account overview sections for profile state, verification state, subscription state, and sign out
+  - [x] 2.5.0 Re-architect post-auth mobile shell around stable top-level navigation
+  - [x] 2.5.1 Replace stacked dashboard home with a task-first mobile home aligned to persistent app navigation
+  - [x] 2.5.2 Add persistent bottom navigation for top-level researcher destinations
+  - [x] 2.5.3 Add a dedicated settings/account destination for user preferences and account actions
+  - [x] 2.5.4 Add in-app language switching wired to `localeControllerProvider`
+  - [x] 2.5.5 Add discoverable theme controls inside settings/account instead of relying on home app-bar toggle
+  - [x] 2.5.6 Add notification preferences visibility and platform-settings handoff in settings/account
+  - [x] 2.5.7 Add account overview sections for profile state, verification state, subscription state, and sign out
   - [ ] 2.5.8 Add dedicated profile edit flow from mobile account area
   - [ ] 2.5.9 Add dedicated security entry point from mobile account area
   - [ ] 2.5.10 Revisit onboarding completion so first-run flow leads into language/theme/topics/account-aware shell
@@ -74,9 +74,9 @@
   - [x] 3.6 Implement push permission request only after topic-intent action
   - [x] 3.7 Implement push deep-link routing into event/topic context
   - [x] 3.8 Add discovery/topic/notification tests including permission and deep-link handling
+  - [x] 3.8.3 Add dedicated topics management page under account
   - [ ] 3.8.1 Separate event filtering from topic subscription management in UX and IA
   - [ ] 3.8.2 Add dedicated saved or bookmarked events view
-  - [ ] 3.8.3 Add dedicated topics management page under account
   - [ ] 3.8.4 Preserve search, filters, and scroll context across event list/detail round-trips
   - [ ] 3.8.5 Expand event detail to include richer event description, timeline, organizer context, and eligibility guidance
   - [ ] 3.8.6 Route duplicate abstract attempts back to the existing submission context instead of creating confusion
