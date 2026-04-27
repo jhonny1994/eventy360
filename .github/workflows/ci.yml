@@ -155,6 +155,12 @@ jobs:
           channel: stable
           cache: true
 
+      - uses: actions/setup-java@v4
+        if: steps.mobile-project.outputs.exists == 'true'
+        with:
+          distribution: temurin
+          java-version: "17"
+
       - name: Install Flutter dependencies
         if: steps.mobile-project.outputs.exists == 'true'
         run: flutter pub get

@@ -22,17 +22,23 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(count) => "${count} ترشيحات نشطة";
 
-  static String m1(date) =>
+  static String m1(count) => "جميع المواضيع متاحة (${count})";
+
+  static String m2(date) =>
       "يشير تقديم الملخصات لهذه الفعالية حالياً إلى ${date} كأقرب موعد نهائي ظاهر.";
 
-  static String m2(email) =>
+  static String m3(email) =>
       "أرسل رابط إعادة تعيين آمن إلى ${email} إذا أردت تغيير كلمة المرور عبر البريد الإلكتروني.";
 
-  static String m3(bankName) => "مرجع البنك الحالي: ${bankName}.";
+  static String m4(count) =>
+      "${Intl.plural(count, zero: 'لا توجد تصفيات مواضيع', one: 'تصفية موضوع واحدة مفعلة', other: '${count} تصفيات مواضيع مفعلة')}";
 
-  static String m4(count) => "المتبقي ${count} يوم";
+  static String m5(bankName) =>
+      "استخدم مرجع البنك ${bankName} عند إرسال إثبات دفع جديد للتفعيل أو التجديد.";
 
-  static String m5(amount, currency, billingPeriod) =>
+  static String m6(count) => "المتبقي ${count} يوم";
+
+  static String m7(amount, currency, billingPeriod) =>
       "المبلغ المقترح: ${amount} ${currency} لفترة ${billingPeriod}.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -62,15 +68,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "accountHeroTitle": MessageLookupByLibrary.simpleMessage(
       "تحكم في تجربتك البحثية",
     ),
-    "accountOverviewTitle": MessageLookupByLibrary.simpleMessage(
-      "نظرة عامة على الحساب",
-    ),
+    "accountOverviewTitle": MessageLookupByLibrary.simpleMessage("حالة الحساب"),
     "accountTitle": MessageLookupByLibrary.simpleMessage("الحساب"),
     "activeSubmissionsCount": m0,
     "activeSubmissionsTitle": MessageLookupByLibrary.simpleMessage(
       "الترشيحات النشطة",
     ),
     "addBookmark": MessageLookupByLibrary.simpleMessage("إضافة إشارة مرجعية"),
+    "allTopicsSummary": m1,
     "appTitle": MessageLookupByLibrary.simpleMessage("إيفنتي 360"),
     "authResearcherBadge": MessageLookupByLibrary.simpleMessage(
       "وصول الباحث عبر الهاتف",
@@ -83,6 +88,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "billingPeriodLabel": MessageLookupByLibrary.simpleMessage("فترة الفوترة"),
     "billingPeriodMonthly": MessageLookupByLibrary.simpleMessage("شهري"),
     "billingPeriodQuarterly": MessageLookupByLibrary.simpleMessage("ربع سنوي"),
+    "bookmarkAddedSuccess": MessageLookupByLibrary.simpleMessage(
+      "تم حفظ الفعالية.",
+    ),
+    "bookmarkRemovedSuccess": MessageLookupByLibrary.simpleMessage(
+      "تمت إزالة الفعالية من المحفوظات.",
+    ),
     "cancelAction": MessageLookupByLibrary.simpleMessage("إلغاء"),
     "completeProfileBody": MessageLookupByLibrary.simpleMessage(
       "قبل استخدام ميزات الباحث، أكمل بيانات ملفك الشخصي.",
@@ -97,9 +108,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "تأكيد كلمة المرور",
     ),
     "continueAction": MessageLookupByLibrary.simpleMessage("متابعة"),
+    "copyLocationAction": MessageLookupByLibrary.simpleMessage("نسخ الموقع"),
     "createAccount": MessageLookupByLibrary.simpleMessage("إنشاء حساب"),
     "dairaLabel": MessageLookupByLibrary.simpleMessage("الدائرة"),
     "deadline": MessageLookupByLibrary.simpleMessage("آخر موعد"),
+    "doneAction": MessageLookupByLibrary.simpleMessage("تم"),
     "draftRestoredMessage": MessageLookupByLibrary.simpleMessage(
       "استعدنا مسودتك قيد العمل حتى تتمكن من المتابعة دون إعادة بناء النموذج.",
     ),
@@ -113,6 +126,29 @@ class MessageLookup extends MessageLookupByLibrary {
     "enableNotificationsAction": MessageLookupByLibrary.simpleMessage(
       "تفعيل الإشعارات",
     ),
+    "eventActionsSectionBody": MessageLookupByLibrary.simpleMessage(
+      "احفظ هذه الفعالية أو واصل إلى مسار التقديم المرتبط بها.",
+    ),
+    "eventActionsSectionTitle": MessageLookupByLibrary.simpleMessage(
+      "الإجراءات",
+    ),
+    "eventAssetsSectionBody": MessageLookupByLibrary.simpleMessage(
+      "افتح المواد البصرية والمساندة الخاصة بالفعالية كما هي معروضة في الويب.",
+    ),
+    "eventAssetsSectionTitle": MessageLookupByLibrary.simpleMessage(
+      "مواد الفعالية",
+    ),
+    "eventAxesSectionTitle": MessageLookupByLibrary.simpleMessage(
+      "محاور الفعالية",
+    ),
+    "eventBrochureAction": MessageLookupByLibrary.simpleMessage("فتح المطوية"),
+    "eventContactSectionBody": MessageLookupByLibrary.simpleMessage(
+      "استخدم قنوات التواصل المباشرة والموقع المرتبطين بهذه الفعالية.",
+    ),
+    "eventContactSectionTitle": MessageLookupByLibrary.simpleMessage(
+      "التواصل والروابط",
+    ),
+    "eventCreatedLabel": MessageLookupByLibrary.simpleMessage("تاريخ الإنشاء"),
     "eventDecisionSupportBody": MessageLookupByLibrary.simpleMessage(
       "تحقق أولاً من الموعد النهائي ومدى الملاءمة وسياق الجهة المنظمة حتى لا تبدأ المسار الخاطئ.",
     ),
@@ -131,25 +167,73 @@ class MessageLookup extends MessageLookupByLibrary {
     "eventEligibilityTitle": MessageLookupByLibrary.simpleMessage(
       "الملاءمة والأهلية",
     ),
+    "eventEndsLabel": MessageLookupByLibrary.simpleMessage("نهاية الفعالية"),
+    "eventFeeLabel": MessageLookupByLibrary.simpleMessage("الرسوم"),
+    "eventFormatLabel": MessageLookupByLibrary.simpleMessage("الصيغة"),
+    "eventFreeLabel": MessageLookupByLibrary.simpleMessage("مجاني"),
+    "eventHeaderSummaryBody": MessageLookupByLibrary.simpleMessage(
+      "راجع مالك الفعالية والبيانات الأساسية والحالة والتكلفة قبل الدخول في تفاصيل النداء.",
+    ),
+    "eventLocationSectionTitle": MessageLookupByLibrary.simpleMessage("الموقع"),
+    "eventLogoTitle": MessageLookupByLibrary.simpleMessage("شعار الفعالية"),
     "eventNotFound": MessageLookupByLibrary.simpleMessage(
       "لم يتم العثور على الفعالية.",
     ),
+    "eventObjectivesTitle": MessageLookupByLibrary.simpleMessage("الأهداف"),
     "eventOrganizerBody": MessageLookupByLibrary.simpleMessage(
       "إذا بدا أي شيء غير واضح، فاعتبر هذه الشاشة مرجعك قبل الالتزام بالتقديم.",
     ),
     "eventOrganizerTitle": MessageLookupByLibrary.simpleMessage(
       "سياق الجهة المنظمة",
     ),
+    "eventProblemStatementTitle": MessageLookupByLibrary.simpleMessage(
+      "إشكالية الفعالية",
+    ),
+    "eventQrTitle": MessageLookupByLibrary.simpleMessage("رمز QR"),
+    "eventReviewResultLabel": MessageLookupByLibrary.simpleMessage(
+      "نتيجة مراجعة الملخص",
+    ),
+    "eventScientificCommitteeTitle": MessageLookupByLibrary.simpleMessage(
+      "اللجنة العلمية",
+    ),
     "eventSelectionLabel": MessageLookupByLibrary.simpleMessage("الفعالية"),
-    "eventTimelineBody": m1,
+    "eventSpeakersTitle": MessageLookupByLibrary.simpleMessage(
+      "المتحدثون والكلمات الرئيسية",
+    ),
+    "eventStartsLabel": MessageLookupByLibrary.simpleMessage("بداية الفعالية"),
+    "eventStatusLabel": MessageLookupByLibrary.simpleMessage("الحالة"),
+    "eventSubmissionGuidelinesTitle": MessageLookupByLibrary.simpleMessage(
+      "إرشادات التقديم",
+    ),
+    "eventTargetAudienceTitle": MessageLookupByLibrary.simpleMessage(
+      "الفئة المستهدفة",
+    ),
+    "eventTimelineBody": m2,
+    "eventTimelineSectionBody": MessageLookupByLibrary.simpleMessage(
+      "تحقق من كل تاريخ مهم مرتبط بهذه الفعالية قبل التقديم أو انتظار النتيجة.",
+    ),
+    "eventTimelineSectionTitle": MessageLookupByLibrary.simpleMessage(
+      "الجدول الزمني",
+    ),
     "eventTimelineTitle": MessageLookupByLibrary.simpleMessage("الجدول الزمني"),
+    "eventTopicsSectionTitle": MessageLookupByLibrary.simpleMessage("المواضيع"),
+    "eventTypeLabel": MessageLookupByLibrary.simpleMessage("نوع الفعالية"),
+    "eventVerdictDeadlineLabel": MessageLookupByLibrary.simpleMessage(
+      "آخر موعد للقرار النهائي",
+    ),
+    "eventWhoOrganizesTitle": MessageLookupByLibrary.simpleMessage(
+      "من ينظم هذه الفعالية",
+    ),
     "eventsOverviewBody": MessageLookupByLibrary.simpleMessage(
-      "تصفح النداءات القادمة وصفِّها حسب الموضوع واشترك فيما يهمك واحتفظ بقائمتك المهمة متقدمة.",
+      "تصفح النداءات القادمة وضيّق القائمة إلى المواضيع المناسبة وافتح فعالية محددة عندما تصبح مستعداً للتقديم.",
     ),
     "eventsSearchHint": MessageLookupByLibrary.simpleMessage(
       "ابحث عن الفعاليات بالاسم أو الموقع",
     ),
-    "eventsTitle": MessageLookupByLibrary.simpleMessage("استكشاف الفعاليات"),
+    "eventsTitle": MessageLookupByLibrary.simpleMessage("الفعاليات"),
+    "eventsTopicFilterBody": MessageLookupByLibrary.simpleMessage(
+      "اختر المجالات البحثية التي تريد ظهورها في الاكتشاف. أبقِ الواجهة الرئيسية هادئة ثم عد للتصفية من هنا عند الحاجة.",
+    ),
     "existingSubmissionRedirectBody": MessageLookupByLibrary.simpleMessage(
       "لقد بدأت بالفعل مشاركة لهذه الفعالية، لذلك أعدناك إلى السجل الحالي بدلاً من إنشاء نسخة مكررة.",
     ),
@@ -170,6 +254,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "fileSizeLabel": MessageLookupByLibrary.simpleMessage("حجم الملف"),
     "fileTypeLabel": MessageLookupByLibrary.simpleMessage("نوع الملف"),
     "fileUrlLabel": MessageLookupByLibrary.simpleMessage("رابط الملف"),
+    "filterTopicsAction": MessageLookupByLibrary.simpleMessage(
+      "تصفية المواضيع",
+    ),
     "forgotPassword": MessageLookupByLibrary.simpleMessage(
       "هل نسيت كلمة المرور؟",
     ),
@@ -180,10 +267,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "genericError": MessageLookupByLibrary.simpleMessage(
       "حدث خطأ ما. حاول مرة أخرى.",
     ),
+    "getDirectionsAction": MessageLookupByLibrary.simpleMessage("الاتجاهات"),
     "getStarted": MessageLookupByLibrary.simpleMessage("ابدأ الآن"),
     "haveAccountSignIn": MessageLookupByLibrary.simpleMessage(
       "لديك حساب بالفعل؟ سجل الدخول",
     ),
+    "homeAttentionTitle": MessageLookupByLibrary.simpleMessage("إجراء مطلوب"),
     "homeDiscoverEventsBody": MessageLookupByLibrary.simpleMessage(
       "تصفح الفرص المتاحة واحفظ ما يهمك وابدأ الترشيح من الفعالية المناسبة.",
     ),
@@ -213,55 +302,43 @@ class MessageLookup extends MessageLookupByLibrary {
     "homeStateSummaryBody": MessageLookupByLibrary.simpleMessage(
       "أبقِ حالة التحقق والاشتراك والمواعيد النهائية والترشيحات مرئية بسرعة.",
     ),
-    "homeStateSummaryTitle": MessageLookupByLibrary.simpleMessage(
-      "ملخص الحالة الحالية",
+    "homeStateSummaryTitle": MessageLookupByLibrary.simpleMessage("الحالة"),
+    "homeSubscriptionAttentionBody": MessageLookupByLibrary.simpleMessage(
+      "الوصول المميز غير نشط حالياً. عالج الفوترة من الحساب عندما تحتاج إلى المستودع أو المزايا المميزة.",
     ),
     "homeSubtitle": MessageLookupByLibrary.simpleMessage(
       "لوحة التحكم الخاصة بك جاهزة.",
     ),
     "homeTitle": MessageLookupByLibrary.simpleMessage("الصفحة الرئيسية للباحث"),
-    "initialSetupContinueAction": MessageLookupByLibrary.simpleMessage(
-      "فتح مساحة العمل",
+    "homeVerificationAttentionBody": MessageLookupByLibrary.simpleMessage(
+      "التحقق لم يكتمل بعد. عالجه من الحساب حتى تبقى مسارات الباحث المقيدة بالثقة متاحة.",
     ),
-    "initialSetupFinishBody": MessageLookupByLibrary.simpleMessage(
-      "عندما تصبح هذه الأساسيات مناسبة لك، تابع إلى تجربة الباحث الكاملة مع شريط التنقل الثابت.",
-    ),
-    "initialSetupFinishTitle": MessageLookupByLibrary.simpleMessage(
-      "الدخول إلى واجهة التطبيق",
-    ),
-    "initialSetupHeroBody": MessageLookupByLibrary.simpleMessage(
-      "اختر كيف يبدو التطبيق وكيف يقرأ وكيف ينبهك قبل الدخول إلى واجهة الباحث الأساسية.",
-    ),
-    "initialSetupHeroTitle": MessageLookupByLibrary.simpleMessage(
-      "أكمل إعداد البداية بشكل مقصود",
-    ),
-    "initialSetupLanguageBody": MessageLookupByLibrary.simpleMessage(
-      "اختر اللغة التي تريد استخدامها في تطبيق الهاتف من أول جلسة.",
-    ),
-    "initialSetupThemeBody": MessageLookupByLibrary.simpleMessage(
-      "اختر المظهر الافتراضي الآن، ويمكنك تغييره لاحقاً من الحساب.",
-    ),
-    "initialSetupTitle": MessageLookupByLibrary.simpleMessage(
-      "إعداد مساحة العمل على الهاتف",
-    ),
-    "initialSetupTopicsBody": MessageLookupByLibrary.simpleMessage(
-      "اشترك في المواضيع التي تهمك حتى تبدأ الاكتشافات والتنبيهات من اهتماماتك الحقيقية.",
-    ),
-    "initialSetupTopicsFootnote": MessageLookupByLibrary.simpleMessage(
-      "يمكنك تعديل هذه المواضيع لاحقاً من دون فقدان تقدمك داخل التطبيق.",
+    "imageUnavailableLabel": MessageLookupByLibrary.simpleMessage(
+      "الصورة غير متاحة",
     ),
     "institution": MessageLookupByLibrary.simpleMessage("المؤسسة"),
     "languageArabic": MessageLookupByLibrary.simpleMessage("العربية"),
     "languageEnglish": MessageLookupByLibrary.simpleMessage("الإنجليزية"),
     "languagePreferenceTitle": MessageLookupByLibrary.simpleMessage("اللغة"),
+    "languageUpdatedSuccess": MessageLookupByLibrary.simpleMessage(
+      "تم تحديث اللغة.",
+    ),
     "lastUpdatedLabel": MessageLookupByLibrary.simpleMessage("آخر تحديث"),
     "latestRequestLabel": MessageLookupByLibrary.simpleMessage("آخر طلب"),
     "loadMore": MessageLookupByLibrary.simpleMessage("تحميل المزيد"),
     "loading": MessageLookupByLibrary.simpleMessage("جار التحميل..."),
     "location": MessageLookupByLibrary.simpleMessage("الموقع"),
+    "locationCopiedSuccess": MessageLookupByLibrary.simpleMessage(
+      "تم نسخ الموقع.",
+    ),
     "manageTopicsAction": MessageLookupByLibrary.simpleMessage(
       "إدارة مواضيع التنبيهات",
     ),
+    "navAccountLabel": MessageLookupByLibrary.simpleMessage("الحساب"),
+    "navEventsLabel": MessageLookupByLibrary.simpleMessage("الفعاليات"),
+    "navHomeLabel": MessageLookupByLibrary.simpleMessage("الرئيسية"),
+    "navLibraryLabel": MessageLookupByLibrary.simpleMessage("المكتبة"),
+    "navSubmissionsLabel": MessageLookupByLibrary.simpleMessage("أعمالي"),
     "nearestDeadlineTitle": MessageLookupByLibrary.simpleMessage(
       "أقرب موعد نهائي",
     ),
@@ -283,6 +360,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "notificationEducationTitle": MessageLookupByLibrary.simpleMessage(
       "إعداد الإشعارات",
+    ),
+    "notificationPermissionUpdated": MessageLookupByLibrary.simpleMessage(
+      "تم تحديث تفضيل الإشعارات.",
     ),
     "notificationPreferencesBody": MessageLookupByLibrary.simpleMessage(
       "تحكم في طريقة تعامل التطبيق مع تنبيهات المواضيع وافتح إعدادات النظام إذا كان أندرويد قد حظر الإشعارات بالفعل.",
@@ -332,6 +412,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "openSystemSettingsAction": MessageLookupByLibrary.simpleMessage(
       "فتح إعدادات النظام",
     ),
+    "openedSystemSettingsMessage": MessageLookupByLibrary.simpleMessage(
+      "تم فتح إعدادات النظام.",
+    ),
+    "organizerLabel": MessageLookupByLibrary.simpleMessage("الجهة المنظمة"),
     "password": MessageLookupByLibrary.simpleMessage("كلمة المرور"),
     "passwordTooShort": MessageLookupByLibrary.simpleMessage(
       "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.",
@@ -383,9 +467,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "سيُعامل هذا البلاغ كعملية تجديد أو استمرار لاشتراكك الحالي.",
     ),
     "paymentTrustFlowHint": MessageLookupByLibrary.simpleMessage(
-      "استخدم هذه المساحة أولاً لفهم حالة اشتراكك الحالية، ثم أبلغ عن الدفع فقط عندما يكون إثباتك جاهزاً.",
+      "استخدم هذه المساحة لمراجعة حالة اشتراكك الحالية، ثم أرسل إثبات دفع جديد كلما احتجت إلى تفعيل الوصول أو تجديده.",
     ),
     "paymentVerifiedStatus": MessageLookupByLibrary.simpleMessage("تم التحقق"),
+    "phoneLabel": MessageLookupByLibrary.simpleMessage("الهاتف"),
     "pickFileAction": MessageLookupByLibrary.simpleMessage("اختر ملفًا"),
     "pickProofDocument": MessageLookupByLibrary.simpleMessage(
       "اختر وثيقة الإثبات",
@@ -420,7 +505,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "أرسل تفاصيل الفوترة ووثيقة الإثبات مرة واحدة حتى يتمكن الفريق من التحقق من وصول اشتراكك بسرعة ودقة.",
     ),
     "reportPaymentTitle": MessageLookupByLibrary.simpleMessage(
-      "الإبلاغ عن دفع",
+      "إرسال إثبات الدفع",
     ),
     "reportedAtLabel": MessageLookupByLibrary.simpleMessage("تاريخ الإبلاغ"),
     "repositoryAbstractTitle": MessageLookupByLibrary.simpleMessage("الملخص"),
@@ -465,13 +550,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "لا يتوفر ملف قابل للتنزيل لهذا البحث.",
     ),
     "repositoryOverviewBody": MessageLookupByLibrary.simpleMessage(
-      "ابحث في المواد البحثية المميزة وصفِّها حسب الموضوع وانتقل من الاكتشاف إلى التنزيل بسلاسة.",
+      "ابحث في الأوراق وصفِّها حسب الموضوع أو المؤلف وافتح المادة التي تهمك دون ازدحام.",
     ),
     "repositoryPaperFileFallback": MessageLookupByLibrary.simpleMessage(
       "ملف البحث",
     ),
     "repositoryPremiumContextBody": MessageLookupByLibrary.simpleMessage(
-      "فعّل الوصول إلى المستودع من الحساب ثم عد إلى هنا بعد بدء الدفع والمراجعة.",
+      "افتح الحساب، وراجع حالة الاشتراك، ثم أرسل إثبات دفع لتفعيل الوصول أو تجديده قبل العودة إلى هنا.",
     ),
     "repositoryProtectedDownloadBody": MessageLookupByLibrary.simpleMessage(
       "تُتبع التنزيلات وتُفتح من مرجع ملف محمي حتى يبقى الوصول متوافقاً مع قواعد الاشتراك.",
@@ -483,19 +568,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "ابحث في الأبحاث أو الفعاليات أو الباحثين",
     ),
     "repositorySubscriptionRequiredBody": MessageLookupByLibrary.simpleMessage(
-      "المستودع مخصص للاشتراكات المميزة أو التجريبية النشطة.",
+      "المستودع متاح فقط عندما يكون الوصول المميز أو التجريبي نشطاً.",
     ),
     "repositorySubscriptionRequiredTitle": MessageLookupByLibrary.simpleMessage(
       "يتطلب وصولًا مميزًا",
     ),
-    "repositoryTitle": MessageLookupByLibrary.simpleMessage("مستودع الأبحاث"),
+    "repositoryTitle": MessageLookupByLibrary.simpleMessage("المكتبة"),
     "repositoryViewsLabel": MessageLookupByLibrary.simpleMessage("المشاهدات"),
     "requiredField": MessageLookupByLibrary.simpleMessage("هذا الحقل مطلوب."),
     "researcherAccessBody": MessageLookupByLibrary.simpleMessage(
-      "راجع خطوات الثقة والوصول في شاشات مخصصة عندما تحتاج إليها.",
+      "افتح الملف الشخصي والتحقق والفعاليات المحفوظة وأدوات الأمان من قسم واحد واضح.",
     ),
     "researcherAccessTitle": MessageLookupByLibrary.simpleMessage(
-      "وصول الباحث",
+      "الملف والوصول",
     ),
     "resetEmailSent": MessageLookupByLibrary.simpleMessage(
       "تم إرسال رسالة إعادة تعيين كلمة المرور.",
@@ -522,6 +607,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "savedEventsEmptyState": MessageLookupByLibrary.simpleMessage(
       "لم تقم بحفظ أي فعاليات بعد.",
     ),
+    "savedEventsShortTitle": MessageLookupByLibrary.simpleMessage("المحفوظة"),
     "savedEventsTitle": MessageLookupByLibrary.simpleMessage(
       "الفعاليات المحفوظة",
     ),
@@ -546,8 +632,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "securityDirectPasswordBody": MessageLookupByLibrary.simpleMessage(
       "إذا كنت مسجلاً الدخول بالفعل على هذا الجهاز، يمكنك تعيين كلمة مرور جديدة هنا مباشرة.",
     ),
-    "securityResetBody": m2,
+    "securityResetBody": m3,
     "securityTitle": MessageLookupByLibrary.simpleMessage("الأمان"),
+    "selectedTopicsCount": m4,
     "sendResetLink": MessageLookupByLibrary.simpleMessage(
       "إرسال رابط إعادة التعيين",
     ),
@@ -625,7 +712,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تفاصيل الترشيح غير متاحة.",
     ),
     "submissionDetailOverviewBody": MessageLookupByLibrary.simpleMessage(
-      "اطلع على دورة حياة هذا الترشيح كاملة بما في ذلك الحالة الحالية ومحتوى الملخص والملفات والسجل الزمني.",
+      "راجع سجل هذا الترشيح ومواعيده وملفاته المرفوعة وملاحظات المراجعين والخطوة المطلوبة التالية.",
     ),
     "submissionDetailTitle": MessageLookupByLibrary.simpleMessage(
       "تفاصيل الترشيح",
@@ -653,9 +740,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "العنوان (الإنجليزية - اختياري)",
     ),
     "submissionsOverviewBody": MessageLookupByLibrary.simpleMessage(
-      "راجع الأعمال النشطة وافهم كل حالة بسرعة واجعل الإجراء التالي واضحًا دائمًا.",
+      "تابع سجلاتك النشطة واعرف ما الذي تغير وواصل فقط الترشيح الذي يحتاج إلى خطوة الآن.",
     ),
-    "submissionsTitle": MessageLookupByLibrary.simpleMessage("ترشيحاتي"),
+    "submissionsStartFromEventBody": MessageLookupByLibrary.simpleMessage(
+      "ابدأ كل ملخص جديد من الفعالية المرتبطة به حتى يبقى النداء والموعد النهائي والسياق مرتبطين بالترشيح منذ البداية.",
+    ),
+    "submissionsTitle": MessageLookupByLibrary.simpleMessage("الترشيحات"),
     "submitAbstractAction": MessageLookupByLibrary.simpleMessage(
       "تقديم الملخص",
     ),
@@ -694,24 +784,24 @@ class MessageLookup extends MessageLookupByLibrary {
     "subscriptionActiveHeadline": MessageLookupByLibrary.simpleMessage(
       "وصولك المميز نشط.",
     ),
-    "subscriptionBankReference": m3,
+    "subscriptionBankReference": m5,
     "subscriptionCancelledHeadline": MessageLookupByLibrary.simpleMessage(
       "تم إلغاء اشتراكك.",
     ),
-    "subscriptionDaysRemaining": m4,
+    "subscriptionDaysRemaining": m6,
     "subscriptionExpiredHeadline": MessageLookupByLibrary.simpleMessage(
       "انتهت صلاحية الوصول المميز.",
     ),
     "subscriptionHistoryAction": MessageLookupByLibrary.simpleMessage(
-      "مراجعة السجل",
+      "سجل الفوترة",
     ),
     "subscriptionInactive": MessageLookupByLibrary.simpleMessage(
       "لا يوجد اشتراك مميز نشط",
     ),
     "subscriptionOverviewBody": MessageLookupByLibrary.simpleMessage(
-      "افهم مستوى الوصول الحالي ومدى الحاجة إلى التجديد وأفضل خطوة دفع تالية من دون مغادرة مسار الحساب.",
+      "راجع مستوى الوصول الحالي، واعرف هل تحتاج إلى تجديد، ثم أرسل إثبات الدفع التالي من دون مغادرة مسار الحساب.",
     ),
-    "subscriptionRecommendedPrice": m5,
+    "subscriptionRecommendedPrice": m7,
     "subscriptionStatusTitle": MessageLookupByLibrary.simpleMessage(
       "حالة الاشتراك",
     ),
@@ -722,6 +812,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "themeLight": MessageLookupByLibrary.simpleMessage("فاتح"),
     "themePreferenceTitle": MessageLookupByLibrary.simpleMessage("المظهر"),
     "themeSystem": MessageLookupByLibrary.simpleMessage("اتباع النظام"),
+    "themeUpdatedSuccess": MessageLookupByLibrary.simpleMessage(
+      "تم تحديث المظهر.",
+    ),
     "topicSubscriptionHint": MessageLookupByLibrary.simpleMessage(
       "اشترك في المواضيع لتصلك تنبيهات فورية.",
     ),
@@ -740,9 +833,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "topicSubscriptionsTitle": MessageLookupByLibrary.simpleMessage(
       "اشتراكات المواضيع",
     ),
-    "trustCenterTitle": MessageLookupByLibrary.simpleMessage("مركز الثقة"),
+    "trustCenterTitle": MessageLookupByLibrary.simpleMessage("التحقق والفوترة"),
     "trustOverviewBody": MessageLookupByLibrary.simpleMessage(
-      "تعامل مع التحقق ووثائق الدفع ضمن مسار آمن وشفاف مصمم لعمليات الثقة الخاصة بالباحثين.",
+      "ارفع وثائق التحقق وراجع تقارير الدفع وأبقِ الوصول المميز متقدماً من مكان آمن واحد.",
     ),
     "unsupportedRoleBody": MessageLookupByLibrary.simpleMessage(
       "تطبيق إيفنتي 360 المحمول يدعم حسابات الباحثين فقط حاليًا.",
@@ -783,9 +876,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "viewProofDocument": MessageLookupByLibrary.simpleMessage(
       "عرض وثيقة الإثبات",
     ),
+    "viewSubmissionAction": MessageLookupByLibrary.simpleMessage("عرض الترشيح"),
+    "viewTopicsAction": MessageLookupByLibrary.simpleMessage("عرض المواضيع"),
     "viewUploadedDocument": MessageLookupByLibrary.simpleMessage(
       "عرض الوثيقة المرفوعة",
     ),
+    "websiteLabel": MessageLookupByLibrary.simpleMessage("الموقع الإلكتروني"),
     "wilayaLabel": MessageLookupByLibrary.simpleMessage("الولاية"),
   };
 }

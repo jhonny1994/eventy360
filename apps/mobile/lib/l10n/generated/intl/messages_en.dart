@@ -22,17 +22,23 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(count) => "${count} active submissions";
 
-  static String m1(date) =>
+  static String m1(count) => "All topics available (${count})";
+
+  static String m2(date) =>
       "Abstract submissions for this event currently point to ${date} as the next visible deadline.";
 
-  static String m2(email) =>
+  static String m3(email) =>
       "Send a secure reset link to ${email} if you want to change your password from email.";
 
-  static String m3(bankName) => "Current bank reference: ${bankName}.";
+  static String m4(count) =>
+      "${Intl.plural(count, zero: 'No topic filters', one: '1 topic filter active', other: '${count} topic filters active')}";
 
-  static String m4(count) => "${count} days remaining";
+  static String m5(bankName) =>
+      "Use bank reference ${bankName} when submitting a new payment proof for activation or renewal.";
 
-  static String m5(amount, currency, billingPeriod) =>
+  static String m6(count) => "${count} days remaining";
+
+  static String m7(amount, currency, billingPeriod) =>
       "Recommended amount: ${amount} ${currency} for ${billingPeriod}.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -65,7 +71,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Control your researcher experience",
     ),
     "accountOverviewTitle": MessageLookupByLibrary.simpleMessage(
-      "Account overview",
+      "Account status",
     ),
     "accountTitle": MessageLookupByLibrary.simpleMessage("Account"),
     "activeSubmissionsCount": m0,
@@ -73,6 +79,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Active submissions",
     ),
     "addBookmark": MessageLookupByLibrary.simpleMessage("Add bookmark"),
+    "allTopicsSummary": m1,
     "appTitle": MessageLookupByLibrary.simpleMessage("Eventy360"),
     "authResearcherBadge": MessageLookupByLibrary.simpleMessage(
       "Researcher mobile access",
@@ -85,6 +92,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "billingPeriodMonthly": MessageLookupByLibrary.simpleMessage("Monthly"),
     "billingPeriodQuarterly": MessageLookupByLibrary.simpleMessage("Quarterly"),
+    "bookmarkAddedSuccess": MessageLookupByLibrary.simpleMessage(
+      "Event saved.",
+    ),
+    "bookmarkRemovedSuccess": MessageLookupByLibrary.simpleMessage(
+      "Event removed from saved list.",
+    ),
     "cancelAction": MessageLookupByLibrary.simpleMessage("Cancel"),
     "completeProfileBody": MessageLookupByLibrary.simpleMessage(
       "Before using researcher features, complete your profile details.",
@@ -97,9 +110,11 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "confirmPassword": MessageLookupByLibrary.simpleMessage("Confirm password"),
     "continueAction": MessageLookupByLibrary.simpleMessage("Continue"),
+    "copyLocationAction": MessageLookupByLibrary.simpleMessage("Copy location"),
     "createAccount": MessageLookupByLibrary.simpleMessage("Create account"),
     "dairaLabel": MessageLookupByLibrary.simpleMessage("Daira"),
     "deadline": MessageLookupByLibrary.simpleMessage("Deadline"),
+    "doneAction": MessageLookupByLibrary.simpleMessage("Done"),
     "draftRestoredMessage": MessageLookupByLibrary.simpleMessage(
       "We restored your in-progress draft so you can continue without rebuilding the form.",
     ),
@@ -111,6 +126,27 @@ class MessageLookup extends MessageLookupByLibrary {
     "enableNotificationsAction": MessageLookupByLibrary.simpleMessage(
       "Enable notifications",
     ),
+    "eventActionsSectionBody": MessageLookupByLibrary.simpleMessage(
+      "Save this event or continue into the event-specific submission path.",
+    ),
+    "eventActionsSectionTitle": MessageLookupByLibrary.simpleMessage("Actions"),
+    "eventAssetsSectionBody": MessageLookupByLibrary.simpleMessage(
+      "Open the event visuals and supporting material that the web page already exposes.",
+    ),
+    "eventAssetsSectionTitle": MessageLookupByLibrary.simpleMessage(
+      "Event assets",
+    ),
+    "eventAxesSectionTitle": MessageLookupByLibrary.simpleMessage("Event axes"),
+    "eventBrochureAction": MessageLookupByLibrary.simpleMessage(
+      "Open brochure",
+    ),
+    "eventContactSectionBody": MessageLookupByLibrary.simpleMessage(
+      "Use the direct contact channels and website tied to this event.",
+    ),
+    "eventContactSectionTitle": MessageLookupByLibrary.simpleMessage(
+      "Contact and links",
+    ),
+    "eventCreatedLabel": MessageLookupByLibrary.simpleMessage("Created"),
     "eventDecisionSupportBody": MessageLookupByLibrary.simpleMessage(
       "Check the deadline, fit, and organizer context first so you do not start the wrong workflow.",
     ),
@@ -127,25 +163,75 @@ class MessageLookup extends MessageLookupByLibrary {
     "eventEligibilityTitle": MessageLookupByLibrary.simpleMessage(
       "Eligibility and fit",
     ),
+    "eventEndsLabel": MessageLookupByLibrary.simpleMessage("Event ends"),
+    "eventFeeLabel": MessageLookupByLibrary.simpleMessage("Fee"),
+    "eventFormatLabel": MessageLookupByLibrary.simpleMessage("Format"),
+    "eventFreeLabel": MessageLookupByLibrary.simpleMessage("Free"),
+    "eventHeaderSummaryBody": MessageLookupByLibrary.simpleMessage(
+      "Review the event owner, core metadata, status, and cost before moving deeper into the call details.",
+    ),
+    "eventLocationSectionTitle": MessageLookupByLibrary.simpleMessage(
+      "Location",
+    ),
+    "eventLogoTitle": MessageLookupByLibrary.simpleMessage("Event logo"),
     "eventNotFound": MessageLookupByLibrary.simpleMessage(
       "Event was not found.",
     ),
+    "eventObjectivesTitle": MessageLookupByLibrary.simpleMessage("Objectives"),
     "eventOrganizerBody": MessageLookupByLibrary.simpleMessage(
       "If anything feels unclear, keep this screen as your source of truth before you commit a submission.",
     ),
     "eventOrganizerTitle": MessageLookupByLibrary.simpleMessage(
       "Organizer context",
     ),
+    "eventProblemStatementTitle": MessageLookupByLibrary.simpleMessage(
+      "Problem statement",
+    ),
+    "eventQrTitle": MessageLookupByLibrary.simpleMessage("QR code"),
+    "eventReviewResultLabel": MessageLookupByLibrary.simpleMessage(
+      "Abstract review result",
+    ),
+    "eventScientificCommitteeTitle": MessageLookupByLibrary.simpleMessage(
+      "Scientific committee",
+    ),
     "eventSelectionLabel": MessageLookupByLibrary.simpleMessage("Event"),
-    "eventTimelineBody": m1,
+    "eventSpeakersTitle": MessageLookupByLibrary.simpleMessage(
+      "Speakers and keynotes",
+    ),
+    "eventStartsLabel": MessageLookupByLibrary.simpleMessage("Event starts"),
+    "eventStatusLabel": MessageLookupByLibrary.simpleMessage("Status"),
+    "eventSubmissionGuidelinesTitle": MessageLookupByLibrary.simpleMessage(
+      "Submission guidelines",
+    ),
+    "eventTargetAudienceTitle": MessageLookupByLibrary.simpleMessage(
+      "Target audience",
+    ),
+    "eventTimelineBody": m2,
+    "eventTimelineSectionBody": MessageLookupByLibrary.simpleMessage(
+      "Check every important date tied to this event before you submit or wait on a result.",
+    ),
+    "eventTimelineSectionTitle": MessageLookupByLibrary.simpleMessage(
+      "Timeline",
+    ),
     "eventTimelineTitle": MessageLookupByLibrary.simpleMessage("Timeline"),
+    "eventTopicsSectionTitle": MessageLookupByLibrary.simpleMessage("Topics"),
+    "eventTypeLabel": MessageLookupByLibrary.simpleMessage("Event type"),
+    "eventVerdictDeadlineLabel": MessageLookupByLibrary.simpleMessage(
+      "Final verdict deadline",
+    ),
+    "eventWhoOrganizesTitle": MessageLookupByLibrary.simpleMessage(
+      "Who organizes this event",
+    ),
     "eventsOverviewBody": MessageLookupByLibrary.simpleMessage(
-      "Browse upcoming calls, filter by topic, subscribe to what matters, and keep your shortlist moving.",
+      "Browse upcoming calls, narrow the list to the right topics, and open a specific event when you are ready to submit.",
     ),
     "eventsSearchHint": MessageLookupByLibrary.simpleMessage(
       "Search events by name or location",
     ),
-    "eventsTitle": MessageLookupByLibrary.simpleMessage("Discover Events"),
+    "eventsTitle": MessageLookupByLibrary.simpleMessage("Events"),
+    "eventsTopicFilterBody": MessageLookupByLibrary.simpleMessage(
+      "Choose the research areas you want to see in discovery. Keep the main feed calm, then refine from here when needed.",
+    ),
     "existingSubmissionRedirectBody": MessageLookupByLibrary.simpleMessage(
       "You already started a submission for this event, so we took you back to that record instead of creating a duplicate.",
     ),
@@ -168,6 +254,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fileSizeLabel": MessageLookupByLibrary.simpleMessage("File size"),
     "fileTypeLabel": MessageLookupByLibrary.simpleMessage("File type"),
     "fileUrlLabel": MessageLookupByLibrary.simpleMessage("File URL"),
+    "filterTopicsAction": MessageLookupByLibrary.simpleMessage("Filter topics"),
     "forgotPassword": MessageLookupByLibrary.simpleMessage("Forgot password?"),
     "fullName": MessageLookupByLibrary.simpleMessage("Full name"),
     "fullPaperDeadlineLabel": MessageLookupByLibrary.simpleMessage(
@@ -176,10 +263,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "genericError": MessageLookupByLibrary.simpleMessage(
       "Something went wrong. Please try again.",
     ),
+    "getDirectionsAction": MessageLookupByLibrary.simpleMessage(
+      "Get directions",
+    ),
     "getStarted": MessageLookupByLibrary.simpleMessage("Get Started"),
     "haveAccountSignIn": MessageLookupByLibrary.simpleMessage(
       "Already have an account? Sign in",
     ),
+    "homeAttentionTitle": MessageLookupByLibrary.simpleMessage("Action needed"),
     "homeDiscoverEventsBody": MessageLookupByLibrary.simpleMessage(
       "Browse live opportunities, bookmark what matters, and start a submission from the right event.",
     ),
@@ -211,47 +302,27 @@ class MessageLookup extends MessageLookupByLibrary {
     "homeStateSummaryBody": MessageLookupByLibrary.simpleMessage(
       "Keep your trust, subscription, deadline, and submission state visible at a glance.",
     ),
-    "homeStateSummaryTitle": MessageLookupByLibrary.simpleMessage(
-      "Current status summary",
+    "homeStateSummaryTitle": MessageLookupByLibrary.simpleMessage("Status"),
+    "homeSubscriptionAttentionBody": MessageLookupByLibrary.simpleMessage(
+      "Premium access is not active yet. Resolve billing from Account when you need repository or premium researcher access.",
     ),
     "homeSubtitle": MessageLookupByLibrary.simpleMessage(
       "Your command center is ready.",
     ),
     "homeTitle": MessageLookupByLibrary.simpleMessage("Researcher Home"),
-    "initialSetupContinueAction": MessageLookupByLibrary.simpleMessage(
-      "Open my workspace",
+    "homeVerificationAttentionBody": MessageLookupByLibrary.simpleMessage(
+      "Verification is still unfinished. Resolve it from Account so trust-gated researcher flows stay available.",
     ),
-    "initialSetupFinishBody": MessageLookupByLibrary.simpleMessage(
-      "Once these basics feel right, continue into the full researcher experience with the stable tab bar.",
-    ),
-    "initialSetupFinishTitle": MessageLookupByLibrary.simpleMessage(
-      "Move into the app shell",
-    ),
-    "initialSetupHeroBody": MessageLookupByLibrary.simpleMessage(
-      "Choose how the app should look, read, and notify before you settle into the researcher shell.",
-    ),
-    "initialSetupHeroTitle": MessageLookupByLibrary.simpleMessage(
-      "Finish the first-run setup with intention",
-    ),
-    "initialSetupLanguageBody": MessageLookupByLibrary.simpleMessage(
-      "Pick the language you want to use across the mobile app from the first session.",
-    ),
-    "initialSetupThemeBody": MessageLookupByLibrary.simpleMessage(
-      "Choose a default appearance now. You can still change it later from Account.",
-    ),
-    "initialSetupTitle": MessageLookupByLibrary.simpleMessage(
-      "Set up your mobile workspace",
-    ),
-    "initialSetupTopicsBody": MessageLookupByLibrary.simpleMessage(
-      "Subscribe to the topics you care about so discovery and notifications start from your real interests.",
-    ),
-    "initialSetupTopicsFootnote": MessageLookupByLibrary.simpleMessage(
-      "You can keep refining these topics later without losing progress in the app.",
+    "imageUnavailableLabel": MessageLookupByLibrary.simpleMessage(
+      "Image unavailable",
     ),
     "institution": MessageLookupByLibrary.simpleMessage("Institution"),
     "languageArabic": MessageLookupByLibrary.simpleMessage("Arabic"),
     "languageEnglish": MessageLookupByLibrary.simpleMessage("English"),
     "languagePreferenceTitle": MessageLookupByLibrary.simpleMessage("Language"),
+    "languageUpdatedSuccess": MessageLookupByLibrary.simpleMessage(
+      "Language updated.",
+    ),
     "lastUpdatedLabel": MessageLookupByLibrary.simpleMessage("Last updated"),
     "latestRequestLabel": MessageLookupByLibrary.simpleMessage(
       "Latest request",
@@ -259,9 +330,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "loadMore": MessageLookupByLibrary.simpleMessage("Load more"),
     "loading": MessageLookupByLibrary.simpleMessage("Loading..."),
     "location": MessageLookupByLibrary.simpleMessage("Location"),
+    "locationCopiedSuccess": MessageLookupByLibrary.simpleMessage(
+      "Location copied.",
+    ),
     "manageTopicsAction": MessageLookupByLibrary.simpleMessage(
       "Manage alert topics",
     ),
+    "navAccountLabel": MessageLookupByLibrary.simpleMessage("Account"),
+    "navEventsLabel": MessageLookupByLibrary.simpleMessage("Events"),
+    "navHomeLabel": MessageLookupByLibrary.simpleMessage("Home"),
+    "navLibraryLabel": MessageLookupByLibrary.simpleMessage("Library"),
+    "navSubmissionsLabel": MessageLookupByLibrary.simpleMessage("Work"),
     "nearestDeadlineTitle": MessageLookupByLibrary.simpleMessage(
       "Nearest deadline",
     ),
@@ -283,6 +362,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "notificationEducationTitle": MessageLookupByLibrary.simpleMessage(
       "Notification setup",
+    ),
+    "notificationPermissionUpdated": MessageLookupByLibrary.simpleMessage(
+      "Notification preference updated.",
     ),
     "notificationPreferencesBody": MessageLookupByLibrary.simpleMessage(
       "Control how the app handles topic alerts and open system settings if Android has already blocked notifications.",
@@ -332,6 +414,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "openSystemSettingsAction": MessageLookupByLibrary.simpleMessage(
       "Open system settings",
     ),
+    "openedSystemSettingsMessage": MessageLookupByLibrary.simpleMessage(
+      "System settings opened.",
+    ),
+    "organizerLabel": MessageLookupByLibrary.simpleMessage("Organizer"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
     "passwordTooShort": MessageLookupByLibrary.simpleMessage(
       "Password must be at least 8 characters.",
@@ -385,9 +471,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "This payment report will be treated as a renewal or continuity action for your current subscription.",
     ),
     "paymentTrustFlowHint": MessageLookupByLibrary.simpleMessage(
-      "Use this space to understand your current subscription state first, then report payment only when you have the right proof ready.",
+      "Use this space to review your current subscription state, then submit a new payment proof whenever you need to activate or renew access.",
     ),
     "paymentVerifiedStatus": MessageLookupByLibrary.simpleMessage("Verified"),
+    "phoneLabel": MessageLookupByLibrary.simpleMessage("Phone"),
     "pickFileAction": MessageLookupByLibrary.simpleMessage("Choose file"),
     "pickProofDocument": MessageLookupByLibrary.simpleMessage(
       "Choose proof document",
@@ -424,7 +511,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Submit billing details and proof once so the team can validate your subscription access quickly and accurately.",
     ),
     "reportPaymentTitle": MessageLookupByLibrary.simpleMessage(
-      "Report Payment",
+      "Submit Payment Proof",
     ),
     "reportedAtLabel": MessageLookupByLibrary.simpleMessage("Reported at"),
     "repositoryAbstractTitle": MessageLookupByLibrary.simpleMessage("Abstract"),
@@ -469,13 +556,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "No downloadable file is available for this paper.",
     ),
     "repositoryOverviewBody": MessageLookupByLibrary.simpleMessage(
-      "Search premium research material, narrow by topic, and move from discovery to download without friction.",
+      "Search papers, filter by topic or author, and open the material that matters without clutter.",
     ),
     "repositoryPaperFileFallback": MessageLookupByLibrary.simpleMessage(
       "Paper file",
     ),
     "repositoryPremiumContextBody": MessageLookupByLibrary.simpleMessage(
-      "Unlock repository access from Account, then return here once payment and review are in motion.",
+      "Open Account, review your subscription state, then submit a payment proof to activate or renew access before returning here.",
     ),
     "repositoryProtectedDownloadBody": MessageLookupByLibrary.simpleMessage(
       "Downloads are tracked and opened from a protected file reference so access remains consistent with subscription rules.",
@@ -487,23 +574,21 @@ class MessageLookup extends MessageLookupByLibrary {
       "Search papers, events, or authors",
     ),
     "repositorySubscriptionRequiredBody": MessageLookupByLibrary.simpleMessage(
-      "The repository is reserved for active premium or trial subscriptions.",
+      "The repository is available only while premium or trial access is active.",
     ),
     "repositorySubscriptionRequiredTitle": MessageLookupByLibrary.simpleMessage(
       "Premium access is required",
     ),
-    "repositoryTitle": MessageLookupByLibrary.simpleMessage(
-      "Research Repository",
-    ),
+    "repositoryTitle": MessageLookupByLibrary.simpleMessage("Library"),
     "repositoryViewsLabel": MessageLookupByLibrary.simpleMessage("Views"),
     "requiredField": MessageLookupByLibrary.simpleMessage(
       "This field is required.",
     ),
     "researcherAccessBody": MessageLookupByLibrary.simpleMessage(
-      "Review trust and access-related steps in focused screens when you need them.",
+      "Open profile, verification, saved events, and security tools from one clear section.",
     ),
     "researcherAccessTitle": MessageLookupByLibrary.simpleMessage(
-      "Researcher access",
+      "Profile and access",
     ),
     "resetEmailSent": MessageLookupByLibrary.simpleMessage(
       "Password reset email was sent.",
@@ -526,6 +611,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "savedEventsEmptyState": MessageLookupByLibrary.simpleMessage(
       "You have not bookmarked any events yet.",
     ),
+    "savedEventsShortTitle": MessageLookupByLibrary.simpleMessage("Saved"),
     "savedEventsTitle": MessageLookupByLibrary.simpleMessage("Saved events"),
     "secureDocsBody": MessageLookupByLibrary.simpleMessage(
       "Verification and payment files are uploaded through authenticated requests, validated before upload, and opened later with short-lived signed links.",
@@ -548,8 +634,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "securityDirectPasswordBody": MessageLookupByLibrary.simpleMessage(
       "If you are already signed in on this device, you can set a new password here immediately.",
     ),
-    "securityResetBody": m2,
+    "securityResetBody": m3,
     "securityTitle": MessageLookupByLibrary.simpleMessage("Security"),
+    "selectedTopicsCount": m4,
     "sendResetLink": MessageLookupByLibrary.simpleMessage("Send reset link"),
     "signIn": MessageLookupByLibrary.simpleMessage("Sign In"),
     "signInHeroBody": MessageLookupByLibrary.simpleMessage(
@@ -627,7 +714,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Submission details are not available.",
     ),
     "submissionDetailOverviewBody": MessageLookupByLibrary.simpleMessage(
-      "See the full lifecycle of this submission, including current status, abstract content, files, and timeline history.",
+      "Review this submission record, its deadlines, uploaded files, reviewer notes, and next required step.",
     ),
     "submissionDetailTitle": MessageLookupByLibrary.simpleMessage(
       "Submission Details",
@@ -653,9 +740,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Title (English, optional)",
     ),
     "submissionsOverviewBody": MessageLookupByLibrary.simpleMessage(
-      "Review active work, understand each status quickly, and keep your next submission action obvious.",
+      "Track your active records, see what changed, and continue only the submission that needs work now.",
     ),
-    "submissionsTitle": MessageLookupByLibrary.simpleMessage("My Submissions"),
+    "submissionsStartFromEventBody": MessageLookupByLibrary.simpleMessage(
+      "Start every new abstract from the event that owns it, so the call, deadline, and context stay tied to the submission from the beginning.",
+    ),
+    "submissionsTitle": MessageLookupByLibrary.simpleMessage("Submissions"),
     "submitAbstractAction": MessageLookupByLibrary.simpleMessage(
       "Submit abstract",
     ),
@@ -696,24 +786,24 @@ class MessageLookup extends MessageLookupByLibrary {
     "subscriptionActiveHeadline": MessageLookupByLibrary.simpleMessage(
       "Your premium access is active.",
     ),
-    "subscriptionBankReference": m3,
+    "subscriptionBankReference": m5,
     "subscriptionCancelledHeadline": MessageLookupByLibrary.simpleMessage(
       "Your subscription was cancelled.",
     ),
-    "subscriptionDaysRemaining": m4,
+    "subscriptionDaysRemaining": m6,
     "subscriptionExpiredHeadline": MessageLookupByLibrary.simpleMessage(
       "Your premium access has expired.",
     ),
     "subscriptionHistoryAction": MessageLookupByLibrary.simpleMessage(
-      "Review history",
+      "Billing history",
     ),
     "subscriptionInactive": MessageLookupByLibrary.simpleMessage(
       "No active premium subscription",
     ),
     "subscriptionOverviewBody": MessageLookupByLibrary.simpleMessage(
-      "Understand your current access, renewal urgency, and the right next billing action without leaving account flow.",
+      "Review your current access, see whether renewal is needed, and submit the next payment proof without leaving account flow.",
     ),
-    "subscriptionRecommendedPrice": m5,
+    "subscriptionRecommendedPrice": m7,
     "subscriptionStatusTitle": MessageLookupByLibrary.simpleMessage(
       "Subscription status",
     ),
@@ -724,6 +814,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "themeLight": MessageLookupByLibrary.simpleMessage("Light"),
     "themePreferenceTitle": MessageLookupByLibrary.simpleMessage("Theme"),
     "themeSystem": MessageLookupByLibrary.simpleMessage("Follow system"),
+    "themeUpdatedSuccess": MessageLookupByLibrary.simpleMessage(
+      "Theme updated.",
+    ),
     "topicSubscriptionHint": MessageLookupByLibrary.simpleMessage(
       "Subscribe to topics to receive push alerts.",
     ),
@@ -742,9 +835,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "topicSubscriptionsTitle": MessageLookupByLibrary.simpleMessage(
       "Topic subscriptions",
     ),
-    "trustCenterTitle": MessageLookupByLibrary.simpleMessage("Trust Center"),
+    "trustCenterTitle": MessageLookupByLibrary.simpleMessage(
+      "Verification & Billing",
+    ),
     "trustOverviewBody": MessageLookupByLibrary.simpleMessage(
-      "Handle verification and payment evidence in a secure, transparent flow designed for researcher trust operations.",
+      "Upload verification documents, review payment reports, and keep premium access moving from one secure place.",
     ),
     "unsupportedRoleBody": MessageLookupByLibrary.simpleMessage(
       "Eventy360 mobile currently supports researcher accounts only.",
@@ -789,9 +884,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "viewProofDocument": MessageLookupByLibrary.simpleMessage(
       "View proof document",
     ),
+    "viewSubmissionAction": MessageLookupByLibrary.simpleMessage(
+      "View submission",
+    ),
+    "viewTopicsAction": MessageLookupByLibrary.simpleMessage("View topics"),
     "viewUploadedDocument": MessageLookupByLibrary.simpleMessage(
       "View uploaded document",
     ),
+    "websiteLabel": MessageLookupByLibrary.simpleMessage("Website"),
     "wilayaLabel": MessageLookupByLibrary.simpleMessage("Wilaya"),
   };
 }

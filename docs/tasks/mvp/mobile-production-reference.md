@@ -75,7 +75,6 @@ Current mobile now implements this shell, and the remaining work is about deep p
 Defined routes today:
 
 - `/onboarding`
-- `/initial-setup`
 - `/auth/sign-in`
 - `/auth/sign-up`
 - `/auth/reset`
@@ -103,7 +102,7 @@ Important reality:
 - account now exists as a first-class top-level destination,
 - the bottom navigation shell exists,
 - trust is now housed under account,
-- first authenticated completion now routes through a dedicated initial setup screen for language, theme, and topics,
+- language, theme, notifications, and topics are exposed through account-level UX instead of a forced standalone setup takeover,
 - remaining work is about parity depth rather than missing shell architecture.
 
 ## What Exists In Mobile Today
@@ -160,8 +159,8 @@ These capabilities are already present in code but are not properly exposed to t
 ### Theme, language, and notifications
 
 - persistent theme mode controller exists and is now exposed through account/preferences and first-run setup
-- locale controller exists and is now exposed through account/preferences and first-run setup
-- notification permission and topic flows exist and are now surfaced through account/preferences and first-run setup
+- locale controller exists and is now exposed through account/preferences
+- notification permission and topic flows exist and are now surfaced through account/preferences
 - platform-settings handoff exists for notification recovery
 
 ## Core Product Gaps
@@ -191,11 +190,11 @@ Current mobile:
 
 Must-have missing:
 
-- none at the shell level; this now hands off into a dedicated first-run setup flow after authentication and profile completion
+- none at the shell level; onboarding now hands users into the real app flow without a separate setup takeover
 
 Reference:
 
-- UX journey stage says users should choose language, theme, and topics before reaching the home command center
+- UX journey stage says users should be able to choose language, theme, and topics before settling into the home command center
 
 ### Sign in
 

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:eventy360/app/router/route_paths.dart';
+import 'package:eventy360/core/presentation/app_feedback.dart';
 import 'package:eventy360/core/presentation/widgets/app_inline_message.dart';
 import 'package:eventy360/features/auth/presentation/widgets/auth_scaffold.dart';
 import 'package:eventy360/features/events/application/events_controller.dart';
@@ -218,102 +219,175 @@ class _SubmissionWriteScreenState extends ConsumerState<SubmissionWriteScreen> {
                   ),
                 ),
               if (widget.mode == SubmissionWriteKind.abstract) ...[
-                DropdownButtonFormField<String>(
-                  initialValue: _selectedEventId,
-                  items: events
-                      .map(
-                        (event) => DropdownMenuItem<String>(
-                          value: event.id,
-                          child: Text(event.title),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          localizations.eventSelectionLabel,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w700),
                         ),
-                      )
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() => _selectedEventId = value);
-                    unawaited(_saveDraft());
-                  },
-                  decoration: InputDecoration(
-                    labelText: localizations.eventSelectionLabel,
-                  ),
-                  validator: (value) => value == null || value.isEmpty
-                      ? localizations.requiredField
-                      : null,
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _titleArController,
-                  decoration: InputDecoration(
-                    labelText: localizations.submissionTitleArLabel,
-                  ),
-                  validator: (value) => (value == null || value.trim().isEmpty)
-                      ? localizations.requiredField
-                      : null,
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _titleEnController,
-                  decoration: InputDecoration(
-                    labelText: localizations.submissionTitleEnLabel,
+                        const SizedBox(height: 12),
+                        DropdownButtonFormField<String>(
+                          initialValue: _selectedEventId,
+                          items: events
+                              .map(
+                                (event) => DropdownMenuItem<String>(
+                                  value: event.id,
+                                  child: Text(event.title),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() => _selectedEventId = value);
+                            unawaited(_saveDraft());
+                          },
+                          decoration: InputDecoration(
+                            labelText: localizations.eventSelectionLabel,
+                          ),
+                          validator: (value) => value == null || value.isEmpty
+                              ? localizations.requiredField
+                              : null,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
-                TextFormField(
-                  controller: _abstractArController,
-                  decoration: InputDecoration(
-                    labelText: localizations.abstractArLabel,
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          localizations.submissionTitleArLabel,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w700),
+                        ),
+                        const SizedBox(height: 12),
+                        TextFormField(
+                          controller: _titleArController,
+                          decoration: InputDecoration(
+                            labelText: localizations.submissionTitleArLabel,
+                          ),
+                          validator: (value) =>
+                              (value == null || value.trim().isEmpty)
+                              ? localizations.requiredField
+                              : null,
+                        ),
+                        const SizedBox(height: 12),
+                        TextFormField(
+                          controller: _titleEnController,
+                          decoration: InputDecoration(
+                            labelText: localizations.submissionTitleEnLabel,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  maxLines: 6,
-                  validator: (value) => (value == null || value.trim().isEmpty)
-                      ? localizations.requiredField
-                      : null,
                 ),
                 const SizedBox(height: 12),
-                TextFormField(
-                  controller: _abstractEnController,
-                  decoration: InputDecoration(
-                    labelText: localizations.abstractEnLabel,
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          localizations.abstractArLabel,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w700),
+                        ),
+                        const SizedBox(height: 12),
+                        TextFormField(
+                          controller: _abstractArController,
+                          decoration: InputDecoration(
+                            labelText: localizations.abstractArLabel,
+                          ),
+                          maxLines: 6,
+                          validator: (value) =>
+                              (value == null || value.trim().isEmpty)
+                              ? localizations.requiredField
+                              : null,
+                        ),
+                        const SizedBox(height: 12),
+                        TextFormField(
+                          controller: _abstractEnController,
+                          decoration: InputDecoration(
+                            labelText: localizations.abstractEnLabel,
+                          ),
+                          maxLines: 6,
+                        ),
+                      ],
+                    ),
                   ),
-                  maxLines: 6,
                 ),
               ],
               if (widget.mode != SubmissionWriteKind.abstract) ...[
-                AppInlineMessage.info(
-                  message: localizations.uploadGuidanceMessage,
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  localizations.filePickerHint,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(height: 8),
-                OutlinedButton.icon(
-                  onPressed: isSubmitting ? null : _pickFile,
-                  icon: const Icon(Icons.attach_file_outlined),
-                  label: Text(localizations.pickFileAction),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  _selectedUploadFile?.fileName ?? localizations.noFileSelected,
-                ),
-                if (_selectedUploadFile != null) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    '${localizations.fileTypeLabel}: ${_selectedUploadFile!.mimeType}',
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        AppInlineMessage.info(
+                          message: localizations.uploadGuidanceMessage,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          localizations.filePickerHint,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        const SizedBox(height: 12),
+                        OutlinedButton.icon(
+                          onPressed: isSubmitting ? null : _pickFile,
+                          icon: const Icon(Icons.attach_file_outlined),
+                          label: Text(localizations.pickFileAction),
+                        ),
+                        const SizedBox(height: 12),
+                        if (_selectedUploadFile == null)
+                          Text(localizations.noFileSelected)
+                        else
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                _selectedUploadFile!.fileName,
+                                style: Theme.of(context).textTheme.titleSmall
+                                    ?.copyWith(fontWeight: FontWeight.w700),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                '${localizations.fileTypeLabel}: ${_selectedUploadFile!.mimeType}',
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '${localizations.fileSizeLabel}: ${_formatFileSize(_selectedUploadFile!.sizeInBytes)}',
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${localizations.fileSizeLabel}: ${_formatFileSize(_selectedUploadFile!.sizeInBytes)}',
-                  ),
-                ],
+                ),
               ],
               if (widget.mode == SubmissionWriteKind.revision) ...[
                 const SizedBox(height: 12),
-                TextFormField(
-                  controller: _revisionNotesController,
-                  decoration: InputDecoration(
-                    labelText: localizations.revisionNotesLabel,
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: TextFormField(
+                      controller: _revisionNotesController,
+                      decoration: InputDecoration(
+                        labelText: localizations.revisionNotesLabel,
+                      ),
+                      maxLines: 4,
+                    ),
                   ),
-                  maxLines: 4,
                 ),
               ],
               const SizedBox(height: 16),
@@ -344,12 +418,8 @@ class _SubmissionWriteScreenState extends ConsumerState<SubmissionWriteScreen> {
                           }
                           if (existingSubmission != null) {
                             if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    localizations.existingSubmissionRedirectBody,
-                                  ),
-                                ),
+                              AppFeedback.showInfo(
+                                localizations.existingSubmissionRedirectBody,
                               );
                             }
                             unawaited(
@@ -373,7 +443,8 @@ class _SubmissionWriteScreenState extends ConsumerState<SubmissionWriteScreen> {
                                   ':${_abstractArController.text.trim()}',
                             ),
                           );
-                        } else if (widget.mode == SubmissionWriteKind.fullPaper) {
+                        } else if (widget.mode ==
+                            SubmissionWriteKind.fullPaper) {
                           final submissionId = widget.submissionId!;
                           final selectedFile = _selectedUploadFile;
                           if (selectedFile == null) {
@@ -397,8 +468,8 @@ class _SubmissionWriteScreenState extends ConsumerState<SubmissionWriteScreen> {
                             SubmitRevisionInput(
                               submissionId: submissionId,
                               file: selectedFile,
-                              revisionNotes:
-                                  _revisionNotesController.text.trim(),
+                              revisionNotes: _revisionNotesController.text
+                                  .trim(),
                               idempotencyKey:
                                   'revision:$submissionId:${selectedFile.fileName}:${selectedFile.sizeInBytes}',
                             ),
@@ -415,6 +486,7 @@ class _SubmissionWriteScreenState extends ConsumerState<SubmissionWriteScreen> {
                           if (!mounted) {
                             return;
                           }
+                          AppFeedback.showSuccess(receipt.message);
                           router.go(RoutePaths.submissionDetail(selectedId));
                         }
                       },
@@ -434,7 +506,7 @@ class _SubmissionWriteScreenState extends ConsumerState<SubmissionWriteScreen> {
                             localizations.submitRevisionAction,
                         },
                       ),
-                      ),
+              ),
             ],
           ),
         ),

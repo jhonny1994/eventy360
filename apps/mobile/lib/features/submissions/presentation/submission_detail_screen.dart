@@ -85,40 +85,45 @@ class _SubmissionDetailScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '${localizations.eventSelectionLabel}: ${record.eventTitle}',
+                  AppListRow(
+                    leading: const Icon(Icons.event_note_outlined),
+                    title: localizations.eventSelectionLabel,
+                    subtitle: record.eventTitle,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${localizations.submittedOnLabel}: ${_formatDateTime(record.submissionDate)}',
+                  const Divider(height: 20),
+                  AppListRow(
+                    leading: const Icon(Icons.schedule_outlined),
+                    title: localizations.submittedOnLabel,
+                    subtitle: _formatDateTime(record.submissionDate),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${localizations.lastUpdatedLabel}: ${_formatDateTime(record.updatedAt)}',
+                  const Divider(height: 20),
+                  AppListRow(
+                    leading: const Icon(Icons.update_outlined),
+                    title: localizations.lastUpdatedLabel,
+                    subtitle: _formatDateTime(record.updatedAt),
                   ),
                   if (detail.abstractDeadline != null) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      '${localizations.abstractDeadlineLabel}: ${_formatDate(detail.abstractDeadline!)}',
+                    const Divider(height: 20),
+                    AppListRow(
+                      leading: const Icon(Icons.timer_outlined),
+                      title: localizations.abstractDeadlineLabel,
+                      subtitle: _formatDate(detail.abstractDeadline!),
                     ),
                   ],
                   if (detail.fullPaperDeadline != null) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      '${localizations.fullPaperDeadlineLabel}: ${_formatDate(detail.fullPaperDeadline!)}',
+                    const Divider(height: 20),
+                    AppListRow(
+                      leading: const Icon(Icons.article_outlined),
+                      title: localizations.fullPaperDeadlineLabel,
+                      subtitle: _formatDate(detail.fullPaperDeadline!),
                     ),
                   ],
-                  const SizedBox(height: 12),
-                  Text(
-                    localizations.abstractArLabel,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(record.abstractText),
                 ],
               ),
+            ),
+            AppSectionCard(
+              title: localizations.abstractArLabel,
+              child: Text(record.abstractText),
             ),
             if (detail.fileDetails != null)
               AppSectionCard(
@@ -127,34 +132,34 @@ class _SubmissionDetailScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      detail.fileDetails!.fileName ??
+                    AppListRow(
+                      leading: const Icon(Icons.description_outlined),
+                      title: detail.fileDetails!.fileName ??
                           localizations.repositoryPaperFileFallback,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
+                      subtitle: localizations.openSubmissionFileAction,
                     ),
                     if (detail.fileDetails!.fileSizeBytes != null) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        '${localizations.fileSizeLabel}: ${_formatFileSize(detail.fileDetails!.fileSizeBytes!)}',
+                      const Divider(height: 20),
+                      AppListRow(
+                        leading: const Icon(Icons.storage_outlined),
+                        title: localizations.fileSizeLabel,
+                        subtitle: _formatFileSize(
+                          detail.fileDetails!.fileSizeBytes!,
+                        ),
                       ),
                     ],
                     if ((detail.fileDetails!.contentType ?? '').isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        '${localizations.fileTypeLabel}: ${detail.fileDetails!.contentType}',
+                      const Divider(height: 20),
+                      AppListRow(
+                        leading: const Icon(Icons.info_outline_rounded),
+                        title: localizations.fileTypeLabel,
+                        subtitle: detail.fileDetails!.contentType!,
                       ),
                     ],
-                    if ((detail.fileDetails!.revisionNotes ?? '').trim().isNotEmpty) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        localizations.revisionNotesLabel,
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
+                    if ((detail.fileDetails!.revisionNotes ?? '')
+                        .trim()
+                        .isNotEmpty) ...[
+                      const SizedBox(height: 12),
                       Text(detail.fileDetails!.revisionNotes!),
                     ],
                     const SizedBox(height: 12),
@@ -186,8 +191,13 @@ class _SubmissionDetailScreenState
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    _feedbackRoleLabel(localizations, entry.role),
-                                    style: Theme.of(context).textTheme.labelLarge
+                                    _feedbackRoleLabel(
+                                      localizations,
+                                      entry.role,
+                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge
                                         ?.copyWith(fontWeight: FontWeight.w700),
                                   ),
                                   const SizedBox(height: 6),
@@ -195,7 +205,9 @@ class _SubmissionDetailScreenState
                                   const SizedBox(height: 8),
                                   Text(
                                     _formatDateTime(entry.timestamp),
-                                    style: Theme.of(context).textTheme.bodySmall,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall,
                                   ),
                                 ],
                               ),
@@ -211,12 +223,13 @@ class _SubmissionDetailScreenState
               child: Column(
                 children: detail.timeline
                     .map(
-                      (entry) => ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: const Icon(Icons.timeline_outlined),
-                        title: Text(entry.title),
-                        subtitle: Text(
-                          '${entry.description}\n${_formatDateTime(entry.timestamp)}',
+                      (entry) => Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: AppListRow(
+                          leading: const Icon(Icons.timeline_outlined),
+                          title: entry.title,
+                          subtitle:
+                              '${entry.description}\n${_formatDateTime(entry.timestamp)}',
                         ),
                       ),
                     )
@@ -232,17 +245,33 @@ class _SubmissionDetailScreenState
                   children: [
                     if (record.canSubmitFullPaper)
                       FilledButton(
-                        onPressed: () => context.push(
-                          RoutePaths.submissionFullPaper(record.id),
-                        ),
+                        onPressed: () async {
+                          await context.push(
+                            RoutePaths.submissionFullPaper(record.id),
+                          );
+                          if (!context.mounted) {
+                            return;
+                          }
+                          await ref
+                              .read(submissionsControllerProvider.notifier)
+                              .loadSubmissionDetail(widget.submissionId);
+                        },
                         child: Text(localizations.submitFullPaperAction),
                       ),
                     if (record.canSubmitRevision) ...[
                       if (record.canSubmitFullPaper) const SizedBox(height: 10),
                       FilledButton.tonal(
-                        onPressed: () => context.push(
-                          RoutePaths.submissionRevision(record.id),
-                        ),
+                        onPressed: () async {
+                          await context.push(
+                            RoutePaths.submissionRevision(record.id),
+                          );
+                          if (!context.mounted) {
+                            return;
+                          }
+                          await ref
+                              .read(submissionsControllerProvider.notifier)
+                              .loadSubmissionDetail(widget.submissionId);
+                        },
                         child: Text(localizations.submitRevisionAction),
                       ),
                     ],

@@ -10,7 +10,6 @@ import 'package:eventy360/features/repository/domain/repository_models.dart';
 import 'package:eventy360/l10n/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PaperDetailScreen extends ConsumerStatefulWidget {
@@ -82,16 +81,27 @@ class _PaperDetailScreenState extends ConsumerState<PaperDetailScreen> {
                 ),
                 AppSectionCard(
                   title: localizations.repositoryContextTitle,
-                  subtitle: localizations.repositoryDownloadConfidenceBody,
+                  subtitle: localizations.repositoryDetailOverviewBody,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      FilledButton.tonalIcon(
-                        onPressed: () => context.pop(),
-                        icon: const Icon(Icons.arrow_back_rounded),
-                        label: Text(localizations.repositoryBackAction),
+                      AppListRow(
+                        leading: const Icon(Icons.person_outline_rounded),
+                        title: paper.authorName,
+                        subtitle: paper.authorInstitution,
                       ),
-                      const SizedBox(height: 12),
+                      const Divider(height: 20),
+                      AppListRow(
+                        leading: const Icon(Icons.event_note_outlined),
+                        title: paper.eventName,
+                        subtitle: _paperContextSubtitle(
+                          localizations: localizations,
+                          submittedOn: paper.submissionDate,
+                          wilayaName: paper.wilayaName,
+                          dairaName: paper.dairaName,
+                        ),
+                      ),
+                      const SizedBox(height: 14),
                       Wrap(
                         spacing: 8,
                         runSpacing: 8,
@@ -111,33 +121,17 @@ class _PaperDetailScreenState extends ConsumerState<PaperDetailScreen> {
                     ],
                   ),
                 ),
-                AppSectionCard(
-                  title: '${paper.authorName} - ${paper.authorInstitution}',
-                  subtitle: paper.eventName,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${localizations.submittedOnLabel}: ${_formatDate(paper.submissionDate)}',
-                      ),
-                      const SizedBox(height: 8),
-                      if (paper.wilayaName != null)
-                        Text(
-                          paper.dairaName == null
-                              ? paper.wilayaName!
-                              : '${paper.wilayaName!}, ${paper.dairaName!}',
-                        ),
-                      const SizedBox(height: 12),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: paper.topicNames
-                            .map((name) => Chip(label: Text(name)))
-                            .toList(),
-                      ),
-                    ],
+                if (paper.topicNames.isNotEmpty)
+                  AppSectionCard(
+                    title: localizations.topicSubscriptionsTitle,
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: paper.topicNames
+                          .map((name) => Chip(label: Text(name)))
+                          .toList(),
+                    ),
                   ),
-                ),
                 AppSectionCard(
                   title: localizations.repositoryAbstractTitle,
                   child: Text(
@@ -147,7 +141,8 @@ class _PaperDetailScreenState extends ConsumerState<PaperDetailScreen> {
                 AppSectionCard(
                   title: localizations.repositoryDownloadSectionTitle,
                   subtitle:
-                      paper.fileName ?? localizations.repositoryPaperFileFallback,
+                      paper.fileName ??
+                      localizations.repositoryPaperFileFallback,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -157,14 +152,20 @@ class _PaperDetailScreenState extends ConsumerState<PaperDetailScreen> {
                       const SizedBox(height: 12),
                       if (paper.fileSizeBytes != null)
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: Text(_formatFileSize(paper.fileSizeBytes!)),
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: AppListRow(
+                            leading: const Icon(Icons.storage_outlined),
+                            title: localizations.fileSizeLabel,
+                            subtitle: _formatFileSize(paper.fileSizeBytes!),
+                          ),
                         ),
                       if ((paper.fileContentType ?? '').isNotEmpty)
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: Text(
-                            '${localizations.fileTypeLabel}: ${paper.fileContentType!}',
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: AppListRow(
+                            leading: const Icon(Icons.description_outlined),
+                            title: localizations.fileTypeLabel,
+                            subtitle: paper.fileContentType!,
                           ),
                         ),
                       FilledButton.icon(
@@ -207,4 +208,22 @@ String _formatDate(DateTime date) {
   final mm = date.month.toString().padLeft(2, '0');
   final dd = date.day.toString().padLeft(2, '0');
   return '${date.year}-$mm-$dd';
+}
+
+String _paperContextSubtitle({
+  required S localizations,
+  required DateTime submittedOn,
+  required String? wilayaName,
+  required String? dairaName,
+}) {
+  final location = switch ((wilayaName, dairaName)) {
+    (final String wilaya?, final String daira?) => '$wilaya, $daira',
+    (final String wilaya?, _) => wilaya,
+    _ => null,
+  };
+  final details = <String>[
+    '${localizations.submittedOnLabel}: ${_formatDate(submittedOn)}',
+    if (location != null && location.isNotEmpty) location,
+  ];
+  return details.join('\n');
 }

@@ -1,4 +1,5 @@
 import 'package:eventy360/features/events/application/events_state.dart';
+import 'package:eventy360/features/events/domain/event_detail.dart';
 import 'package:eventy360/features/events/domain/event_summary.dart';
 import 'package:eventy360/features/events/domain/events_repository.dart';
 import 'package:eventy360/features/events/infrastructure/supabase_events_repository.dart';
@@ -10,6 +11,12 @@ part 'events_controller.g.dart';
 @Riverpod(keepAlive: true)
 EventsRepository eventsRepository(Ref ref) {
   return SupabaseEventsRepository(ref);
+}
+
+@Riverpod(keepAlive: true)
+Future<EventDetail?> eventDetail(Ref ref, String eventId) {
+  final repository = ref.watch(eventsRepositoryProvider);
+  return repository.fetchEventDetail(eventId);
 }
 
 @Riverpod(keepAlive: true)

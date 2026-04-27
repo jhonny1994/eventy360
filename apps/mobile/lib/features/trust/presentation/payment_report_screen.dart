@@ -1,9 +1,12 @@
 import 'dart:io';
 
 import 'package:eventy360/app/application/app_settings_provider.dart';
+import 'package:eventy360/core/presentation/app_feedback.dart';
 import 'package:eventy360/core/presentation/widgets/app_inline_message.dart';
 import 'package:eventy360/features/account/application/subscription_overview_provider.dart';
 import 'package:eventy360/features/auth/presentation/widgets/auth_scaffold.dart';
+import 'package:eventy360/features/home/application/home_subscription_provider.dart';
+import 'package:eventy360/features/repository/application/repository_controller.dart';
 import 'package:eventy360/features/trust/application/trust_controller.dart';
 import 'package:eventy360/features/trust/domain/trust_models.dart';
 import 'package:eventy360/l10n/generated/l10n.dart';
@@ -101,7 +104,9 @@ class _PaymentReportScreenState extends ConsumerState<PaymentReportScreen> {
     if (_amountController.text.trim().isEmpty && recommendedPrice != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && _amountController.text.trim().isEmpty) {
-          _amountController.text = recommendedPrice.finalPrice.toStringAsFixed(0);
+          _amountController.text = recommendedPrice.finalPrice.toStringAsFixed(
+            0,
+          );
         }
       });
     }
@@ -153,7 +158,8 @@ class _PaymentReportScreenState extends ConsumerState<PaymentReportScreen> {
                       ),
                     if ((settings.accountHolder ?? '').isNotEmpty)
                       _InstructionLine(
-                        label: localizations.paymentInstructionAccountHolderLabel,
+                        label:
+                            localizations.paymentInstructionAccountHolderLabel,
                         value: settings.accountHolder!,
                       ),
                     if ((settings.accountNumberRib ?? '').isNotEmpty)
@@ -301,8 +307,8 @@ class _PaymentReportScreenState extends ConsumerState<PaymentReportScreen> {
                                 billingPeriod: _billingPeriod,
                                 paymentMethod: _paymentMethod,
                                 file: _selectedFile!,
-                                referenceNumber:
-                                    _referenceController.text.trim(),
+                                referenceNumber: _referenceController.text
+                                    .trim(),
                                 payerNotes: _notesController.text.trim(),
                               ),
                             );
@@ -314,6 +320,15 @@ class _PaymentReportScreenState extends ConsumerState<PaymentReportScreen> {
                           return;
                         }
                         if (nextState?.errorMessage == null) {
+                          ref
+                            ..invalidate(subscriptionOverviewProvider)
+                            ..invalidate(homeSubscriptionStatusProvider)
+                            ..invalidate(repositoryControllerProvider)
+                            ..invalidate(trustControllerProvider);
+                          AppFeedback.showSuccess(
+                            nextState?.lastReceipt?.message ??
+                                localizations.submitPaymentReportAction,
+                          );
                           context.pop();
                         }
                       },

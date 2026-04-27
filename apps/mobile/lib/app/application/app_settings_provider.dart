@@ -104,8 +104,8 @@ Future<AppPaymentSettings?> appPaymentSettings(Ref ref) async {
     accountHolder: normalize(row['account_holder']?.toString()),
     accountNumberRib: normalize(row['account_number_rib']?.toString()),
     paymentEmail: normalize(row['payment_email']?.toString()),
-    basePriceResearcherMonthly:
-        (row['base_price_researcher_monthly'] as num?)?.toDouble(),
+    basePriceResearcherMonthly: (row['base_price_researcher_monthly'] as num?)
+        ?.toDouble(),
     discountQuarterly: (row['discount_quarterly'] as num?)?.toDouble(),
     discountBiannual: (row['discount_biannual'] as num?)?.toDouble(),
     discountAnnual: (row['discount_annual'] as num?)?.toDouble(),

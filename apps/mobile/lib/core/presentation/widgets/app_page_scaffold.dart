@@ -56,7 +56,7 @@ class AppPageHero extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(28),
         gradient: LinearGradient(
@@ -83,26 +83,27 @@ class AppPageHero extends StatelessWidget {
                   Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,
                     spacing: 8,
-                    runSpacing: 8,
+                    runSpacing: 6,
                     children: [
                       if (badge != null) _HeroBadge(label: badge!, icon: icon),
                     ],
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 12),
                 ],
                 Text(
                   title,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w800,
                     letterSpacing: -0.3,
+                    height: 1.12,
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 8),
                 Text(
                   subtitle,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurfaceVariant,
-                    height: 1.45,
+                    height: 1.34,
                   ),
                 ),
               ],
@@ -172,14 +173,16 @@ class AppSectionCard extends StatelessWidget {
                             title!,
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w700,
+                              height: 1.2,
                             ),
                           ),
                         if (subtitle != null) ...[
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 6),
                           Text(
                             subtitle!,
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: colorScheme.onSurfaceVariant,
+                              height: 1.32,
                             ),
                           ),
                         ],
@@ -192,7 +195,7 @@ class AppSectionCard extends StatelessWidget {
                   ],
                 ],
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 12),
             ],
             child,
           ],
@@ -299,13 +302,78 @@ class AppStatusBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
         child: Text(
           label,
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
             color: foreground,
             fontWeight: FontWeight.w700,
+            height: 1.15,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class AppListRow extends StatelessWidget {
+  const AppListRow({
+    required this.title,
+    required this.subtitle,
+    super.key,
+    this.leading,
+    this.trailing,
+    this.onTap,
+  });
+
+  final String title;
+  final String subtitle;
+  final Widget? leading;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return InkWell(
+      borderRadius: BorderRadius.circular(18),
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 2),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (leading != null) ...[
+              leading!,
+              const SizedBox(width: 12),
+            ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      height: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                      height: 1.3,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (trailing != null) ...[
+              const SizedBox(width: 12),
+              trailing!,
+            ],
+          ],
         ),
       ),
     );

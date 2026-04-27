@@ -120,11 +120,6 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
                     subtitle: localizations.trustOverviewBody,
                   ),
                   AppSectionCard(
-                    title: localizations.secureDocsTitle,
-                    subtitle: localizations.secureDocsBody,
-                    child: const SizedBox.shrink(),
-                  ),
-                  AppSectionCard(
                     title: localizations.subscriptionStatusTitle,
                     subtitle: localizations.subscriptionOverviewBody,
                     child: subscriptionOverview.when(
@@ -132,12 +127,7 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            overview.hasSubscription
-                                ? _subscriptionStatusLabel(
-                                    localizations,
-                                    overview.status,
-                                  )
-                                : localizations.subscriptionInactive,
+                            _subscriptionStatusLabel(localizations, overview),
                             style: Theme.of(context).textTheme.titleSmall
                                 ?.copyWith(fontWeight: FontWeight.w700),
                           ),
@@ -161,8 +151,15 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
                             children: [
                               Expanded(
                                 child: FilledButton.icon(
-                                  onPressed: () =>
-                                      context.push(RoutePaths.reportPayment),
+                                  onPressed: () async {
+                                    await context.push(
+                                      RoutePaths.reportPayment,
+                                    );
+                                    ref.invalidate(
+                                      subscriptionOverviewProvider,
+                                    );
+                                    await controller.refresh();
+                                  },
                                   icon: const Icon(
                                     Icons.upload_file_outlined,
                                   ),
@@ -174,8 +171,16 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: FilledButton.tonalIcon(
-                                  onPressed: () => context.push(RoutePaths.account),
-                                  icon: const Icon(Icons.manage_accounts_outlined),
+                                  onPressed: () async {
+                                    await context.push(RoutePaths.account);
+                                    ref.invalidate(
+                                      subscriptionOverviewProvider,
+                                    );
+                                    await controller.refresh();
+                                  },
+                                  icon: const Icon(
+                                    Icons.manage_accounts_outlined,
+                                  ),
                                   label: Text(localizations.accountTitle),
                                 ),
                               ),
@@ -204,11 +209,18 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        AppInlineMessage.info(
+                          message: localizations.secureDocsBody,
+                        ),
                         if (data.verification.latestRequest != null) ...[
+                          const SizedBox(height: 12),
                           Text(
                             '${localizations.latestRequestLabel}: ${_formatDate(data.verification.latestRequest!.submittedAt)}',
                           ),
-                          if ((data.verification.latestRequest!.rejectionReason ??
+                          if ((data
+                                      .verification
+                                      .latestRequest!
+                                      .rejectionReason ??
                                   '')
                               .trim()
                               .isNotEmpty)
@@ -226,7 +238,10 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
                               padding: const EdgeInsets.only(top: 8),
                               child: TextButton.icon(
                                 onPressed: () => _openDocument(
-                                  data.verification.latestRequest!.documentPath!,
+                                  data
+                                      .verification
+                                      .latestRequest!
+                                      .documentPath!,
                                 ),
                                 icon: const Icon(Icons.lock_open_outlined),
                                 label: Text(localizations.viewUploadedDocument),
@@ -296,7 +311,11 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
                     title: localizations.paymentHistoryTitle,
                     subtitle: localizations.paymentHistoryBody,
                     trailing: FilledButton.tonalIcon(
-                      onPressed: () => context.push(RoutePaths.reportPayment),
+                      onPressed: () async {
+                        await context.push(RoutePaths.reportPayment);
+                        ref.invalidate(subscriptionOverviewProvider);
+                        await controller.refresh();
+                      },
                       icon: const Icon(Icons.receipt_long_outlined),
                       label: Text(localizations.reportPaymentTitle),
                     ),
@@ -322,8 +341,9 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
                               payment: payment,
                               onOpenDocument: payment.proofDocumentPath == null
                                   ? null
-                                  : () =>
-                                        _openDocument(payment.proofDocumentPath!),
+                                  : () => _openDocument(
+                                      payment.proofDocumentPath!,
+                                    ),
                             ),
                           ),
                       ],
@@ -406,26 +426,37 @@ class _PaymentTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '${localizations.billingPeriodLabel}: ${_billingPeriodLabel(localizations, payment.billingPeriod)}',
+          AppListRow(
+            leading: const Icon(Icons.calendar_month_outlined),
+            title: localizations.billingPeriodLabel,
+            subtitle: _billingPeriodLabel(localizations, payment.billingPeriod),
           ),
-          const SizedBox(height: 4),
-          Text(
-            '${localizations.paymentMethodLabel}: ${_paymentMethodLabel(localizations, payment.paymentMethod)}',
+          const Divider(height: 18),
+          AppListRow(
+            leading: const Icon(Icons.payments_outlined),
+            title: localizations.paymentMethodLabel,
+            subtitle: _paymentMethodLabel(
+              localizations,
+              payment.paymentMethod,
+            ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            '${localizations.reportedAtLabel}: ${_formatDate(payment.reportedAt)}',
+          const Divider(height: 18),
+          AppListRow(
+            leading: const Icon(Icons.schedule_outlined),
+            title: localizations.reportedAtLabel,
+            subtitle: _formatDate(payment.reportedAt),
           ),
           if ((payment.referenceNumber ?? '').trim().isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text(
-              '${localizations.referenceNumberLabel}: ${payment.referenceNumber}',
+            const Divider(height: 18),
+            AppListRow(
+              leading: const Icon(Icons.tag_outlined),
+              title: localizations.referenceNumberLabel,
+              subtitle: payment.referenceNumber!,
             ),
           ],
           if ((payment.payerNotes ?? '').trim().isNotEmpty)
             Padding(
-              padding: const EdgeInsets.only(top: 8),
+              padding: const EdgeInsets.only(top: 12),
               child: Text(payment.payerNotes!),
             ),
           if (onOpenDocument != null)
@@ -501,10 +532,17 @@ String _formatDate(DateTime date) {
   return '${date.year}-$mm-$dd';
 }
 
-String _subscriptionStatusLabel(S localizations, String? status) {
-  return switch (status) {
-    'trial' => localizations.subscriptionTrialHeadline,
-    'active' => localizations.subscriptionActiveHeadline,
+String _subscriptionStatusLabel(
+  S localizations,
+  SubscriptionOverview overview,
+) {
+  if (overview.isTrial) {
+    return localizations.subscriptionTrialHeadline;
+  }
+  if (overview.isActive) {
+    return localizations.subscriptionActiveHeadline;
+  }
+  return switch (overview.status) {
     'expired' => localizations.subscriptionExpiredHeadline,
     'cancelled' => localizations.subscriptionCancelledHeadline,
     _ => localizations.subscriptionInactive,

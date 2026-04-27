@@ -61,7 +61,7 @@
   - [x] 2.5.7 Add account overview sections for profile state, verification state, subscription state, and sign out
   - [x] 2.5.8 Add dedicated profile edit flow from mobile account area
   - [x] 2.5.9 Add dedicated security entry point from mobile account area
-  - [x] 2.5.10 Revisit onboarding completion so first-run flow leads into language/theme/topics/account-aware shell
+  - [x] 2.5.10 Revisit onboarding completion so onboarding and account preferences support language/theme/topics without blocking entry into the real app shell
   - [x] 2.6 Add auth/home tests: provider tests, widget flow tests, and basic navigation tests
   - [ ] 2.7 Run milestone manual validation #1: auth, onboarding, profile gate, home
 
@@ -78,7 +78,7 @@
   - [x] 3.8.1 Separate event filtering from topic subscription management in UX and IA
   - [x] 3.8.2 Add dedicated saved or bookmarked events view
   - [x] 3.8.4 Preserve search, filters, and scroll context across event list/detail round-trips
-  - [ ] 3.8.5 Expand event detail to include richer event description, timeline, organizer context, and eligibility guidance
+  - [x] 3.8.5 Expand event detail to include richer event description, timeline, organizer context, and eligibility guidance
   - [x] 3.8.6 Route duplicate abstract attempts back to the existing submission context instead of creating confusion
   - [ ] 3.9 Run milestone manual validation #2: discovery, bookmarks, topics, real subscribed-topic push
 
@@ -125,14 +125,14 @@
   - [x] 6.3.5 Add large-text and RTL regression checklist for every primary route
   - [x] 6.3.6 Add cold-start, background-resume, and return-to-task validation for every critical workflow
   - [ ] 6.4 Execute full manual walkthrough across all core researcher flows
-  - [ ] 6.5 Capture defects from walkthrough and resolve blocking issues
-  - [ ] 6.6 Re-run automated checks after fixes and confirm clean status
+  - [x] 6.5 Capture defects from walkthrough and resolve blocking issues
+  - [x] 6.6 Re-run automated checks after fixes and confirm clean status
 
 - [ ] 7.0 Build Android release artifacts and publish to GitHub Releases
   - [ ] 7.1 Configure Android signing for release builds
   - [ ] 7.2 Build release APK and verify install/launch on target device(s)
-  - [ ] 7.3 Validate versioning metadata and release notes
-  - [ ] 7.4 Generate checksum for published artifact
+  - [x] 7.3 Validate versioning metadata and release notes
+  - [x] 7.4 Generate checksum for published artifact
   - [ ] 7.5 Publish APK and release notes to GitHub Releases
-  - [ ] 7.5.1 Document rollback and hotfix procedure for release issues
+  - [x] 7.5.1 Document rollback and hotfix procedure for release issues
   - [ ] 7.6 Run milestone manual validation #5: release candidate install and end-to-end sanity

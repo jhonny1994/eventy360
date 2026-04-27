@@ -55,6 +55,81 @@ final class EventsRepositoryProvider
 
 String _$eventsRepositoryHash() => r'ac10519aad254be23ca633cfd465e549246943ac';
 
+@ProviderFor(eventDetail)
+final eventDetailProvider = EventDetailFamily._();
+
+final class EventDetailProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<EventDetail?>,
+          EventDetail?,
+          FutureOr<EventDetail?>
+        >
+    with $FutureModifier<EventDetail?>, $FutureProvider<EventDetail?> {
+  EventDetailProvider._({
+    required EventDetailFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'eventDetailProvider',
+         isAutoDispose: false,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$eventDetailHash();
+
+  @override
+  String toString() {
+    return r'eventDetailProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<EventDetail?> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<EventDetail?> create(Ref ref) {
+    final argument = this.argument as String;
+    return eventDetail(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is EventDetailProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$eventDetailHash() => r'bbe393e20c9899fd6d70482e812e620896989477';
+
+final class EventDetailFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<EventDetail?>, String> {
+  EventDetailFamily._()
+    : super(
+        retry: null,
+        name: r'eventDetailProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: false,
+      );
+
+  EventDetailProvider call(String eventId) =>
+      EventDetailProvider._(argument: eventId, from: this);
+
+  @override
+  String toString() => r'eventDetailProvider';
+}
+
 @ProviderFor(EventsController)
 final eventsControllerProvider = EventsControllerProvider._();
 

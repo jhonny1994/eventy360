@@ -2,6 +2,7 @@ import 'package:eventy360/app/application/app_settings_provider.dart';
 import 'package:eventy360/app/localization/locale_controller.dart';
 import 'package:eventy360/app/router/route_paths.dart';
 import 'package:eventy360/app/theme/theme_mode_controller.dart';
+import 'package:eventy360/core/presentation/app_feedback.dart';
 import 'package:eventy360/core/presentation/widgets/app_page_scaffold.dart';
 import 'package:eventy360/features/account/application/subscription_overview_provider.dart';
 import 'package:eventy360/features/auth/application/session_controller.dart';
@@ -51,35 +52,46 @@ class AccountScreen extends ConsumerWidget {
             ),
             AppSectionCard(
               title: localizations.accountOverviewTitle,
-              subtitle: email,
               leading: const Icon(Icons.account_circle_outlined),
-              child: Wrap(
-                spacing: 12,
-                runSpacing: 12,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AppStatusBadge(
-                    label: isVerified
-                        ? localizations.verifiedStatus
-                        : localizations.notVerifiedStatus,
-                    tone: isVerified
-                        ? AppStatusTone.success
-                        : AppStatusTone.neutral,
+                  Text(
+                    email,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
-                  AppStatusBadge(
-                    label: hasPremiumSubscription
-                        ? localizations.subscriptionActive
-                        : localizations.subscriptionInactive,
-                    tone: hasPremiumSubscription
-                        ? AppStatusTone.info
-                        : AppStatusTone.neutral,
-                  ),
-                  AppStatusBadge(
-                    label: notificationPermissionGranted
-                        ? localizations.notificationsEnabledStatus
-                        : localizations.notificationsNotEnabledStatus,
-                    tone: notificationPermissionGranted
-                        ? AppStatusTone.success
-                        : AppStatusTone.neutral,
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: [
+                      AppStatusBadge(
+                        label: isVerified
+                            ? localizations.verifiedStatus
+                            : localizations.notVerifiedStatus,
+                        tone: isVerified
+                            ? AppStatusTone.success
+                            : AppStatusTone.neutral,
+                      ),
+                      AppStatusBadge(
+                        label: hasPremiumSubscription
+                            ? localizations.subscriptionActive
+                            : localizations.subscriptionInactive,
+                        tone: hasPremiumSubscription
+                            ? AppStatusTone.info
+                            : AppStatusTone.neutral,
+                      ),
+                      AppStatusBadge(
+                        label: notificationPermissionGranted
+                            ? localizations.notificationsEnabledStatus
+                            : localizations.notificationsNotEnabledStatus,
+                        tone: notificationPermissionGranted
+                            ? AppStatusTone.success
+                            : AppStatusTone.neutral,
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -118,9 +130,13 @@ class AccountScreen extends ConsumerWidget {
                         ),
                       ],
                       if ((bankName ?? '').isNotEmpty) ...[
-                        const SizedBox(height: 6),
-                        Text(
-                          localizations.subscriptionBankReference(bankName!),
+                        const SizedBox(height: 10),
+                        AppListRow(
+                          leading: const Icon(Icons.account_balance_outlined),
+                          title: localizations.reportPaymentTitle,
+                          subtitle: localizations.subscriptionBankReference(
+                            bankName!,
+                          ),
                         ),
                       ],
                       const SizedBox(height: 14),
@@ -128,16 +144,23 @@ class AccountScreen extends ConsumerWidget {
                         children: [
                           Expanded(
                             child: FilledButton.tonalIcon(
-                              onPressed: () => context.push(RoutePaths.trust),
+                              onPressed: () async {
+                                await context.push(RoutePaths.trust);
+                                _refreshAccountData(ref);
+                              },
                               icon: const Icon(Icons.receipt_long_outlined),
-                              label: Text(localizations.subscriptionHistoryAction),
+                              label: Text(
+                                localizations.subscriptionHistoryAction,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 10),
                           Expanded(
                             child: FilledButton.icon(
-                              onPressed: () =>
-                                  context.push(RoutePaths.reportPayment),
+                              onPressed: () async {
+                                await context.push(RoutePaths.reportPayment);
+                                _refreshAccountData(ref);
+                              },
                               icon: const Icon(Icons.upload_file_outlined),
                               label: Text(localizations.reportPaymentTitle),
                             ),
@@ -162,6 +185,7 @@ class AccountScreen extends ConsumerWidget {
                     subtitle: _languageLabel(localizations, locale),
                     onTap: () async {
                       await _showLanguageSheet(context, ref);
+                      _refreshAccountData(ref);
                     },
                   ),
                   const Divider(height: 1),
@@ -171,6 +195,7 @@ class AccountScreen extends ConsumerWidget {
                     subtitle: _themeLabel(localizations, themeMode),
                     onTap: () async {
                       await _showThemeSheet(context, ref);
+                      _refreshAccountData(ref);
                     },
                   ),
                   const Divider(height: 1),
@@ -182,6 +207,7 @@ class AccountScreen extends ConsumerWidget {
                         : localizations.notificationsDisabledBody,
                     onTap: () async {
                       await _showNotificationSheet(context, ref);
+                      _refreshAccountData(ref);
                     },
                   ),
                 ],
@@ -196,35 +222,50 @@ class AccountScreen extends ConsumerWidget {
                     icon: Icons.person_outline_rounded,
                     title: localizations.editProfileTitle,
                     subtitle: localizations.editProfileBody,
-                    onTap: () => context.push(RoutePaths.accountProfile),
+                    onTap: () async {
+                      await context.push(RoutePaths.accountProfile);
+                      _refreshAccountData(ref);
+                    },
                   ),
                   const Divider(height: 1),
                   _PreferenceTile(
                     icon: Icons.security_outlined,
                     title: localizations.securityTitle,
                     subtitle: localizations.securityBody,
-                    onTap: () => context.push(RoutePaths.accountSecurity),
+                    onTap: () async {
+                      await context.push(RoutePaths.accountSecurity);
+                      _refreshAccountData(ref);
+                    },
                   ),
                   const Divider(height: 1),
                   _PreferenceTile(
                     icon: Icons.verified_user_outlined,
                     title: localizations.trustCenterTitle,
                     subtitle: localizations.trustOverviewBody,
-                    onTap: () => context.push(RoutePaths.trust),
+                    onTap: () async {
+                      await context.push(RoutePaths.trust);
+                      _refreshAccountData(ref);
+                    },
                   ),
                   const Divider(height: 1),
                   _PreferenceTile(
                     icon: Icons.bookmarks_outlined,
                     title: localizations.savedEventsTitle,
                     subtitle: localizations.savedEventsBody,
-                    onTap: () => context.push(RoutePaths.savedEvents),
+                    onTap: () async {
+                      await context.push(RoutePaths.savedEvents);
+                      _refreshAccountData(ref);
+                    },
                   ),
                   const Divider(height: 1),
                   _PreferenceTile(
                     icon: Icons.event_note_outlined,
                     title: localizations.topicSubscriptionsTitle,
                     subtitle: localizations.topicSubscriptionsBody,
-                    onTap: () => context.push(RoutePaths.topics),
+                    onTap: () async {
+                      await context.push(RoutePaths.topics);
+                      _refreshAccountData(ref);
+                    },
                   ),
                 ],
               ),
@@ -272,6 +313,9 @@ class AccountScreen extends ConsumerWidget {
                   await ref
                       .read(localeControllerProvider.notifier)
                       .setLocale(const Locale('en'));
+                  AppFeedback.showSuccess(
+                    localizations.languagePreferenceTitle,
+                  );
                   if (context.mounted) {
                     Navigator.of(context).pop();
                   }
@@ -286,6 +330,9 @@ class AccountScreen extends ConsumerWidget {
                   await ref
                       .read(localeControllerProvider.notifier)
                       .setLocale(const Locale('ar'));
+                  AppFeedback.showSuccess(
+                    localizations.languagePreferenceTitle,
+                  );
                   if (context.mounted) {
                     Navigator.of(context).pop();
                   }
@@ -318,6 +365,7 @@ class AccountScreen extends ConsumerWidget {
                   await ref
                       .read(themeModeControllerProvider.notifier)
                       .setThemeMode(ThemeMode.system);
+                  AppFeedback.showSuccess(localizations.themePreferenceTitle);
                   if (context.mounted) {
                     Navigator.of(context).pop();
                   }
@@ -332,6 +380,7 @@ class AccountScreen extends ConsumerWidget {
                   await ref
                       .read(themeModeControllerProvider.notifier)
                       .setThemeMode(ThemeMode.light);
+                  AppFeedback.showSuccess(localizations.themePreferenceTitle);
                   if (context.mounted) {
                     Navigator.of(context).pop();
                   }
@@ -346,6 +395,7 @@ class AccountScreen extends ConsumerWidget {
                   await ref
                       .read(themeModeControllerProvider.notifier)
                       .setThemeMode(ThemeMode.dark);
+                  AppFeedback.showSuccess(localizations.themePreferenceTitle);
                   if (context.mounted) {
                     Navigator.of(context).pop();
                   }
@@ -390,6 +440,9 @@ class AccountScreen extends ConsumerWidget {
                 FilledButton.icon(
                   onPressed: () async {
                     await controller.requestPermissionForTopicIntent();
+                    AppFeedback.showInfo(
+                      localizations.notificationPreferencesTitle,
+                    );
                     if (context.mounted) {
                       Navigator.of(context).pop();
                     }
@@ -401,6 +454,9 @@ class AccountScreen extends ConsumerWidget {
                 OutlinedButton.icon(
                   onPressed: () async {
                     await permissions.openAppSettings();
+                    AppFeedback.showInfo(
+                      localizations.openSystemSettingsAction,
+                    );
                     if (context.mounted) {
                       Navigator.of(context).pop();
                     }
@@ -432,17 +488,25 @@ class AccountScreen extends ConsumerWidget {
   }
 
   String _subscriptionHeadline(S localizations, SubscriptionOverview overview) {
-    if (!overview.hasSubscription) {
-      return localizations.subscriptionInactive;
+    if (overview.isTrial) {
+      return localizations.subscriptionTrialHeadline;
+    }
+    if (overview.isActive) {
+      return localizations.subscriptionActiveHeadline;
     }
     return switch (overview.status) {
-      'trial' => localizations.subscriptionTrialHeadline,
-      'active' => localizations.subscriptionActiveHeadline,
       'expired' => localizations.subscriptionExpiredHeadline,
       'cancelled' => localizations.subscriptionCancelledHeadline,
       _ => localizations.subscriptionInactive,
     };
   }
+}
+
+void _refreshAccountData(WidgetRef ref) {
+  ref
+    ..invalidate(homeSubscriptionStatusProvider)
+    ..invalidate(subscriptionOverviewProvider)
+    ..invalidate(notificationControllerProvider);
 }
 
 class _PreferenceTile extends StatelessWidget {
@@ -460,11 +524,10 @@ class _PreferenceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
+    return AppListRow(
       leading: Icon(icon),
-      title: Text(title),
-      subtitle: Text(subtitle),
+      title: title,
+      subtitle: subtitle,
       trailing: const Icon(Icons.chevron_right_rounded),
       onTap: onTap,
     );

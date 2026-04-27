@@ -1,0 +1,4 @@
+storeFile=keystore/eventy360-release.jks
+storePassword=replace-with-store-password
+keyAlias=eventy360
+keyPassword=replace-with-key-password
