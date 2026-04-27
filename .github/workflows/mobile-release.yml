@@ -7,7 +7,8 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: "Optional release tag for a manual GitHub Release, for example mobile-v1.0.0"
+        description: "Optional release tag for a manual GitHub Release, for example
+          mobile-v1.0.0"
         required: false
         type: string
 

@@ -120,4 +120,3 @@ jobs:
 
       - name: Test
         run: flutter test
-
