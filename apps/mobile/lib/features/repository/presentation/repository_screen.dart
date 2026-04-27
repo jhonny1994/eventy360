@@ -1,9 +1,9 @@
 import 'package:eventy360/app/router/route_paths.dart';
 import 'package:eventy360/core/presentation/app_feedback.dart';
-import 'package:eventy360/core/presentation/widgets/adaptive_page_body.dart';
 import 'package:eventy360/core/presentation/widgets/app_error_view.dart';
 import 'package:eventy360/core/presentation/widgets/app_inline_message.dart';
 import 'package:eventy360/core/presentation/widgets/app_loading_view.dart';
+import 'package:eventy360/core/presentation/widgets/app_page_scaffold.dart';
 import 'package:eventy360/features/home/application/home_subscription_provider.dart';
 import 'package:eventy360/features/repository/application/repository_controller.dart';
 import 'package:eventy360/features/repository/domain/repository_models.dart';
@@ -68,30 +68,22 @@ class _RepositoryScreenState extends ConsumerState<RepositoryScreen> {
       body: subscriptionState.when(
         data: (subscription) {
           if (!subscription.isActive && !subscription.isTrial) {
-            return AdaptivePageBody(
-              child: Center(
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.workspace_premium_outlined, size: 40),
-                        const SizedBox(height: 12),
-                        Text(
-                          localizations.repositorySubscriptionRequiredTitle,
-                          style: Theme.of(context).textTheme.titleMedium,
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          localizations.repositorySubscriptionRequiredBody,
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
+            return AppPageContainer(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                children: [
+                  AppPageHero(
+                    badge: localizations.repositoryTitle,
+                    icon: Icons.menu_book_outlined,
+                    title: localizations.repositoryTitle,
+                    subtitle: localizations.repositoryOverviewBody,
                   ),
-                ),
+                  AppEmptyState(
+                    icon: Icons.workspace_premium_outlined,
+                    title: localizations.repositorySubscriptionRequiredTitle,
+                    body: localizations.repositorySubscriptionRequiredBody,
+                  ),
+                ],
               ),
             );
           }
@@ -105,40 +97,56 @@ class _RepositoryScreenState extends ConsumerState<RepositoryScreen> {
               return RefreshIndicator(
                 onRefresh: () =>
                     ref.read(repositoryControllerProvider.notifier).refresh(),
-                child: AdaptivePageBody(
+                child: AppPageContainer(
                   child: ListView(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     children: [
-                      TextField(
-                        controller: _searchController,
-                        decoration: InputDecoration(
-                          hintText: localizations.repositorySearchHint,
-                          prefixIcon: const Icon(Icons.search_outlined),
-                        ),
-                        textInputAction: TextInputAction.search,
-                        onSubmitted: (value) => ref
-                            .read(repositoryControllerProvider.notifier)
-                            .updateQuery(value),
+                      AppPageHero(
+                        badge: localizations.repositoryTitle,
+                        icon: Icons.menu_book_outlined,
+                        title: localizations.repositoryTitle,
+                        subtitle: localizations.repositoryOverviewBody,
                       ),
-                      const SizedBox(height: 12),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: data.topics
-                            .map(
-                              (topic) => FilterChip(
-                                label: Text(topic.name),
-                                selected: data.selectedTopicIds.contains(
-                                  topic.id,
-                                ),
-                                onSelected: (_) => ref
-                                    .read(repositoryControllerProvider.notifier)
-                                    .toggleTopicFilter(topic.id),
+                      AppSectionCard(
+                        title: localizations.repositorySearchHint,
+                        subtitle: localizations.repositoryOverviewBody,
+                        child: Column(
+                          children: [
+                            TextField(
+                              controller: _searchController,
+                              decoration: InputDecoration(
+                                hintText: localizations.repositorySearchHint,
+                                prefixIcon: const Icon(Icons.search_outlined),
                               ),
-                            )
-                            .toList(),
+                              textInputAction: TextInputAction.search,
+                              onSubmitted: (value) => ref
+                                  .read(repositoryControllerProvider.notifier)
+                                  .updateQuery(value),
+                            ),
+                            const SizedBox(height: 12),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: data.topics
+                                  .map(
+                                    (topic) => FilterChip(
+                                      label: Text(topic.name),
+                                      selected: data.selectedTopicIds.contains(
+                                        topic.id,
+                                      ),
+                                      onSelected: (_) => ref
+                                          .read(
+                                            repositoryControllerProvider
+                                                .notifier,
+                                          )
+                                          .toggleTopicFilter(topic.id),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 16),
                       if ((data.errorMessage ?? '').isNotEmpty)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 12),
@@ -147,11 +155,10 @@ class _RepositoryScreenState extends ConsumerState<RepositoryScreen> {
                           ),
                         ),
                       if (data.papers.isEmpty)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 40),
-                          child: Center(
-                            child: Text(localizations.repositoryEmptyState),
-                          ),
+                        AppEmptyState(
+                          icon: Icons.search_off_outlined,
+                          title: localizations.repositoryTitle,
+                          body: localizations.repositoryEmptyState,
                         )
                       else
                         ...data.papers.map(
@@ -215,68 +222,63 @@ class _PaperCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizations = S.of(context);
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+    return AppSectionCard(
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                paper.title,
-                style: Theme.of(context).textTheme.titleMedium,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              paper.title,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '${paper.authorName} - ${paper.authorInstitution}',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 4),
+            Text(paper.eventName),
+            if (paper.wilayaName != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  paper.dairaName == null
+                      ? paper.wilayaName!
+                      : '${paper.wilayaName!}, ${paper.dairaName!}',
+                ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                '${paper.authorName} - ${paper.authorInstitution}',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 4),
-              Text(paper.eventName),
-              if (paper.wilayaName != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 4),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: paper.topicNames
+                  .take(3)
+                  .map((name) => Chip(label: Text(name)))
+                  .toList(),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
                   child: Text(
-                    paper.dairaName == null
-                        ? paper.wilayaName!
-                        : '${paper.wilayaName!}, ${paper.dairaName!}',
+                    '${localizations.repositoryViewsLabel}: ${paper.viewCount}  •  ${localizations.repositoryDownloadsLabel}: ${paper.downloadCount}',
                   ),
                 ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: paper.topicNames
-                    .take(3)
-                    .map((name) => Chip(label: Text(name)))
-                    .toList(),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      '${localizations.repositoryViewsLabel}: ${paper.viewCount}  •  ${localizations.repositoryDownloadsLabel}: ${paper.downloadCount}',
-                    ),
-                  ),
-                  if (onDownload != null)
-                    IconButton(
-                      onPressed: onDownload,
-                      icon: const Icon(Icons.download_outlined),
-                      tooltip: localizations.repositoryDownloadAction,
-                    ),
+                if (onDownload != null)
                   IconButton(
-                    onPressed: onTap,
-                    icon: const Icon(Icons.chevron_right_outlined),
-                    tooltip: localizations.repositoryDetailAction,
+                    onPressed: onDownload,
+                    icon: const Icon(Icons.download_outlined),
+                    tooltip: localizations.repositoryDownloadAction,
                   ),
-                ],
-              ),
-            ],
-          ),
+                IconButton(
+                  onPressed: onTap,
+                  icon: const Icon(Icons.chevron_right_outlined),
+                  tooltip: localizations.repositoryDetailAction,
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

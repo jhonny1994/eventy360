@@ -39,6 +39,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "addBookmark": MessageLookupByLibrary.simpleMessage("Add bookmark"),
     "appTitle": MessageLookupByLibrary.simpleMessage("Eventy360"),
+    "authResearcherBadge": MessageLookupByLibrary.simpleMessage(
+      "Researcher mobile access",
+    ),
     "backToSignIn": MessageLookupByLibrary.simpleMessage("Back to sign in"),
     "billingPeriodAnnual": MessageLookupByLibrary.simpleMessage("Annual"),
     "billingPeriodBiannual": MessageLookupByLibrary.simpleMessage("Biannual"),
@@ -51,6 +54,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "completeProfileBody": MessageLookupByLibrary.simpleMessage(
       "Before using researcher features, complete your profile details.",
     ),
+    "completeProfileHeroBody": MessageLookupByLibrary.simpleMessage(
+      "Add your professional details and location once so the rest of the mobile experience can stay personalized and accurate.",
+    ),
     "completeProfileTitle": MessageLookupByLibrary.simpleMessage(
       "Complete Your Profile",
     ),
@@ -60,11 +66,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "dairaLabel": MessageLookupByLibrary.simpleMessage("Daira"),
     "deadline": MessageLookupByLibrary.simpleMessage("Deadline"),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
+    "eventDetailsOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "Review the event timing, location, topics, and next actions before bookmarking or submitting.",
+    ),
     "eventDetailsTitle": MessageLookupByLibrary.simpleMessage("Event Details"),
     "eventNotFound": MessageLookupByLibrary.simpleMessage(
       "Event was not found.",
     ),
     "eventSelectionLabel": MessageLookupByLibrary.simpleMessage("Event"),
+    "eventsOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "Browse upcoming calls, filter by topic, subscribe to what matters, and keep your shortlist moving.",
+    ),
     "eventsSearchHint": MessageLookupByLibrary.simpleMessage(
       "Search events by name or location",
     ),
@@ -88,6 +100,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "getStarted": MessageLookupByLibrary.simpleMessage("Get Started"),
     "haveAccountSignIn": MessageLookupByLibrary.simpleMessage(
       "Already have an account? Sign in",
+    ),
+    "homeOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "Track your account health, critical deadlines, submissions, and researcher tools from one calm control center.",
     ),
     "homeSubtitle": MessageLookupByLibrary.simpleMessage(
       "Your command center is ready.",
@@ -124,6 +139,24 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "onboardingBody": MessageLookupByLibrary.simpleMessage(
       "Complete your researcher workflow from mobile with fewer steps.",
+    ),
+    "onboardingStepDiscoverBody": MessageLookupByLibrary.simpleMessage(
+      "Search, filter, and bookmark opportunities that match your research focus and deadlines.",
+    ),
+    "onboardingStepDiscoverTitle": MessageLookupByLibrary.simpleMessage(
+      "Discover relevant events faster",
+    ),
+    "onboardingStepNotifyBody": MessageLookupByLibrary.simpleMessage(
+      "We request notification permission only when you subscribe to topics, so prompts remain contextual.",
+    ),
+    "onboardingStepNotifyTitle": MessageLookupByLibrary.simpleMessage(
+      "Stay ahead with timely alerts",
+    ),
+    "onboardingStepSubmitBody": MessageLookupByLibrary.simpleMessage(
+      "Track abstracts, full papers, and revisions in one guided flow with clear status visibility.",
+    ),
+    "onboardingStepSubmitTitle": MessageLookupByLibrary.simpleMessage(
+      "Submit with fewer blockers",
     ),
     "onboardingTitle": MessageLookupByLibrary.simpleMessage(
       "Welcome to Eventy360",
@@ -184,6 +217,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "reportPaymentBody": MessageLookupByLibrary.simpleMessage(
       "Submit your payment amount, method, and proof so the team can verify your subscription access.",
     ),
+    "reportPaymentOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "Submit billing details and proof once so the team can validate your subscription access quickly and accurately.",
+    ),
     "reportPaymentTitle": MessageLookupByLibrary.simpleMessage(
       "Report Payment",
     ),
@@ -191,6 +227,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "repositoryAbstractTitle": MessageLookupByLibrary.simpleMessage("Abstract"),
     "repositoryDetailAction": MessageLookupByLibrary.simpleMessage(
       "View details",
+    ),
+    "repositoryDetailOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "Review the paper context, abstract, and download package before opening the full document.",
     ),
     "repositoryDetailTitle": MessageLookupByLibrary.simpleMessage(
       "Paper Details",
@@ -209,6 +248,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "repositoryNoFileAvailable": MessageLookupByLibrary.simpleMessage(
       "No downloadable file is available for this paper.",
+    ),
+    "repositoryOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "Search premium research material, narrow by topic, and move from discovery to download without friction.",
     ),
     "repositoryPaperFileFallback": MessageLookupByLibrary.simpleMessage(
       "Paper file",
@@ -233,6 +275,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Password reset email was sent.",
     ),
     "resetPassword": MessageLookupByLibrary.simpleMessage("Reset Password"),
+    "resetPasswordHeroBody": MessageLookupByLibrary.simpleMessage(
+      "Recover access securely with a reset link, or finish a password recovery session without losing context.",
+    ),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
     "revisionNotesLabel": MessageLookupByLibrary.simpleMessage(
       "Revision notes (optional)",
@@ -254,9 +299,22 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "sendResetLink": MessageLookupByLibrary.simpleMessage("Send reset link"),
     "signIn": MessageLookupByLibrary.simpleMessage("Sign In"),
+    "signInHeroBody": MessageLookupByLibrary.simpleMessage(
+      "Access events, submissions, trust operations, and repository tools from one focused mobile workspace.",
+    ),
+    "signInHeroTitle": MessageLookupByLibrary.simpleMessage(
+      "Return to your research flow",
+    ),
     "signOut": MessageLookupByLibrary.simpleMessage("Sign Out"),
     "signUp": MessageLookupByLibrary.simpleMessage("Sign Up"),
+    "signUpHeroBody": MessageLookupByLibrary.simpleMessage(
+      "Start with secure credentials, then complete your researcher profile and verification path inside the app.",
+    ),
+    "signUpHeroTitle": MessageLookupByLibrary.simpleMessage(
+      "Create your researcher access",
+    ),
     "signedInAs": MessageLookupByLibrary.simpleMessage("Signed in as"),
+    "skipAction": MessageLookupByLibrary.simpleMessage("Skip"),
     "somethingWentWrong": MessageLookupByLibrary.simpleMessage(
       "Something went wrong.",
     ),
@@ -288,6 +346,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "submissionDetailMissing": MessageLookupByLibrary.simpleMessage(
       "Submission details are not available.",
     ),
+    "submissionDetailOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "See the full lifecycle of this submission, including current status, abstract content, files, and timeline history.",
+    ),
     "submissionDetailTitle": MessageLookupByLibrary.simpleMessage(
       "Submission Details",
     ),
@@ -301,15 +362,24 @@ class MessageLookup extends MessageLookupByLibrary {
     "submissionTitleEnLabel": MessageLookupByLibrary.simpleMessage(
       "Title (English, optional)",
     ),
+    "submissionsOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "Review active work, understand each status quickly, and keep your next submission action obvious.",
+    ),
     "submissionsTitle": MessageLookupByLibrary.simpleMessage("My Submissions"),
     "submitAbstractAction": MessageLookupByLibrary.simpleMessage(
       "Submit abstract",
+    ),
+    "submitAbstractOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "Prepare the core metadata and abstracts needed to create a clean initial submission.",
     ),
     "submitAbstractTitle": MessageLookupByLibrary.simpleMessage(
       "Submit Abstract",
     ),
     "submitFullPaperAction": MessageLookupByLibrary.simpleMessage(
       "Submit full paper",
+    ),
+    "submitFullPaperOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "Upload the final paper file against the approved submission record without losing context.",
     ),
     "submitFullPaperTitle": MessageLookupByLibrary.simpleMessage(
       "Submit Full Paper",
@@ -319,6 +389,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "submitRevisionAction": MessageLookupByLibrary.simpleMessage(
       "Submit revision",
+    ),
+    "submitRevisionOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "Send the revised paper and any notes requested by reviewers in one focused step.",
     ),
     "submitRevisionTitle": MessageLookupByLibrary.simpleMessage(
       "Submit Revision",
@@ -339,8 +412,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "Subscribe to topics to receive push alerts.",
     ),
     "trustCenterTitle": MessageLookupByLibrary.simpleMessage("Trust Center"),
+    "trustOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "Handle verification and payment evidence in a secure, transparent flow designed for researcher trust operations.",
+    ),
     "unsupportedRoleBody": MessageLookupByLibrary.simpleMessage(
       "Eventy360 mobile currently supports researcher accounts only.",
+    ),
+    "unsupportedRoleOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "This mobile release is intentionally focused on researcher workflows, so unsupported accounts are stopped here instead of failing later.",
     ),
     "unsupportedRoleTitle": MessageLookupByLibrary.simpleMessage(
       "This account role is not supported on mobile",

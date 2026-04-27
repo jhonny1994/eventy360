@@ -12,31 +12,31 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> bootstrap() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  final sharedPreferences = await SharedPreferences.getInstance();
-  await _initializeBackendClients();
-
-  FlutterError.onError = (details) {
-    FlutterError.presentError(details);
-    debugPrint('FlutterError: ${details.exceptionAsString()}');
-  };
-
-  ErrorWidget.builder = (details) => MaterialApp(
-    home: AppErrorView(
-      message: details.exceptionAsString(),
-      onRetry: null,
-    ),
-  );
-
-  PlatformDispatcher.instance.onError = (error, stack) {
-    debugPrint('Platform error: $error');
-    debugPrintStack(stackTrace: stack);
-    return true;
-  };
-
   await runZonedGuarded(
     () async {
+      WidgetsFlutterBinding.ensureInitialized();
+
+      final sharedPreferences = await SharedPreferences.getInstance();
+      await _initializeBackendClients();
+
+      FlutterError.onError = (details) {
+        FlutterError.presentError(details);
+        debugPrint('FlutterError: ${details.exceptionAsString()}');
+      };
+
+      ErrorWidget.builder = (details) => MaterialApp(
+        home: AppErrorView(
+          message: details.exceptionAsString(),
+          onRetry: null,
+        ),
+      );
+
+      PlatformDispatcher.instance.onError = (error, stack) {
+        debugPrint('Platform error: $error');
+        debugPrintStack(stackTrace: stack);
+        return true;
+      };
+
       runApp(
         ProviderScope(
           overrides: [

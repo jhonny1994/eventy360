@@ -37,6 +37,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "addBookmark": MessageLookupByLibrary.simpleMessage("إضافة إشارة مرجعية"),
     "appTitle": MessageLookupByLibrary.simpleMessage("إيفنتي 360"),
+    "authResearcherBadge": MessageLookupByLibrary.simpleMessage(
+      "وصول الباحث عبر الهاتف",
+    ),
     "backToSignIn": MessageLookupByLibrary.simpleMessage(
       "العودة إلى تسجيل الدخول",
     ),
@@ -49,6 +52,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "completeProfileBody": MessageLookupByLibrary.simpleMessage(
       "قبل استخدام ميزات الباحث، أكمل بيانات ملفك الشخصي.",
     ),
+    "completeProfileHeroBody": MessageLookupByLibrary.simpleMessage(
+      "أضف بياناتك المهنية وموقعك مرة واحدة حتى تبقى التجربة المحمولة مخصصة ودقيقة في بقية المسارات.",
+    ),
     "completeProfileTitle": MessageLookupByLibrary.simpleMessage(
       "أكمل ملفك الشخصي",
     ),
@@ -60,6 +66,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "dairaLabel": MessageLookupByLibrary.simpleMessage("الدائرة"),
     "deadline": MessageLookupByLibrary.simpleMessage("آخر موعد"),
     "email": MessageLookupByLibrary.simpleMessage("البريد الإلكتروني"),
+    "eventDetailsOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "راجع توقيت الفعالية وموقعها ومواضيعها وخطواتها التالية قبل الحفظ أو التقديم.",
+    ),
     "eventDetailsTitle": MessageLookupByLibrary.simpleMessage(
       "تفاصيل الفعالية",
     ),
@@ -67,6 +76,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "لم يتم العثور على الفعالية.",
     ),
     "eventSelectionLabel": MessageLookupByLibrary.simpleMessage("الفعالية"),
+    "eventsOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "تصفح النداءات القادمة وصفِّها حسب الموضوع واشترك فيما يهمك واحتفظ بقائمتك المهمة متقدمة.",
+    ),
     "eventsSearchHint": MessageLookupByLibrary.simpleMessage(
       "ابحث عن الفعاليات بالاسم أو الموقع",
     ),
@@ -90,6 +102,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "getStarted": MessageLookupByLibrary.simpleMessage("ابدأ الآن"),
     "haveAccountSignIn": MessageLookupByLibrary.simpleMessage(
       "لديك حساب بالفعل؟ سجل الدخول",
+    ),
+    "homeOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "تابع حالة حسابك والمواعيد النهائية المهمة والترشيحات وأدوات الباحث من مركز تحكم هادئ واحد.",
     ),
     "homeSubtitle": MessageLookupByLibrary.simpleMessage(
       "لوحة التحكم الخاصة بك جاهزة.",
@@ -124,6 +139,24 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "onboardingBody": MessageLookupByLibrary.simpleMessage(
       "أنجز سير عملك البحثي من الهاتف بخطوات أقل.",
+    ),
+    "onboardingStepDiscoverBody": MessageLookupByLibrary.simpleMessage(
+      "ابحث وصفِّ واشرِّح الفعاليات المطابقة لاهتماماتك البحثية والمواعيد النهائية.",
+    ),
+    "onboardingStepDiscoverTitle": MessageLookupByLibrary.simpleMessage(
+      "اكتشف الفعاليات المناسبة بسرعة",
+    ),
+    "onboardingStepNotifyBody": MessageLookupByLibrary.simpleMessage(
+      "نطلب إذن الإشعارات فقط عند اشتراكك في المواضيع حتى تبقى الطلبات مرتبطة بالسياق.",
+    ),
+    "onboardingStepNotifyTitle": MessageLookupByLibrary.simpleMessage(
+      "ابقَ على اطلاع بتنبيهات في وقتها",
+    ),
+    "onboardingStepSubmitBody": MessageLookupByLibrary.simpleMessage(
+      "تابع الملخصات والأبحاث الكاملة والمراجعات ضمن مسار واحد واضح الحالة.",
+    ),
+    "onboardingStepSubmitTitle": MessageLookupByLibrary.simpleMessage(
+      "قدّم أعمالك بسلاسة أكبر",
     ),
     "onboardingTitle": MessageLookupByLibrary.simpleMessage(
       "مرحبًا بك في إيفنتي 360",
@@ -178,6 +211,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "reportPaymentBody": MessageLookupByLibrary.simpleMessage(
       "أرسل مبلغ الدفع وطريقته ووثيقة الإثبات حتى يتمكن الفريق من التحقق من وصول اشتراكك.",
     ),
+    "reportPaymentOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "أرسل تفاصيل الفوترة ووثيقة الإثبات مرة واحدة حتى يتمكن الفريق من التحقق من وصول اشتراكك بسرعة ودقة.",
+    ),
     "reportPaymentTitle": MessageLookupByLibrary.simpleMessage(
       "الإبلاغ عن دفع",
     ),
@@ -185,6 +221,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "repositoryAbstractTitle": MessageLookupByLibrary.simpleMessage("الملخص"),
     "repositoryDetailAction": MessageLookupByLibrary.simpleMessage(
       "عرض التفاصيل",
+    ),
+    "repositoryDetailOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "راجع سياق البحث وملخصه وحزمة التنزيل قبل فتح الملف الكامل.",
     ),
     "repositoryDetailTitle": MessageLookupByLibrary.simpleMessage(
       "تفاصيل البحث",
@@ -203,6 +242,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "repositoryNoFileAvailable": MessageLookupByLibrary.simpleMessage(
       "لا يتوفر ملف قابل للتنزيل لهذا البحث.",
+    ),
+    "repositoryOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "ابحث في المواد البحثية المميزة وصفِّها حسب الموضوع وانتقل من الاكتشاف إلى التنزيل بسلاسة.",
     ),
     "repositoryPaperFileFallback": MessageLookupByLibrary.simpleMessage(
       "ملف البحث",
@@ -224,6 +266,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "resetPassword": MessageLookupByLibrary.simpleMessage(
       "إعادة تعيين كلمة المرور",
+    ),
+    "resetPasswordHeroBody": MessageLookupByLibrary.simpleMessage(
+      "استعد الوصول بأمان عبر رابط إعادة التعيين، أو أكمل جلسة استرجاع كلمة المرور دون فقدان السياق.",
     ),
     "retry": MessageLookupByLibrary.simpleMessage("إعادة المحاولة"),
     "revisionNotesLabel": MessageLookupByLibrary.simpleMessage(
@@ -248,9 +293,22 @@ class MessageLookup extends MessageLookupByLibrary {
       "إرسال رابط إعادة التعيين",
     ),
     "signIn": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
+    "signInHeroBody": MessageLookupByLibrary.simpleMessage(
+      "ادخل إلى الفعاليات والترشيحات ومسارات الثقة والمستودع من مساحة عمل محمولة واحدة ومركزة.",
+    ),
+    "signInHeroTitle": MessageLookupByLibrary.simpleMessage(
+      "عد إلى مسارك البحثي بسرعة",
+    ),
     "signOut": MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),
     "signUp": MessageLookupByLibrary.simpleMessage("إنشاء حساب"),
+    "signUpHeroBody": MessageLookupByLibrary.simpleMessage(
+      "ابدأ ببيانات الدخول الآمنة، ثم أكمل ملفك الشخصي ومسار التحقق داخل التطبيق.",
+    ),
+    "signUpHeroTitle": MessageLookupByLibrary.simpleMessage(
+      "أنشئ وصول الباحث الخاص بك",
+    ),
     "signedInAs": MessageLookupByLibrary.simpleMessage("تم تسجيل الدخول باسم"),
+    "skipAction": MessageLookupByLibrary.simpleMessage("تخطي"),
     "somethingWentWrong": MessageLookupByLibrary.simpleMessage("حدث خطأ ما."),
     "statusAbstractAccepted": MessageLookupByLibrary.simpleMessage(
       "تم قبول الملخص",
@@ -280,6 +338,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "submissionDetailMissing": MessageLookupByLibrary.simpleMessage(
       "تفاصيل الترشيح غير متاحة.",
     ),
+    "submissionDetailOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "اطلع على دورة حياة هذا الترشيح كاملة بما في ذلك الحالة الحالية ومحتوى الملخص والملفات والسجل الزمني.",
+    ),
     "submissionDetailTitle": MessageLookupByLibrary.simpleMessage(
       "تفاصيل الترشيح",
     ),
@@ -293,13 +354,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "submissionTitleEnLabel": MessageLookupByLibrary.simpleMessage(
       "العنوان (الإنجليزية - اختياري)",
     ),
+    "submissionsOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "راجع الأعمال النشطة وافهم كل حالة بسرعة واجعل الإجراء التالي واضحًا دائمًا.",
+    ),
     "submissionsTitle": MessageLookupByLibrary.simpleMessage("ترشيحاتي"),
     "submitAbstractAction": MessageLookupByLibrary.simpleMessage(
       "تقديم الملخص",
     ),
+    "submitAbstractOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "جهّز البيانات الأساسية والملخصات المطلوبة لإنشاء ترشيح أولي منظم.",
+    ),
     "submitAbstractTitle": MessageLookupByLibrary.simpleMessage("تقديم الملخص"),
     "submitFullPaperAction": MessageLookupByLibrary.simpleMessage(
       "تقديم البحث الكامل",
+    ),
+    "submitFullPaperOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "ارفع ملف البحث النهائي على سجل الترشيح الموافق عليه دون فقدان السياق.",
     ),
     "submitFullPaperTitle": MessageLookupByLibrary.simpleMessage(
       "تقديم البحث الكامل",
@@ -309,6 +379,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "submitRevisionAction": MessageLookupByLibrary.simpleMessage(
       "تقديم المراجعة",
+    ),
+    "submitRevisionOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "أرسل النسخة المعدلة وأي ملاحظات مطلوبة من المراجعين في خطوة واحدة مركزة.",
     ),
     "submitRevisionTitle": MessageLookupByLibrary.simpleMessage(
       "تقديم المراجعة",
@@ -329,8 +402,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "اشترك في المواضيع لتصلك تنبيهات فورية.",
     ),
     "trustCenterTitle": MessageLookupByLibrary.simpleMessage("مركز الثقة"),
+    "trustOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "تعامل مع التحقق ووثائق الدفع ضمن مسار آمن وشفاف مصمم لعمليات الثقة الخاصة بالباحثين.",
+    ),
     "unsupportedRoleBody": MessageLookupByLibrary.simpleMessage(
       "تطبيق إيفنتي 360 المحمول يدعم حسابات الباحثين فقط حاليًا.",
+    ),
+    "unsupportedRoleOverviewBody": MessageLookupByLibrary.simpleMessage(
+      "هذا الإصدار المحمول يركز عمدًا على مسارات الباحثين فقط، لذلك يتم إيقاف الحسابات غير المدعومة هنا بدلًا من أن تتعطل لاحقًا.",
     ),
     "unsupportedRoleTitle": MessageLookupByLibrary.simpleMessage(
       "هذا الدور غير مدعوم على التطبيق المحمول",

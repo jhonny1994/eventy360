@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:eventy360/app/router/route_paths.dart';
 import 'package:eventy360/core/presentation/widgets/app_inline_message.dart';
+import 'package:eventy360/features/auth/presentation/widgets/auth_scaffold.dart';
 import 'package:eventy360/features/events/application/events_controller.dart';
 import 'package:eventy360/features/submissions/application/submissions_controller.dart';
 import 'package:eventy360/features/submissions/domain/submission_models.dart';
@@ -155,201 +156,229 @@ class _SubmissionWriteScreenState extends ConsumerState<SubmissionWriteScreen> {
           },
         ),
       ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            if (widget.mode == SubmissionWriteKind.abstract) ...[
-              DropdownButtonFormField<String>(
-                initialValue: _selectedEventId,
-                items: events
-                    .map(
-                      (event) => DropdownMenuItem<String>(
-                        value: event.id,
-                        child: Text(event.title),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (value) {
-                  setState(() => _selectedEventId = value);
-                  unawaited(_saveDraft());
-                },
-                decoration: InputDecoration(
-                  labelText: localizations.eventSelectionLabel,
+      body: AuthScaffold(
+        badge: localizations.submissionsTitle,
+        icon: switch (widget.mode) {
+          SubmissionWriteKind.abstract => Icons.edit_note_outlined,
+          SubmissionWriteKind.fullPaper => Icons.upload_file_outlined,
+          SubmissionWriteKind.revision => Icons.rate_review_outlined,
+        },
+        title: switch (widget.mode) {
+          SubmissionWriteKind.abstract => localizations.submitAbstractTitle,
+          SubmissionWriteKind.fullPaper => localizations.submitFullPaperTitle,
+          SubmissionWriteKind.revision => localizations.submitRevisionTitle,
+        },
+        subtitle: switch (widget.mode) {
+          SubmissionWriteKind.abstract =>
+            localizations.submitAbstractOverviewBody,
+          SubmissionWriteKind.fullPaper =>
+            localizations.submitFullPaperOverviewBody,
+          SubmissionWriteKind.revision =>
+            localizations.submitRevisionOverviewBody,
+        },
+        bottom:
+            widget.mode != SubmissionWriteKind.abstract &&
+                widget.submissionId != null
+            ? Center(
+                child: TextButton(
+                  onPressed: () {
+                    final id = widget.submissionId!;
+                    final match = submissions.where((entry) => entry.id == id);
+                    if (match.isNotEmpty) {
+                      context.go(RoutePaths.submissionDetail(id));
+                    } else {
+                      context.pop();
+                    }
+                  },
+                  child: Text(localizations.cancelAction),
                 ),
-                validator: (value) => value == null || value.isEmpty
-                    ? localizations.requiredField
-                    : null,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _titleArController,
-                decoration: InputDecoration(
-                  labelText: localizations.submissionTitleArLabel,
+              )
+            : null,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (widget.mode == SubmissionWriteKind.abstract) ...[
+                DropdownButtonFormField<String>(
+                  initialValue: _selectedEventId,
+                  items: events
+                      .map(
+                        (event) => DropdownMenuItem<String>(
+                          value: event.id,
+                          child: Text(event.title),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() => _selectedEventId = value);
+                    unawaited(_saveDraft());
+                  },
+                  decoration: InputDecoration(
+                    labelText: localizations.eventSelectionLabel,
+                  ),
+                  validator: (value) => value == null || value.isEmpty
+                      ? localizations.requiredField
+                      : null,
                 ),
-                validator: (value) => (value == null || value.trim().isEmpty)
-                    ? localizations.requiredField
-                    : null,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _titleEnController,
-                decoration: InputDecoration(
-                  labelText: localizations.submissionTitleEnLabel,
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _titleArController,
+                  decoration: InputDecoration(
+                    labelText: localizations.submissionTitleArLabel,
+                  ),
+                  validator: (value) => (value == null || value.trim().isEmpty)
+                      ? localizations.requiredField
+                      : null,
                 ),
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _abstractArController,
-                decoration: InputDecoration(
-                  labelText: localizations.abstractArLabel,
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _titleEnController,
+                  decoration: InputDecoration(
+                    labelText: localizations.submissionTitleEnLabel,
+                  ),
                 ),
-                maxLines: 6,
-                validator: (value) => (value == null || value.trim().isEmpty)
-                    ? localizations.requiredField
-                    : null,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _abstractEnController,
-                decoration: InputDecoration(
-                  labelText: localizations.abstractEnLabel,
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _abstractArController,
+                  decoration: InputDecoration(
+                    labelText: localizations.abstractArLabel,
+                  ),
+                  maxLines: 6,
+                  validator: (value) => (value == null || value.trim().isEmpty)
+                      ? localizations.requiredField
+                      : null,
                 ),
-                maxLines: 6,
-              ),
-            ],
-            if (widget.mode != SubmissionWriteKind.abstract) ...[
-              Text(
-                localizations.filePickerHint,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _abstractEnController,
+                  decoration: InputDecoration(
+                    labelText: localizations.abstractEnLabel,
+                  ),
+                  maxLines: 6,
+                ),
+              ],
+              if (widget.mode != SubmissionWriteKind.abstract) ...[
+                Text(
+                  localizations.filePickerHint,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: isSubmitting ? null : _pickFile,
+                  icon: const Icon(Icons.attach_file_outlined),
+                  label: Text(localizations.pickFileAction),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  _selectedUploadFile?.fileName ?? localizations.noFileSelected,
+                ),
+              ],
+              if (widget.mode == SubmissionWriteKind.revision) ...[
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _revisionNotesController,
+                  decoration: InputDecoration(
+                    labelText: localizations.revisionNotesLabel,
+                  ),
+                  maxLines: 4,
+                ),
+              ],
+              const SizedBox(height: 16),
+              if ((state.asData?.value.errorMessage ?? '').isNotEmpty)
+                AppInlineMessage.error(
+                  message: state.asData!.value.errorMessage!,
+                ),
               const SizedBox(height: 8),
-              OutlinedButton.icon(
-                onPressed: isSubmitting ? null : _pickFile,
-                icon: const Icon(Icons.attach_file_outlined),
-                label: Text(localizations.pickFileAction),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                _selectedUploadFile?.fileName ?? localizations.noFileSelected,
-              ),
-            ],
-            if (widget.mode == SubmissionWriteKind.revision) ...[
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _revisionNotesController,
-                decoration: InputDecoration(
-                  labelText: localizations.revisionNotesLabel,
-                ),
-                maxLines: 4,
-              ),
-            ],
-            const SizedBox(height: 16),
-            if ((state.asData?.value.errorMessage ?? '').isNotEmpty)
-              AppInlineMessage.error(
-                message: state.asData!.value.errorMessage!,
-              ),
-            const SizedBox(height: 8),
-            FilledButton(
-              onPressed: isSubmitting
-                  ? null
-                  : () async {
-                      final router = GoRouter.of(context);
-                      if (!_formKey.currentState!.validate()) {
-                        return;
-                      }
-                      if (widget.mode == SubmissionWriteKind.abstract) {
-                        final eventId = _selectedEventId;
-                        if (eventId == null || eventId.isEmpty) {
+              FilledButton(
+                onPressed: isSubmitting
+                    ? null
+                    : () async {
+                        final router = GoRouter.of(context);
+                        if (!_formKey.currentState!.validate()) {
                           return;
                         }
-                        await controller.submitAbstract(
-                          SubmitAbstractInput(
-                            eventId: eventId,
-                            titleAr: _titleArController.text.trim(),
-                            titleEn: _titleEnController.text.trim(),
-                            abstractAr: _abstractArController.text.trim(),
-                            abstractEn: _abstractEnController.text.trim(),
-                            idempotencyKey:
-                                'abstract:$eventId:${_titleArController.text.trim()}'
-                                ':${_abstractArController.text.trim()}',
-                          ),
-                        );
-                      } else if (widget.mode == SubmissionWriteKind.fullPaper) {
-                        final submissionId = widget.submissionId!;
-                        final selectedFile = _selectedUploadFile;
-                        if (selectedFile == null) {
-                          return;
+                        if (widget.mode == SubmissionWriteKind.abstract) {
+                          final eventId = _selectedEventId;
+                          if (eventId == null || eventId.isEmpty) {
+                            return;
+                          }
+                          await controller.submitAbstract(
+                            SubmitAbstractInput(
+                              eventId: eventId,
+                              titleAr: _titleArController.text.trim(),
+                              titleEn: _titleEnController.text.trim(),
+                              abstractAr: _abstractArController.text.trim(),
+                              abstractEn: _abstractEnController.text.trim(),
+                              idempotencyKey:
+                                  'abstract:$eventId:${_titleArController.text.trim()}'
+                                  ':${_abstractArController.text.trim()}',
+                            ),
+                          );
+                        } else if (widget.mode == SubmissionWriteKind.fullPaper) {
+                          final submissionId = widget.submissionId!;
+                          final selectedFile = _selectedUploadFile;
+                          if (selectedFile == null) {
+                            return;
+                          }
+                          await controller.submitFullPaper(
+                            SubmitFullPaperInput(
+                              submissionId: submissionId,
+                              file: selectedFile,
+                              idempotencyKey:
+                                  'fullPaper:$submissionId:${selectedFile.fileName}:${selectedFile.sizeInBytes}',
+                            ),
+                          );
+                        } else {
+                          final submissionId = widget.submissionId!;
+                          final selectedFile = _selectedUploadFile;
+                          if (selectedFile == null) {
+                            return;
+                          }
+                          await controller.submitRevision(
+                            SubmitRevisionInput(
+                              submissionId: submissionId,
+                              file: selectedFile,
+                              revisionNotes:
+                                  _revisionNotesController.text.trim(),
+                              idempotencyKey:
+                                  'revision:$submissionId:${selectedFile.fileName}:${selectedFile.sizeInBytes}',
+                            ),
+                          );
                         }
-                        await controller.submitFullPaper(
-                          SubmitFullPaperInput(
-                            submissionId: submissionId,
-                            file: selectedFile,
-                            idempotencyKey:
-                                'fullPaper:$submissionId:${selectedFile.fileName}:${selectedFile.sizeInBytes}',
-                          ),
-                        );
-                      } else {
-                        final submissionId = widget.submissionId!;
-                        final selectedFile = _selectedUploadFile;
-                        if (selectedFile == null) {
-                          return;
+                        final receipt = ref
+                            .read(submissionsControllerProvider)
+                            .asData
+                            ?.value
+                            .lastReceipt;
+                        if (mounted && receipt != null) {
+                          final selectedId = receipt.id;
+                          await controller.clearReceipt();
+                          if (!mounted) {
+                            return;
+                          }
+                          router.go(RoutePaths.submissionDetail(selectedId));
                         }
-                        await controller.submitRevision(
-                          SubmitRevisionInput(
-                            submissionId: submissionId,
-                            file: selectedFile,
-                            revisionNotes: _revisionNotesController.text.trim(),
-                            idempotencyKey:
-                                'revision:$submissionId:${selectedFile.fileName}:${selectedFile.sizeInBytes}',
-                          ),
-                        );
-                      }
-                      final receipt = ref
-                          .read(submissionsControllerProvider)
-                          .asData
-                          ?.value
-                          .lastReceipt;
-                      if (mounted && receipt != null) {
-                        final selectedId = receipt.id;
-                        await controller.clearReceipt();
-                        if (!mounted) {
-                          return;
-                        }
-                        router.go(RoutePaths.submissionDetail(selectedId));
-                      }
-                    },
-              child: isSubmitting
-                  ? const CircularProgressIndicator.adaptive()
-                  : Text(
-                      switch (widget.mode) {
-                        SubmissionWriteKind.abstract =>
-                          localizations.submitAbstractAction,
-                        SubmissionWriteKind.fullPaper =>
-                          localizations.submitFullPaperAction,
-                        SubmissionWriteKind.revision =>
-                          localizations.submitRevisionAction,
                       },
-                    ),
-            ),
-            if (widget.mode != SubmissionWriteKind.abstract &&
-                widget.submissionId != null) ...[
-              const SizedBox(height: 12),
-              TextButton(
-                onPressed: () {
-                  final id = widget.submissionId!;
-                  final match = submissions.where((entry) => entry.id == id);
-                  if (match.isNotEmpty) {
-                    context.go(RoutePaths.submissionDetail(id));
-                  } else {
-                    context.pop();
-                  }
-                },
-                child: Text(localizations.cancelAction),
+                child: isSubmitting
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(strokeWidth: 2.2),
+                      )
+                    : Text(
+                        switch (widget.mode) {
+                          SubmissionWriteKind.abstract =>
+                            localizations.submitAbstractAction,
+                          SubmissionWriteKind.fullPaper =>
+                            localizations.submitFullPaperAction,
+                          SubmissionWriteKind.revision =>
+                            localizations.submitRevisionAction,
+                        },
+                      ),
               ),
             ],
-          ],
+          ),
         ),
       ),
     );
