@@ -12,6 +12,7 @@ It standardizes:
 - CI requirements for `apps/mobile`
 - milestone validation evidence and pass/fail policy
 - push operational checks before release
+- production UI audit expectations for mobile routes
 
 ## 1. Canonical Local Automated Checks
 
@@ -210,3 +211,19 @@ Evidence to capture:
 - release candidate install
 - end-to-end researcher sanity sweep
 - rollback and hotfix readiness
+
+## 7. UI Production Gate
+
+The mobile release is not ready unless it also passes the UI production audit:
+
+- [phase6-mobile-ui-production-audit.md](C:/Users/raouf/projects/eventy360/docs/tasks/mvp/phase6-mobile-ui-production-audit.md)
+
+Mandatory UI gate checks:
+
+1. all primary researcher routes use the shared page architecture
+2. auth and gate flows use a coherent shared shell
+3. status-heavy pages show current state before long descriptive content
+4. forms use persistent labels, clear hierarchy, and obvious primary actions
+5. loading, empty, blocked, error, and success states are visually explicit
+6. Arabic, English, light, dark, and large-text validation are completed on critical flows
+7. no critical route regresses to raw scaffold-like `ListView + Card + SizedBox` composition without shared primitives

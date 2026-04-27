@@ -1,7 +1,7 @@
 import 'package:eventy360/app/router/route_paths.dart';
-import 'package:eventy360/core/presentation/widgets/adaptive_page_body.dart';
 import 'package:eventy360/core/presentation/widgets/app_error_view.dart';
 import 'package:eventy360/core/presentation/widgets/app_loading_view.dart';
+import 'package:eventy360/core/presentation/widgets/app_page_scaffold.dart';
 import 'package:eventy360/features/submissions/application/submissions_controller.dart';
 import 'package:eventy360/features/submissions/domain/submission_models.dart';
 import 'package:eventy360/l10n/generated/l10n.dart';
@@ -36,26 +36,39 @@ class SubmissionsScreen extends ConsumerWidget {
               ref.read(submissionsControllerProvider.notifier).refresh(),
         ),
         data: (data) {
-          return AdaptivePageBody(
+          return AppPageContainer(
             child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: const EdgeInsets.symmetric(vertical: 16),
               children: [
-                FilledButton.icon(
-                  onPressed: () => context.go(RoutePaths.newAbstractSubmission),
-                  icon: const Icon(Icons.add_circle_outline),
-                  label: Text(localizations.submitAbstractAction),
+                AppPageHero(
+                  badge: localizations.submissionsTitle,
+                  icon: Icons.assignment_outlined,
+                  title: localizations.submissionsTitle,
+                  subtitle: localizations.submissionsOverviewBody,
                 ),
-                const SizedBox(height: 12),
-                if (data.submissions.isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Center(
-                      child: Text(localizations.noSubmissionsFound),
+                AppSectionCard(
+                  title: localizations.submitAbstractAction,
+                  subtitle: localizations.submissionsOverviewBody,
+                  child: Semantics(
+                    button: true,
+                    label: localizations.submitAbstractAction,
+                    child: FilledButton.icon(
+                      onPressed: () =>
+                          context.go(RoutePaths.newAbstractSubmission),
+                      icon: const Icon(Icons.add_circle_outline),
+                      label: Text(localizations.submitAbstractAction),
                     ),
+                  ),
+                ),
+                if (data.submissions.isEmpty)
+                  AppEmptyState(
+                    icon: Icons.description_outlined,
+                    title: localizations.submissionsTitle,
+                    body: localizations.noSubmissionsFound,
                   )
                 else
                   ...data.submissions.map(
-                    (submission) => Card(
+                    (submission) => AppSectionCard(
                       child: ListTile(
                         title: Text(submission.title),
                         subtitle: Text(

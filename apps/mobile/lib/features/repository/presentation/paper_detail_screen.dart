@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:eventy360/core/presentation/app_feedback.dart';
-import 'package:eventy360/core/presentation/widgets/adaptive_page_body.dart';
 import 'package:eventy360/core/presentation/widgets/app_error_view.dart';
 import 'package:eventy360/core/presentation/widgets/app_loading_view.dart';
+import 'package:eventy360/core/presentation/widgets/app_page_scaffold.dart';
 import 'package:eventy360/features/repository/application/repository_controller.dart';
 import 'package:eventy360/features/repository/domain/repository_models.dart';
 import 'package:eventy360/l10n/generated/l10n.dart';
@@ -68,73 +68,65 @@ class _PaperDetailScreenState extends ConsumerState<PaperDetailScreen> {
           if (paper == null) {
             return const AppLoadingView();
           }
-          return AdaptivePageBody(
+          return AppPageContainer(
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 16),
               children: [
-                Text(
-                  paper.title,
-                  style: Theme.of(context).textTheme.headlineSmall,
+                AppPageHero(
+                  badge: localizations.repositoryTitle,
+                  icon: Icons.description_outlined,
+                  title: paper.title,
+                  subtitle: localizations.repositoryDetailOverviewBody,
                 ),
-                const SizedBox(height: 12),
-                Text('${paper.authorName} - ${paper.authorInstitution}'),
-                const SizedBox(height: 4),
-                Text(paper.eventName),
-                if (paper.wilayaName != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Text(
-                      paper.dairaName == null
-                          ? paper.wilayaName!
-                          : '${paper.wilayaName!}, ${paper.dairaName!}',
-                    ),
+                AppSectionCard(
+                  title: '${paper.authorName} - ${paper.authorInstitution}',
+                  subtitle: paper.eventName,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (paper.wilayaName != null)
+                        Text(
+                          paper.dairaName == null
+                              ? paper.wilayaName!
+                              : '${paper.wilayaName!}, ${paper.dairaName!}',
+                        ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: paper.topicNames
+                            .map((name) => Chip(label: Text(name)))
+                            .toList(),
+                      ),
+                    ],
                   ),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: paper.topicNames
-                      .map((name) => Chip(label: Text(name)))
-                      .toList(),
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  localizations.repositoryAbstractTitle,
-                  style: Theme.of(context).textTheme.titleMedium,
+                AppSectionCard(
+                  title: localizations.repositoryAbstractTitle,
+                  child: Text(
+                    paper.abstractText.isEmpty ? '-' : paper.abstractText,
+                  ),
                 ),
-                const SizedBox(height: 8),
-                Text(paper.abstractText.isEmpty ? '-' : paper.abstractText),
-                const SizedBox(height: 16),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          localizations.repositoryDownloadSectionTitle,
-                          style: Theme.of(context).textTheme.titleMedium,
+                AppSectionCard(
+                  title: localizations.repositoryDownloadSectionTitle,
+                  subtitle:
+                      paper.fileName ?? localizations.repositoryPaperFileFallback,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (paper.fileSizeBytes != null)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Text(_formatFileSize(paper.fileSizeBytes!)),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          paper.fileName ??
-                              localizations.repositoryPaperFileFallback,
-                        ),
-                        if (paper.fileSizeBytes != null)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4),
-                            child: Text(_formatFileSize(paper.fileSizeBytes!)),
-                          ),
-                        const SizedBox(height: 12),
-                        FilledButton.icon(
-                          onPressed: paper.fullPaperFileUrl == null
-                              ? null
-                              : () => _downloadPaper(paper),
-                          icon: const Icon(Icons.download_outlined),
-                          label: Text(localizations.repositoryDownloadAction),
-                        ),
-                      ],
-                    ),
+                      FilledButton.icon(
+                        onPressed: paper.fullPaperFileUrl == null
+                            ? null
+                            : () => _downloadPaper(paper),
+                        icon: const Icon(Icons.download_outlined),
+                        label: Text(localizations.repositoryDownloadAction),
+                      ),
+                    ],
                   ),
                 ),
               ],

@@ -1,6 +1,6 @@
 import 'package:eventy360/app/router/route_paths.dart';
 import 'package:eventy360/app/theme/theme_mode_controller.dart';
-import 'package:eventy360/core/presentation/widgets/adaptive_page_body.dart';
+import 'package:eventy360/core/presentation/widgets/app_page_scaffold.dart';
 import 'package:eventy360/features/auth/application/session_controller.dart';
 import 'package:eventy360/features/events/application/events_controller.dart';
 import 'package:eventy360/features/events/domain/event_summary.dart';
@@ -54,121 +54,187 @@ class HomeScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: AdaptivePageBody(
+      body: AppPageContainer(
         child: ListView(
           padding: const EdgeInsets.symmetric(vertical: 16),
           children: [
-            Card(
-              child: ListTile(
-                title: Text(localizations.signedInAs),
-                subtitle: Text(userEmail),
-                trailing: OutlinedButton(
-                  onPressed: () =>
-                      ref.read(sessionControllerProvider.notifier).signOut(),
-                  child: Text(localizations.signOut),
-                ),
+            AppPageHero(
+              badge: localizations.authResearcherBadge,
+              icon: Icons.space_dashboard_outlined,
+              title: localizations.homeSubtitle,
+              subtitle: localizations.homeOverviewBody,
+              trailing: OutlinedButton(
+                onPressed: () =>
+                    ref.read(sessionControllerProvider.notifier).signOut(),
+                child: Text(localizations.signOut),
               ),
             ),
-            const SizedBox(height: 12),
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.verified_user_outlined),
-                title: Text(localizations.verificationStatusTitle),
-                subtitle: Text(verificationStatus),
+            AppSectionCard(
+              title: localizations.signedInAs,
+              subtitle: userEmail,
+              leading: const Icon(Icons.alternate_email_rounded),
+              child: Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  AppStatusBadge(
+                    label: verificationStatus,
+                    tone: session?.isVerified == true
+                        ? AppStatusTone.success
+                        : AppStatusTone.neutral,
+                  ),
+                  AppStatusBadge(
+                    label: hasPremiumSubscription
+                        ? localizations.subscriptionActive
+                        : localizations.subscriptionInactive,
+                    tone: hasPremiumSubscription
+                        ? AppStatusTone.info
+                        : AppStatusTone.neutral,
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 12),
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.workspace_premium_outlined),
-                title: Text(localizations.subscriptionStatusTitle),
-                subtitle: Text(
-                  hasPremiumSubscription
-                      ? localizations.subscriptionActive
-                      : localizations.subscriptionInactive,
-                ),
+            AppSectionCard(
+              title: localizations.homeTitle,
+              subtitle: localizations.homeOverviewBody,
+              child: Column(
+                children: [
+                  _MetricRow(
+                    icon: Icons.verified_user_outlined,
+                    label: localizations.verificationStatusTitle,
+                    value: verificationStatus,
+                  ),
+                  const SizedBox(height: 12),
+                  _MetricRow(
+                    icon: Icons.workspace_premium_outlined,
+                    label: localizations.subscriptionStatusTitle,
+                    value: hasPremiumSubscription
+                        ? localizations.subscriptionActive
+                        : localizations.subscriptionInactive,
+                  ),
+                  const SizedBox(height: 12),
+                  _MetricRow(
+                    icon: Icons.event_available_outlined,
+                    label: localizations.nearestDeadlineTitle,
+                    value: nearestDeadline == null
+                        ? localizations.noUpcomingDeadline
+                        : _formatDate(nearestDeadline),
+                  ),
+                  const SizedBox(height: 12),
+                  _MetricRow(
+                    icon: Icons.description_outlined,
+                    label: localizations.activeSubmissionsTitle,
+                    value: localizations.activeSubmissionsCount(
+                      activeSubmissionCount,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 12),
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.event_available_outlined),
-                title: Text(localizations.nearestDeadlineTitle),
-                subtitle: Text(
-                  nearestDeadline == null
-                      ? localizations.noUpcomingDeadline
-                      : _formatDate(nearestDeadline),
-                ),
-              ),
+            AppSectionCard(
+              title: localizations.notificationEducationTitle,
+              subtitle: localizations.notificationEducationBody,
+              leading: const Icon(Icons.notifications_active_outlined),
+              child: const SizedBox.shrink(),
             ),
-            const SizedBox(height: 12),
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.description_outlined),
-                title: Text(localizations.activeSubmissionsTitle),
-                subtitle: Text(
-                  localizations.activeSubmissionsCount(activeSubmissionCount),
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.notifications_active_outlined),
-                title: Text(localizations.notificationEducationTitle),
-                subtitle: Text(localizations.notificationEducationBody),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.dashboard_outlined),
-                title: Text(localizations.homeSubtitle),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Semantics(
-              button: true,
-              label: localizations.exploreEvents,
-              child: FilledButton.icon(
-                onPressed: () => context.go(RoutePaths.events),
-                icon: const Icon(Icons.event_note_outlined),
-                label: Text(localizations.exploreEvents),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Semantics(
-              button: true,
-              label: localizations.submissionsTitle,
-              child: OutlinedButton.icon(
-                onPressed: () => context.go(RoutePaths.submissions),
-                icon: const Icon(Icons.description_outlined),
-                label: Text(localizations.submissionsTitle),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Semantics(
-              button: true,
-              label: localizations.trustCenterTitle,
-              child: OutlinedButton.icon(
-                onPressed: () => context.go(RoutePaths.trust),
-                icon: const Icon(Icons.verified_user_outlined),
-                label: Text(localizations.trustCenterTitle),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Semantics(
-              button: true,
-              label: localizations.repositoryTitle,
-              child: OutlinedButton.icon(
-                onPressed: () => context.go(RoutePaths.repository),
-                icon: const Icon(Icons.menu_book_outlined),
-                label: Text(localizations.repositoryTitle),
+            AppSectionCard(
+              title: localizations.exploreEvents,
+              subtitle: localizations.homeSubtitle,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Semantics(
+                    button: true,
+                    label: localizations.exploreEvents,
+                    child: FilledButton.icon(
+                      onPressed: () => context.go(RoutePaths.events),
+                      icon: const Icon(Icons.event_note_outlined),
+                      label: Text(localizations.exploreEvents),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Semantics(
+                    button: true,
+                    label: localizations.submissionsTitle,
+                    child: OutlinedButton.icon(
+                      onPressed: () => context.go(RoutePaths.submissions),
+                      icon: const Icon(Icons.description_outlined),
+                      label: Text(localizations.submissionsTitle),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Semantics(
+                    button: true,
+                    label: localizations.trustCenterTitle,
+                    child: OutlinedButton.icon(
+                      onPressed: () => context.go(RoutePaths.trust),
+                      icon: const Icon(Icons.verified_user_outlined),
+                      label: Text(localizations.trustCenterTitle),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Semantics(
+                    button: true,
+                    label: localizations.repositoryTitle,
+                    child: OutlinedButton.icon(
+                      onPressed: () => context.go(RoutePaths.repository),
+                      icon: const Icon(Icons.menu_book_outlined),
+                      label: Text(localizations.repositoryTitle),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _MetricRow extends StatelessWidget {
+  const _MetricRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Icon(icon, color: colorScheme.onPrimaryContainer, size: 20),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: Theme.of(
+                  context,
+                ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 4),
+              Text(value),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

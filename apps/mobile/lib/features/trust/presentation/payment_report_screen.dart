@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:eventy360/core/presentation/widgets/app_inline_message.dart';
+import 'package:eventy360/features/auth/presentation/widgets/auth_scaffold.dart';
 import 'package:eventy360/features/trust/application/trust_controller.dart';
 import 'package:eventy360/features/trust/domain/trust_models.dart';
 import 'package:eventy360/l10n/generated/l10n.dart';
@@ -87,149 +88,162 @@ class _PaymentReportScreenState extends ConsumerState<PaymentReportScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(localizations.reportPaymentTitle)),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            Text(localizations.reportPaymentBody),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _amountController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
+      body: AuthScaffold(
+        badge: localizations.trustCenterTitle,
+        icon: Icons.receipt_long_outlined,
+        title: localizations.reportPaymentTitle,
+        subtitle: localizations.reportPaymentOverviewBody,
+        bottom: Center(
+          child: TextButton(
+            onPressed: () => context.pop(),
+            child: Text(localizations.cancelAction),
+          ),
+        ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(localizations.reportPaymentBody),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _amountController,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                decoration: InputDecoration(
+                  labelText: localizations.paymentAmountLabel,
+                ),
+                validator: (value) {
+                  final amount = double.tryParse((value ?? '').trim());
+                  if (amount == null || amount <= 0) {
+                    return localizations.paymentAmountError;
+                  }
+                  return null;
+                },
               ),
-              decoration: InputDecoration(
-                labelText: localizations.paymentAmountLabel,
+              const SizedBox(height: 12),
+              DropdownButtonFormField<BillingPeriod>(
+                initialValue: _billingPeriod,
+                items: BillingPeriod.values
+                    .map(
+                      (value) => DropdownMenuItem(
+                        value: value,
+                        child: Text(_billingPeriodLabel(localizations, value)),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() => _billingPeriod = value);
+                  }
+                },
+                decoration: InputDecoration(
+                  labelText: localizations.billingPeriodLabel,
+                ),
               ),
-              validator: (value) {
-                final amount = double.tryParse((value ?? '').trim());
-                if (amount == null || amount <= 0) {
-                  return localizations.paymentAmountError;
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<BillingPeriod>(
-              initialValue: _billingPeriod,
-              items: BillingPeriod.values
-                  .map(
-                    (value) => DropdownMenuItem(
-                      value: value,
-                      child: Text(_billingPeriodLabel(localizations, value)),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() => _billingPeriod = value);
-                }
-              },
-              decoration: InputDecoration(
-                labelText: localizations.billingPeriodLabel,
+              const SizedBox(height: 12),
+              DropdownButtonFormField<PaymentMethod>(
+                initialValue: _paymentMethod,
+                items: PaymentMethod.values
+                    .map(
+                      (value) => DropdownMenuItem(
+                        value: value,
+                        child: Text(_paymentMethodLabel(localizations, value)),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() => _paymentMethod = value);
+                  }
+                },
+                decoration: InputDecoration(
+                  labelText: localizations.paymentMethodLabel,
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<PaymentMethod>(
-              initialValue: _paymentMethod,
-              items: PaymentMethod.values
-                  .map(
-                    (value) => DropdownMenuItem(
-                      value: value,
-                      child: Text(_paymentMethodLabel(localizations, value)),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() => _paymentMethod = value);
-                }
-              },
-              decoration: InputDecoration(
-                labelText: localizations.paymentMethodLabel,
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _referenceController,
+                decoration: InputDecoration(
+                  labelText: localizations.referenceNumberLabel,
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _referenceController,
-              decoration: InputDecoration(
-                labelText: localizations.referenceNumberLabel,
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _notesController,
+                maxLines: 4,
+                decoration: InputDecoration(
+                  labelText: localizations.paymentNotesLabel,
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _notesController,
-              maxLines: 4,
-              decoration: InputDecoration(
-                labelText: localizations.paymentNotesLabel,
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: isSubmitting ? null : _pickFile,
+                icon: const Icon(Icons.attach_file_outlined),
+                label: Text(localizations.pickProofDocument),
               ),
-            ),
-            const SizedBox(height: 12),
-            OutlinedButton.icon(
-              onPressed: isSubmitting ? null : _pickFile,
-              icon: const Icon(Icons.attach_file_outlined),
-              label: Text(localizations.pickProofDocument),
-            ),
-            const SizedBox(height: 8),
-            Text(_selectedFile?.fileName ?? localizations.noFileSelected),
-            if (_localError != null) ...[
               const SizedBox(height: 8),
-              AppInlineMessage.error(
-                message: _localError!,
-              ),
-            ],
-            if ((state?.errorMessage ?? '').isNotEmpty) ...[
-              const SizedBox(height: 8),
-              AppInlineMessage.error(
-                message: state!.errorMessage!,
-              ),
-            ],
-            const SizedBox(height: 16),
-            FilledButton(
-              onPressed: isSubmitting
-                  ? null
-                  : () async {
-                      if (!_formKey.currentState!.validate() ||
-                          _selectedFile == null) {
-                        if (_selectedFile == null) {
-                          setState(
-                            () => _localError =
-                                localizations.secureFileRequiredError,
-                          );
+              Text(_selectedFile?.fileName ?? localizations.noFileSelected),
+              if (_localError != null) ...[
+                const SizedBox(height: 8),
+                AppInlineMessage.error(message: _localError!),
+              ],
+              if ((state?.errorMessage ?? '').isNotEmpty) ...[
+                const SizedBox(height: 8),
+                AppInlineMessage.error(message: state!.errorMessage!),
+              ],
+              const SizedBox(height: 18),
+              FilledButton(
+                onPressed: isSubmitting
+                    ? null
+                    : () async {
+                        if (!_formKey.currentState!.validate() ||
+                            _selectedFile == null) {
+                          if (_selectedFile == null) {
+                            setState(
+                              () => _localError =
+                                  localizations.secureFileRequiredError,
+                            );
+                          }
+                          return;
                         }
-                        return;
-                      }
-                      await ref
-                          .read(trustControllerProvider.notifier)
-                          .reportPayment(
-                            PaymentReportInput(
-                              amount: double.parse(
-                                _amountController.text.trim(),
+                        await ref
+                            .read(trustControllerProvider.notifier)
+                            .reportPayment(
+                              PaymentReportInput(
+                                amount: double.parse(
+                                  _amountController.text.trim(),
+                                ),
+                                billingPeriod: _billingPeriod,
+                                paymentMethod: _paymentMethod,
+                                file: _selectedFile!,
+                                referenceNumber:
+                                    _referenceController.text.trim(),
+                                payerNotes: _notesController.text.trim(),
                               ),
-                              billingPeriod: _billingPeriod,
-                              paymentMethod: _paymentMethod,
-                              file: _selectedFile!,
-                              referenceNumber: _referenceController.text.trim(),
-                              payerNotes: _notesController.text.trim(),
-                            ),
-                          );
-                      final nextState = ref
-                          .read(trustControllerProvider)
-                          .asData
-                          ?.value;
-                      if (!context.mounted) {
-                        return;
-                      }
-                      if (nextState?.errorMessage == null) {
-                        context.pop();
-                      }
-                    },
-              child: isSubmitting
-                  ? const CircularProgressIndicator.adaptive()
-                  : Text(localizations.submitPaymentReportAction),
-            ),
-          ],
+                            );
+                        final nextState = ref
+                            .read(trustControllerProvider)
+                            .asData
+                            ?.value;
+                        if (!context.mounted) {
+                          return;
+                        }
+                        if (nextState?.errorMessage == null) {
+                          context.pop();
+                        }
+                      },
+                child: isSubmitting
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(strokeWidth: 2.2),
+                      )
+                    : Text(localizations.submitPaymentReportAction),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:eventy360/app/router/route_paths.dart';
+import 'package:eventy360/core/presentation/widgets/app_page_scaffold.dart';
 import 'package:eventy360/features/events/application/events_controller.dart';
 import 'package:eventy360/features/events/domain/event_summary.dart';
 import 'package:eventy360/l10n/generated/l10n.dart';
@@ -56,63 +57,74 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
     if (event == null) {
       return Scaffold(
         appBar: AppBar(title: Text(localizations.eventDetailsTitle)),
-        body: Center(
-          child: _loadingMissingEvent
-              ? const CircularProgressIndicator.adaptive()
-              : Text(localizations.eventNotFound),
+        body: AppPageContainer(
+          child: Center(
+            child: _loadingMissingEvent
+                ? const CircularProgressIndicator.adaptive()
+                : Text(localizations.eventNotFound),
+          ),
         ),
       );
     }
     final selectedEvent = event;
     return Scaffold(
       appBar: AppBar(title: Text(localizations.eventDetailsTitle)),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Text(
-            selectedEvent.title,
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '${localizations.deadline}: '
-            '${selectedEvent.deadline.toIso8601String().split("T").first}',
-          ),
-          const SizedBox(height: 8),
-          Text('${localizations.location}: ${selectedEvent.location}'),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: selectedEvent.topics
-                .map((topic) => Chip(label: Text(topic)))
-                .toList(),
-          ),
-          const SizedBox(height: 16),
-          FilledButton.icon(
-            onPressed: () => ref
-                .read(eventsControllerProvider.notifier)
-                .toggleBookmark(selectedEvent.id),
-            icon: Icon(
-              selectedEvent.isBookmarked
-                  ? Icons.bookmark
-                  : Icons.bookmark_border,
+      body: AppPageContainer(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          children: [
+            AppPageHero(
+              badge: localizations.eventsTitle,
+              icon: Icons.event_outlined,
+              title: selectedEvent.title,
+              subtitle: localizations.eventDetailsOverviewBody,
             ),
-            label: Text(
-              selectedEvent.isBookmarked
-                  ? localizations.removeBookmark
-                  : localizations.addBookmark,
+            AppSectionCard(
+              title: localizations.eventDetailsTitle,
+              subtitle:
+                  '${localizations.location}: ${selectedEvent.location} • ${localizations.deadline}: ${selectedEvent.deadline.toIso8601String().split("T").first}',
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: selectedEvent.topics
+                    .map((topic) => Chip(label: Text(topic)))
+                    .toList(),
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          OutlinedButton.icon(
-            onPressed: () => context.go(
-              RoutePaths.newAbstractSubmissionForEvent(selectedEvent.id),
+            AppSectionCard(
+              title: localizations.submitAbstractAction,
+              subtitle: localizations.eventDetailsOverviewBody,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  FilledButton.icon(
+                    onPressed: () => ref
+                        .read(eventsControllerProvider.notifier)
+                        .toggleBookmark(selectedEvent.id),
+                    icon: Icon(
+                      selectedEvent.isBookmarked
+                          ? Icons.bookmark
+                          : Icons.bookmark_border,
+                    ),
+                    label: Text(
+                      selectedEvent.isBookmarked
+                          ? localizations.removeBookmark
+                          : localizations.addBookmark,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  OutlinedButton.icon(
+                    onPressed: () => context.go(
+                      RoutePaths.newAbstractSubmissionForEvent(selectedEvent.id),
+                    ),
+                    icon: const Icon(Icons.upload_file_outlined),
+                    label: Text(localizations.submitAbstractAction),
+                  ),
+                ],
+              ),
             ),
-            icon: const Icon(Icons.upload_file_outlined),
-            label: Text(localizations.submitAbstractAction),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

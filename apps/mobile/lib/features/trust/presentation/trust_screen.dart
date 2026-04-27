@@ -3,10 +3,10 @@ import 'dart:io';
 
 import 'package:eventy360/app/router/route_paths.dart';
 import 'package:eventy360/core/presentation/app_feedback.dart';
-import 'package:eventy360/core/presentation/widgets/adaptive_page_body.dart';
 import 'package:eventy360/core/presentation/widgets/app_error_view.dart';
 import 'package:eventy360/core/presentation/widgets/app_inline_message.dart';
 import 'package:eventy360/core/presentation/widgets/app_loading_view.dart';
+import 'package:eventy360/core/presentation/widgets/app_page_scaffold.dart';
 import 'package:eventy360/features/trust/application/trust_controller.dart';
 import 'package:eventy360/features/trust/domain/trust_models.dart';
 import 'package:eventy360/l10n/generated/l10n.dart';
@@ -105,218 +105,161 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
           }
           return RefreshIndicator(
             onRefresh: controller.refresh,
-            child: AdaptivePageBody(
+            child: AppPageContainer(
               child: ListView(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 children: [
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                  AppPageHero(
+                    badge: localizations.trustCenterTitle,
+                    icon: Icons.verified_user_outlined,
+                    title: localizations.trustCenterTitle,
+                    subtitle: localizations.trustOverviewBody,
+                  ),
+                  AppSectionCard(
+                    title: localizations.secureDocsTitle,
+                    subtitle: localizations.secureDocsBody,
+                    child: const SizedBox.shrink(),
+                  ),
+                  AppSectionCard(
+                    title: localizations.verificationCenterTitle,
+                    subtitle: data.verification.isVerified
+                        ? localizations.verificationApprovedBody
+                        : data.verification.hasPendingRequest
+                        ? localizations.verificationPendingBody
+                        : localizations.verificationRequiredBody,
+                    leading: const Icon(Icons.verified_user_outlined),
+                    trailing: _VerificationBadge(
+                      status: data.verification.isVerified
+                          ? VerificationRequestStatus.approved
+                          : data.verification.latestRequest?.status,
+                      isVerified: data.verification.isVerified,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (data.verification.latestRequest != null) ...[
                           Text(
-                            localizations.secureDocsTitle,
-                            style: Theme.of(context).textTheme.titleMedium,
+                            '${localizations.latestRequestLabel}: ${_formatDate(data.verification.latestRequest!.submittedAt)}',
+                          ),
+                          if ((data.verification.latestRequest!.rejectionReason ??
+                                  '')
+                              .trim()
+                              .isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: AppInlineMessage.error(
+                                message:
+                                    '${localizations.rejectionReasonLabel}: ${data.verification.latestRequest!.rejectionReason!}',
+                              ),
+                            ),
+                          if ((data.verification.latestRequest!.documentPath ??
+                                  '')
+                              .isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: TextButton.icon(
+                                onPressed: () => _openDocument(
+                                  data.verification.latestRequest!.documentPath!,
+                                ),
+                                icon: const Icon(Icons.lock_open_outlined),
+                                label: Text(localizations.viewUploadedDocument),
+                              ),
+                            ),
+                        ],
+                        if (!data.verification.isVerified &&
+                            !data.verification.hasPendingRequest) ...[
+                          const SizedBox(height: 16),
+                          OutlinedButton.icon(
+                            onPressed: data.isUploadingVerification
+                                ? null
+                                : _pickVerificationFile,
+                            icon: const Icon(Icons.attach_file_outlined),
+                            label: Text(localizations.pickVerificationDocument),
                           ),
                           const SizedBox(height: 8),
-                          Text(localizations.secureDocsBody),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(Icons.verified_user_outlined),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  localizations.verificationCenterTitle,
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.titleMedium,
-                                ),
-                              ),
-                              _VerificationBadge(
-                                status: data.verification.isVerified
-                                    ? VerificationRequestStatus.approved
-                                    : data.verification.latestRequest?.status,
-                                isVerified: data.verification.isVerified,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
                           Text(
-                            data.verification.isVerified
-                                ? localizations.verificationApprovedBody
-                                : data.verification.hasPendingRequest
-                                ? localizations.verificationPendingBody
-                                : localizations.verificationRequiredBody,
+                            _verificationFile?.fileName ??
+                                localizations.noFileSelected,
                           ),
-                          if (data.verification.latestRequest != null) ...[
-                            const SizedBox(height: 12),
-                            Text(
-                              '${localizations.latestRequestLabel}: ${_formatDate(data.verification.latestRequest!.submittedAt)}',
-                            ),
-                            if ((data
-                                        .verification
-                                        .latestRequest!
-                                        .rejectionReason ??
-                                    '')
-                                .trim()
-                                .isNotEmpty)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8),
-                                child: Text(
-                                  '${localizations.rejectionReasonLabel}: ${data.verification.latestRequest!.rejectionReason!}',
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.error,
-                                  ),
-                                ),
-                              ),
-                            if ((data
-                                        .verification
-                                        .latestRequest!
-                                        .documentPath ??
-                                    '')
-                                .isNotEmpty)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8),
-                                child: TextButton.icon(
-                                  onPressed: () => _openDocument(
-                                    data
-                                        .verification
-                                        .latestRequest!
-                                        .documentPath!,
-                                  ),
-                                  icon: const Icon(Icons.lock_open_outlined),
-                                  label: Text(
-                                    localizations.viewUploadedDocument,
-                                  ),
-                                ),
-                              ),
-                          ],
-                          if (!data.verification.isVerified &&
-                              !data.verification.hasPendingRequest) ...[
-                            const SizedBox(height: 16),
-                            OutlinedButton.icon(
-                              onPressed: data.isUploadingVerification
-                                  ? null
-                                  : _pickVerificationFile,
-                              icon: const Icon(Icons.attach_file_outlined),
-                              label: Text(
-                                localizations.pickVerificationDocument,
-                              ),
-                            ),
+                          if (_localError != null) ...[
                             const SizedBox(height: 8),
-                            Text(
-                              _verificationFile?.fileName ??
-                                  localizations.noFileSelected,
-                            ),
-                            if (_localError != null) ...[
-                              const SizedBox(height: 8),
-                              AppInlineMessage.error(
-                                message: _localError!,
-                              ),
-                            ],
-                            const SizedBox(height: 12),
-                            FilledButton.icon(
-                              onPressed:
-                                  data.isUploadingVerification ||
-                                      _verificationFile == null
-                                  ? null
-                                  : () async {
-                                      await controller
-                                          .uploadVerificationDocument(
-                                            _verificationFile!,
-                                          );
-                                      if (mounted &&
-                                          ref
-                                                  .read(trustControllerProvider)
-                                                  .asData
-                                                  ?.value
-                                                  .errorMessage ==
-                                              null) {
-                                        setState(() {
-                                          _verificationFile = null;
-                                          _localError = null;
-                                        });
-                                      }
-                                    },
-                              icon: data.isUploadingVerification
-                                  ? const SizedBox(
-                                      width: 18,
-                                      height: 18,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : const Icon(Icons.upload_file_outlined),
-                              label: Text(
-                                localizations.submitVerificationRequest,
-                              ),
-                            ),
+                            AppInlineMessage.error(message: _localError!),
                           ],
+                          const SizedBox(height: 12),
+                          FilledButton.icon(
+                            onPressed:
+                                data.isUploadingVerification ||
+                                    _verificationFile == null
+                                ? null
+                                : () async {
+                                    await controller.uploadVerificationDocument(
+                                      _verificationFile!,
+                                    );
+                                    if (mounted &&
+                                        ref
+                                                .read(trustControllerProvider)
+                                                .asData
+                                                ?.value
+                                                .errorMessage ==
+                                            null) {
+                                      setState(() {
+                                        _verificationFile = null;
+                                        _localError = null;
+                                      });
+                                    }
+                                  },
+                            icon: data.isUploadingVerification
+                                ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(Icons.upload_file_outlined),
+                            label: Text(
+                              localizations.submitVerificationRequest,
+                            ),
+                          ),
                         ],
-                      ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  localizations.paymentHistoryTitle,
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.titleMedium,
-                                ),
-                              ),
-                              FilledButton.tonalIcon(
-                                onPressed: () =>
-                                    context.push(RoutePaths.reportPayment),
-                                icon: const Icon(Icons.receipt_long_outlined),
-                                label: Text(localizations.reportPaymentTitle),
-                              ),
-                            ],
+                  AppSectionCard(
+                    title: localizations.paymentHistoryTitle,
+                    subtitle: localizations.reportPaymentOverviewBody,
+                    trailing: FilledButton.tonalIcon(
+                      onPressed: () => context.push(RoutePaths.reportPayment),
+                      icon: const Icon(Icons.receipt_long_outlined),
+                      label: Text(localizations.reportPaymentTitle),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if ((state?.errorMessage ?? '').isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: AppInlineMessage.error(
+                              message: state!.errorMessage!,
+                            ),
                           ),
-                          const SizedBox(height: 12),
-                          if ((state?.errorMessage ?? '').isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 12),
-                              child: AppInlineMessage.error(
-                                message: state!.errorMessage!,
-                              ),
+                        if (data.payments.isEmpty)
+                          AppEmptyState(
+                            icon: Icons.receipt_long_outlined,
+                            title: localizations.paymentHistoryTitle,
+                            body: localizations.noPaymentsFound,
+                          )
+                        else
+                          ...data.payments.map(
+                            (payment) => _PaymentTile(
+                              payment: payment,
+                              onOpenDocument: payment.proofDocumentPath == null
+                                  ? null
+                                  : () =>
+                                        _openDocument(payment.proofDocumentPath!),
                             ),
-                          if (data.payments.isEmpty)
-                            Text(localizations.noPaymentsFound)
-                          else
-                            ...data.payments.map(
-                              (payment) => _PaymentTile(
-                                payment: payment,
-                                onOpenDocument:
-                                    payment.proofDocumentPath == null
-                                    ? null
-                                    : () => _openDocument(
-                                        payment.proofDocumentPath!,
-                                      ),
-                              ),
-                            ),
-                        ],
-                      ),
+                          ),
+                      ],
                     ),
                   ),
                 ],
@@ -360,32 +303,21 @@ class _VerificationBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizations = S.of(context);
-    final colorScheme = Theme.of(context).colorScheme;
-    final (label, color) = switch ((isVerified, status)) {
-      (true, _) => (localizations.verifiedStatus, colorScheme.primaryContainer),
-      (false, VerificationRequestStatus.pending) => (
-        localizations.verificationPendingStatus,
-        colorScheme.secondaryContainer,
-      ),
-      (false, VerificationRequestStatus.rejected) => (
-        localizations.verificationRejectedStatus,
-        colorScheme.errorContainer,
-      ),
-      _ => (
-        localizations.notVerifiedStatus,
-        colorScheme.surfaceContainerHighest,
-      ),
+    final tone = switch ((isVerified, status)) {
+      (true, _) => AppStatusTone.success,
+      (false, VerificationRequestStatus.pending) => AppStatusTone.info,
+      (false, VerificationRequestStatus.rejected) => AppStatusTone.error,
+      _ => AppStatusTone.neutral,
     };
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        child: Text(label),
-      ),
-    );
+    final label = switch ((isVerified, status)) {
+      (true, _) => localizations.verifiedStatus,
+      (false, VerificationRequestStatus.pending) =>
+        localizations.verificationPendingStatus,
+      (false, VerificationRequestStatus.rejected) =>
+        localizations.verificationRejectedStatus,
+      _ => localizations.notVerifiedStatus,
+    };
+    return AppStatusBadge(label: label, tone: tone);
   }
 }
 
@@ -401,54 +333,44 @@ class _PaymentTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizations = S.of(context);
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    '${payment.amount.toStringAsFixed(2)} DZD',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ),
-                _PaymentStatusChip(status: payment.status),
-              ],
-            ),
-            const SizedBox(height: 8),
+    return AppSectionCard(
+      title: '${payment.amount.toStringAsFixed(2)} DZD',
+      trailing: _PaymentStatusChip(status: payment.status),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '${localizations.billingPeriodLabel}: ${_billingPeriodLabel(localizations, payment.billingPeriod)}',
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '${localizations.paymentMethodLabel}: ${_paymentMethodLabel(localizations, payment.paymentMethod)}',
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '${localizations.reportedAtLabel}: ${_formatDate(payment.reportedAt)}',
+          ),
+          if ((payment.referenceNumber ?? '').trim().isNotEmpty) ...[
+            const SizedBox(height: 4),
             Text(
-              '${localizations.billingPeriodLabel}: ${_billingPeriodLabel(localizations, payment.billingPeriod)}',
+              '${localizations.referenceNumberLabel}: ${payment.referenceNumber}',
             ),
-            Text(
-              '${localizations.paymentMethodLabel}: ${_paymentMethodLabel(localizations, payment.paymentMethod)}',
-            ),
-            Text(
-              '${localizations.reportedAtLabel}: ${_formatDate(payment.reportedAt)}',
-            ),
-            if ((payment.referenceNumber ?? '').trim().isNotEmpty)
-              Text(
-                '${localizations.referenceNumberLabel}: ${payment.referenceNumber}',
-              ),
-            if ((payment.payerNotes ?? '').trim().isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text(payment.payerNotes!),
-              ),
-            if (onOpenDocument != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: TextButton.icon(
-                  onPressed: onOpenDocument,
-                  icon: const Icon(Icons.lock_open_outlined),
-                  label: Text(localizations.viewProofDocument),
-                ),
-              ),
           ],
-        ),
+          if ((payment.payerNotes ?? '').trim().isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(payment.payerNotes!),
+            ),
+          if (onOpenDocument != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: TextButton.icon(
+                onPressed: onOpenDocument,
+                icon: const Icon(Icons.lock_open_outlined),
+                label: Text(localizations.viewProofDocument),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -462,31 +384,21 @@ class _PaymentStatusChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizations = S.of(context);
-    final colorScheme = Theme.of(context).colorScheme;
-    final (label, color) = switch (status) {
+    final (label, tone) = switch (status) {
       PaymentStatus.pendingVerification => (
         localizations.paymentPendingStatus,
-        colorScheme.secondaryContainer,
+        AppStatusTone.info,
       ),
       PaymentStatus.verified => (
         localizations.paymentVerifiedStatus,
-        colorScheme.primaryContainer,
+        AppStatusTone.success,
       ),
       PaymentStatus.rejected => (
         localizations.paymentRejectedStatus,
-        colorScheme.errorContainer,
+        AppStatusTone.error,
       ),
     };
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        child: Text(label),
-      ),
-    );
+    return AppStatusBadge(label: label, tone: tone);
   }
 }
 

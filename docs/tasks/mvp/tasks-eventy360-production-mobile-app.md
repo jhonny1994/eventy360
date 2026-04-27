@@ -13,6 +13,8 @@
 - `apps/mobile/test/` - Unit/widget/integration tests for app behavior.
 - `apps/mobile/integration_test/` - Higher-value end-to-end mobile flow tests.
 - `apps/mobile/android/` - Android signing, manifest, notification, and release config.
+- `docs/tasks/mvp/phase6-mobile-quality-gates.md` - Mobile automated/manual release gate definition.
+- `docs/tasks/mvp/phase6-mobile-ui-production-audit.md` - Mobile UI production standards and route-level audit baseline.
 - `apps/web/src/` - Existing researcher semantics and behavior parity reference.
 - `supabase/functions/` - Existing write and notification paths used by mobile.
 - `supabase/migrations/` - Current schema and behavior reference for live integrations.
@@ -49,6 +51,17 @@
   - [x] 2.3 Build onboarding flow with contextual notification education (no first-launch permission prompt)
   - [x] 2.4 Implement researcher profile completion gate aligned with existing semantics
   - [x] 2.5 Build home dashboard with profile/verification/subscription/deadline/active-submission states
+  - [ ] 2.5.0 Re-architect post-auth mobile shell around stable top-level navigation
+  - [ ] 2.5.1 Replace stacked dashboard home with a task-first mobile home aligned to persistent app navigation
+  - [ ] 2.5.2 Add persistent bottom navigation for top-level researcher destinations
+  - [ ] 2.5.3 Add a dedicated settings/account destination for user preferences and account actions
+  - [ ] 2.5.4 Add in-app language switching wired to `localeControllerProvider`
+  - [ ] 2.5.5 Add discoverable theme controls inside settings/account instead of relying on home app-bar toggle
+  - [ ] 2.5.6 Add notification preferences visibility and platform-settings handoff in settings/account
+  - [ ] 2.5.7 Add account overview sections for profile state, verification state, subscription state, and sign out
+  - [ ] 2.5.8 Add dedicated profile edit flow from mobile account area
+  - [ ] 2.5.9 Add dedicated security entry point from mobile account area
+  - [ ] 2.5.10 Revisit onboarding completion so first-run flow leads into language/theme/topics/account-aware shell
   - [x] 2.6 Add auth/home tests: provider tests, widget flow tests, and basic navigation tests
   - [ ] 2.7 Run milestone manual validation #1: auth, onboarding, profile gate, home
 
@@ -61,6 +74,12 @@
   - [x] 3.6 Implement push permission request only after topic-intent action
   - [x] 3.7 Implement push deep-link routing into event/topic context
   - [x] 3.8 Add discovery/topic/notification tests including permission and deep-link handling
+  - [ ] 3.8.1 Separate event filtering from topic subscription management in UX and IA
+  - [ ] 3.8.2 Add dedicated saved or bookmarked events view
+  - [ ] 3.8.3 Add dedicated topics management page under account
+  - [ ] 3.8.4 Preserve search, filters, and scroll context across event list/detail round-trips
+  - [ ] 3.8.5 Expand event detail to include richer event description, timeline, organizer context, and eligibility guidance
+  - [ ] 3.8.6 Route duplicate abstract attempts back to the existing submission context instead of creating confusion
   - [ ] 3.9 Run milestone manual validation #2: discovery, bookmarks, topics, real subscribed-topic push
 
 - [ ] 4.0 Implement real critical write flows with minimal reliability guards
@@ -73,6 +92,11 @@
   - [x] 4.6 Add local draft/context preservation for interruption-safe forms
   - [x] 4.7 Add submission detail, status, and feedback timeline UI
   - [x] 4.8 Add write-flow tests including failure and retry behavior
+  - [ ] 4.8.1 Add reviewer feedback parity and human-readable status context to submission detail
+  - [ ] 4.8.2 Replace raw file URL exposure with safer file metadata, actions, and privacy framing
+  - [ ] 4.8.3 Add stronger event context and deadline context inside submission detail
+  - [ ] 4.8.4 Improve write-form guidance for accepted file types, file size expectations, and upload receipts
+  - [ ] 4.8.5 Add explicit draft restore UX and autosave communication in submission forms
   - [ ] 4.9 Run milestone manual validation #3: all submission write flows end-to-end
 
 - [ ] 5.0 Implement verification, payment, and repository end-to-end flows
@@ -82,6 +106,12 @@
   - [x] 5.4 Implement repository list/detail and download behavior using real backend data
   - [x] 5.5 Add secure handling UX for sensitive docs and file operation errors
   - [x] 5.6 Add trust/repository tests including edge and error paths
+  - [ ] 5.6.1 Re-house trust flows under account while preserving clear verification and payment entry points
+  - [ ] 5.6.2 Add subscription overview and subscription resolution path in mobile account UX
+  - [ ] 5.6.3 Add payment history/report split that matches current product semantics
+  - [ ] 5.6.4 Add payment instructions and expectations before proof submission
+  - [ ] 5.6.5 Expand repository filters and repository detail metadata toward web parity
+  - [ ] 5.6.6 Add repository back-navigation, premium-context messaging, and download confidence cues
   - [ ] 5.7 Run milestone manual validation #4: verification, payment, repository
 
 - [ ] 6.0 Add phase-by-phase automated checks and milestone manual validation
@@ -90,6 +120,10 @@
   - [x] 6.3 Define manual validation checklist template for each milestone
   - [x] 6.3.1 Define objective milestone acceptance criteria (required evidence, blocker policy, pass/fail threshold)
   - [x] 6.3.2 Define push operational validation checklist (delivery failures, stale token handling, retry/queue behavior)
+  - [ ] 6.3.3 Add manual validation coverage for settings discoverability, theme persistence, language switching, and notification preference entry points
+  - [ ] 6.3.4 Add route-by-route parity checklist against web semantics and `02-researcher-journey-and-ux.md`
+  - [ ] 6.3.5 Add large-text and RTL regression checklist for every primary route
+  - [ ] 6.3.6 Add cold-start, background-resume, and return-to-task validation for every critical workflow
   - [ ] 6.4 Execute full manual walkthrough across all core researcher flows
   - [ ] 6.5 Capture defects from walkthrough and resolve blocking issues
   - [ ] 6.6 Re-run automated checks after fixes and confirm clean status

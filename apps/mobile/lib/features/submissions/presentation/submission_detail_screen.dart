@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:eventy360/app/router/route_paths.dart';
 import 'package:eventy360/core/presentation/widgets/app_error_view.dart';
 import 'package:eventy360/core/presentation/widgets/app_loading_view.dart';
+import 'package:eventy360/core/presentation/widgets/app_page_scaffold.dart';
 import 'package:eventy360/features/submissions/application/submissions_controller.dart';
 import 'package:eventy360/features/submissions/domain/submission_models.dart';
 import 'package:eventy360/l10n/generated/l10n.dart';
@@ -62,63 +63,95 @@ class _SubmissionDetailScreenState
     final record = detail.record;
     return Scaffold(
       appBar: AppBar(title: Text(localizations.submissionDetailTitle)),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Text(record.title, style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: 8),
-          Text('${localizations.eventSelectionLabel}: ${record.eventTitle}'),
-          const SizedBox(height: 8),
-          Text(
-            '${localizations.submissionStatusLabel}: '
-            '${_statusLabel(localizations, record.status)}',
-          ),
-          const SizedBox(height: 12),
-          Text(
-            localizations.abstractArLabel,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 4),
-          Text(record.abstractText),
-          if ((record.fullPaperFileUrl ?? '').isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Text(
-              localizations.fileUrlLabel,
-              style: Theme.of(context).textTheme.titleMedium,
+      body: AppPageContainer(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          children: [
+            AppPageHero(
+              badge: localizations.submissionsTitle,
+              icon: Icons.timeline_outlined,
+              title: record.title,
+              subtitle: localizations.submissionDetailOverviewBody,
             ),
-            const SizedBox(height: 4),
-            SelectableText(record.fullPaperFileUrl!),
-          ],
-          const SizedBox(height: 16),
-          Text(
-            localizations.submissionTimelineTitle,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 8),
-          ...detail.timeline.map(
-            (entry) => ListTile(
-              dense: true,
-              leading: const Icon(Icons.timeline_outlined),
-              title: Text(entry.title),
-              subtitle: Text(
-                '${entry.description}\n${entry.timestamp.toIso8601String()}',
+            AppSectionCard(
+              title: record.eventTitle,
+              subtitle: localizations.submissionStatusLabel,
+              trailing: AppStatusBadge(
+                label: _statusLabel(localizations, record.status),
+                tone: _statusTone(record.status),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${localizations.eventSelectionLabel}: ${record.eventTitle}',
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    localizations.abstractArLabel,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(record.abstractText),
+                  if ((record.fullPaperFileUrl ?? '').isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    Text(
+                      localizations.fileUrlLabel,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    SelectableText(record.fullPaperFileUrl!),
+                  ],
+                ],
               ),
             ),
-          ),
-          const SizedBox(height: 16),
-          if (record.canSubmitFullPaper)
-            FilledButton(
-              onPressed: () =>
-                  context.go(RoutePaths.submissionFullPaper(record.id)),
-              child: Text(localizations.submitFullPaperAction),
+            AppSectionCard(
+              title: localizations.submissionTimelineTitle,
+              child: Column(
+                children: detail.timeline
+                    .map(
+                      (entry) => ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: const Icon(Icons.timeline_outlined),
+                        title: Text(entry.title),
+                        subtitle: Text(
+                          '${entry.description}\n${entry.timestamp.toIso8601String()}',
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
             ),
-          if (record.canSubmitRevision)
-            FilledButton.tonal(
-              onPressed: () =>
-                  context.go(RoutePaths.submissionRevision(record.id)),
-              child: Text(localizations.submitRevisionAction),
-            ),
-        ],
+            if (record.canSubmitFullPaper || record.canSubmitRevision)
+              AppSectionCard(
+                title: localizations.continueAction,
+                subtitle: localizations.submissionsOverviewBody,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (record.canSubmitFullPaper)
+                      FilledButton(
+                        onPressed: () =>
+                            context.go(RoutePaths.submissionFullPaper(record.id)),
+                        child: Text(localizations.submitFullPaperAction),
+                      ),
+                    if (record.canSubmitRevision) ...[
+                      if (record.canSubmitFullPaper) const SizedBox(height: 10),
+                      FilledButton.tonal(
+                        onPressed: () =>
+                            context.go(RoutePaths.submissionRevision(record.id)),
+                        child: Text(localizations.submitRevisionAction),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -143,6 +176,24 @@ class _SubmissionDetailScreenState
         return localizations.statusRevisionUnderReview;
       case SubmissionStatus.completed:
         return localizations.statusCompleted;
+    }
+  }
+
+  AppStatusTone _statusTone(SubmissionStatus status) {
+    switch (status) {
+      case SubmissionStatus.abstractAccepted:
+      case SubmissionStatus.fullPaperAccepted:
+      case SubmissionStatus.completed:
+        return AppStatusTone.success;
+      case SubmissionStatus.abstractRejected:
+      case SubmissionStatus.fullPaperRejected:
+        return AppStatusTone.error;
+      case SubmissionStatus.revisionRequested:
+      case SubmissionStatus.revisionUnderReview:
+        return AppStatusTone.info;
+      case SubmissionStatus.abstractSubmitted:
+      case SubmissionStatus.fullPaperSubmitted:
+        return AppStatusTone.neutral;
     }
   }
 }

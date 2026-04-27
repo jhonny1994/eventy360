@@ -100,8 +100,14 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('Verified'), findsOneWidget);
-    expect(find.text('Premium subscription active'), findsOneWidget);
+    expect(find.text('Verified'), findsWidgets);
+    expect(find.text('Premium subscription active'), findsWidgets);
+    await tester.scrollUntilVisible(
+      find.text('1 active submissions'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
     expect(find.text('1 active submissions'), findsOneWidget);
   });
 }

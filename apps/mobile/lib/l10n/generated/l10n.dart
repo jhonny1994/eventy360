@@ -79,6 +79,16 @@ class S {
     );
   }
 
+  /// `Track your account health, critical deadlines, submissions, and researcher tools from one calm control center.`
+  String get homeOverviewBody {
+    return Intl.message(
+      'Track your account health, critical deadlines, submissions, and researcher tools from one calm control center.',
+      name: 'homeOverviewBody',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Welcome to Eventy360`
   String get onboardingTitle {
     return Intl.message(
@@ -94,6 +104,66 @@ class S {
     return Intl.message(
       'Complete your researcher workflow from mobile with fewer steps.',
       name: 'onboardingBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Discover relevant events faster`
+  String get onboardingStepDiscoverTitle {
+    return Intl.message(
+      'Discover relevant events faster',
+      name: 'onboardingStepDiscoverTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search, filter, and bookmark opportunities that match your research focus and deadlines.`
+  String get onboardingStepDiscoverBody {
+    return Intl.message(
+      'Search, filter, and bookmark opportunities that match your research focus and deadlines.',
+      name: 'onboardingStepDiscoverBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submit with fewer blockers`
+  String get onboardingStepSubmitTitle {
+    return Intl.message(
+      'Submit with fewer blockers',
+      name: 'onboardingStepSubmitTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Track abstracts, full papers, and revisions in one guided flow with clear status visibility.`
+  String get onboardingStepSubmitBody {
+    return Intl.message(
+      'Track abstracts, full papers, and revisions in one guided flow with clear status visibility.',
+      name: 'onboardingStepSubmitBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stay ahead with timely alerts`
+  String get onboardingStepNotifyTitle {
+    return Intl.message(
+      'Stay ahead with timely alerts',
+      name: 'onboardingStepNotifyTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We request notification permission only when you subscribe to topics, so prompts remain contextual.`
+  String get onboardingStepNotifyBody {
+    return Intl.message(
+      'We request notification permission only when you subscribe to topics, so prompts remain contextual.',
+      name: 'onboardingStepNotifyBody',
       desc: '',
       args: [],
     );
@@ -119,6 +189,11 @@ class S {
     );
   }
 
+  /// `Skip`
+  String get skipAction {
+    return Intl.message('Skip', name: 'skipAction', desc: '', args: []);
+  }
+
   /// `Get Started`
   String get getStarted {
     return Intl.message('Get Started', name: 'getStarted', desc: '', args: []);
@@ -129,14 +204,64 @@ class S {
     return Intl.message('Sign In', name: 'signIn', desc: '', args: []);
   }
 
+  /// `Return to your research flow`
+  String get signInHeroTitle {
+    return Intl.message(
+      'Return to your research flow',
+      name: 'signInHeroTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Access events, submissions, trust operations, and repository tools from one focused mobile workspace.`
+  String get signInHeroBody {
+    return Intl.message(
+      'Access events, submissions, trust operations, and repository tools from one focused mobile workspace.',
+      name: 'signInHeroBody',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Sign Up`
   String get signUp {
     return Intl.message('Sign Up', name: 'signUp', desc: '', args: []);
   }
 
+  /// `Create your researcher access`
+  String get signUpHeroTitle {
+    return Intl.message(
+      'Create your researcher access',
+      name: 'signUpHeroTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start with secure credentials, then complete your researcher profile and verification path inside the app.`
+  String get signUpHeroBody {
+    return Intl.message(
+      'Start with secure credentials, then complete your researcher profile and verification path inside the app.',
+      name: 'signUpHeroBody',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Sign Out`
   String get signOut {
     return Intl.message('Sign Out', name: 'signOut', desc: '', args: []);
+  }
+
+  /// `Researcher mobile access`
+  String get authResearcherBadge {
+    return Intl.message(
+      'Researcher mobile access',
+      name: 'authResearcherBadge',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Email`
@@ -204,6 +329,16 @@ class S {
     return Intl.message(
       'Reset Password',
       name: 'resetPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recover access securely with a reset link, or finish a password recovery session without losing context.`
+  String get resetPasswordHeroBody {
+    return Intl.message(
+      'Recover access securely with a reset link, or finish a password recovery session without losing context.',
+      name: 'resetPasswordHeroBody',
       desc: '',
       args: [],
     );
@@ -334,6 +469,16 @@ class S {
     return Intl.message(
       'Before using researcher features, complete your profile details.',
       name: 'completeProfileBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add your professional details and location once so the rest of the mobile experience can stay personalized and accurate.`
+  String get completeProfileHeroBody {
+    return Intl.message(
+      'Add your professional details and location once so the rest of the mobile experience can stay personalized and accurate.',
+      name: 'completeProfileHeroBody',
       desc: '',
       args: [],
     );
@@ -534,6 +679,16 @@ class S {
     );
   }
 
+  /// `Browse upcoming calls, filter by topic, subscribe to what matters, and keep your shortlist moving.`
+  String get eventsOverviewBody {
+    return Intl.message(
+      'Browse upcoming calls, filter by topic, subscribe to what matters, and keep your shortlist moving.',
+      name: 'eventsOverviewBody',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Search events by name or location`
   String get eventsSearchHint {
     return Intl.message(
@@ -619,6 +774,16 @@ class S {
     );
   }
 
+  /// `Review active work, understand each status quickly, and keep your next submission action obvious.`
+  String get submissionsOverviewBody {
+    return Intl.message(
+      'Review active work, understand each status quickly, and keep your next submission action obvious.',
+      name: 'submissionsOverviewBody',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Submit Abstract`
   String get submitAbstractTitle {
     return Intl.message(
@@ -674,6 +839,36 @@ class S {
     return Intl.message(
       'Submit revision',
       name: 'submitRevisionAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Prepare the core metadata and abstracts needed to create a clean initial submission.`
+  String get submitAbstractOverviewBody {
+    return Intl.message(
+      'Prepare the core metadata and abstracts needed to create a clean initial submission.',
+      name: 'submitAbstractOverviewBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Upload the final paper file against the approved submission record without losing context.`
+  String get submitFullPaperOverviewBody {
+    return Intl.message(
+      'Upload the final paper file against the approved submission record without losing context.',
+      name: 'submitFullPaperOverviewBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send the revised paper and any notes requested by reviewers in one focused step.`
+  String get submitRevisionOverviewBody {
+    return Intl.message(
+      'Send the revised paper and any notes requested by reviewers in one focused step.',
+      name: 'submitRevisionOverviewBody',
       desc: '',
       args: [],
     );
@@ -919,11 +1114,31 @@ class S {
     );
   }
 
+  /// `See the full lifecycle of this submission, including current status, abstract content, files, and timeline history.`
+  String get submissionDetailOverviewBody {
+    return Intl.message(
+      'See the full lifecycle of this submission, including current status, abstract content, files, and timeline history.',
+      name: 'submissionDetailOverviewBody',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Trust Center`
   String get trustCenterTitle {
     return Intl.message(
       'Trust Center',
       name: 'trustCenterTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Handle verification and payment evidence in a secure, transparent flow designed for researcher trust operations.`
+  String get trustOverviewBody {
+    return Intl.message(
+      'Handle verification and payment evidence in a secure, transparent flow designed for researcher trust operations.',
+      name: 'trustOverviewBody',
       desc: '',
       args: [],
     );
@@ -1074,6 +1289,16 @@ class S {
     return Intl.message(
       'Report Payment',
       name: 'reportPaymentTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submit billing details and proof once so the team can validate your subscription access quickly and accurately.`
+  String get reportPaymentOverviewBody {
+    return Intl.message(
+      'Submit billing details and proof once so the team can validate your subscription access quickly and accurately.',
+      name: 'reportPaymentOverviewBody',
       desc: '',
       args: [],
     );
@@ -1314,6 +1539,16 @@ class S {
     );
   }
 
+  /// `Search premium research material, narrow by topic, and move from discovery to download without friction.`
+  String get repositoryOverviewBody {
+    return Intl.message(
+      'Search premium research material, narrow by topic, and move from discovery to download without friction.',
+      name: 'repositoryOverviewBody',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Premium access is required`
   String get repositorySubscriptionRequiredTitle {
     return Intl.message(
@@ -1399,6 +1634,16 @@ class S {
     return Intl.message(
       'Paper Details',
       name: 'repositoryDetailTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Review the paper context, abstract, and download package before opening the full document.`
+  String get repositoryDetailOverviewBody {
+    return Intl.message(
+      'Review the paper context, abstract, and download package before opening the full document.',
+      name: 'repositoryDetailOverviewBody',
       desc: '',
       args: [],
     );
@@ -1502,6 +1747,26 @@ class S {
   /// `Location`
   String get location {
     return Intl.message('Location', name: 'location', desc: '', args: []);
+  }
+
+  /// `Review the event timing, location, topics, and next actions before bookmarking or submitting.`
+  String get eventDetailsOverviewBody {
+    return Intl.message(
+      'Review the event timing, location, topics, and next actions before bookmarking or submitting.',
+      name: 'eventDetailsOverviewBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This mobile release is intentionally focused on researcher workflows, so unsupported accounts are stopped here instead of failing later.`
+  String get unsupportedRoleOverviewBody {
+    return Intl.message(
+      'This mobile release is intentionally focused on researcher workflows, so unsupported accounts are stopped here instead of failing later.',
+      name: 'unsupportedRoleOverviewBody',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Retry`
