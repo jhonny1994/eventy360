@@ -75,7 +75,7 @@
   - [x] 3.7 Implement push deep-link routing into event/topic context
   - [x] 3.8 Add discovery/topic/notification tests including permission and deep-link handling
   - [x] 3.8.3 Add dedicated topics management page under account
-  - [ ] 3.8.1 Separate event filtering from topic subscription management in UX and IA
+  - [x] 3.8.1 Separate event filtering from topic subscription management in UX and IA
   - [ ] 3.8.2 Add dedicated saved or bookmarked events view
   - [ ] 3.8.4 Preserve search, filters, and scroll context across event list/detail round-trips
   - [ ] 3.8.5 Expand event detail to include richer event description, timeline, organizer context, and eligibility guidance

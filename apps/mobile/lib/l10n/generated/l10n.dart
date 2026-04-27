@@ -799,6 +799,16 @@ class S {
     );
   }
 
+  /// `Manage alert topics`
+  String get manageTopicsAction {
+    return Intl.message(
+      'Manage alert topics',
+      name: 'manageTopicsAction',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Profile status`
   String get profileStatus {
     return Intl.message(
