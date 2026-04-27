@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:eventy360/core/presentation/widgets/app_inline_message.dart';
 import 'package:eventy360/features/auth/application/session_controller.dart';
 import 'package:eventy360/features/auth/domain/location_option.dart';
 import 'package:eventy360/features/auth/presentation/widgets/auth_scaffold.dart';
@@ -139,12 +140,7 @@ class _ProfileGateScreenState extends ConsumerState<ProfileGateScreen> {
             ],
             if ((_locationError ?? '').isNotEmpty) ...[
               const SizedBox(height: 12),
-              Text(
-                _locationError!,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.error,
-                ),
-              ),
+              AppInlineMessage.error(message: _locationError!),
             ],
             const SizedBox(height: 18),
             FilledButton(

@@ -1,3 +1,5 @@
+import 'package:eventy360/core/presentation/widgets/app_inline_message.dart';
+import 'package:eventy360/core/presentation/widgets/app_page_scaffold.dart';
 import 'package:eventy360/features/auth/application/session_controller.dart';
 import 'package:eventy360/l10n/generated/l10n.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +18,8 @@ class _SecurityScreenState extends ConsumerState<SecurityScreen> {
   final _confirmPasswordController = TextEditingController();
   bool _sendingReset = false;
   bool _updatingPassword = false;
+  bool _obscureNewPassword = true;
+  bool _obscureConfirmPassword = true;
   String? _message;
   String? _errorMessage;
 
@@ -33,29 +37,29 @@ class _SecurityScreenState extends ConsumerState<SecurityScreen> {
     final email = session?.user?.email ?? '';
     return Scaffold(
       appBar: AppBar(title: Text(localizations.securityTitle)),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-        children: [
-          Text(
-            localizations.securityBody,
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-          const SizedBox(height: 16),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
+      body: AppPageContainer(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          children: [
+            AppPageHero(
+              badge: localizations.accountTitle,
+              icon: Icons.security_outlined,
+              title: localizations.securityTitle,
+              subtitle: localizations.securityBody,
+            ),
+            if ((_message ?? '').isNotEmpty)
+              AppInlineMessage.info(message: _message!),
+            if ((_errorMessage ?? '').isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: AppInlineMessage.error(message: _errorMessage!),
+              ),
+            AppSectionCard(
+              title: localizations.sendResetLink,
+              subtitle: localizations.securityResetBody(email),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    localizations.sendResetLink,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(localizations.securityResetBody(email)),
-                  const SizedBox(height: 16),
                   FilledButton.tonalIcon(
                     onPressed: _sendingReset ? null : () => _sendReset(email),
                     icon: _sendingReset
@@ -70,30 +74,32 @@ class _SecurityScreenState extends ConsumerState<SecurityScreen> {
                 ],
               ),
             ),
-          ),
-          const SizedBox(height: 12),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
+            AppSectionCard(
+              title: localizations.updatePasswordTitle,
+              subtitle: localizations.securityDirectPasswordBody,
               child: Form(
                 key: _formKey,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(
-                      localizations.updatePasswordTitle,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(localizations.securityDirectPasswordBody),
-                    const SizedBox(height: 16),
                     TextFormField(
                       controller: _newPasswordController,
-                      obscureText: true,
+                      obscureText: _obscureNewPassword,
+                      autofillHints: const [AutofillHints.newPassword],
                       decoration: InputDecoration(
                         labelText: localizations.newPassword,
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(
+                              () => _obscureNewPassword = !_obscureNewPassword,
+                            );
+                          },
+                          icon: Icon(
+                            _obscureNewPassword
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                          ),
+                        ),
                       ),
                       validator: (value) =>
                           (value == null || value.length < 8)
@@ -103,14 +109,33 @@ class _SecurityScreenState extends ConsumerState<SecurityScreen> {
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _confirmPasswordController,
-                      obscureText: true,
+                      obscureText: _obscureConfirmPassword,
+                      autofillHints: const [AutofillHints.newPassword],
                       decoration: InputDecoration(
                         labelText: localizations.confirmPassword,
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(
+                              () => _obscureConfirmPassword =
+                                  !_obscureConfirmPassword,
+                            );
+                          },
+                          icon: Icon(
+                            _obscureConfirmPassword
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                          ),
+                        ),
                       ),
-                      validator: (value) =>
-                          value != _newPasswordController.text
-                          ? localizations.passwordsDoNotMatch
-                          : null,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return localizations.requiredField;
+                        }
+                        if (value != _newPasswordController.text) {
+                          return localizations.passwordsDoNotMatch;
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 16),
                     FilledButton.icon(
@@ -128,26 +153,8 @@ class _SecurityScreenState extends ConsumerState<SecurityScreen> {
                 ),
               ),
             ),
-          ),
-          if ((_message ?? '').isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Text(
-              _message!,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
           ],
-          if ((_errorMessage ?? '').isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Text(
-              _errorMessage!,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.error,
-              ),
-            ),
-          ],
-        ],
+        ),
       ),
     );
   }
