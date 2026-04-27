@@ -13,6 +13,7 @@ It standardizes:
 - milestone validation evidence and pass/fail policy
 - push operational checks before release
 - production UI audit expectations for mobile routes
+- manual route parity and preference validation coverage
 
 ## 1. Canonical Local Automated Checks
 
@@ -227,3 +228,20 @@ Mandatory UI gate checks:
 5. loading, empty, blocked, error, and success states are visually explicit
 6. Arabic, English, light, dark, and large-text validation are completed on critical flows
 7. no critical route regresses to raw scaffold-like `ListView + Card + SizedBox` composition without shared primitives
+
+## 8. Additional Manual Coverage Documents
+
+Use these alongside this quality gate during phase 6:
+
+1. [phase6-mobile-route-parity-checklist.md](C:/Users/raouf/projects/eventy360/docs/tasks/mvp/phase6-mobile-route-parity-checklist.md)
+2. [phase6-mobile-manual-validation-coverage.md](C:/Users/raouf/projects/eventy360/docs/tasks/mvp/phase6-mobile-manual-validation-coverage.md)
+
+These documents are the canonical source for:
+
+1. route-by-route parity checks
+2. settings discoverability checks
+3. theme persistence checks
+4. language switching checks
+5. notification preference entry checks
+6. large-text and RTL sweeps
+7. cold-start and background-resume validation
