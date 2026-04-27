@@ -28,9 +28,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "abstractEnLabel": MessageLookupByLibrary.simpleMessage(
       "الملخص (الإنجليزية - اختياري)",
     ),
+    "accountActionsTitle": MessageLookupByLibrary.simpleMessage(
+      "إجراءات الحساب",
+    ),
     "accountCreated": MessageLookupByLibrary.simpleMessage(
       "تم إنشاء الحساب بنجاح.",
     ),
+    "accountHeroBody": MessageLookupByLibrary.simpleMessage(
+      "أدر الثقة والتفضيلات واللغة والمظهر والتنبيهات من مكان واحد واضح.",
+    ),
+    "accountHeroTitle": MessageLookupByLibrary.simpleMessage(
+      "تحكم في تجربتك البحثية",
+    ),
+    "accountOverviewTitle": MessageLookupByLibrary.simpleMessage(
+      "نظرة عامة على الحساب",
+    ),
+    "accountTitle": MessageLookupByLibrary.simpleMessage("الحساب"),
     "activeSubmissionsCount": m0,
     "activeSubmissionsTitle": MessageLookupByLibrary.simpleMessage(
       "الترشيحات النشطة",
@@ -66,6 +79,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "dairaLabel": MessageLookupByLibrary.simpleMessage("الدائرة"),
     "deadline": MessageLookupByLibrary.simpleMessage("آخر موعد"),
     "email": MessageLookupByLibrary.simpleMessage("البريد الإلكتروني"),
+    "enableNotificationsAction": MessageLookupByLibrary.simpleMessage(
+      "تفعيل الإشعارات",
+    ),
     "eventDetailsOverviewBody": MessageLookupByLibrary.simpleMessage(
       "راجع توقيت الفعالية وموقعها ومواضيعها وخطواتها التالية قبل الحفظ أو التقديم.",
     ),
@@ -103,14 +119,43 @@ class MessageLookup extends MessageLookupByLibrary {
     "haveAccountSignIn": MessageLookupByLibrary.simpleMessage(
       "لديك حساب بالفعل؟ سجل الدخول",
     ),
+    "homeDiscoverEventsBody": MessageLookupByLibrary.simpleMessage(
+      "تصفح الفرص المتاحة واحفظ ما يهمك وابدأ الترشيح من الفعالية المناسبة.",
+    ),
+    "homeHeroBody": MessageLookupByLibrary.simpleMessage(
+      "اعرف ما يحتاج إلى اهتمام الآن، وواصل عملك الحالي، وانتقل إلى المسار الصحيح دون ازدحام.",
+    ),
+    "homeHeroTitle": MessageLookupByLibrary.simpleMessage("يومك البحثي منظم"),
+    "homeManageAccountBody": MessageLookupByLibrary.simpleMessage(
+      "عدّل التفضيلات وحالة الثقة وإعدادات تسجيل الدخول من وجهة ثابتة واحدة.",
+    ),
+    "homeNextActionTitle": MessageLookupByLibrary.simpleMessage(
+      "أفضل إجراء تالٍ",
+    ),
     "homeOverviewBody": MessageLookupByLibrary.simpleMessage(
       "تابع حالة حسابك والمواعيد النهائية المهمة والترشيحات وأدوات الباحث من مركز تحكم هادئ واحد.",
+    ),
+    "homeQuickLinksBody": MessageLookupByLibrary.simpleMessage(
+      "انتقل إلى أهم مناطق الباحث دون تحويل الصفحة الرئيسية إلى قائمة مزدحمة.",
+    ),
+    "homeQuickLinksTitle": MessageLookupByLibrary.simpleMessage("روابط سريعة"),
+    "homeResumeSubmissionBody": MessageLookupByLibrary.simpleMessage(
+      "راجع ترشيحاتك النشطة وواصل الخطوة المطلوبة التالية.",
+    ),
+    "homeStateSummaryBody": MessageLookupByLibrary.simpleMessage(
+      "أبقِ حالة التحقق والاشتراك والمواعيد النهائية والترشيحات مرئية بسرعة.",
+    ),
+    "homeStateSummaryTitle": MessageLookupByLibrary.simpleMessage(
+      "ملخص الحالة الحالية",
     ),
     "homeSubtitle": MessageLookupByLibrary.simpleMessage(
       "لوحة التحكم الخاصة بك جاهزة.",
     ),
     "homeTitle": MessageLookupByLibrary.simpleMessage("الصفحة الرئيسية للباحث"),
     "institution": MessageLookupByLibrary.simpleMessage("المؤسسة"),
+    "languageArabic": MessageLookupByLibrary.simpleMessage("العربية"),
+    "languageEnglish": MessageLookupByLibrary.simpleMessage("الإنجليزية"),
+    "languagePreferenceTitle": MessageLookupByLibrary.simpleMessage("اللغة"),
     "latestRequestLabel": MessageLookupByLibrary.simpleMessage("آخر طلب"),
     "loadMore": MessageLookupByLibrary.simpleMessage("تحميل المزيد"),
     "loading": MessageLookupByLibrary.simpleMessage("جار التحميل..."),
@@ -137,6 +182,24 @@ class MessageLookup extends MessageLookupByLibrary {
     "notificationEducationTitle": MessageLookupByLibrary.simpleMessage(
       "إعداد الإشعارات",
     ),
+    "notificationPreferencesBody": MessageLookupByLibrary.simpleMessage(
+      "تحكم في طريقة تعامل التطبيق مع تنبيهات المواضيع وافتح إعدادات النظام إذا كان أندرويد قد حظر الإشعارات بالفعل.",
+    ),
+    "notificationPreferencesTitle": MessageLookupByLibrary.simpleMessage(
+      "تفضيلات الإشعارات",
+    ),
+    "notificationsDisabledBody": MessageLookupByLibrary.simpleMessage(
+      "فعّل الإشعارات حتى تصلك تنبيهات المواضيع المهمة في الوقت المناسب.",
+    ),
+    "notificationsEnabledBody": MessageLookupByLibrary.simpleMessage(
+      "تصبح تنبيهات المواضيع متاحة عند الاشتراك في المجالات ذات الصلة.",
+    ),
+    "notificationsEnabledStatus": MessageLookupByLibrary.simpleMessage(
+      "الإشعارات مفعلة",
+    ),
+    "notificationsNotEnabledStatus": MessageLookupByLibrary.simpleMessage(
+      "الإشعارات غير مفعلة",
+    ),
     "onboardingBody": MessageLookupByLibrary.simpleMessage(
       "أنجز سير عملك البحثي من الهاتف بخطوات أقل.",
     ),
@@ -160,6 +223,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "onboardingTitle": MessageLookupByLibrary.simpleMessage(
       "مرحبًا بك في إيفنتي 360",
+    ),
+    "openSystemSettingsAction": MessageLookupByLibrary.simpleMessage(
+      "فتح إعدادات النظام",
     ),
     "password": MessageLookupByLibrary.simpleMessage("كلمة المرور"),
     "passwordTooShort": MessageLookupByLibrary.simpleMessage(
@@ -196,6 +262,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "pickVerificationDocument": MessageLookupByLibrary.simpleMessage(
       "اختر وثيقة التحقق",
     ),
+    "preferencesBody": MessageLookupByLibrary.simpleMessage(
+      "اضبط المظهر واللغة وسلوك التنبيهات دون مغادرة مسار التطبيق.",
+    ),
+    "preferencesTitle": MessageLookupByLibrary.simpleMessage("التفضيلات"),
     "profileCompleted": MessageLookupByLibrary.simpleMessage(
       "الملف الشخصي مكتمل",
     ),
@@ -261,6 +331,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "repositoryTitle": MessageLookupByLibrary.simpleMessage("مستودع الأبحاث"),
     "repositoryViewsLabel": MessageLookupByLibrary.simpleMessage("المشاهدات"),
     "requiredField": MessageLookupByLibrary.simpleMessage("هذا الحقل مطلوب."),
+    "researcherAccessBody": MessageLookupByLibrary.simpleMessage(
+      "راجع خطوات الثقة والوصول في شاشات مخصصة عندما تحتاج إليها.",
+    ),
+    "researcherAccessTitle": MessageLookupByLibrary.simpleMessage(
+      "وصول الباحث",
+    ),
     "resetEmailSent": MessageLookupByLibrary.simpleMessage(
       "تم إرسال رسالة إعادة تعيين كلمة المرور.",
     ),
@@ -271,6 +347,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "استعد الوصول بأمان عبر رابط إعادة التعيين، أو أكمل جلسة استرجاع كلمة المرور دون فقدان السياق.",
     ),
     "retry": MessageLookupByLibrary.simpleMessage("إعادة المحاولة"),
+    "reviewSubmissionsAction": MessageLookupByLibrary.simpleMessage(
+      "مراجعة الترشيحات",
+    ),
     "revisionNotesLabel": MessageLookupByLibrary.simpleMessage(
       "ملاحظات المراجعة (اختياري)",
     ),
@@ -398,8 +477,27 @@ class MessageLookup extends MessageLookupByLibrary {
     "subscriptionStatusTitle": MessageLookupByLibrary.simpleMessage(
       "حالة الاشتراك",
     ),
+    "themeDark": MessageLookupByLibrary.simpleMessage("داكن"),
+    "themeLight": MessageLookupByLibrary.simpleMessage("فاتح"),
+    "themePreferenceTitle": MessageLookupByLibrary.simpleMessage("المظهر"),
+    "themeSystem": MessageLookupByLibrary.simpleMessage("اتباع النظام"),
     "topicSubscriptionHint": MessageLookupByLibrary.simpleMessage(
       "اشترك في المواضيع لتصلك تنبيهات فورية.",
+    ),
+    "topicSubscriptionsBody": MessageLookupByLibrary.simpleMessage(
+      "أدر اهتماماتك البحثية ومواضيع التنبيهات.",
+    ),
+    "topicSubscriptionsEmptyState": MessageLookupByLibrary.simpleMessage(
+      "لا توجد مواضيع متاحة حاليًا.",
+    ),
+    "topicSubscriptionsManageBody": MessageLookupByLibrary.simpleMessage(
+      "اختر المواضيع التي تريد متابعتها. نطلب إذن الإشعارات عند الاشتراك حتى تبقى الطلبات مرتبطة بالسياق.",
+    ),
+    "topicSubscriptionsManageTitle": MessageLookupByLibrary.simpleMessage(
+      "إدارة مواضيع التنبيهات",
+    ),
+    "topicSubscriptionsTitle": MessageLookupByLibrary.simpleMessage(
+      "اشتراكات المواضيع",
     ),
     "trustCenterTitle": MessageLookupByLibrary.simpleMessage("مركز الثقة"),
     "trustOverviewBody": MessageLookupByLibrary.simpleMessage(

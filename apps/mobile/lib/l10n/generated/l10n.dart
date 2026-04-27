@@ -534,6 +534,271 @@ class S {
     return Intl.message('Signed in as', name: 'signedInAs', desc: '', args: []);
   }
 
+  /// `Account`
+  String get accountTitle {
+    return Intl.message('Account', name: 'accountTitle', desc: '', args: []);
+  }
+
+  /// `Control your researcher experience`
+  String get accountHeroTitle {
+    return Intl.message(
+      'Control your researcher experience',
+      name: 'accountHeroTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Manage trust, preferences, language, theme, and alerts from one clear place.`
+  String get accountHeroBody {
+    return Intl.message(
+      'Manage trust, preferences, language, theme, and alerts from one clear place.',
+      name: 'accountHeroBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Account overview`
+  String get accountOverviewTitle {
+    return Intl.message(
+      'Account overview',
+      name: 'accountOverviewTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Account actions`
+  String get accountActionsTitle {
+    return Intl.message(
+      'Account actions',
+      name: 'accountActionsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Preferences`
+  String get preferencesTitle {
+    return Intl.message(
+      'Preferences',
+      name: 'preferencesTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Adjust appearance, language, and alert behavior without leaving the app flow.`
+  String get preferencesBody {
+    return Intl.message(
+      'Adjust appearance, language, and alert behavior without leaving the app flow.',
+      name: 'preferencesBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Language`
+  String get languagePreferenceTitle {
+    return Intl.message(
+      'Language',
+      name: 'languagePreferenceTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Theme`
+  String get themePreferenceTitle {
+    return Intl.message(
+      'Theme',
+      name: 'themePreferenceTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notification preferences`
+  String get notificationPreferencesTitle {
+    return Intl.message(
+      'Notification preferences',
+      name: 'notificationPreferencesTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Control how the app handles topic alerts and open system settings if Android has already blocked notifications.`
+  String get notificationPreferencesBody {
+    return Intl.message(
+      'Control how the app handles topic alerts and open system settings if Android has already blocked notifications.',
+      name: 'notificationPreferencesBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notifications enabled`
+  String get notificationsEnabledStatus {
+    return Intl.message(
+      'Notifications enabled',
+      name: 'notificationsEnabledStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notifications not enabled`
+  String get notificationsNotEnabledStatus {
+    return Intl.message(
+      'Notifications not enabled',
+      name: 'notificationsNotEnabledStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Topic alerts are available when you subscribe to relevant subjects.`
+  String get notificationsEnabledBody {
+    return Intl.message(
+      'Topic alerts are available when you subscribe to relevant subjects.',
+      name: 'notificationsEnabledBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable notifications so important topic alerts can reach you on time.`
+  String get notificationsDisabledBody {
+    return Intl.message(
+      'Enable notifications so important topic alerts can reach you on time.',
+      name: 'notificationsDisabledBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable notifications`
+  String get enableNotificationsAction {
+    return Intl.message(
+      'Enable notifications',
+      name: 'enableNotificationsAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open system settings`
+  String get openSystemSettingsAction {
+    return Intl.message(
+      'Open system settings',
+      name: 'openSystemSettingsAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `English`
+  String get languageEnglish {
+    return Intl.message('English', name: 'languageEnglish', desc: '', args: []);
+  }
+
+  /// `Arabic`
+  String get languageArabic {
+    return Intl.message('Arabic', name: 'languageArabic', desc: '', args: []);
+  }
+
+  /// `Follow system`
+  String get themeSystem {
+    return Intl.message(
+      'Follow system',
+      name: 'themeSystem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Light`
+  String get themeLight {
+    return Intl.message('Light', name: 'themeLight', desc: '', args: []);
+  }
+
+  /// `Dark`
+  String get themeDark {
+    return Intl.message('Dark', name: 'themeDark', desc: '', args: []);
+  }
+
+  /// `Researcher access`
+  String get researcherAccessTitle {
+    return Intl.message(
+      'Researcher access',
+      name: 'researcherAccessTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Review trust and access-related steps in focused screens when you need them.`
+  String get researcherAccessBody {
+    return Intl.message(
+      'Review trust and access-related steps in focused screens when you need them.',
+      name: 'researcherAccessBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Topic subscriptions`
+  String get topicSubscriptionsTitle {
+    return Intl.message(
+      'Topic subscriptions',
+      name: 'topicSubscriptionsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Manage your research interests and notification topics.`
+  String get topicSubscriptionsBody {
+    return Intl.message(
+      'Manage your research interests and notification topics.',
+      name: 'topicSubscriptionsBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Manage alert topics`
+  String get topicSubscriptionsManageTitle {
+    return Intl.message(
+      'Manage alert topics',
+      name: 'topicSubscriptionsManageTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose the topics you want to follow. We request notification permission when you subscribe so prompts stay contextual.`
+  String get topicSubscriptionsManageBody {
+    return Intl.message(
+      'Choose the topics you want to follow. We request notification permission when you subscribe so prompts stay contextual.',
+      name: 'topicSubscriptionsManageBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No topics are available right now.`
+  String get topicSubscriptionsEmptyState {
+    return Intl.message(
+      'No topics are available right now.',
+      name: 'topicSubscriptionsEmptyState',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Profile status`
   String get profileStatus {
     return Intl.message(
@@ -654,6 +919,116 @@ class S {
     return Intl.message(
       'Profile incomplete',
       name: 'profileIncomplete',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your research day is organized`
+  String get homeHeroTitle {
+    return Intl.message(
+      'Your research day is organized',
+      name: 'homeHeroTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `See what needs attention now, continue your current work, and move into the right workflow without clutter.`
+  String get homeHeroBody {
+    return Intl.message(
+      'See what needs attention now, continue your current work, and move into the right workflow without clutter.',
+      name: 'homeHeroBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Next best action`
+  String get homeNextActionTitle {
+    return Intl.message(
+      'Next best action',
+      name: 'homeNextActionTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current status summary`
+  String get homeStateSummaryTitle {
+    return Intl.message(
+      'Current status summary',
+      name: 'homeStateSummaryTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Keep your trust, subscription, deadline, and submission state visible at a glance.`
+  String get homeStateSummaryBody {
+    return Intl.message(
+      'Keep your trust, subscription, deadline, and submission state visible at a glance.',
+      name: 'homeStateSummaryBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quick links`
+  String get homeQuickLinksTitle {
+    return Intl.message(
+      'Quick links',
+      name: 'homeQuickLinksTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Jump into your core researcher areas without turning home into a crowded menu.`
+  String get homeQuickLinksBody {
+    return Intl.message(
+      'Jump into your core researcher areas without turning home into a crowded menu.',
+      name: 'homeQuickLinksBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Review your active submissions and continue the next required step.`
+  String get homeResumeSubmissionBody {
+    return Intl.message(
+      'Review your active submissions and continue the next required step.',
+      name: 'homeResumeSubmissionBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Browse live opportunities, bookmark what matters, and start a submission from the right event.`
+  String get homeDiscoverEventsBody {
+    return Intl.message(
+      'Browse live opportunities, bookmark what matters, and start a submission from the right event.',
+      name: 'homeDiscoverEventsBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Adjust preferences, trust status, and sign-in settings from one stable destination.`
+  String get homeManageAccountBody {
+    return Intl.message(
+      'Adjust preferences, trust status, and sign-in settings from one stable destination.',
+      name: 'homeManageAccountBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Review submissions`
+  String get reviewSubmissionsAction {
+    return Intl.message(
+      'Review submissions',
+      name: 'reviewSubmissionsAction',
       desc: '',
       args: [],
     );

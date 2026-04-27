@@ -12,9 +12,17 @@ class RoutePaths {
   static const events = '/events';
   static const submissions = '/submissions';
   static const newAbstractSubmission = '/submissions/new-abstract';
-  static const trust = '/trust';
-  static const reportPayment = '/trust/report-payment';
   static const repository = '/repository';
+  static const account = '/account';
+  static const trustSegment = 'trust';
+  static const reportPaymentSegment = 'report-payment';
+  static const topicsSegment = 'topics';
+
+  static String get trust => '$account/$trustSegment';
+
+  static String get reportPayment => '$trust/$reportPaymentSegment';
+
+  static String get topics => '$account/$topicsSegment';
 
   static String eventDetail(String eventId) => '$events/$eventId';
 

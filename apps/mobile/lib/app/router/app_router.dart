@@ -1,4 +1,7 @@
+import 'package:eventy360/app/router/app_shell.dart';
 import 'package:eventy360/app/router/route_paths.dart';
+import 'package:eventy360/features/account/presentation/account_screen.dart';
+import 'package:eventy360/features/account/presentation/topic_subscriptions_screen.dart';
 import 'package:eventy360/features/auth/application/session_controller.dart';
 import 'package:eventy360/features/auth/application/session_state.dart';
 import 'package:eventy360/features/auth/presentation/onboarding_screen.dart';
@@ -60,64 +63,125 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: RoutePaths.unsupportedRole,
         builder: (context, state) => const UnsupportedRoleScreen(),
       ),
-      GoRoute(
-        path: RoutePaths.home,
-        builder: (context, state) => const HomeScreen(),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            AppShell(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePaths.home,
+                builder: (context, state) => const HomeScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePaths.events,
+                builder: (context, state) => const EventsScreen(),
+                routes: [
+                  GoRoute(
+                    path: ':eventId',
+                    builder: (context, state) => EventDetailScreen(
+                      eventId: state.pathParameters['eventId'] ?? '',
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePaths.submissions,
+                builder: (context, state) => const SubmissionsScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'new-abstract',
+                    builder: (context, state) => SubmissionWriteScreen.abstract(
+                      prefilledEventId: state.uri.queryParameters['eventId'],
+                    ),
+                  ),
+                  GoRoute(
+                    path: ':submissionId',
+                    builder: (context, state) => SubmissionDetailScreen(
+                      submissionId: state.pathParameters['submissionId'] ?? '',
+                    ),
+                    routes: [
+                      GoRoute(
+                        path: 'full-paper',
+                        builder: (context, state) =>
+                            SubmissionWriteScreen.fullPaper(
+                              submissionId:
+                                  state.pathParameters['submissionId'] ?? '',
+                            ),
+                      ),
+                      GoRoute(
+                        path: 'revision',
+                        builder: (context, state) =>
+                            SubmissionWriteScreen.revision(
+                              submissionId:
+                                  state.pathParameters['submissionId'] ?? '',
+                            ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePaths.repository,
+                builder: (context, state) => const RepositoryScreen(),
+                routes: [
+                  GoRoute(
+                    path: ':paperId',
+                    builder: (context, state) => PaperDetailScreen(
+                      paperId: state.pathParameters['paperId'] ?? '',
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePaths.account,
+                builder: (context, state) => const AccountScreen(),
+                routes: [
+                  GoRoute(
+                    path: RoutePaths.topicsSegment,
+                    builder: (context, state) =>
+                        const TopicSubscriptionsScreen(),
+                  ),
+                  GoRoute(
+                    path: RoutePaths.trustSegment,
+                    builder: (context, state) => const TrustScreen(),
+                    routes: [
+                      GoRoute(
+                        path: RoutePaths.reportPaymentSegment,
+                        builder: (context, state) =>
+                            const PaymentReportScreen(),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
       ),
       GoRoute(
-        path: RoutePaths.trust,
-        builder: (context, state) => const TrustScreen(),
+        path: '/trust',
+        redirect: (context, state) => RoutePaths.trust,
       ),
       GoRoute(
-        path: RoutePaths.reportPayment,
-        builder: (context, state) => const PaymentReportScreen(),
-      ),
-      GoRoute(
-        path: RoutePaths.repository,
-        builder: (context, state) => const RepositoryScreen(),
-      ),
-      GoRoute(
-        path: '${RoutePaths.repository}/:paperId',
-        builder: (context, state) => PaperDetailScreen(
-          paperId: state.pathParameters['paperId'] ?? '',
-        ),
-      ),
-      GoRoute(
-        path: RoutePaths.events,
-        builder: (context, state) => const EventsScreen(),
-      ),
-      GoRoute(
-        path: '${RoutePaths.events}/:eventId',
-        builder: (context, state) =>
-            EventDetailScreen(eventId: state.pathParameters['eventId'] ?? ''),
-      ),
-      GoRoute(
-        path: RoutePaths.submissions,
-        builder: (context, state) => const SubmissionsScreen(),
-      ),
-      GoRoute(
-        path: RoutePaths.newAbstractSubmission,
-        builder: (context, state) => SubmissionWriteScreen.abstract(
-          prefilledEventId: state.uri.queryParameters['eventId'],
-        ),
-      ),
-      GoRoute(
-        path: '${RoutePaths.submissions}/:submissionId',
-        builder: (context, state) => SubmissionDetailScreen(
-          submissionId: state.pathParameters['submissionId'] ?? '',
-        ),
-      ),
-      GoRoute(
-        path: '${RoutePaths.submissions}/:submissionId/full-paper',
-        builder: (context, state) => SubmissionWriteScreen.fullPaper(
-          submissionId: state.pathParameters['submissionId'] ?? '',
-        ),
-      ),
-      GoRoute(
-        path: '${RoutePaths.submissions}/:submissionId/revision',
-        builder: (context, state) => SubmissionWriteScreen.revision(
-          submissionId: state.pathParameters['submissionId'] ?? '',
-        ),
+        path: '/trust/report-payment',
+        redirect: (context, state) => RoutePaths.reportPayment,
       ),
     ],
   );

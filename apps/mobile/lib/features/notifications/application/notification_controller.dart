@@ -25,6 +25,10 @@ class NotificationController extends _$NotificationController {
     final service = ref.watch(pushNotificationServiceProvider);
     final initialMessage = await service.getInitialMessage();
     final initialEventId = _extractEventId(initialMessage?.data);
+    final currentSettings = await service.getPermissionStatus();
+    final permissionGranted =
+        currentSettings == PushAuthorizationStatus.authorized ||
+        currentSettings == PushAuthorizationStatus.provisional;
 
     _foregroundSub = service.onForegroundMessage().listen((message) {
       final current = state.asData?.value ?? NotificationState.initial();
@@ -48,6 +52,7 @@ class NotificationController extends _$NotificationController {
 
     return NotificationState.initial().copyWith(
       pendingEventId: initialEventId,
+      permissionGranted: permissionGranted,
     );
   }
 
