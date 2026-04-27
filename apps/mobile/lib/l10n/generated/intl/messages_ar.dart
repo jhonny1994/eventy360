@@ -22,11 +22,26 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(count) => "${count} ترشيحات نشطة";
 
+  static String m1(date) =>
+      "يشير تقديم الملخصات لهذه الفعالية حالياً إلى ${date} كأقرب موعد نهائي ظاهر.";
+
+  static String m2(email) =>
+      "أرسل رابط إعادة تعيين آمن إلى ${email} إذا أردت تغيير كلمة المرور عبر البريد الإلكتروني.";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "abstractArLabel": MessageLookupByLibrary.simpleMessage("الملخص (العربية)"),
+    "abstractDeadlineLabel": MessageLookupByLibrary.simpleMessage(
+      "موعد الملخص",
+    ),
     "abstractEnLabel": MessageLookupByLibrary.simpleMessage(
       "الملخص (الإنجليزية - اختياري)",
+    ),
+    "abstractWriteGuidance": MessageLookupByLibrary.simpleMessage(
+      "ابدأ من الفعالية الصحيحة، واحرص على وضوح العناوين، ولا ترسل إلا عندما تكون هذه هي المشاركة التي تريد تتبعها لهذه الدعوة.",
+    ),
+    "academicPositionLabel": MessageLookupByLibrary.simpleMessage(
+      "الصفة الأكاديمية",
     ),
     "accountActionsTitle": MessageLookupByLibrary.simpleMessage(
       "إجراءات الحساب",
@@ -78,9 +93,24 @@ class MessageLookup extends MessageLookupByLibrary {
     "createAccount": MessageLookupByLibrary.simpleMessage("إنشاء حساب"),
     "dairaLabel": MessageLookupByLibrary.simpleMessage("الدائرة"),
     "deadline": MessageLookupByLibrary.simpleMessage("آخر موعد"),
+    "draftRestoredMessage": MessageLookupByLibrary.simpleMessage(
+      "استعدنا مسودتك قيد العمل حتى تتمكن من المتابعة دون إعادة بناء النموذج.",
+    ),
+    "editProfileBody": MessageLookupByLibrary.simpleMessage(
+      "حافظ على دقة الاسم والمؤسسة والدور الأكاديمي والموقع حتى تبقى مسارات الفعاليات والثقة متناسقة.",
+    ),
+    "editProfileTitle": MessageLookupByLibrary.simpleMessage(
+      "تعديل الملف الشخصي",
+    ),
     "email": MessageLookupByLibrary.simpleMessage("البريد الإلكتروني"),
     "enableNotificationsAction": MessageLookupByLibrary.simpleMessage(
       "تفعيل الإشعارات",
+    ),
+    "eventDecisionSupportBody": MessageLookupByLibrary.simpleMessage(
+      "تحقق أولاً من الموعد النهائي ومدى الملاءمة وسياق الجهة المنظمة حتى لا تبدأ المسار الخاطئ.",
+    ),
+    "eventDecisionSupportTitle": MessageLookupByLibrary.simpleMessage(
+      "قبل أن تتقدم",
     ),
     "eventDetailsOverviewBody": MessageLookupByLibrary.simpleMessage(
       "راجع توقيت الفعالية وموقعها ومواضيعها وخطواتها التالية قبل الحفظ أو التقديم.",
@@ -88,10 +118,24 @@ class MessageLookup extends MessageLookupByLibrary {
     "eventDetailsTitle": MessageLookupByLibrary.simpleMessage(
       "تفاصيل الفعالية",
     ),
+    "eventEligibilityBody": MessageLookupByLibrary.simpleMessage(
+      "استخدم مواضيع الفعالية والموقع كفحص سريع للملاءمة، ثم تابع فقط إذا كانت الدعوة مناسبة لعملك.",
+    ),
+    "eventEligibilityTitle": MessageLookupByLibrary.simpleMessage(
+      "الملاءمة والأهلية",
+    ),
     "eventNotFound": MessageLookupByLibrary.simpleMessage(
       "لم يتم العثور على الفعالية.",
     ),
+    "eventOrganizerBody": MessageLookupByLibrary.simpleMessage(
+      "إذا بدا أي شيء غير واضح، فاعتبر هذه الشاشة مرجعك قبل الالتزام بالتقديم.",
+    ),
+    "eventOrganizerTitle": MessageLookupByLibrary.simpleMessage(
+      "سياق الجهة المنظمة",
+    ),
     "eventSelectionLabel": MessageLookupByLibrary.simpleMessage("الفعالية"),
+    "eventTimelineBody": m1,
+    "eventTimelineTitle": MessageLookupByLibrary.simpleMessage("الجدول الزمني"),
     "eventsOverviewBody": MessageLookupByLibrary.simpleMessage(
       "تصفح النداءات القادمة وصفِّها حسب الموضوع واشترك فيما يهمك واحتفظ بقائمتك المهمة متقدمة.",
     ),
@@ -99,7 +143,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "ابحث عن الفعاليات بالاسم أو الموقع",
     ),
     "eventsTitle": MessageLookupByLibrary.simpleMessage("استكشاف الفعاليات"),
+    "existingSubmissionRedirectBody": MessageLookupByLibrary.simpleMessage(
+      "لقد بدأت بالفعل مشاركة لهذه الفعالية، لذلك أعدناك إلى السجل الحالي بدلاً من إنشاء نسخة مكررة.",
+    ),
     "exploreEvents": MessageLookupByLibrary.simpleMessage("استكشف الفعاليات"),
+    "feedbackResearcherLabel": MessageLookupByLibrary.simpleMessage(
+      "ملاحظة الباحث",
+    ),
+    "feedbackReviewerLabel": MessageLookupByLibrary.simpleMessage(
+      "ملاحظة المراجع",
+    ),
     "fileOpenFailed": MessageLookupByLibrary.simpleMessage("تعذر فتح الملف."),
     "filePickerHint": MessageLookupByLibrary.simpleMessage(
       "اختر ملف PDF أو DOC أو DOCX وسنقوم برفعه لك.",
@@ -107,11 +160,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "fileReadFailed": MessageLookupByLibrary.simpleMessage(
       "تعذر قراءة الملف المحدد.",
     ),
+    "fileSizeLabel": MessageLookupByLibrary.simpleMessage("حجم الملف"),
+    "fileTypeLabel": MessageLookupByLibrary.simpleMessage("نوع الملف"),
     "fileUrlLabel": MessageLookupByLibrary.simpleMessage("رابط الملف"),
     "forgotPassword": MessageLookupByLibrary.simpleMessage(
       "هل نسيت كلمة المرور؟",
     ),
     "fullName": MessageLookupByLibrary.simpleMessage("الاسم الكامل"),
+    "fullPaperDeadlineLabel": MessageLookupByLibrary.simpleMessage(
+      "موعد البحث الكامل",
+    ),
     "genericError": MessageLookupByLibrary.simpleMessage(
       "حدث خطأ ما. حاول مرة أخرى.",
     ),
@@ -142,6 +200,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "homeResumeSubmissionBody": MessageLookupByLibrary.simpleMessage(
       "راجع ترشيحاتك النشطة وواصل الخطوة المطلوبة التالية.",
     ),
+    "homeSavedEventsBody": MessageLookupByLibrary.simpleMessage(
+      "ارجع إلى الفعاليات التي حفظتها عندما تقرر ما الذي ستتقدم إليه لاحقاً.",
+    ),
     "homeStateSummaryBody": MessageLookupByLibrary.simpleMessage(
       "أبقِ حالة التحقق والاشتراك والمواعيد النهائية والترشيحات مرئية بسرعة.",
     ),
@@ -156,6 +217,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "languageArabic": MessageLookupByLibrary.simpleMessage("العربية"),
     "languageEnglish": MessageLookupByLibrary.simpleMessage("الإنجليزية"),
     "languagePreferenceTitle": MessageLookupByLibrary.simpleMessage("اللغة"),
+    "lastUpdatedLabel": MessageLookupByLibrary.simpleMessage("آخر تحديث"),
     "latestRequestLabel": MessageLookupByLibrary.simpleMessage("آخر طلب"),
     "loadMore": MessageLookupByLibrary.simpleMessage("تحميل المزيد"),
     "loading": MessageLookupByLibrary.simpleMessage("جار التحميل..."),
@@ -227,6 +289,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "onboardingTitle": MessageLookupByLibrary.simpleMessage(
       "مرحبًا بك في إيفنتي 360",
     ),
+    "openSubmissionFileAction": MessageLookupByLibrary.simpleMessage(
+      "فتح الملف المرفوع",
+    ),
     "openSystemSettingsAction": MessageLookupByLibrary.simpleMessage(
       "فتح إعدادات النظام",
     ),
@@ -269,11 +334,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "اضبط المظهر واللغة وسلوك التنبيهات دون مغادرة مسار التطبيق.",
     ),
     "preferencesTitle": MessageLookupByLibrary.simpleMessage("التفضيلات"),
+    "profileBioLabel": MessageLookupByLibrary.simpleMessage("نبذة قصيرة"),
     "profileCompleted": MessageLookupByLibrary.simpleMessage(
       "الملف الشخصي مكتمل",
     ),
     "profileIncomplete": MessageLookupByLibrary.simpleMessage(
       "الملف الشخصي غير مكتمل",
+    ),
+    "profileSavedSuccess": MessageLookupByLibrary.simpleMessage(
+      "تم تحديث الملف الشخصي بنجاح.",
     ),
     "profileStatus": MessageLookupByLibrary.simpleMessage("حالة الملف الشخصي"),
     "referenceNumberLabel": MessageLookupByLibrary.simpleMessage("رقم المرجع"),
@@ -356,6 +425,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "revisionNotesLabel": MessageLookupByLibrary.simpleMessage(
       "ملاحظات المراجعة (اختياري)",
     ),
+    "saveProfileAction": MessageLookupByLibrary.simpleMessage(
+      "حفظ الملف الشخصي",
+    ),
+    "savedEventsBody": MessageLookupByLibrary.simpleMessage(
+      "ارجع إلى الفعاليات التي اخترتها دون الحاجة إلى إعادة بناء البحث من البداية.",
+    ),
+    "savedEventsEmptyState": MessageLookupByLibrary.simpleMessage(
+      "لم تقم بحفظ أي فعاليات بعد.",
+    ),
+    "savedEventsTitle": MessageLookupByLibrary.simpleMessage(
+      "الفعاليات المحفوظة",
+    ),
     "secureDocsBody": MessageLookupByLibrary.simpleMessage(
       "يتم رفع ملفات التحقق والدفع عبر طلبات موثقة، ويتم التحقق منها قبل الرفع، ثم فتحها لاحقًا بروابط موقعة قصيرة العمر.",
     ),
@@ -371,6 +452,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "secureFileTypeError": MessageLookupByLibrary.simpleMessage(
       "يسمح هنا فقط بملفات PDF أو JPG أو PNG.",
     ),
+    "securityBody": MessageLookupByLibrary.simpleMessage(
+      "احمِ الوصول إلى حسابك وحافظ على تحديث بيانات الاعتماد من شاشة أمان مخصصة.",
+    ),
+    "securityDirectPasswordBody": MessageLookupByLibrary.simpleMessage(
+      "إذا كنت مسجلاً الدخول بالفعل على هذا الجهاز، يمكنك تعيين كلمة مرور جديدة هنا مباشرة.",
+    ),
+    "securityResetBody": m2,
+    "securityTitle": MessageLookupByLibrary.simpleMessage("الأمان"),
     "sendResetLink": MessageLookupByLibrary.simpleMessage(
       "إرسال رابط إعادة التعيين",
     ),
@@ -411,6 +500,33 @@ class MessageLookup extends MessageLookupByLibrary {
     "statusFullPaperSubmitted": MessageLookupByLibrary.simpleMessage(
       "تم تقديم البحث الكامل",
     ),
+    "statusNarrativeAbstractAccepted": MessageLookupByLibrary.simpleMessage(
+      "تمت الموافقة على الملخص. الإجراء التالي المهم هو تجهيز البحث الكامل قبل موعده النهائي.",
+    ),
+    "statusNarrativeAbstractRejected": MessageLookupByLibrary.simpleMessage(
+      "لم يتم قبول الملخص. راجع أي ملاحظات هنا قبل أن تقرر خطوتك التالية.",
+    ),
+    "statusNarrativeAbstractSubmitted": MessageLookupByLibrary.simpleMessage(
+      "ملخصك قيد المراجعة الآن. لا يلزم اتخاذ إجراء إضافي حتى يصدر الفريق البحثي النتيجة.",
+    ),
+    "statusNarrativeCompleted": MessageLookupByLibrary.simpleMessage(
+      "وصلت هذه المشاركة إلى حالتها النهائية المكتملة. يمكنك الاحتفاظ بهذه الصفحة كسجل لما تم تسليمه.",
+    ),
+    "statusNarrativeFullPaperAccepted": MessageLookupByLibrary.simpleMessage(
+      "تم قبول البحث الكامل. المشاركة الآن في حالة جيدة ما لم تتواصل معك الجهة المنظمة مرة أخرى.",
+    ),
+    "statusNarrativeFullPaperRejected": MessageLookupByLibrary.simpleMessage(
+      "تم رفض البحث الكامل. اقرأ الملاحظات بعناية قبل أن تستثمر وقتاً في رفع جديد.",
+    ),
+    "statusNarrativeFullPaperSubmitted": MessageLookupByLibrary.simpleMessage(
+      "تم حفظ البحث الكامل وهو الآن بانتظار المراجعة. راقب الملاحظات وتحديثات المواعيد.",
+    ),
+    "statusNarrativeRevisionRequested": MessageLookupByLibrary.simpleMessage(
+      "تم طلب مراجعة. استخدم الملاحظات أدناه ثم أرسل النسخة المحدثة من هذه الشاشة.",
+    ),
+    "statusNarrativeRevisionUnderReview": MessageLookupByLibrary.simpleMessage(
+      "تم رفع المراجعة وعادت إلى التقييم. تبقى أحدث الملاحظات مرئية أدناه كمرجع.",
+    ),
     "statusRevisionRequested": MessageLookupByLibrary.simpleMessage(
       "تم طلب مراجعة",
     ),
@@ -425,6 +541,18 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "submissionDetailTitle": MessageLookupByLibrary.simpleMessage(
       "تفاصيل الترشيح",
+    ),
+    "submissionFeedbackBody": MessageLookupByLibrary.simpleMessage(
+      "أبقِ ملاحظات المراجعين منفصلة عن إجراءاتك حتى تبقى الخطوة التالية واضحة.",
+    ),
+    "submissionFeedbackTitle": MessageLookupByLibrary.simpleMessage(
+      "الملاحظات",
+    ),
+    "submissionFilesBody": MessageLookupByLibrary.simpleMessage(
+      "راجع تفاصيل الملف المرفوع هنا بدلاً من الاعتماد على رابط تخزين خام.",
+    ),
+    "submissionFilesTitle": MessageLookupByLibrary.simpleMessage(
+      "ملف المشاركة",
     ),
     "submissionStatusLabel": MessageLookupByLibrary.simpleMessage("الحالة"),
     "submissionTimelineTitle": MessageLookupByLibrary.simpleMessage(
@@ -471,6 +599,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "submitVerificationRequest": MessageLookupByLibrary.simpleMessage(
       "إرسال طلب التحقق",
     ),
+    "submittedOnLabel": MessageLookupByLibrary.simpleMessage("تاريخ التقديم"),
     "subscriptionActive": MessageLookupByLibrary.simpleMessage(
       "اشتراك مميز نشط",
     ),
@@ -520,6 +649,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "updatePasswordTitle": MessageLookupByLibrary.simpleMessage(
       "تعيين كلمة مرور جديدة",
+    ),
+    "uploadGuidanceMessage": MessageLookupByLibrary.simpleMessage(
+      "ارفع فقط ملفات PDF أو DOC أو DOCX. تبقى إرشادات الملف والحجم والنوع ظاهرة هنا حتى تبدو العملية واضحة وآمنة.",
     ),
     "verificationApprovedBody": MessageLookupByLibrary.simpleMessage(
       "تمت الموافقة على توثيقك كباحث، ويمكنك متابعة استخدام المسارات المخصصة للحسابات الموثقة.",

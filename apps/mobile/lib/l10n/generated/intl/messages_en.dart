@@ -22,13 +22,28 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(count) => "${count} active submissions";
 
+  static String m1(date) =>
+      "Abstract submissions for this event currently point to ${date} as the next visible deadline.";
+
+  static String m2(email) =>
+      "Send a secure reset link to ${email} if you want to change your password from email.";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "abstractArLabel": MessageLookupByLibrary.simpleMessage(
       "Abstract (Arabic)",
     ),
+    "abstractDeadlineLabel": MessageLookupByLibrary.simpleMessage(
+      "Abstract deadline",
+    ),
     "abstractEnLabel": MessageLookupByLibrary.simpleMessage(
       "Abstract (English, optional)",
+    ),
+    "abstractWriteGuidance": MessageLookupByLibrary.simpleMessage(
+      "Start from the right event, keep titles clear, and submit only when this abstract is the one you want tracked for that call.",
+    ),
+    "academicPositionLabel": MessageLookupByLibrary.simpleMessage(
+      "Academic position",
     ),
     "accountActionsTitle": MessageLookupByLibrary.simpleMessage(
       "Account actions",
@@ -78,18 +93,45 @@ class MessageLookup extends MessageLookupByLibrary {
     "createAccount": MessageLookupByLibrary.simpleMessage("Create account"),
     "dairaLabel": MessageLookupByLibrary.simpleMessage("Daira"),
     "deadline": MessageLookupByLibrary.simpleMessage("Deadline"),
+    "draftRestoredMessage": MessageLookupByLibrary.simpleMessage(
+      "We restored your in-progress draft so you can continue without rebuilding the form.",
+    ),
+    "editProfileBody": MessageLookupByLibrary.simpleMessage(
+      "Keep your name, institution, academic role, and location accurate so event and trust workflows stay aligned.",
+    ),
+    "editProfileTitle": MessageLookupByLibrary.simpleMessage("Edit profile"),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
     "enableNotificationsAction": MessageLookupByLibrary.simpleMessage(
       "Enable notifications",
+    ),
+    "eventDecisionSupportBody": MessageLookupByLibrary.simpleMessage(
+      "Check the deadline, fit, and organizer context first so you do not start the wrong workflow.",
+    ),
+    "eventDecisionSupportTitle": MessageLookupByLibrary.simpleMessage(
+      "Before you submit",
     ),
     "eventDetailsOverviewBody": MessageLookupByLibrary.simpleMessage(
       "Review the event timing, location, topics, and next actions before bookmarking or submitting.",
     ),
     "eventDetailsTitle": MessageLookupByLibrary.simpleMessage("Event Details"),
+    "eventEligibilityBody": MessageLookupByLibrary.simpleMessage(
+      "Use the event topics and location as a quick fit check, then continue only if this call matches your work.",
+    ),
+    "eventEligibilityTitle": MessageLookupByLibrary.simpleMessage(
+      "Eligibility and fit",
+    ),
     "eventNotFound": MessageLookupByLibrary.simpleMessage(
       "Event was not found.",
     ),
+    "eventOrganizerBody": MessageLookupByLibrary.simpleMessage(
+      "If anything feels unclear, keep this screen as your source of truth before you commit a submission.",
+    ),
+    "eventOrganizerTitle": MessageLookupByLibrary.simpleMessage(
+      "Organizer context",
+    ),
     "eventSelectionLabel": MessageLookupByLibrary.simpleMessage("Event"),
+    "eventTimelineBody": m1,
+    "eventTimelineTitle": MessageLookupByLibrary.simpleMessage("Timeline"),
     "eventsOverviewBody": MessageLookupByLibrary.simpleMessage(
       "Browse upcoming calls, filter by topic, subscribe to what matters, and keep your shortlist moving.",
     ),
@@ -97,7 +139,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "Search events by name or location",
     ),
     "eventsTitle": MessageLookupByLibrary.simpleMessage("Discover Events"),
+    "existingSubmissionRedirectBody": MessageLookupByLibrary.simpleMessage(
+      "You already started a submission for this event, so we took you back to that record instead of creating a duplicate.",
+    ),
     "exploreEvents": MessageLookupByLibrary.simpleMessage("Explore events"),
+    "feedbackResearcherLabel": MessageLookupByLibrary.simpleMessage(
+      "Researcher note",
+    ),
+    "feedbackReviewerLabel": MessageLookupByLibrary.simpleMessage(
+      "Reviewer note",
+    ),
     "fileOpenFailed": MessageLookupByLibrary.simpleMessage(
       "We could not open the file.",
     ),
@@ -107,9 +158,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "fileReadFailed": MessageLookupByLibrary.simpleMessage(
       "We could not read the selected file.",
     ),
+    "fileSizeLabel": MessageLookupByLibrary.simpleMessage("File size"),
+    "fileTypeLabel": MessageLookupByLibrary.simpleMessage("File type"),
     "fileUrlLabel": MessageLookupByLibrary.simpleMessage("File URL"),
     "forgotPassword": MessageLookupByLibrary.simpleMessage("Forgot password?"),
     "fullName": MessageLookupByLibrary.simpleMessage("Full name"),
+    "fullPaperDeadlineLabel": MessageLookupByLibrary.simpleMessage(
+      "Full-paper deadline",
+    ),
     "genericError": MessageLookupByLibrary.simpleMessage(
       "Something went wrong. Please try again.",
     ),
@@ -142,6 +198,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "homeResumeSubmissionBody": MessageLookupByLibrary.simpleMessage(
       "Review your active submissions and continue the next required step.",
     ),
+    "homeSavedEventsBody": MessageLookupByLibrary.simpleMessage(
+      "Return to the events you bookmarked when you are deciding what to submit next.",
+    ),
     "homeStateSummaryBody": MessageLookupByLibrary.simpleMessage(
       "Keep your trust, subscription, deadline, and submission state visible at a glance.",
     ),
@@ -156,6 +215,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "languageArabic": MessageLookupByLibrary.simpleMessage("Arabic"),
     "languageEnglish": MessageLookupByLibrary.simpleMessage("English"),
     "languagePreferenceTitle": MessageLookupByLibrary.simpleMessage("Language"),
+    "lastUpdatedLabel": MessageLookupByLibrary.simpleMessage("Last updated"),
     "latestRequestLabel": MessageLookupByLibrary.simpleMessage(
       "Latest request",
     ),
@@ -229,6 +289,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "onboardingTitle": MessageLookupByLibrary.simpleMessage(
       "Welcome to Eventy360",
     ),
+    "openSubmissionFileAction": MessageLookupByLibrary.simpleMessage(
+      "Open uploaded file",
+    ),
     "openSystemSettingsAction": MessageLookupByLibrary.simpleMessage(
       "Open system settings",
     ),
@@ -275,11 +338,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "Adjust appearance, language, and alert behavior without leaving the app flow.",
     ),
     "preferencesTitle": MessageLookupByLibrary.simpleMessage("Preferences"),
+    "profileBioLabel": MessageLookupByLibrary.simpleMessage("Short bio"),
     "profileCompleted": MessageLookupByLibrary.simpleMessage(
       "Profile completed",
     ),
     "profileIncomplete": MessageLookupByLibrary.simpleMessage(
       "Profile incomplete",
+    ),
+    "profileSavedSuccess": MessageLookupByLibrary.simpleMessage(
+      "Profile updated successfully.",
     ),
     "profileStatus": MessageLookupByLibrary.simpleMessage("Profile status"),
     "referenceNumberLabel": MessageLookupByLibrary.simpleMessage(
@@ -366,6 +433,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "revisionNotesLabel": MessageLookupByLibrary.simpleMessage(
       "Revision notes (optional)",
     ),
+    "saveProfileAction": MessageLookupByLibrary.simpleMessage("Save profile"),
+    "savedEventsBody": MessageLookupByLibrary.simpleMessage(
+      "Return to the events you shortlisted without rebuilding your search from scratch.",
+    ),
+    "savedEventsEmptyState": MessageLookupByLibrary.simpleMessage(
+      "You have not bookmarked any events yet.",
+    ),
+    "savedEventsTitle": MessageLookupByLibrary.simpleMessage("Saved events"),
     "secureDocsBody": MessageLookupByLibrary.simpleMessage(
       "Verification and payment files are uploaded through authenticated requests, validated before upload, and opened later with short-lived signed links.",
     ),
@@ -381,6 +456,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "secureFileTypeError": MessageLookupByLibrary.simpleMessage(
       "Only PDF, JPG, or PNG files are allowed here.",
     ),
+    "securityBody": MessageLookupByLibrary.simpleMessage(
+      "Protect your account access and keep your credentials current from a dedicated security surface.",
+    ),
+    "securityDirectPasswordBody": MessageLookupByLibrary.simpleMessage(
+      "If you are already signed in on this device, you can set a new password here immediately.",
+    ),
+    "securityResetBody": m2,
+    "securityTitle": MessageLookupByLibrary.simpleMessage("Security"),
     "sendResetLink": MessageLookupByLibrary.simpleMessage("Send reset link"),
     "signIn": MessageLookupByLibrary.simpleMessage("Sign In"),
     "signInHeroBody": MessageLookupByLibrary.simpleMessage(
@@ -421,6 +504,33 @@ class MessageLookup extends MessageLookupByLibrary {
     "statusFullPaperSubmitted": MessageLookupByLibrary.simpleMessage(
       "Full paper submitted",
     ),
+    "statusNarrativeAbstractAccepted": MessageLookupByLibrary.simpleMessage(
+      "Your abstract is approved. The next important action is preparing the full paper before the paper deadline.",
+    ),
+    "statusNarrativeAbstractRejected": MessageLookupByLibrary.simpleMessage(
+      "Your abstract was not accepted. Review any feedback here before deciding on your next event submission.",
+    ),
+    "statusNarrativeAbstractSubmitted": MessageLookupByLibrary.simpleMessage(
+      "Your abstract is in review. No additional action is needed until the research team updates the verdict.",
+    ),
+    "statusNarrativeCompleted": MessageLookupByLibrary.simpleMessage(
+      "This submission has reached its final completed state. You can keep this page as your record of what was delivered.",
+    ),
+    "statusNarrativeFullPaperAccepted": MessageLookupByLibrary.simpleMessage(
+      "Your full paper was accepted. This submission is in a healthy state unless the event team contacts you again.",
+    ),
+    "statusNarrativeFullPaperRejected": MessageLookupByLibrary.simpleMessage(
+      "Your full paper was rejected. Read the notes carefully before investing effort in another upload.",
+    ),
+    "statusNarrativeFullPaperSubmitted": MessageLookupByLibrary.simpleMessage(
+      "Your full paper is on file and waiting for review. Keep an eye on feedback and deadline updates.",
+    ),
+    "statusNarrativeRevisionRequested": MessageLookupByLibrary.simpleMessage(
+      "A revision is required. Use the notes below and submit the updated paper from this screen.",
+    ),
+    "statusNarrativeRevisionUnderReview": MessageLookupByLibrary.simpleMessage(
+      "Your revision is uploaded and back under review. The latest notes remain visible below for context.",
+    ),
     "statusRevisionRequested": MessageLookupByLibrary.simpleMessage(
       "Revision requested",
     ),
@@ -435,6 +545,16 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "submissionDetailTitle": MessageLookupByLibrary.simpleMessage(
       "Submission Details",
+    ),
+    "submissionFeedbackBody": MessageLookupByLibrary.simpleMessage(
+      "Keep reviewer feedback separate from your actions so the next step stays clear.",
+    ),
+    "submissionFeedbackTitle": MessageLookupByLibrary.simpleMessage("Feedback"),
+    "submissionFilesBody": MessageLookupByLibrary.simpleMessage(
+      "Review the uploaded file details here instead of relying on a raw storage URL.",
+    ),
+    "submissionFilesTitle": MessageLookupByLibrary.simpleMessage(
+      "Submission file",
     ),
     "submissionStatusLabel": MessageLookupByLibrary.simpleMessage("Status"),
     "submissionTimelineTitle": MessageLookupByLibrary.simpleMessage(
@@ -483,6 +603,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "submitVerificationRequest": MessageLookupByLibrary.simpleMessage(
       "Submit verification request",
     ),
+    "submittedOnLabel": MessageLookupByLibrary.simpleMessage("Submitted on"),
     "subscriptionActive": MessageLookupByLibrary.simpleMessage(
       "Premium subscription active",
     ),
@@ -532,6 +653,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "updatePasswordTitle": MessageLookupByLibrary.simpleMessage(
       "Set a new password",
+    ),
+    "uploadGuidanceMessage": MessageLookupByLibrary.simpleMessage(
+      "Upload PDF, DOC, or DOCX only. File guidance, size, and type stay visible here so the submission feels explicit and safe.",
     ),
     "verificationApprovedBody": MessageLookupByLibrary.simpleMessage(
       "Your researcher verification is approved. You can continue using verified researcher flows.",

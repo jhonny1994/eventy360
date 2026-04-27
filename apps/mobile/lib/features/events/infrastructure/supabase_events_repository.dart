@@ -182,6 +182,72 @@ class SupabaseEventsRepository implements EventsRepository {
   }
 
   @override
+  Future<List<EventSummary>> fetchBookmarkedEvents() async {
+    final client = _client;
+    final userId = _userId;
+    if (client == null || userId == null) {
+      return const <EventSummary>[];
+    }
+    try {
+      final locale =
+          ref.read(sharedPreferencesProvider).getString('app.locale_code') ??
+          'en';
+      final bookmarks = await client
+          .from('bookmarks')
+          .select('event_id, events!inner(id,event_name_translations,abstract_submission_deadline,wilaya_id)')
+          .eq('profile_id', userId);
+      final rows = (bookmarks as List<dynamic>).cast<Map<String, dynamic>>();
+      final wilayaIds = rows
+          .map(
+            (row) =>
+                (row['events'] as Map<String, dynamic>)['wilaya_id'] as int?,
+          )
+          .whereType<int>()
+          .toSet()
+          .toList();
+      final wilayaNames = <int, String>{};
+      for (final wilayaId in wilayaIds) {
+        try {
+          wilayaNames[wilayaId] = await client.rpc<String>(
+            'get_wilaya_name',
+            params: {
+              'p_wilaya_id': wilayaId,
+              'p_locale': locale,
+            },
+          );
+        } on Object {
+          wilayaNames[wilayaId] = 'Algeria';
+        }
+      }
+      return rows.map((row) {
+        final event = row['events'] as Map<String, dynamic>;
+        final translations =
+            (event['event_name_translations'] as Map?)?.cast<String, dynamic>() ??
+            const <String, dynamic>{};
+        final wilayaId = event['wilaya_id'] as int?;
+        return EventSummary(
+          id: event['id'].toString(),
+          title:
+              translations[locale]?.toString() ??
+              translations['en']?.toString() ??
+              translations['ar']?.toString() ??
+              'Untitled event',
+          deadline:
+              DateTime.tryParse(
+                event['abstract_submission_deadline']?.toString() ?? '',
+              ) ??
+              DateTime.now().add(const Duration(days: 10)),
+          location: wilayaId == null ? 'Algeria' : (wilayaNames[wilayaId] ?? 'Algeria'),
+          topics: const <String>[],
+          isBookmarked: true,
+        );
+      }).toList();
+    } on Object catch (error) {
+      throw EventsRepositoryError('Bookmarked events lookup failed: $error');
+    }
+  }
+
+  @override
   Future<Set<String>> getBookmarkedEventIds() async {
     final prefs = ref.read(sharedPreferencesProvider);
     final fallback = prefs.getStringList(_bookmarkCacheKey) ?? const <String>[];

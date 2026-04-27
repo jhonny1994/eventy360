@@ -227,6 +227,17 @@ class _FakeEventsRepository implements EventsRepository {
   }
 
   @override
+  Future<List<EventSummary>> fetchBookmarkedEvents() async {
+    final events = await discoverEvents(
+      page: 1,
+      pageSize: 10,
+      query: '',
+      selectedTopicIds: const {},
+    );
+    return events.where((event) => _bookmarks.contains(event.id)).toList();
+  }
+
+  @override
   Future<Set<String>> getBookmarkedEventIds() async => {..._bookmarks};
 
   @override

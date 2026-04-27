@@ -51,6 +51,7 @@ class _SubmissionWriteScreenState extends ConsumerState<SubmissionWriteScreen> {
 
   String? _selectedEventId;
   SubmissionUploadFile? _selectedUploadFile;
+  bool _restoredDraft = false;
 
   @override
   void initState() {
@@ -68,6 +69,7 @@ class _SubmissionWriteScreenState extends ConsumerState<SubmissionWriteScreen> {
         .read(submissionsControllerProvider.notifier)
         .getDraft(widget.mode, idOrEvent: idOrEvent);
     if (draft != null) {
+      _restoredDraft = true;
       _selectedEventId = draft.eventId;
       _titleArController.text = draft.titleAr;
       _titleEnController.text = draft.titleEn;
@@ -185,7 +187,9 @@ class _SubmissionWriteScreenState extends ConsumerState<SubmissionWriteScreen> {
                     final id = widget.submissionId!;
                     final match = submissions.where((entry) => entry.id == id);
                     if (match.isNotEmpty) {
-                      context.go(RoutePaths.submissionDetail(id));
+                      unawaited(
+                        context.push(RoutePaths.submissionDetail(id)),
+                      );
                     } else {
                       context.pop();
                     }
@@ -199,6 +203,20 @@ class _SubmissionWriteScreenState extends ConsumerState<SubmissionWriteScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              if (_restoredDraft)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: AppInlineMessage.info(
+                    message: localizations.draftRestoredMessage,
+                  ),
+                ),
+              if (widget.mode == SubmissionWriteKind.abstract)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: AppInlineMessage.info(
+                    message: localizations.abstractWriteGuidance,
+                  ),
+                ),
               if (widget.mode == SubmissionWriteKind.abstract) ...[
                 DropdownButtonFormField<String>(
                   initialValue: _selectedEventId,
@@ -259,6 +277,10 @@ class _SubmissionWriteScreenState extends ConsumerState<SubmissionWriteScreen> {
                 ),
               ],
               if (widget.mode != SubmissionWriteKind.abstract) ...[
+                AppInlineMessage.info(
+                  message: localizations.uploadGuidanceMessage,
+                ),
+                const SizedBox(height: 12),
                 Text(
                   localizations.filePickerHint,
                   style: Theme.of(context).textTheme.bodySmall,
@@ -273,6 +295,16 @@ class _SubmissionWriteScreenState extends ConsumerState<SubmissionWriteScreen> {
                 Text(
                   _selectedUploadFile?.fileName ?? localizations.noFileSelected,
                 ),
+                if (_selectedUploadFile != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    '${localizations.fileTypeLabel}: ${_selectedUploadFile!.mimeType}',
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${localizations.fileSizeLabel}: ${_formatFileSize(_selectedUploadFile!.sizeInBytes)}',
+                  ),
+                ],
               ],
               if (widget.mode == SubmissionWriteKind.revision) ...[
                 const SizedBox(height: 12),
@@ -301,6 +333,32 @@ class _SubmissionWriteScreenState extends ConsumerState<SubmissionWriteScreen> {
                         if (widget.mode == SubmissionWriteKind.abstract) {
                           final eventId = _selectedEventId;
                           if (eventId == null || eventId.isEmpty) {
+                            return;
+                          }
+                          SubmissionRecord? existingSubmission;
+                          for (final entry in submissions) {
+                            if (entry.eventId == eventId) {
+                              existingSubmission = entry;
+                              break;
+                            }
+                          }
+                          if (existingSubmission != null) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    localizations.existingSubmissionRedirectBody,
+                                  ),
+                                ),
+                              );
+                            }
+                            unawaited(
+                              context.push(
+                                RoutePaths.submissionDetail(
+                                  existingSubmission.id,
+                                ),
+                              ),
+                            );
                             return;
                           }
                           await controller.submitAbstract(
@@ -376,7 +434,7 @@ class _SubmissionWriteScreenState extends ConsumerState<SubmissionWriteScreen> {
                             localizations.submitRevisionAction,
                         },
                       ),
-              ),
+                      ),
             ],
           ),
         ),
@@ -395,4 +453,14 @@ class _SubmissionWriteScreenState extends ConsumerState<SubmissionWriteScreen> {
         return 'application/pdf';
     }
   }
+}
+
+String _formatFileSize(int bytes) {
+  if (bytes < 1024) {
+    return '$bytes B';
+  }
+  if (bytes < 1024 * 1024) {
+    return '${(bytes / 1024).toStringAsFixed(1)} KB';
+  }
+  return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
 }

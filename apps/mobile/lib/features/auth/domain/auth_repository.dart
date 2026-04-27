@@ -1,6 +1,7 @@
 import 'package:eventy360/features/auth/domain/auth_deep_link_intent.dart';
 import 'package:eventy360/features/auth/domain/auth_user.dart';
 import 'package:eventy360/features/auth/domain/location_option.dart';
+import 'package:eventy360/features/auth/domain/researcher_profile.dart';
 import 'package:eventy360/features/auth/domain/user_profile_status.dart';
 
 abstract class AuthRepository {
@@ -14,6 +15,15 @@ abstract class AuthRepository {
   Future<void> completeResearcherProfile({
     required String fullName,
     required String institution,
+    required int wilayaId,
+    required int dairaId,
+  });
+  Future<ResearcherProfile> fetchResearcherProfile();
+  Future<void> updateResearcherProfile({
+    required String fullName,
+    required String institution,
+    required String academicPosition,
+    required String bio,
     required int wilayaId,
     required int dairaId,
   });

@@ -1,6 +1,8 @@
 import 'package:eventy360/app/router/app_shell.dart';
 import 'package:eventy360/app/router/route_paths.dart';
 import 'package:eventy360/features/account/presentation/account_screen.dart';
+import 'package:eventy360/features/account/presentation/edit_profile_screen.dart';
+import 'package:eventy360/features/account/presentation/security_screen.dart';
 import 'package:eventy360/features/account/presentation/topic_subscriptions_screen.dart';
 import 'package:eventy360/features/auth/application/session_controller.dart';
 import 'package:eventy360/features/auth/application/session_state.dart';
@@ -13,6 +15,7 @@ import 'package:eventy360/features/auth/presentation/splash_screen.dart';
 import 'package:eventy360/features/auth/presentation/unsupported_role_screen.dart';
 import 'package:eventy360/features/events/presentation/event_detail_screen.dart';
 import 'package:eventy360/features/events/presentation/events_screen.dart';
+import 'package:eventy360/features/events/presentation/saved_events_screen.dart';
 import 'package:eventy360/features/home/presentation/home_screen.dart';
 import 'package:eventy360/features/repository/presentation/paper_detail_screen.dart';
 import 'package:eventy360/features/repository/presentation/repository_screen.dart';
@@ -81,6 +84,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 path: RoutePaths.events,
                 builder: (context, state) => const EventsScreen(),
                 routes: [
+                  GoRoute(
+                    path: 'saved',
+                    builder: (context, state) => const SavedEventsScreen(),
+                  ),
                   GoRoute(
                     path: ':eventId',
                     builder: (context, state) => EventDetailScreen(
@@ -153,6 +160,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 path: RoutePaths.account,
                 builder: (context, state) => const AccountScreen(),
                 routes: [
+                  GoRoute(
+                    path: RoutePaths.profileSegment,
+                    builder: (context, state) => const EditProfileScreen(),
+                  ),
+                  GoRoute(
+                    path: RoutePaths.securitySegment,
+                    builder: (context, state) => const SecurityScreen(),
+                  ),
                   GoRoute(
                     path: RoutePaths.topicsSegment,
                     builder: (context, state) =>

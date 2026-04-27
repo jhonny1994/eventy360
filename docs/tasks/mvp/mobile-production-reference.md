@@ -68,7 +68,7 @@ Per the UX doc, post-onboarding mobile should use stable primary navigation:
 4. Repository
 5. Account
 
-Current mobile does not yet implement this shell.
+Current mobile now implements this shell, and the remaining work is about deep parity, polish, and release confidence.
 
 ## Current Mobile Route Map
 
@@ -82,10 +82,15 @@ Defined routes today:
 - `/unsupported-role`
 - `/home`
 - `/events`
+- `/events/saved`
 - `/submissions`
-- `/trust`
-- `/trust/report-payment`
 - `/repository`
+- `/account`
+- `/account/profile`
+- `/account/security`
+- `/account/topics`
+- `/account/trust`
+- `/account/trust/report-payment`
 
 Source:
 
@@ -94,9 +99,10 @@ Source:
 
 Important reality:
 
-- there is no `Account` route,
-- there is no stable bottom navigation shell,
-- trust and preferences are exposed as standalone routes instead of being housed under account/settings.
+- account now exists as a first-class top-level destination,
+- the bottom navigation shell exists,
+- trust is now housed under account,
+- remaining work is about parity depth rather than missing shell architecture.
 
 ## What Exists In Mobile Today
 

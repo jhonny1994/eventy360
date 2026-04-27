@@ -59,8 +59,8 @@
   - [x] 2.5.5 Add discoverable theme controls inside settings/account instead of relying on home app-bar toggle
   - [x] 2.5.6 Add notification preferences visibility and platform-settings handoff in settings/account
   - [x] 2.5.7 Add account overview sections for profile state, verification state, subscription state, and sign out
-  - [ ] 2.5.8 Add dedicated profile edit flow from mobile account area
-  - [ ] 2.5.9 Add dedicated security entry point from mobile account area
+  - [x] 2.5.8 Add dedicated profile edit flow from mobile account area
+  - [x] 2.5.9 Add dedicated security entry point from mobile account area
   - [ ] 2.5.10 Revisit onboarding completion so first-run flow leads into language/theme/topics/account-aware shell
   - [x] 2.6 Add auth/home tests: provider tests, widget flow tests, and basic navigation tests
   - [ ] 2.7 Run milestone manual validation #1: auth, onboarding, profile gate, home
@@ -76,10 +76,10 @@
   - [x] 3.8 Add discovery/topic/notification tests including permission and deep-link handling
   - [x] 3.8.3 Add dedicated topics management page under account
   - [x] 3.8.1 Separate event filtering from topic subscription management in UX and IA
-  - [ ] 3.8.2 Add dedicated saved or bookmarked events view
-  - [ ] 3.8.4 Preserve search, filters, and scroll context across event list/detail round-trips
+  - [x] 3.8.2 Add dedicated saved or bookmarked events view
+  - [x] 3.8.4 Preserve search, filters, and scroll context across event list/detail round-trips
   - [ ] 3.8.5 Expand event detail to include richer event description, timeline, organizer context, and eligibility guidance
-  - [ ] 3.8.6 Route duplicate abstract attempts back to the existing submission context instead of creating confusion
+  - [x] 3.8.6 Route duplicate abstract attempts back to the existing submission context instead of creating confusion
   - [ ] 3.9 Run milestone manual validation #2: discovery, bookmarks, topics, real subscribed-topic push
 
 - [ ] 4.0 Implement real critical write flows with minimal reliability guards
@@ -92,11 +92,11 @@
   - [x] 4.6 Add local draft/context preservation for interruption-safe forms
   - [x] 4.7 Add submission detail, status, and feedback timeline UI
   - [x] 4.8 Add write-flow tests including failure and retry behavior
-  - [ ] 4.8.1 Add reviewer feedback parity and human-readable status context to submission detail
-  - [ ] 4.8.2 Replace raw file URL exposure with safer file metadata, actions, and privacy framing
-  - [ ] 4.8.3 Add stronger event context and deadline context inside submission detail
-  - [ ] 4.8.4 Improve write-form guidance for accepted file types, file size expectations, and upload receipts
-  - [ ] 4.8.5 Add explicit draft restore UX and autosave communication in submission forms
+  - [x] 4.8.1 Add reviewer feedback parity and human-readable status context to submission detail
+  - [x] 4.8.2 Replace raw file URL exposure with safer file metadata, actions, and privacy framing
+  - [x] 4.8.3 Add stronger event context and deadline context inside submission detail
+  - [x] 4.8.4 Improve write-form guidance for accepted file types, file size expectations, and upload receipts
+  - [x] 4.8.5 Add explicit draft restore UX and autosave communication in submission forms
   - [ ] 4.9 Run milestone manual validation #3: all submission write flows end-to-end
 
 - [ ] 5.0 Implement verification, payment, and repository end-to-end flows
@@ -106,7 +106,7 @@
   - [x] 5.4 Implement repository list/detail and download behavior using real backend data
   - [x] 5.5 Add secure handling UX for sensitive docs and file operation errors
   - [x] 5.6 Add trust/repository tests including edge and error paths
-  - [ ] 5.6.1 Re-house trust flows under account while preserving clear verification and payment entry points
+  - [x] 5.6.1 Re-house trust flows under account while preserving clear verification and payment entry points
   - [ ] 5.6.2 Add subscription overview and subscription resolution path in mobile account UX
   - [ ] 5.6.3 Add payment history/report split that matches current product semantics
   - [ ] 5.6.4 Add payment instructions and expectations before proof submission
