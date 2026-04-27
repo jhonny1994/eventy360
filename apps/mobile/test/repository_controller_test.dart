@@ -40,6 +40,44 @@ void main() {
     expect(repository.lastQuery, 'vision');
   });
 
+  test('updates author filter using repository search state', () async {
+    final repository = _FakeRepositoryRepository();
+    final container = ProviderContainer(
+      overrides: [
+        repositoryRepositoryProvider.overrideWithValue(repository),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await container.read(repositoryControllerProvider.future);
+    await container
+        .read(repositoryControllerProvider.notifier)
+        .updateAuthorQuery('Benali');
+
+    final state = container.read(repositoryControllerProvider).asData!.value;
+    expect(state.authorQuery, 'Benali');
+    expect(repository.lastAuthorQuery, 'Benali');
+  });
+
+  test('updates wilaya filter using repository filter state', () async {
+    final repository = _FakeRepositoryRepository();
+    final container = ProviderContainer(
+      overrides: [
+        repositoryRepositoryProvider.overrideWithValue(repository),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await container.read(repositoryControllerProvider.future);
+    await container
+        .read(repositoryControllerProvider.notifier)
+        .updateWilayaFilter(16);
+
+    final state = container.read(repositoryControllerProvider).asData!.value;
+    expect(state.selectedWilayaId, 16);
+    expect(repository.lastWilayaId, 16);
+  });
+
   test('loads paper detail and prepares download', () async {
     final repository = _FakeRepositoryRepository();
     final container = ProviderContainer(
@@ -87,6 +125,8 @@ void main() {
 
 class _FakeRepositoryRepository implements RepositoryRepository {
   String lastQuery = '';
+  String lastAuthorQuery = '';
+  int? lastWilayaId;
   String? downloadTrackedFor;
   bool detailError = false;
 
@@ -123,6 +163,8 @@ class _FakeRepositoryRepository implements RepositoryRepository {
     required int? selectedWilayaId,
   }) async {
     lastQuery = query;
+    lastAuthorQuery = authorQuery;
+    lastWilayaId = selectedWilayaId;
     return RepositoryPage(
       items: <RepositoryPaper>[paper],
       page: page,

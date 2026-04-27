@@ -451,6 +451,12 @@ Mobile should preserve these semantics while using correct mobile patterns.
 9. Submission detail parity improvement
 10. Route-by-route large-text, RTL, and resume validation
 
+Phase-6 validation references:
+
+1. [phase6-mobile-quality-gates.md](C:/Users/raouf/projects/eventy360/docs/tasks/mvp/phase6-mobile-quality-gates.md)
+2. [phase6-mobile-route-parity-checklist.md](C:/Users/raouf/projects/eventy360/docs/tasks/mvp/phase6-mobile-route-parity-checklist.md)
+3. [phase6-mobile-manual-validation-coverage.md](C:/Users/raouf/projects/eventy360/docs/tasks/mvp/phase6-mobile-manual-validation-coverage.md)
+
 ## Better-To-Have After The Must-Haves
 
 1. notification inbox

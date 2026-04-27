@@ -120,10 +120,10 @@
   - [x] 6.3 Define manual validation checklist template for each milestone
   - [x] 6.3.1 Define objective milestone acceptance criteria (required evidence, blocker policy, pass/fail threshold)
   - [x] 6.3.2 Define push operational validation checklist (delivery failures, stale token handling, retry/queue behavior)
-  - [ ] 6.3.3 Add manual validation coverage for settings discoverability, theme persistence, language switching, and notification preference entry points
-  - [ ] 6.3.4 Add route-by-route parity checklist against web semantics and `02-researcher-journey-and-ux.md`
-  - [ ] 6.3.5 Add large-text and RTL regression checklist for every primary route
-  - [ ] 6.3.6 Add cold-start, background-resume, and return-to-task validation for every critical workflow
+  - [x] 6.3.3 Add manual validation coverage for settings discoverability, theme persistence, language switching, and notification preference entry points
+  - [x] 6.3.4 Add route-by-route parity checklist against web semantics and `02-researcher-journey-and-ux.md`
+  - [x] 6.3.5 Add large-text and RTL regression checklist for every primary route
+  - [x] 6.3.6 Add cold-start, background-resume, and return-to-task validation for every critical workflow
   - [ ] 6.4 Execute full manual walkthrough across all core researcher flows
   - [ ] 6.5 Capture defects from walkthrough and resolve blocking issues
   - [ ] 6.6 Re-run automated checks after fixes and confirm clean status
