@@ -110,15 +110,25 @@ jobs:
             apps/mobile/build/app/outputs/flutter-apk/app-release.apk
             apps/mobile/build/app/outputs/flutter-apk/app-release.apk.sha256
 
-      - name: Create GitHub release
-        if: startsWith(github.ref, 'refs/tags/mobile-v') || (github.event_name ==
-          'workflow_dispatch' && inputs.publish_release)
+      - name: Create GitHub release from tag
+        if: startsWith(github.ref, 'refs/tags/mobile-v')
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.event_name == 'workflow_dispatch' && inputs.tag_name ||
-            github.ref_name }}
-          name: ${{ github.event_name == 'workflow_dispatch' && inputs.tag_name ||
-            github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
+            apps/mobile/build/app/outputs/flutter-apk/app-release.apk
+            apps/mobile/build/app/outputs/flutter-apk/app-release.apk.sha256
+          fail_on_unmatched_files: true
+
+      - name: Create GitHub release from manual dispatch
+        if: github.event_name == 'workflow_dispatch' && inputs.publish_release &&
+          inputs.tag_name != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag_name }}
+          name: ${{ inputs.tag_name }}
           generate_release_notes: true
           files: |
             apps/mobile/build/app/outputs/flutter-apk/app-release.apk
