@@ -84,33 +84,10 @@ class EventsScreen extends ConsumerWidget {
                           }).toList(),
                         ),
                         const SizedBox(height: 14),
-                        Text(
-                          localizations.topicSubscriptionHint,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: data.topics.map((topic) {
-                            final subscribed = data.subscribedTopicIds.contains(
-                              topic.id,
-                            );
-                            return FilterChip(
-                              selectedColor: Theme.of(
-                                context,
-                              ).colorScheme.secondaryContainer,
-                              label: Text(topic.name),
-                              selected: subscribed,
-                              onSelected: (_) {
-                                unawaited(
-                                  ref
-                                      .read(eventsControllerProvider.notifier)
-                                      .toggleTopicSubscription(topic.id),
-                                );
-                              },
-                            );
-                          }).toList(),
+                        OutlinedButton.icon(
+                          onPressed: () => context.push(RoutePaths.topics),
+                          icon: const Icon(Icons.tune_outlined),
+                          label: Text(localizations.manageTopicsAction),
                         ),
                       ],
                     ),

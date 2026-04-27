@@ -84,6 +84,7 @@
   "topicSubscriptionsManageTitle": "إدارة مواضيع التنبيهات",
   "topicSubscriptionsManageBody": "اختر المواضيع التي تريد متابعتها. نطلب إذن الإشعارات عند الاشتراك حتى تبقى الطلبات مرتبطة بالسياق.",
   "topicSubscriptionsEmptyState": "لا توجد مواضيع متاحة حاليًا.",
+  "manageTopicsAction": "إدارة مواضيع التنبيهات",
   "profileStatus": "حالة الملف الشخصي",
   "verificationStatusTitle": "حالة التحقق",
   "verifiedStatus": "موثق",

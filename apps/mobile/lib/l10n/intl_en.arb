@@ -84,6 +84,7 @@
   "topicSubscriptionsManageTitle": "Manage alert topics",
   "topicSubscriptionsManageBody": "Choose the topics you want to follow. We request notification permission when you subscribe so prompts stay contextual.",
   "topicSubscriptionsEmptyState": "No topics are available right now.",
+  "manageTopicsAction": "Manage alert topics",
   "profileStatus": "Profile status",
   "verificationStatusTitle": "Verification status",
   "verifiedStatus": "Verified",

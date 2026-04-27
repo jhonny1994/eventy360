@@ -162,6 +162,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "loadMore": MessageLookupByLibrary.simpleMessage("Load more"),
     "loading": MessageLookupByLibrary.simpleMessage("Loading..."),
     "location": MessageLookupByLibrary.simpleMessage("Location"),
+    "manageTopicsAction": MessageLookupByLibrary.simpleMessage(
+      "Manage alert topics",
+    ),
     "nearestDeadlineTitle": MessageLookupByLibrary.simpleMessage(
       "Nearest deadline",
     ),

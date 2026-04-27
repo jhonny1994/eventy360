@@ -160,6 +160,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "loadMore": MessageLookupByLibrary.simpleMessage("تحميل المزيد"),
     "loading": MessageLookupByLibrary.simpleMessage("جار التحميل..."),
     "location": MessageLookupByLibrary.simpleMessage("الموقع"),
+    "manageTopicsAction": MessageLookupByLibrary.simpleMessage(
+      "إدارة مواضيع التنبيهات",
+    ),
     "nearestDeadlineTitle": MessageLookupByLibrary.simpleMessage(
       "أقرب موعد نهائي",
     ),
