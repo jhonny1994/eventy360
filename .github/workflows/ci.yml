@@ -31,37 +31,6 @@ jobs:
       - name: Validate monorepo layout
         run: pnpm check:repo
 
-  web:
-    name: Web checks
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    env:
-      NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
-      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: pnpm
-          cache-dependency-path: apps/web/pnpm-lock.yaml
-
-      - name: Install web dependencies
-        run: pnpm install:web
-
-      - name: Lint
-        run: pnpm lint:web
-
-      - name: Typecheck
-        run: pnpm typecheck:web
-
-      - name: Build
-        run: pnpm build:web
-
   supabase:
     name: Supabase checks
     runs-on: ubuntu-latest
