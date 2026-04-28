@@ -65,7 +65,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Account created successfully.",
     ),
     "accountHeroBody": MessageLookupByLibrary.simpleMessage(
-      "Manage trust, preferences, language, theme, and alerts from one clear place.",
+      "Manage your profile, verification, preferences, and alerts from one reliable account center.",
     ),
     "accountHeroTitle": MessageLookupByLibrary.simpleMessage(
       "Control your researcher experience",
@@ -119,7 +119,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "We restored your in-progress draft so you can continue without rebuilding the form.",
     ),
     "editProfileBody": MessageLookupByLibrary.simpleMessage(
-      "Keep your name, institution, academic role, and location accurate so event and trust workflows stay aligned.",
+      "Keep your identity, institution, role, and location accurate for smoother event and verification workflows.",
     ),
     "editProfileTitle": MessageLookupByLibrary.simpleMessage("Edit profile"),
     "email": MessageLookupByLibrary.simpleMessage("Email"),
@@ -270,7 +270,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "haveAccountSignIn": MessageLookupByLibrary.simpleMessage(
       "Already have an account? Sign in",
     ),
-    "homeAttentionTitle": MessageLookupByLibrary.simpleMessage("Action needed"),
+    "homeAttentionTitle": MessageLookupByLibrary.simpleMessage(
+      "Action required",
+    ),
     "homeDiscoverEventsBody": MessageLookupByLibrary.simpleMessage(
       "Browse live opportunities, bookmark what matters, and start a submission from the right event.",
     ),
@@ -300,18 +302,18 @@ class MessageLookup extends MessageLookupByLibrary {
       "Return to the events you bookmarked when you are deciding what to submit next.",
     ),
     "homeStateSummaryBody": MessageLookupByLibrary.simpleMessage(
-      "Keep your trust, subscription, deadline, and submission state visible at a glance.",
+      "Keep verification, subscription, deadlines, and submission progress visible at a glance.",
     ),
     "homeStateSummaryTitle": MessageLookupByLibrary.simpleMessage("Status"),
     "homeSubscriptionAttentionBody": MessageLookupByLibrary.simpleMessage(
-      "Premium access is not active yet. Resolve billing from Account when you need repository or premium researcher access.",
+      "Premium access is not active yet. Complete billing from Account when you need repository or premium researcher access.",
     ),
     "homeSubtitle": MessageLookupByLibrary.simpleMessage(
       "Your command center is ready.",
     ),
     "homeTitle": MessageLookupByLibrary.simpleMessage("Researcher Home"),
     "homeVerificationAttentionBody": MessageLookupByLibrary.simpleMessage(
-      "Verification is still unfinished. Resolve it from Account so trust-gated researcher flows stay available.",
+      "Your verification is still incomplete. Finish it from Account to keep trusted researcher workflows available.",
     ),
     "imageUnavailableLabel": MessageLookupByLibrary.simpleMessage(
       "Image unavailable",
@@ -367,16 +369,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "Notification preference updated.",
     ),
     "notificationPreferencesBody": MessageLookupByLibrary.simpleMessage(
-      "Control how the app handles topic alerts and open system settings if Android has already blocked notifications.",
+      "Manage topic alerts here, and open system settings if notifications are blocked on your device.",
     ),
     "notificationPreferencesTitle": MessageLookupByLibrary.simpleMessage(
       "Notification preferences",
     ),
     "notificationsDisabledBody": MessageLookupByLibrary.simpleMessage(
-      "Enable notifications so important topic alerts can reach you on time.",
+      "Enable notifications so important research alerts reach you on time.",
     ),
     "notificationsEnabledBody": MessageLookupByLibrary.simpleMessage(
-      "Topic alerts are available when you subscribe to relevant subjects.",
+      "Topic alerts are ready when you subscribe to relevant research subjects.",
     ),
     "notificationsEnabledStatus": MessageLookupByLibrary.simpleMessage(
       "Notifications enabled",
@@ -433,7 +435,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "paymentAmountLabel": MessageLookupByLibrary.simpleMessage("Amount"),
     "paymentHistoryBody": MessageLookupByLibrary.simpleMessage(
-      "These are the proofs you already submitted and the review decisions attached to each one.",
+      "Review the payment proofs you already submitted and the decision attached to each one.",
     ),
     "paymentHistoryTitle": MessageLookupByLibrary.simpleMessage(
       "Payment History",
@@ -471,7 +473,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "This payment report will be treated as a renewal or continuity action for your current subscription.",
     ),
     "paymentTrustFlowHint": MessageLookupByLibrary.simpleMessage(
-      "Use this space to review your current subscription state, then submit a new payment proof whenever you need to activate or renew access.",
+      "Review your current subscription state here, then submit a new payment proof whenever you need to activate or renew access.",
     ),
     "paymentVerifiedStatus": MessageLookupByLibrary.simpleMessage("Verified"),
     "phoneLabel": MessageLookupByLibrary.simpleMessage("Phone"),
@@ -483,7 +485,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Choose verification document",
     ),
     "preferencesBody": MessageLookupByLibrary.simpleMessage(
-      "Adjust appearance, language, and alert behavior without leaving the app flow.",
+      "Choose language, appearance, and alert behavior without leaving your main workflow.",
     ),
     "preferencesTitle": MessageLookupByLibrary.simpleMessage("Preferences"),
     "profileBioLabel": MessageLookupByLibrary.simpleMessage("Short bio"),
@@ -508,7 +510,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Submit your payment amount, method, and proof so the team can verify your subscription access.",
     ),
     "reportPaymentOverviewBody": MessageLookupByLibrary.simpleMessage(
-      "Submit billing details and proof once so the team can validate your subscription access quickly and accurately.",
+      "Submit billing details and proof so the team can validate your subscription access quickly and accurately.",
     ),
     "reportPaymentTitle": MessageLookupByLibrary.simpleMessage(
       "Submit Payment Proof",
@@ -585,7 +587,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "This field is required.",
     ),
     "researcherAccessBody": MessageLookupByLibrary.simpleMessage(
-      "Open profile, verification, saved events, and security tools from one clear section.",
+      "Open profile, security, verification, and saved research tools from one organized section.",
     ),
     "researcherAccessTitle": MessageLookupByLibrary.simpleMessage(
       "Profile and access",
@@ -606,7 +608,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "saveProfileAction": MessageLookupByLibrary.simpleMessage("Save profile"),
     "savedEventsBody": MessageLookupByLibrary.simpleMessage(
-      "Return to the events you shortlisted without rebuilding your search from scratch.",
+      "Return to the events you saved without rebuilding your search.",
     ),
     "savedEventsEmptyState": MessageLookupByLibrary.simpleMessage(
       "You have not bookmarked any events yet.",
@@ -629,7 +631,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Only PDF, JPG, or PNG files are allowed here.",
     ),
     "securityBody": MessageLookupByLibrary.simpleMessage(
-      "Protect your account access and keep your credentials current from a dedicated security surface.",
+      "Review password access and account protection from one dedicated security screen.",
     ),
     "securityDirectPasswordBody": MessageLookupByLibrary.simpleMessage(
       "If you are already signed in on this device, you can set a new password here immediately.",
@@ -801,7 +803,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "No active premium subscription",
     ),
     "subscriptionOverviewBody": MessageLookupByLibrary.simpleMessage(
-      "Review your current access, see whether renewal is needed, and submit the next payment proof without leaving account flow.",
+      "Review your current access, check whether renewal is needed, and submit the next payment proof without leaving Account.",
     ),
     "subscriptionRecommendedPrice": m7,
     "subscriptionStatusTitle": MessageLookupByLibrary.simpleMessage(
@@ -821,7 +823,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Subscribe to topics to receive push alerts.",
     ),
     "topicSubscriptionsBody": MessageLookupByLibrary.simpleMessage(
-      "Manage your research interests and notification topics.",
+      "Choose the research topics you want to follow and receive alerts for.",
     ),
     "topicSubscriptionsEmptyState": MessageLookupByLibrary.simpleMessage(
       "No topics are available right now.",
@@ -839,7 +841,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Verification & Billing",
     ),
     "trustOverviewBody": MessageLookupByLibrary.simpleMessage(
-      "Upload verification documents, review payment reports, and keep premium access moving from one secure place.",
+      "Upload verification documents, review payment reports, and manage premium access from one secure place.",
     ),
     "unsupportedRoleBody": MessageLookupByLibrary.simpleMessage(
       "Eventy360 mobile currently supports researcher accounts only.",

@@ -38,8 +38,6 @@ class SubmissionsScreen extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 children: [
                   AppPageHero(
-                    badge: localizations.submissionsTitle,
-                    icon: Icons.assignment_outlined,
                     title: localizations.submissionsTitle,
                     subtitle: localizations.submissionsOverviewBody,
                   ),
@@ -67,8 +65,11 @@ class SubmissionsScreen extends ConsumerWidget {
                       (submission) => AppSectionCard(
                         child: AppListRow(
                           title: submission.title,
-                          subtitle:
-                              '${submission.eventTitle}\n${_statusLabel(localizations, submission.status)}',
+                          subtitle: _submissionSubtitle(
+                            context,
+                            localizations,
+                            submission,
+                          ),
                           trailing: AppStatusBadge(
                             label: _statusLabel(
                               localizations,
@@ -135,5 +136,29 @@ class SubmissionsScreen extends ConsumerWidget {
       case SubmissionStatus.fullPaperSubmitted:
         return AppStatusTone.neutral;
     }
+  }
+
+  String _submissionSubtitle(
+    BuildContext context,
+    S localizations,
+    SubmissionRecord submission,
+  ) {
+    final eventTitle = submission.eventTitle.trim();
+    final title = submission.title.trim();
+    if (eventTitle.isNotEmpty && !_sameLabel(eventTitle, title)) {
+      return eventTitle;
+    }
+
+    final date = MaterialLocalizations.of(
+      context,
+    ).formatShortDate(submission.updatedAt);
+    return '${localizations.lastUpdatedLabel}: $date';
+  }
+
+  bool _sameLabel(String first, String second) {
+    String normalize(String value) =>
+        value.toLowerCase().replaceAll(RegExp(r'\s+'), ' ').trim();
+
+    return normalize(first) == normalize(second);
   }
 }

@@ -52,6 +52,11 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Text(
+              localizations.signUpHeroBody,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 18),
             TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
@@ -60,7 +65,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 AutofillHints.email,
               ],
               textInputAction: TextInputAction.next,
-              decoration: InputDecoration(labelText: localizations.email),
+              decoration: InputDecoration(
+                labelText: localizations.email,
+                hintText: 'name@example.com',
+              ),
               validator: (value) => (value == null || value.isEmpty)
                   ? localizations.requiredField
                   : null,
@@ -73,6 +81,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
               textInputAction: TextInputAction.done,
               decoration: InputDecoration(
                 labelText: localizations.password,
+                helperText: localizations.passwordTooShort,
                 suffixIcon: IconButton(
                   onPressed: () {
                     setState(() => _obscurePassword = !_obscurePassword);

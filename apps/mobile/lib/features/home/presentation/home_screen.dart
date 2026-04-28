@@ -42,6 +42,9 @@ class HomeScreen extends ConsumerWidget {
         : localizations.homeDiscoverEventsBody;
     final needsVerification = session?.isVerified != true;
     final needsSubscription = !hasPremiumSubscription;
+    final attentionLabel = needsVerification
+        ? localizations.notVerifiedStatus
+        : localizations.subscriptionInactive;
 
     return Scaffold(
       appBar: AppBar(
@@ -64,14 +67,26 @@ class HomeScreen extends ConsumerWidget {
                 icon: Icons.space_dashboard_outlined,
                 title: localizations.homeHeroTitle,
                 subtitle: localizations.homeHeroBody,
+                trailing: AppStatusBadge(
+                  label: verificationStatus,
+                  tone: session?.isVerified == true
+                      ? AppStatusTone.success
+                      : AppStatusTone.info,
+                ),
               ),
               AppSectionCard(
                 title: localizations.homeNextActionTitle,
                 subtitle: nextActionDescription,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    FilledButton.icon(
+                leading: _SectionIcon(
+                  icon: activeSubmissionCount > 0
+                      ? Icons.assignment_outlined
+                      : Icons.travel_explore_outlined,
+                ),
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
                       onPressed: () => context.go(nextActionRoute),
                       icon: Icon(
                         activeSubmissionCount > 0
@@ -80,7 +95,7 @@ class HomeScreen extends ConsumerWidget {
                       ),
                       label: Text(nextActionLabel),
                     ),
-                  ],
+                  ),
                 ),
               ),
               if (needsVerification || needsSubscription)
@@ -89,20 +104,34 @@ class HomeScreen extends ConsumerWidget {
                   subtitle: needsVerification
                       ? localizations.homeVerificationAttentionBody
                       : localizations.homeSubscriptionAttentionBody,
+                  leading: _SectionIcon(
+                    icon: needsVerification
+                        ? Icons.verified_user_outlined
+                        : Icons.workspace_premium_outlined,
+                    tone: AppStatusTone.info,
+                  ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      FilledButton.tonalIcon(
-                        onPressed: () => context.go(RoutePaths.account),
-                        icon: Icon(
-                          needsVerification
-                              ? Icons.verified_user_outlined
-                              : Icons.workspace_premium_outlined,
-                        ),
-                        label: Text(
-                          needsVerification
-                              ? localizations.trustCenterTitle
-                              : localizations.accountTitle,
+                      AppStatusBadge(
+                        label: attentionLabel,
+                        tone: AppStatusTone.info,
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.icon(
+                          onPressed: () => context.go(RoutePaths.account),
+                          icon: Icon(
+                            needsVerification
+                                ? Icons.verified_user_outlined
+                                : Icons.workspace_premium_outlined,
+                          ),
+                          label: Text(
+                            needsVerification
+                                ? localizations.trustCenterTitle
+                                : localizations.accountTitle,
+                          ),
                         ),
                       ),
                     ],
@@ -111,31 +140,36 @@ class HomeScreen extends ConsumerWidget {
               AppSectionCard(
                 title: localizations.homeStateSummaryTitle,
                 subtitle: localizations.homeStateSummaryBody,
-                child: Column(
+                child: Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
                   children: [
-                    _MetricRow(
+                    _MetricTile(
                       icon: Icons.verified_user_outlined,
                       label: localizations.verificationStatusTitle,
                       value: verificationStatus,
+                      tone: session?.isVerified == true
+                          ? AppStatusTone.success
+                          : AppStatusTone.info,
                     ),
-                    const SizedBox(height: 12),
-                    _MetricRow(
+                    _MetricTile(
                       icon: Icons.workspace_premium_outlined,
                       label: localizations.subscriptionStatusTitle,
                       value: hasPremiumSubscription
                           ? localizations.subscriptionActive
                           : localizations.subscriptionInactive,
+                      tone: hasPremiumSubscription
+                          ? AppStatusTone.success
+                          : AppStatusTone.info,
                     ),
-                    const SizedBox(height: 12),
-                    _MetricRow(
+                    _MetricTile(
                       icon: Icons.event_available_outlined,
                       label: localizations.nearestDeadlineTitle,
                       value: nearestDeadline == null
                           ? localizations.noUpcomingDeadline
                           : _formatDate(nearestDeadline),
                     ),
-                    const SizedBox(height: 12),
-                    _MetricRow(
+                    _MetricTile(
                       icon: Icons.description_outlined,
                       label: localizations.activeSubmissionsTitle,
                       value: localizations.activeSubmissionsCount(
@@ -153,49 +187,110 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
-class _MetricRow extends StatelessWidget {
-  const _MetricRow({
+class _MetricTile extends StatelessWidget {
+  const _MetricTile({
     required this.icon,
     required this.label,
     required this.value,
+    this.tone = AppStatusTone.neutral,
   });
 
   final IconData icon;
   final String label;
   final String value;
+  final AppStatusTone tone;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: colorScheme.primaryContainer,
-            borderRadius: BorderRadius.circular(14),
+    final width = (MediaQuery.sizeOf(context).width - 44).clamp(0.0, 840.0);
+    final tileWidth = width >= 620 ? (width - 12) / 2 : width;
+    final background = colorScheme.primaryContainer;
+    final foreground = colorScheme.onPrimaryContainer;
+    return SizedBox(
+      width: tileWidth,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerLowest.withValues(alpha: 0.72),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.55),
           ),
-          child: Icon(icon, color: colorScheme.onPrimaryContainer, size: 20),
         ),
-        const SizedBox(width: 12),
-        Expanded(
+        child: Padding(
+          padding: const EdgeInsets.all(14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: background,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(icon, color: foreground, size: 20),
+              ),
+              const SizedBox(height: 14),
               Text(
                 label,
                 style: Theme.of(
                   context,
                 ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
               ),
-              const SizedBox(height: 4),
-              Text(value),
+              const SizedBox(height: 6),
+              Text(
+                value,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurface,
+                ),
+              ),
             ],
           ),
         ),
-      ],
+      ),
+    );
+  }
+}
+
+class _SectionIcon extends StatelessWidget {
+  const _SectionIcon({
+    required this.icon,
+    this.tone = AppStatusTone.neutral,
+  });
+
+  final IconData icon;
+  final AppStatusTone tone;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final (background, foreground) = switch (tone) {
+      AppStatusTone.neutral => (
+        colorScheme.primaryContainer,
+        colorScheme.onPrimaryContainer,
+      ),
+      AppStatusTone.info => (
+        colorScheme.secondaryContainer,
+        colorScheme.onSecondaryContainer,
+      ),
+      AppStatusTone.success => (
+        colorScheme.primaryContainer,
+        colorScheme.onPrimaryContainer,
+      ),
+      AppStatusTone.error => (
+        colorScheme.errorContainer,
+        colorScheme.onErrorContainer,
+      ),
+    };
+    return Container(
+      width: 44,
+      height: 44,
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Icon(icon, color: foreground, size: 22),
     );
   }
 }

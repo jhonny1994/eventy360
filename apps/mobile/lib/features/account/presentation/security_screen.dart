@@ -46,6 +46,12 @@ class _SecurityScreenState extends ConsumerState<SecurityScreen> {
               icon: Icons.security_outlined,
               title: localizations.securityTitle,
               subtitle: localizations.securityBody,
+              trailing: email.isEmpty
+                  ? null
+                  : AppStatusBadge(
+                      label: email,
+                      tone: AppStatusTone.neutral,
+                    ),
             ),
             if ((_message ?? '').isNotEmpty)
               AppInlineMessage.info(message: _message!),
@@ -57,6 +63,7 @@ class _SecurityScreenState extends ConsumerState<SecurityScreen> {
             AppSectionCard(
               title: localizations.sendResetLink,
               subtitle: localizations.securityResetBody(email),
+              leading: const Icon(Icons.mark_email_read_outlined),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -77,6 +84,7 @@ class _SecurityScreenState extends ConsumerState<SecurityScreen> {
             AppSectionCard(
               title: localizations.updatePasswordTitle,
               subtitle: localizations.securityDirectPasswordBody,
+              leading: const Icon(Icons.lock_reset_outlined),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -88,6 +96,7 @@ class _SecurityScreenState extends ConsumerState<SecurityScreen> {
                       autofillHints: const [AutofillHints.newPassword],
                       decoration: InputDecoration(
                         labelText: localizations.newPassword,
+                        helperText: localizations.passwordTooShort,
                         suffixIcon: IconButton(
                           onPressed: () {
                             setState(
@@ -101,8 +110,7 @@ class _SecurityScreenState extends ConsumerState<SecurityScreen> {
                           ),
                         ),
                       ),
-                      validator: (value) =>
-                          (value == null || value.length < 8)
+                      validator: (value) => (value == null || value.length < 8)
                           ? localizations.passwordTooShort
                           : null,
                     ),
@@ -166,7 +174,9 @@ class _SecurityScreenState extends ConsumerState<SecurityScreen> {
       _errorMessage = null;
     });
     try {
-      await ref.read(sessionControllerProvider.notifier).sendPasswordReset(email);
+      await ref
+          .read(sessionControllerProvider.notifier)
+          .sendPasswordReset(email);
       if (!mounted) {
         return;
       }

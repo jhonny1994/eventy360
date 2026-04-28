@@ -81,7 +81,6 @@ class _PaperDetailScreenState extends ConsumerState<PaperDetailScreen> {
                 ),
                 AppSectionCard(
                   title: localizations.repositoryContextTitle,
-                  subtitle: localizations.repositoryDetailOverviewBody,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [

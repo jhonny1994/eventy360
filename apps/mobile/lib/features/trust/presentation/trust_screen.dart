@@ -118,10 +118,17 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
                     icon: Icons.verified_user_outlined,
                     title: localizations.trustCenterTitle,
                     subtitle: localizations.trustOverviewBody,
+                    trailing: _VerificationBadge(
+                      status: data.verification.isVerified
+                          ? VerificationRequestStatus.approved
+                          : data.verification.latestRequest?.status,
+                      isVerified: data.verification.isVerified,
+                    ),
                   ),
                   AppSectionCard(
                     title: localizations.subscriptionStatusTitle,
                     subtitle: localizations.subscriptionOverviewBody,
+                    leading: const Icon(Icons.workspace_premium_outlined),
                     child: subscriptionOverview.when(
                       data: (overview) => Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,44 +154,60 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
                             ),
                           ],
                           const SizedBox(height: 14),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: FilledButton.icon(
-                                  onPressed: () async {
-                                    await context.push(
-                                      RoutePaths.reportPayment,
-                                    );
-                                    ref.invalidate(
-                                      subscriptionOverviewProvider,
-                                    );
-                                    await controller.refresh();
-                                  },
-                                  icon: const Icon(
-                                    Icons.upload_file_outlined,
-                                  ),
-                                  label: Text(
-                                    localizations.reportPaymentTitle,
-                                  ),
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              final compact = constraints.maxWidth < 560;
+                              final first = FilledButton.icon(
+                                onPressed: () async {
+                                  await context.push(
+                                    RoutePaths.reportPayment,
+                                  );
+                                  ref.invalidate(
+                                    subscriptionOverviewProvider,
+                                  );
+                                  await controller.refresh();
+                                },
+                                icon: const Icon(
+                                  Icons.upload_file_outlined,
                                 ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: FilledButton.tonalIcon(
-                                  onPressed: () async {
-                                    await context.push(RoutePaths.account);
-                                    ref.invalidate(
-                                      subscriptionOverviewProvider,
-                                    );
-                                    await controller.refresh();
-                                  },
-                                  icon: const Icon(
-                                    Icons.manage_accounts_outlined,
-                                  ),
-                                  label: Text(localizations.accountTitle),
+                                label: Text(
+                                  localizations.reportPaymentTitle,
                                 ),
-                              ),
-                            ],
+                              );
+                              final second = FilledButton.tonalIcon(
+                                onPressed: () async {
+                                  await context.push(RoutePaths.account);
+                                  ref.invalidate(
+                                    subscriptionOverviewProvider,
+                                  );
+                                  await controller.refresh();
+                                },
+                                icon: const Icon(
+                                  Icons.manage_accounts_outlined,
+                                ),
+                                label: Text(localizations.accountTitle),
+                              );
+
+                              if (compact) {
+                                return Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    first,
+                                    const SizedBox(height: 10),
+                                    second,
+                                  ],
+                                );
+                              }
+
+                              return Row(
+                                children: [
+                                  Expanded(child: first),
+                                  const SizedBox(width: 10),
+                                  Expanded(child: second),
+                                ],
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -236,7 +259,7 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
                               .isNotEmpty)
                             Padding(
                               padding: const EdgeInsets.only(top: 8),
-                              child: TextButton.icon(
+                              child: FilledButton.tonalIcon(
                                 onPressed: () => _openDocument(
                                   data
                                       .verification
@@ -259,9 +282,20 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
                             label: Text(localizations.pickVerificationDocument),
                           ),
                           const SizedBox(height: 8),
-                          Text(
-                            _verificationFile?.fileName ??
-                                localizations.noFileSelected,
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainerLow,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Text(
+                                _verificationFile?.fileName ??
+                                    localizations.noFileSelected,
+                              ),
+                            ),
                           ),
                           if (_localError != null) ...[
                             const SizedBox(height: 8),
@@ -310,6 +344,7 @@ class _TrustScreenState extends ConsumerState<TrustScreen> {
                   AppSectionCard(
                     title: localizations.paymentHistoryTitle,
                     subtitle: localizations.paymentHistoryBody,
+                    leading: const Icon(Icons.receipt_long_outlined),
                     trailing: FilledButton.tonalIcon(
                       onPressed: () async {
                         await context.push(RoutePaths.reportPayment);
@@ -457,7 +492,7 @@ class _PaymentTile extends StatelessWidget {
           if ((payment.payerNotes ?? '').trim().isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(top: 12),
-              child: Text(payment.payerNotes!),
+              child: AppInlineMessage.info(message: payment.payerNotes!),
             ),
           if (onOpenDocument != null)
             Padding(

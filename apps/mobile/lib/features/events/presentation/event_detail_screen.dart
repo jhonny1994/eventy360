@@ -66,8 +66,6 @@ class EventDetailScreen extends ConsumerWidget {
                       : localizations.eventDetailsOverviewBody,
                 ),
                 AppSectionCard(
-                  title: localizations.eventDetailsTitle,
-                  subtitle: localizations.eventHeaderSummaryBody,
                   child: Column(
                     children: [
                       if (detail.organizer != null)
@@ -198,7 +196,7 @@ class EventDetailScreen extends ConsumerWidget {
                   ),
                 if (_hasAnyDescriptionContent(detail))
                   AppSectionCard(
-                    title: localizations.eventDetailsTitle,
+                    title: localizations.eventOrganizerTitle,
                     subtitle: localizations.eventOrganizerBody,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,8 +242,7 @@ class EventDetailScreen extends ConsumerWidget {
                         ],
                         if (_hasText(detail.submissionGuidelines))
                           _DetailBlock(
-                            title:
-                                localizations.eventSubmissionGuidelinesTitle,
+                            title: localizations.eventSubmissionGuidelinesTitle,
                             body: detail.submissionGuidelines!,
                             icon: Icons.rule_folder_outlined,
                           ),
@@ -257,8 +254,7 @@ class EventDetailScreen extends ConsumerWidget {
                           ),
                         if (_hasText(detail.scientificCommittees))
                           _DetailBlock(
-                            title:
-                                localizations.eventScientificCommitteeTitle,
+                            title: localizations.eventScientificCommitteeTitle,
                             body: detail.scientificCommittees!,
                             icon: Icons.groups_outlined,
                           ),

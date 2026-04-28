@@ -61,94 +61,106 @@ class _PasswordResetScreenState extends ConsumerState<PasswordResetScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (widget.isRecoveryMode) ...[
-            Form(
-              key: _updateFormKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: _obscurePassword,
-                    decoration: InputDecoration(
-                      labelText: localizations.newPassword,
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() => _obscurePassword = !_obscurePassword);
-                        },
-                        icon: Icon(
-                          _obscurePassword
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
+            _ResetSection(
+              title: localizations.updatePasswordTitle,
+              body: localizations.securityDirectPasswordBody,
+              child: Form(
+                key: _updateFormKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TextFormField(
+                      controller: _passwordController,
+                      obscureText: _obscurePassword,
+                      decoration: InputDecoration(
+                        labelText: localizations.newPassword,
+                        helperText: localizations.passwordTooShort,
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(
+                              () => _obscurePassword = !_obscurePassword,
+                            );
+                          },
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                          ),
                         ),
                       ),
+                      validator: (value) => (value == null || value.length < 8)
+                          ? localizations.passwordTooShort
+                          : null,
                     ),
-                    validator: (value) => (value == null || value.length < 8)
-                        ? localizations.passwordTooShort
-                        : null,
-                  ),
-                  const SizedBox(height: 14),
-                  TextFormField(
-                    controller: _confirmPasswordController,
-                    obscureText: _obscureConfirmPassword,
-                    decoration: InputDecoration(
-                      labelText: localizations.confirmPassword,
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(
-                            () => _obscureConfirmPassword =
-                                !_obscureConfirmPassword,
-                          );
-                        },
-                        icon: Icon(
-                          _obscureConfirmPassword
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
+                    const SizedBox(height: 14),
+                    TextFormField(
+                      controller: _confirmPasswordController,
+                      obscureText: _obscureConfirmPassword,
+                      decoration: InputDecoration(
+                        labelText: localizations.confirmPassword,
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(
+                              () => _obscureConfirmPassword =
+                                  !_obscureConfirmPassword,
+                            );
+                          },
+                          icon: Icon(
+                            _obscureConfirmPassword
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                          ),
                         ),
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return localizations.requiredField;
+                        }
+                        if (value != _passwordController.text) {
+                          return localizations.passwordsDoNotMatch;
+                        }
+                        return null;
+                      },
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return localizations.requiredField;
-                      }
-                      if (value != _passwordController.text) {
-                        return localizations.passwordsDoNotMatch;
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  FilledButton(
-                    onPressed: _submitPasswordUpdate,
-                    child: Text(localizations.updatePasswordAction),
-                  ),
-                ],
+                    const SizedBox(height: 16),
+                    FilledButton(
+                      onPressed: _submitPasswordUpdate,
+                      child: Text(localizations.updatePasswordAction),
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 18),
             Divider(color: Theme.of(context).colorScheme.outlineVariant),
             const SizedBox(height: 18),
           ],
-          Form(
-            key: _requestFormKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                TextFormField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: localizations.email,
+          _ResetSection(
+            title: localizations.sendResetLink,
+            body: localizations.resetPasswordHeroBody,
+            child: Form(
+              key: _requestFormKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  TextFormField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      labelText: localizations.email,
+                      hintText: 'name@example.com',
+                    ),
+                    validator: (value) => (value == null || value.isEmpty)
+                        ? localizations.requiredField
+                        : null,
                   ),
-                  validator: (value) => (value == null || value.isEmpty)
-                      ? localizations.requiredField
-                      : null,
-                ),
-                const SizedBox(height: 16),
-                FilledButton.tonal(
-                  onPressed: _submitResetRequest,
-                  child: Text(localizations.sendResetLink),
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  FilledButton.tonal(
+                    onPressed: _submitResetRequest,
+                    child: Text(localizations.sendResetLink),
+                  ),
+                ],
+              ),
             ),
           ),
           if (_message != null) ...[
@@ -208,5 +220,49 @@ class _PasswordResetScreenState extends ConsumerState<PasswordResetScreen> {
     } on Object {
       setState(() => _error = localizations.genericError);
     }
+  }
+}
+
+class _ResetSection extends StatelessWidget {
+  const _ResetSection({
+    required this.title,
+    required this.body,
+    required this.child,
+  });
+
+  final String title;
+  final String body;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLowest.withValues(alpha: 0.72),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.55),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              title,
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 6),
+            Text(body, style: Theme.of(context).textTheme.bodyMedium),
+            const SizedBox(height: 16),
+            child,
+          ],
+        ),
+      ),
+    );
   }
 }

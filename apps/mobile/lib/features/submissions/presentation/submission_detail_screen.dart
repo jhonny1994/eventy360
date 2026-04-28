@@ -76,7 +76,7 @@ class _SubmissionDetailScreenState
               subtitle: localizations.submissionDetailOverviewBody,
             ),
             AppSectionCard(
-              title: record.eventTitle,
+              title: localizations.submissionStatusLabel,
               subtitle: _statusNarrative(localizations, record.status),
               trailing: AppStatusBadge(
                 label: _statusLabel(localizations, record.status),
@@ -134,7 +134,8 @@ class _SubmissionDetailScreenState
                   children: [
                     AppListRow(
                       leading: const Icon(Icons.description_outlined),
-                      title: detail.fileDetails!.fileName ??
+                      title:
+                          detail.fileDetails!.fileName ??
                           localizations.repositoryPaperFileFallback,
                       subtitle: localizations.openSubmissionFileAction,
                     ),

@@ -23,12 +23,13 @@ class AppTheme {
 
   static ThemeData _themeData(ColorScheme colorScheme) {
     final isDark = colorScheme.brightness == Brightness.dark;
+    final baseTextTheme = isDark
+        ? Typography.material2021().white
+        : Typography.material2021().black;
     return ThemeData(
       colorScheme: colorScheme,
       scaffoldBackgroundColor: colorScheme.surface,
-      textTheme: isDark
-          ? Typography.material2021().white
-          : Typography.material2021().black,
+      textTheme: _textTheme(baseTextTheme, colorScheme),
       appBarTheme: _appBarTheme(colorScheme),
       inputDecorationTheme: _inputDecorationTheme(colorScheme),
       cardTheme: _cardTheme(colorScheme),
@@ -36,8 +37,49 @@ class AppTheme {
       outlinedButtonTheme: _outlinedButtonTheme(colorScheme),
       chipTheme: _chipTheme(colorScheme),
       listTileTheme: _listTileTheme(colorScheme),
+      navigationBarTheme: _navigationBarTheme(colorScheme),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: colorScheme.onPrimary,
+        circularTrackColor: colorScheme.onPrimary.withValues(alpha: 0.18),
+      ),
       snackBarTheme: _snackBarTheme(colorScheme),
       useMaterial3: true,
+    );
+  }
+
+  static TextTheme _textTheme(TextTheme base, ColorScheme colorScheme) {
+    return base.copyWith(
+      headlineMedium: base.headlineMedium?.copyWith(
+        fontWeight: FontWeight.w800,
+        letterSpacing: -0.7,
+        height: 1.12,
+      ),
+      headlineSmall: base.headlineSmall?.copyWith(
+        fontWeight: FontWeight.w800,
+        letterSpacing: -0.5,
+        height: 1.15,
+      ),
+      titleLarge: base.titleLarge?.copyWith(
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.2,
+        height: 1.2,
+      ),
+      titleMedium: base.titleMedium?.copyWith(
+        fontWeight: FontWeight.w700,
+        height: 1.24,
+      ),
+      bodyLarge: base.bodyLarge?.copyWith(
+        color: colorScheme.onSurface,
+        height: 1.42,
+      ),
+      bodyMedium: base.bodyMedium?.copyWith(
+        color: colorScheme.onSurfaceVariant,
+        height: 1.4,
+      ),
+      labelLarge: base.labelLarge?.copyWith(
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.1,
+      ),
     );
   }
 
@@ -149,6 +191,34 @@ class AppTheme {
         height: 1.3,
       ),
       iconColor: colorScheme.onSurfaceVariant,
+    );
+  }
+
+  static NavigationBarThemeData _navigationBarTheme(ColorScheme colorScheme) {
+    return NavigationBarThemeData(
+      height: 72,
+      backgroundColor: colorScheme.surface.withValues(alpha: 0.96),
+      indicatorColor: colorScheme.secondaryContainer,
+      shadowColor: colorScheme.shadow.withValues(alpha: 0.08),
+      surfaceTintColor: Colors.transparent,
+      labelTextStyle: WidgetStateProperty.resolveWith((states) {
+        final selected = states.contains(WidgetState.selected);
+        return TextStyle(
+          fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+          color: selected
+              ? colorScheme.onSurface
+              : colorScheme.onSurfaceVariant,
+        );
+      }),
+      iconTheme: WidgetStateProperty.resolveWith((states) {
+        final selected = states.contains(WidgetState.selected);
+        return IconThemeData(
+          size: 24,
+          color: selected
+              ? colorScheme.onSecondaryContainer
+              : colorScheme.onSurfaceVariant,
+        );
+      }),
     );
   }
 

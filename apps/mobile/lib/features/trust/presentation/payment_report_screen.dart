@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:eventy360/app/application/app_settings_provider.dart';
 import 'package:eventy360/core/presentation/app_feedback.dart';
 import 'package:eventy360/core/presentation/widgets/app_inline_message.dart';
+import 'package:eventy360/core/presentation/widgets/app_page_scaffold.dart';
 import 'package:eventy360/features/account/application/subscription_overview_provider.dart';
 import 'package:eventy360/features/auth/presentation/widgets/auth_scaffold.dart';
 import 'package:eventy360/features/home/application/home_subscription_provider.dart';
@@ -129,8 +130,10 @@ class _PaymentReportScreenState extends ConsumerState<PaymentReportScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              AppInlineMessage.info(
-                message: localizations.reportPaymentBody,
+              AppSectionCard(
+                title: localizations.reportPaymentTitle,
+                subtitle: localizations.reportPaymentBody,
+                child: const SizedBox.shrink(),
               ),
               if (recommendedPrice != null) ...[
                 const SizedBox(height: 16),
@@ -148,31 +151,35 @@ class _PaymentReportScreenState extends ConsumerState<PaymentReportScreen> {
                       (settings.accountNumberRib ?? '').isNotEmpty ||
                       (settings.paymentEmail ?? '').isNotEmpty)) ...[
                 const SizedBox(height: 16),
-                _InstructionCard(
+                AppSectionCard(
                   title: localizations.paymentInstructionsTitle,
-                  children: [
-                    if ((settings.bankName ?? '').isNotEmpty)
-                      _InstructionLine(
-                        label: localizations.paymentInstructionBankLabel,
-                        value: settings.bankName!,
-                      ),
-                    if ((settings.accountHolder ?? '').isNotEmpty)
-                      _InstructionLine(
-                        label:
-                            localizations.paymentInstructionAccountHolderLabel,
-                        value: settings.accountHolder!,
-                      ),
-                    if ((settings.accountNumberRib ?? '').isNotEmpty)
-                      _InstructionLine(
-                        label: localizations.paymentInstructionRibLabel,
-                        value: settings.accountNumberRib!,
-                      ),
-                    if ((settings.paymentEmail ?? '').isNotEmpty)
-                      _InstructionLine(
-                        label: localizations.paymentInstructionEmailLabel,
-                        value: settings.paymentEmail!,
-                      ),
-                  ],
+                  subtitle: localizations.paymentTrustFlowHint,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if ((settings.bankName ?? '').isNotEmpty)
+                        _InstructionLine(
+                          label: localizations.paymentInstructionBankLabel,
+                          value: settings.bankName!,
+                        ),
+                      if ((settings.accountHolder ?? '').isNotEmpty)
+                        _InstructionLine(
+                          label: localizations
+                              .paymentInstructionAccountHolderLabel,
+                          value: settings.accountHolder!,
+                        ),
+                      if ((settings.accountNumberRib ?? '').isNotEmpty)
+                        _InstructionLine(
+                          label: localizations.paymentInstructionRibLabel,
+                          value: settings.accountNumberRib!,
+                        ),
+                      if ((settings.paymentEmail ?? '').isNotEmpty)
+                        _InstructionLine(
+                          label: localizations.paymentInstructionEmailLabel,
+                          value: settings.paymentEmail!,
+                        ),
+                    ],
+                  ),
                 ),
               ],
               const SizedBox(height: 16),
@@ -186,78 +193,91 @@ class _PaymentReportScreenState extends ConsumerState<PaymentReportScreen> {
                 loading: () => const SizedBox.shrink(),
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                controller: _amountController,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                ),
-                decoration: InputDecoration(
-                  labelText: localizations.paymentAmountLabel,
-                ),
-                validator: (value) {
-                  final amount = double.tryParse((value ?? '').trim());
-                  if (amount == null || amount <= 0) {
-                    return localizations.paymentAmountError;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<BillingPeriod>(
-                initialValue: _billingPeriod,
-                items: BillingPeriod.values
-                    .map(
-                      (value) => DropdownMenuItem(
-                        value: value,
-                        child: Text(_billingPeriodLabel(localizations, value)),
+              AppSectionCard(
+                title: localizations.submitPaymentReportAction,
+                subtitle: localizations.paymentReportActivationHint,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TextFormField(
+                      controller: _amountController,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
                       ),
-                    )
-                    .toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() {
-                      _billingPeriod = value;
-                      _syncAmountFromSettings();
-                    });
-                  }
-                },
-                decoration: InputDecoration(
-                  labelText: localizations.billingPeriodLabel,
-                ),
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<PaymentMethod>(
-                initialValue: _paymentMethod,
-                items: PaymentMethod.values
-                    .map(
-                      (value) => DropdownMenuItem(
-                        value: value,
-                        child: Text(_paymentMethodLabel(localizations, value)),
+                      decoration: InputDecoration(
+                        labelText: localizations.paymentAmountLabel,
                       ),
-                    )
-                    .toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() => _paymentMethod = value);
-                  }
-                },
-                decoration: InputDecoration(
-                  labelText: localizations.paymentMethodLabel,
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _referenceController,
-                decoration: InputDecoration(
-                  labelText: localizations.referenceNumberLabel,
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _notesController,
-                maxLines: 4,
-                decoration: InputDecoration(
-                  labelText: localizations.paymentNotesLabel,
+                      validator: (value) {
+                        final amount = double.tryParse((value ?? '').trim());
+                        if (amount == null || amount <= 0) {
+                          return localizations.paymentAmountError;
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    DropdownButtonFormField<BillingPeriod>(
+                      initialValue: _billingPeriod,
+                      items: BillingPeriod.values
+                          .map(
+                            (value) => DropdownMenuItem(
+                              value: value,
+                              child: Text(
+                                _billingPeriodLabel(localizations, value),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() {
+                            _billingPeriod = value;
+                            _syncAmountFromSettings();
+                          });
+                        }
+                      },
+                      decoration: InputDecoration(
+                        labelText: localizations.billingPeriodLabel,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    DropdownButtonFormField<PaymentMethod>(
+                      initialValue: _paymentMethod,
+                      items: PaymentMethod.values
+                          .map(
+                            (value) => DropdownMenuItem(
+                              value: value,
+                              child: Text(
+                                _paymentMethodLabel(localizations, value),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() => _paymentMethod = value);
+                        }
+                      },
+                      decoration: InputDecoration(
+                        labelText: localizations.paymentMethodLabel,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _referenceController,
+                      decoration: InputDecoration(
+                        labelText: localizations.referenceNumberLabel,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _notesController,
+                      maxLines: 4,
+                      decoration: InputDecoration(
+                        labelText: localizations.paymentNotesLabel,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 12),
@@ -267,7 +287,18 @@ class _PaymentReportScreenState extends ConsumerState<PaymentReportScreen> {
                 label: Text(localizations.pickProofDocument),
               ),
               const SizedBox(height: 8),
-              Text(_selectedFile?.fileName ?? localizations.noFileSelected),
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Text(
+                    _selectedFile?.fileName ?? localizations.noFileSelected,
+                  ),
+                ),
+              ),
               if (_selectedFile != null) ...[
                 const SizedBox(height: 4),
                 Text(
@@ -356,38 +387,6 @@ class _PaymentReportScreenState extends ConsumerState<PaymentReportScreen> {
       return;
     }
     _amountController.text = price.finalPrice.toStringAsFixed(0);
-  }
-}
-
-class _InstructionCard extends StatelessWidget {
-  const _InstructionCard({
-    required this.title,
-    required this.children,
-  });
-
-  final String title;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 12),
-            ...children,
-          ],
-        ),
-      ),
-    );
   }
 }
 

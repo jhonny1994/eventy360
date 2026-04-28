@@ -39,6 +39,12 @@ class TopicSubscriptionsScreen extends ConsumerWidget {
                   icon: Icons.interests_outlined,
                   title: localizations.topicSubscriptionsTitle,
                   subtitle: localizations.topicSubscriptionsBody,
+                  trailing: AppStatusBadge(
+                    label: '${data.subscribedTopicIds.length}',
+                    tone: data.subscribedTopicIds.isEmpty
+                        ? AppStatusTone.neutral
+                        : AppStatusTone.success,
+                  ),
                 ),
                 AppSectionCard(
                   title: localizations.topicSubscriptionsManageTitle,
@@ -89,6 +95,11 @@ class TopicSubscriptionsScreen extends ConsumerWidget {
                             );
                           }).toList(),
                         ),
+                      const SizedBox(height: 14),
+                      Text(
+                        localizations.notificationPreferencesBody,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                     ],
                   ),
                 ),

@@ -5,6 +5,7 @@ import 'package:eventy360/core/presentation/app_feedback.dart';
 import 'package:eventy360/core/presentation/widgets/app_error_view.dart';
 import 'package:eventy360/core/presentation/widgets/app_inline_message.dart';
 import 'package:eventy360/core/presentation/widgets/app_loading_view.dart';
+import 'package:eventy360/core/presentation/widgets/app_modal_sheet.dart';
 import 'package:eventy360/core/presentation/widgets/app_page_scaffold.dart';
 import 'package:eventy360/features/events/application/events_controller.dart';
 import 'package:eventy360/features/events/application/events_state.dart';
@@ -151,74 +152,60 @@ Future<void> _showTopicFilters(
   required EventsState data,
 }) async {
   final localizations = S.of(context);
-  await showModalBottomSheet<void>(
+  await showAppModalSheet<void>(
     context: context,
     isScrollControlled: true,
-    showDragHandle: true,
     builder: (context) {
-      return SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                localizations.filterTopicsAction,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
+      return AppModalSheet(
+        title: localizations.filterTopicsAction,
+        subtitle: localizations.eventsTopicFilterBody,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.4,
+              child: SingleChildScrollView(
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: data.topics.map((topic) {
+                    final selected = data.selectedTopicIds.contains(topic.id);
+                    return FilterChip(
+                      label: Text(topic.name),
+                      selected: selected,
+                      onSelected: (_) {
+                        unawaited(
+                          ref
+                              .read(eventsControllerProvider.notifier)
+                              .toggleTopicFilter(topic.id),
+                        );
+                      },
+                    );
+                  }).toList(),
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                localizations.eventsTopicFilterBody,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.4,
-                child: SingleChildScrollView(
-                  child: Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: data.topics.map((topic) {
-                      final selected = data.selectedTopicIds.contains(topic.id);
-                      return FilterChip(
-                        label: Text(topic.name),
-                        selected: selected,
-                        onSelected: (_) {
-                          unawaited(
-                            ref
-                                .read(eventsControllerProvider.notifier)
-                                .toggleTopicFilter(topic.id),
-                          );
-                        },
-                      );
-                    }).toList(),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.push(RoutePaths.topics),
+                    icon: const Icon(Icons.tune_outlined),
+                    label: Text(localizations.manageTopicsAction),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () => context.push(RoutePaths.topics),
-                      icon: const Icon(Icons.tune_outlined),
-                      label: Text(localizations.manageTopicsAction),
-                    ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: FilledButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(localizations.doneAction),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: Text(localizations.doneAction),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       );
     },

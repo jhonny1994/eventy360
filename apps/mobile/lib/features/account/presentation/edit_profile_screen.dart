@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:eventy360/core/presentation/app_feedback.dart';
+import 'package:eventy360/core/presentation/widgets/app_inline_message.dart';
+import 'package:eventy360/core/presentation/widgets/app_page_scaffold.dart';
 import 'package:eventy360/features/auth/application/session_controller.dart';
 import 'package:eventy360/features/auth/domain/location_option.dart';
 import 'package:eventy360/features/auth/domain/researcher_profile.dart';
@@ -55,135 +57,134 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator.adaptive())
-          : ListView(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-              children: [
-                Text(
-                  localizations.editProfileBody,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                const SizedBox(height: 16),
-                if ((_errorMessage ?? '').isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Text(
-                      _errorMessage!,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
+          : AppPageContainer(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                children: [
+                  AppPageHero(
+                    badge: localizations.accountTitle,
+                    icon: Icons.person_outline_rounded,
+                    title: localizations.editProfileTitle,
+                    subtitle: localizations.editProfileBody,
+                  ),
+                  if ((_errorMessage ?? '').isNotEmpty)
+                    AppInlineMessage.error(message: _errorMessage!),
+                  AppSectionCard(
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            controller: _fullNameController,
+                            decoration: InputDecoration(
+                              labelText: localizations.fullName,
+                            ),
+                            validator: (value) =>
+                                (value == null || value.trim().isEmpty)
+                                ? localizations.requiredField
+                                : null,
+                          ),
+                          const SizedBox(height: 12),
+                          TextFormField(
+                            controller: _institutionController,
+                            decoration: InputDecoration(
+                              labelText: localizations.institution,
+                            ),
+                            validator: (value) =>
+                                (value == null || value.trim().isEmpty)
+                                ? localizations.requiredField
+                                : null,
+                          ),
+                          const SizedBox(height: 12),
+                          TextFormField(
+                            controller: _academicPositionController,
+                            decoration: InputDecoration(
+                              labelText: localizations.academicPositionLabel,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          TextFormField(
+                            controller: _bioController,
+                            maxLines: 4,
+                            decoration: InputDecoration(
+                              labelText: localizations.profileBioLabel,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          DropdownButtonFormField<int>(
+                            initialValue: _selectedWilayaId,
+                            items: _wilayas
+                                .map(
+                                  (wilaya) => DropdownMenuItem<int>(
+                                    value: wilaya.id,
+                                    child: Text(wilaya.name),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (value) async {
+                              setState(() {
+                                _selectedWilayaId = value;
+                                _selectedDairaId = null;
+                                _dairas = const [];
+                              });
+                              if (value != null) {
+                                await _loadDairas(value);
+                              }
+                            },
+                            decoration: InputDecoration(
+                              labelText: localizations.wilayaLabel,
+                            ),
+                            validator: (value) => value == null
+                                ? localizations.requiredField
+                                : null,
+                          ),
+                          const SizedBox(height: 12),
+                          DropdownButtonFormField<int>(
+                            initialValue: _selectedDairaId,
+                            items: _dairas
+                                .map(
+                                  (daira) => DropdownMenuItem<int>(
+                                    value: daira.id,
+                                    child: Text(daira.name),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: _loadingDairas
+                                ? null
+                                : (value) {
+                                    setState(() => _selectedDairaId = value);
+                                  },
+                            decoration: InputDecoration(
+                              labelText: localizations.dairaLabel,
+                            ),
+                            validator: (value) => value == null
+                                ? localizations.requiredField
+                                : null,
+                          ),
+                          if (_loadingDairas) ...[
+                            const SizedBox(height: 12),
+                            const LinearProgressIndicator(),
+                          ],
+                          const SizedBox(height: 20),
+                          FilledButton.icon(
+                            onPressed: _saving ? null : _save,
+                            icon: _saving
+                                ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(Icons.save_outlined),
+                            label: Text(localizations.saveProfileAction),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        controller: _fullNameController,
-                        decoration: InputDecoration(
-                          labelText: localizations.fullName,
-                        ),
-                        validator: (value) =>
-                            (value == null || value.trim().isEmpty)
-                            ? localizations.requiredField
-                            : null,
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _institutionController,
-                        decoration: InputDecoration(
-                          labelText: localizations.institution,
-                        ),
-                        validator: (value) =>
-                            (value == null || value.trim().isEmpty)
-                            ? localizations.requiredField
-                            : null,
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _academicPositionController,
-                        decoration: InputDecoration(
-                          labelText: localizations.academicPositionLabel,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _bioController,
-                        maxLines: 4,
-                        decoration: InputDecoration(
-                          labelText: localizations.profileBioLabel,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      DropdownButtonFormField<int>(
-                        initialValue: _selectedWilayaId,
-                        items: _wilayas
-                            .map(
-                              (wilaya) => DropdownMenuItem<int>(
-                                value: wilaya.id,
-                                child: Text(wilaya.name),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (value) async {
-                          setState(() {
-                            _selectedWilayaId = value;
-                            _selectedDairaId = null;
-                            _dairas = const [];
-                          });
-                          if (value != null) {
-                            await _loadDairas(value);
-                          }
-                        },
-                        decoration: InputDecoration(
-                          labelText: localizations.wilayaLabel,
-                        ),
-                        validator: (value) =>
-                            value == null ? localizations.requiredField : null,
-                      ),
-                      const SizedBox(height: 12),
-                      DropdownButtonFormField<int>(
-                        initialValue: _selectedDairaId,
-                        items: _dairas
-                            .map(
-                              (daira) => DropdownMenuItem<int>(
-                                value: daira.id,
-                                child: Text(daira.name),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: _loadingDairas
-                            ? null
-                            : (value) {
-                                setState(() => _selectedDairaId = value);
-                              },
-                        decoration: InputDecoration(
-                          labelText: localizations.dairaLabel,
-                        ),
-                        validator: (value) =>
-                            value == null ? localizations.requiredField : null,
-                      ),
-                      if (_loadingDairas) ...[
-                        const SizedBox(height: 12),
-                        const LinearProgressIndicator(),
-                      ],
-                      const SizedBox(height: 20),
-                      FilledButton.icon(
-                        onPressed: _saving ? null : _save,
-                        icon: _saving
-                            ? const SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Icon(Icons.save_outlined),
-                        label: Text(localizations.saveProfileAction),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
     );
   }

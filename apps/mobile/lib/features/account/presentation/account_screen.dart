@@ -3,6 +3,7 @@ import 'package:eventy360/app/localization/locale_controller.dart';
 import 'package:eventy360/app/router/route_paths.dart';
 import 'package:eventy360/app/theme/theme_mode_controller.dart';
 import 'package:eventy360/core/presentation/app_feedback.dart';
+import 'package:eventy360/core/presentation/widgets/app_modal_sheet.dart';
 import 'package:eventy360/core/presentation/widgets/app_page_scaffold.dart';
 import 'package:eventy360/features/account/application/subscription_overview_provider.dart';
 import 'package:eventy360/features/auth/application/session_controller.dart';
@@ -35,6 +36,13 @@ class AccountScreen extends ConsumerWidget {
         subscriptionState.asData?.value.isTrial == true;
     final notificationPermissionGranted =
         notificationState.asData?.value.permissionGranted == true;
+    final profileReady = session?.profileCompleted == true;
+    final accountHealthScore = [
+      profileReady,
+      isVerified,
+      hasPremiumSubscription,
+      notificationPermissionGranted,
+    ].where((value) => value).length;
 
     return Scaffold(
       appBar: AppBar(
@@ -49,10 +57,16 @@ class AccountScreen extends ConsumerWidget {
               icon: Icons.manage_accounts_outlined,
               title: localizations.accountHeroTitle,
               subtitle: localizations.accountHeroBody,
+              trailing: AppStatusBadge(
+                label: '$accountHealthScore/4',
+                tone: accountHealthScore >= 3
+                    ? AppStatusTone.success
+                    : AppStatusTone.info,
+              ),
             ),
             AppSectionCard(
               title: localizations.accountOverviewTitle,
-              leading: const Icon(Icons.account_circle_outlined),
+              leading: const _SectionBadge(icon: Icons.account_circle_outlined),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -67,6 +81,14 @@ class AccountScreen extends ConsumerWidget {
                     spacing: 12,
                     runSpacing: 12,
                     children: [
+                      AppStatusBadge(
+                        label: profileReady
+                            ? localizations.editProfileTitle
+                            : localizations.editProfileTitle,
+                        tone: profileReady
+                            ? AppStatusTone.success
+                            : AppStatusTone.info,
+                      ),
                       AppStatusBadge(
                         label: isVerified
                             ? localizations.verifiedStatus
@@ -93,12 +115,38 @@ class AccountScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 14),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: [
+                      FilledButton.tonalIcon(
+                        onPressed: () async {
+                          await context.push(RoutePaths.accountProfile);
+                          _refreshAccountData(ref);
+                        },
+                        icon: const Icon(Icons.person_outline_rounded),
+                        label: Text(localizations.editProfileTitle),
+                      ),
+                      FilledButton.tonalIcon(
+                        onPressed: () async {
+                          await context.push(RoutePaths.trust);
+                          _refreshAccountData(ref);
+                        },
+                        icon: const Icon(Icons.verified_user_outlined),
+                        label: Text(localizations.trustCenterTitle),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
             AppSectionCard(
               title: localizations.subscriptionStatusTitle,
               subtitle: localizations.subscriptionOverviewBody,
+              leading: const _SectionBadge(
+                icon: Icons.workspace_premium_outlined,
+              ),
               child: subscriptionOverview.when(
                 data: (overview) {
                   final bankName = appSettings.asData?.value?.bankName;
@@ -140,32 +188,47 @@ class AccountScreen extends ConsumerWidget {
                         ),
                       ],
                       const SizedBox(height: 14),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: FilledButton.tonalIcon(
-                              onPressed: () async {
-                                await context.push(RoutePaths.trust);
-                                _refreshAccountData(ref);
-                              },
-                              icon: const Icon(Icons.receipt_long_outlined),
-                              label: Text(
-                                localizations.subscriptionHistoryAction,
-                              ),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final compact = constraints.maxWidth < 560;
+                          final first = FilledButton.tonalIcon(
+                            onPressed: () async {
+                              await context.push(RoutePaths.trust);
+                              _refreshAccountData(ref);
+                            },
+                            icon: const Icon(Icons.receipt_long_outlined),
+                            label: Text(
+                              localizations.subscriptionHistoryAction,
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: FilledButton.icon(
-                              onPressed: () async {
-                                await context.push(RoutePaths.reportPayment);
-                                _refreshAccountData(ref);
-                              },
-                              icon: const Icon(Icons.upload_file_outlined),
-                              label: Text(localizations.reportPaymentTitle),
-                            ),
-                          ),
-                        ],
+                          );
+                          final second = FilledButton.icon(
+                            onPressed: () async {
+                              await context.push(RoutePaths.reportPayment);
+                              _refreshAccountData(ref);
+                            },
+                            icon: const Icon(Icons.upload_file_outlined),
+                            label: Text(localizations.reportPaymentTitle),
+                          );
+
+                          if (compact) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                first,
+                                const SizedBox(height: 10),
+                                second,
+                              ],
+                            );
+                          }
+
+                          return Row(
+                            children: [
+                              Expanded(child: first),
+                              const SizedBox(width: 10),
+                              Expanded(child: second),
+                            ],
+                          );
+                        },
                       ),
                     ],
                   );
@@ -177,6 +240,7 @@ class AccountScreen extends ConsumerWidget {
             AppSectionCard(
               title: localizations.preferencesTitle,
               subtitle: localizations.preferencesBody,
+              leading: const _SectionBadge(icon: Icons.tune_outlined),
               child: Column(
                 children: [
                   _PreferenceTile(
@@ -216,6 +280,7 @@ class AccountScreen extends ConsumerWidget {
             AppSectionCard(
               title: localizations.researcherAccessTitle,
               subtitle: localizations.researcherAccessBody,
+              leading: const _SectionBadge(icon: Icons.hub_outlined),
               child: Column(
                 children: [
                   _PreferenceTile(
@@ -272,10 +337,12 @@ class AccountScreen extends ConsumerWidget {
             ),
             AppSectionCard(
               title: localizations.accountActionsTitle,
+              leading: const _SectionBadge(icon: Icons.logout_outlined),
+              subtitle: email,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  FilledButton.tonalIcon(
+                  OutlinedButton.icon(
                     onPressed: () async {
                       await ref
                           .read(sessionControllerProvider.notifier)
@@ -296,42 +363,39 @@ class AccountScreen extends ConsumerWidget {
   Future<void> _showLanguageSheet(BuildContext context, WidgetRef ref) async {
     final localizations = S.of(context);
     final current = ref.read(localeControllerProvider);
-    await showModalBottomSheet<void>(
+    await showAppModalSheet<void>(
       context: context,
-      showDragHandle: true,
       builder: (context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+        return AppModalSheet(
+          title: localizations.languagePreferenceTitle,
+          subtitle: localizations.preferencesBody,
+          child: AppModalSheetSection(
             children: [
-              ListTile(
-                title: Text(localizations.languageEnglish),
-                trailing: current?.languageCode == 'en'
-                    ? const Icon(Icons.check_rounded)
-                    : null,
+              AppModalSheetOption(
+                label: localizations.languageEnglish,
+                selected: current?.languageCode == 'en',
                 onTap: () async {
                   await ref
                       .read(localeControllerProvider.notifier)
                       .setLocale(const Locale('en'));
                   AppFeedback.showSuccess(
-                    localizations.languagePreferenceTitle,
+                    localizations.languageUpdatedSuccess,
                   );
                   if (context.mounted) {
                     Navigator.of(context).pop();
                   }
                 },
               ),
-              ListTile(
-                title: Text(localizations.languageArabic),
-                trailing: current?.languageCode == 'ar'
-                    ? const Icon(Icons.check_rounded)
-                    : null,
+              const Divider(height: 1),
+              AppModalSheetOption(
+                label: localizations.languageArabic,
+                selected: current?.languageCode == 'ar',
                 onTap: () async {
                   await ref
                       .read(localeControllerProvider.notifier)
                       .setLocale(const Locale('ar'));
                   AppFeedback.showSuccess(
-                    localizations.languagePreferenceTitle,
+                    localizations.languageUpdatedSuccess,
                   );
                   if (context.mounted) {
                     Navigator.of(context).pop();
@@ -348,54 +412,50 @@ class AccountScreen extends ConsumerWidget {
   Future<void> _showThemeSheet(BuildContext context, WidgetRef ref) async {
     final localizations = S.of(context);
     final current = ref.read(themeModeControllerProvider);
-    await showModalBottomSheet<void>(
+    await showAppModalSheet<void>(
       context: context,
-      showDragHandle: true,
       builder: (context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+        return AppModalSheet(
+          title: localizations.themePreferenceTitle,
+          subtitle: localizations.preferencesBody,
+          child: AppModalSheetSection(
             children: [
-              ListTile(
-                title: Text(localizations.themeSystem),
-                trailing: current == ThemeMode.system
-                    ? const Icon(Icons.check_rounded)
-                    : null,
+              AppModalSheetOption(
+                label: localizations.themeSystem,
+                selected: current == ThemeMode.system,
                 onTap: () async {
                   await ref
                       .read(themeModeControllerProvider.notifier)
                       .setThemeMode(ThemeMode.system);
-                  AppFeedback.showSuccess(localizations.themePreferenceTitle);
+                  AppFeedback.showSuccess(localizations.themeUpdatedSuccess);
                   if (context.mounted) {
                     Navigator.of(context).pop();
                   }
                 },
               ),
-              ListTile(
-                title: Text(localizations.themeLight),
-                trailing: current == ThemeMode.light
-                    ? const Icon(Icons.check_rounded)
-                    : null,
+              const Divider(height: 1),
+              AppModalSheetOption(
+                label: localizations.themeLight,
+                selected: current == ThemeMode.light,
                 onTap: () async {
                   await ref
                       .read(themeModeControllerProvider.notifier)
                       .setThemeMode(ThemeMode.light);
-                  AppFeedback.showSuccess(localizations.themePreferenceTitle);
+                  AppFeedback.showSuccess(localizations.themeUpdatedSuccess);
                   if (context.mounted) {
                     Navigator.of(context).pop();
                   }
                 },
               ),
-              ListTile(
-                title: Text(localizations.themeDark),
-                trailing: current == ThemeMode.dark
-                    ? const Icon(Icons.check_rounded)
-                    : null,
+              const Divider(height: 1),
+              AppModalSheetOption(
+                label: localizations.themeDark,
+                selected: current == ThemeMode.dark,
                 onTap: () async {
                   await ref
                       .read(themeModeControllerProvider.notifier)
                       .setThemeMode(ThemeMode.dark);
-                  AppFeedback.showSuccess(localizations.themePreferenceTitle);
+                  AppFeedback.showSuccess(localizations.themeUpdatedSuccess);
                   if (context.mounted) {
                     Navigator.of(context).pop();
                   }
@@ -414,58 +474,44 @@ class AccountScreen extends ConsumerWidget {
   ) async {
     final localizations = S.of(context);
     final controller = ref.read(notificationControllerProvider.notifier);
-    await showModalBottomSheet<void>(
+    await showAppModalSheet<void>(
       context: context,
-      showDragHandle: true,
       builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  localizations.notificationPreferencesTitle,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  localizations.notificationPreferencesBody,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 16),
-                FilledButton.icon(
-                  onPressed: () async {
-                    await controller.requestPermissionForTopicIntent();
-                    AppFeedback.showInfo(
-                      localizations.notificationPreferencesTitle,
-                    );
-                    if (context.mounted) {
-                      Navigator.of(context).pop();
-                    }
-                  },
-                  icon: const Icon(Icons.notifications_active_outlined),
-                  label: Text(localizations.enableNotificationsAction),
-                ),
-                const SizedBox(height: 10),
-                OutlinedButton.icon(
-                  onPressed: () async {
-                    await permissions.openAppSettings();
-                    AppFeedback.showInfo(
-                      localizations.openSystemSettingsAction,
-                    );
-                    if (context.mounted) {
-                      Navigator.of(context).pop();
-                    }
-                  },
-                  icon: const Icon(Icons.open_in_new_outlined),
-                  label: Text(localizations.openSystemSettingsAction),
-                ),
-              ],
-            ),
+        return AppModalSheet(
+          title: localizations.notificationPreferencesTitle,
+          subtitle: localizations.notificationPreferencesBody,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              FilledButton.icon(
+                onPressed: () async {
+                  await controller.requestPermissionForTopicIntent();
+                  AppFeedback.showInfo(
+                    localizations.notificationPreferencesTitle,
+                  );
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                },
+                icon: const Icon(Icons.notifications_active_outlined),
+                label: Text(localizations.enableNotificationsAction),
+              ),
+              const SizedBox(height: 10),
+              OutlinedButton.icon(
+                onPressed: () async {
+                  await permissions.openAppSettings();
+                  AppFeedback.showInfo(
+                    localizations.openSystemSettingsAction,
+                  );
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                },
+                icon: const Icon(Icons.open_in_new_outlined),
+                label: Text(localizations.openSystemSettingsAction),
+              ),
+            ],
           ),
         );
       },
@@ -530,6 +576,27 @@ class _PreferenceTile extends StatelessWidget {
       subtitle: subtitle,
       trailing: const Icon(Icons.chevron_right_rounded),
       onTap: onTap,
+      stackTrailingOnCompact: false,
+    );
+  }
+}
+
+class _SectionBadge extends StatelessWidget {
+  const _SectionBadge({required this.icon});
+
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Container(
+      width: 44,
+      height: 44,
+      decoration: BoxDecoration(
+        color: colorScheme.primaryContainer,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Icon(icon, color: colorScheme.onPrimaryContainer),
     );
   }
 }

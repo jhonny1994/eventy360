@@ -386,7 +386,8 @@ class SupabaseEventsRepository implements EventsRepository {
             institutionType: organizerRow['institution_type']?.toString(),
             profilePictureUrl: organizerRow['profile_picture_url']?.toString(),
             isVerified:
-                (organizerRow['profiles'] as Map<String, dynamic>?)?['is_verified'] ==
+                (organizerRow['profiles']
+                    as Map<String, dynamic>?)?['is_verified'] ==
                 true,
           );
         }
@@ -406,8 +407,8 @@ class SupabaseEventsRepository implements EventsRepository {
       ].whereType<String>().where((value) => value.trim().isNotEmpty).toList();
 
       final bookmarkedIds = await getBookmarkedEventIds();
-      final translations =
-          (eventRow['event_name_translations'] as Map?)?.cast<String, dynamic>();
+      final translations = (eventRow['event_name_translations'] as Map?)
+          ?.cast<String, dynamic>();
       return EventDetail(
         id: eventRow['id'].toString(),
         title:

@@ -51,6 +51,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Text(
+              localizations.signInHeroBody,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 18),
             TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
@@ -59,7 +64,10 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 AutofillHints.email,
               ],
               textInputAction: TextInputAction.next,
-              decoration: InputDecoration(labelText: localizations.email),
+              decoration: InputDecoration(
+                labelText: localizations.email,
+                hintText: 'name@example.com',
+              ),
               validator: (value) => (value == null || value.isEmpty)
                   ? localizations.requiredField
                   : null,
@@ -94,6 +102,13 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               child: TextButton(
                 onPressed: () => context.go(RoutePaths.resetPassword),
                 child: Text(localizations.forgotPassword),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              localizations.securityBody,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
             if (_error != null) ...[

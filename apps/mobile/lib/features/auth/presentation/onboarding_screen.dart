@@ -55,9 +55,20 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 
+  Future<void> _onBackAction() async {
+    if (_currentStep == 0) {
+      return;
+    }
+    await _pageController.previousPage(
+      duration: const Duration(milliseconds: 220),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final localizations = S.of(context);
+    final materialLocalizations = MaterialLocalizations.of(context);
     final theme = Theme.of(context);
     final steps = [
       _OnboardingStep(
@@ -108,6 +119,26 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   localizations.onboardingBody,
                   style: theme.textTheme.bodyLarge,
                 ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: LinearProgressIndicator(
+                        value: (_currentStep + 1) / steps.length,
+                        minHeight: 8,
+                        borderRadius: BorderRadius.circular(999),
+                        backgroundColor: theme.colorScheme.surfaceContainerHigh,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      '${_currentStep + 1}/${steps.length}',
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 24),
                 Expanded(
                   child: PageView.builder(
@@ -124,27 +155,51 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                height: 56,
-                                width: 56,
-                                decoration: BoxDecoration(
-                                  color: theme.colorScheme.primaryContainer,
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Icon(
-                                  step.icon,
-                                  color: theme.colorScheme.onPrimaryContainer,
-                                ),
+                              Row(
+                                children: [
+                                  Container(
+                                    height: 56,
+                                    width: 56,
+                                    decoration: BoxDecoration(
+                                      color: theme.colorScheme.primaryContainer,
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    child: Icon(
+                                      step.icon,
+                                      color:
+                                          theme.colorScheme.onPrimaryContainer,
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: theme.colorScheme.surfaceContainer,
+                                      borderRadius: BorderRadius.circular(999),
+                                    ),
+                                    child: Text(
+                                      '${index + 1}',
+                                      style: theme.textTheme.labelLarge,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 24),
                               Text(
                                 step.title,
-                                style: theme.textTheme.titleLarge,
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                ),
                               ),
                               const SizedBox(height: 12),
                               Text(
                                 step.body,
-                                style: theme.textTheme.bodyLarge,
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
                               ),
                             ],
                           ),
@@ -176,19 +231,34 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Semantics(
-                  button: true,
-                  label: _currentStep == steps.length - 1
-                      ? localizations.getStarted
-                      : localizations.continueAction,
-                  child: FilledButton(
-                    onPressed: () => _onPrimaryAction(context, steps.length),
-                    child: Text(
-                      _currentStep == steps.length - 1
-                          ? localizations.getStarted
-                          : localizations.continueAction,
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: _currentStep == 0 ? null : _onBackAction,
+                        child: Text(materialLocalizations.backButtonTooltip),
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: Semantics(
+                        button: true,
+                        label: _currentStep == steps.length - 1
+                            ? localizations.getStarted
+                            : localizations.continueAction,
+                        child: FilledButton(
+                          onPressed: () =>
+                              _onPrimaryAction(context, steps.length),
+                          child: Text(
+                            _currentStep == steps.length - 1
+                                ? localizations.getStarted
+                                : localizations.continueAction,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

@@ -3,6 +3,7 @@ import 'package:eventy360/core/presentation/app_feedback.dart';
 import 'package:eventy360/core/presentation/widgets/app_error_view.dart';
 import 'package:eventy360/core/presentation/widgets/app_inline_message.dart';
 import 'package:eventy360/core/presentation/widgets/app_loading_view.dart';
+import 'package:eventy360/core/presentation/widgets/app_modal_sheet.dart';
 import 'package:eventy360/core/presentation/widgets/app_page_scaffold.dart';
 import 'package:eventy360/features/account/application/subscription_overview_provider.dart';
 import 'package:eventy360/features/home/application/home_subscription_provider.dart';
@@ -266,79 +267,65 @@ Future<void> _showRepositoryFilters(
   required RepositoryState data,
 }) async {
   final localizations = S.of(context);
-  await showModalBottomSheet<void>(
+  await showAppModalSheet<void>(
     context: context,
-    showDragHandle: true,
     builder: (context) {
-      return SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                localizations.filterTopicsAction,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
+      return AppModalSheet(
+        title: localizations.filterTopicsAction,
+        subtitle: localizations.repositoryFilterBody,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            DropdownButtonFormField<int?>(
+              initialValue: data.selectedWilayaId,
+              items: [
+                DropdownMenuItem(
+                  child: Text(localizations.repositoryAllWilayas),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                localizations.repositoryFilterBody,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<int?>(
-                initialValue: data.selectedWilayaId,
-                items: [
-                  DropdownMenuItem(
-                    child: Text(localizations.repositoryAllWilayas),
-                  ),
-                  ...data.wilayas.map(
-                    (wilaya) => DropdownMenuItem<int?>(
-                      value: wilaya.id,
-                      child: Text(wilaya.name),
-                    ),
-                  ),
-                ],
-                onChanged: (value) => ref
-                    .read(repositoryControllerProvider.notifier)
-                    .updateWilayaFilter(value),
-                decoration: InputDecoration(
-                  labelText: localizations.wilayaLabel,
-                ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.35,
-                child: SingleChildScrollView(
-                  child: Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: data.topics.map((topic) {
-                      final selected = data.selectedTopicIds.contains(topic.id);
-                      return FilterChip(
-                        label: Text(topic.name),
-                        selected: selected,
-                        onSelected: (_) => ref
-                            .read(repositoryControllerProvider.notifier)
-                            .toggleTopicFilter(topic.id),
-                      );
-                    }).toList(),
+                ...data.wilayas.map(
+                  (wilaya) => DropdownMenuItem<int?>(
+                    value: wilaya.id,
+                    child: Text(wilaya.name),
                   ),
                 ),
+              ],
+              onChanged: (value) => ref
+                  .read(repositoryControllerProvider.notifier)
+                  .updateWilayaFilter(value),
+              decoration: InputDecoration(
+                labelText: localizations.wilayaLabel,
               ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(localizations.doneAction),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.35,
+              child: SingleChildScrollView(
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: data.topics.map((topic) {
+                    final selected = data.selectedTopicIds.contains(topic.id);
+                    return FilterChip(
+                      label: Text(topic.name),
+                      selected: selected,
+                      onSelected: (_) => ref
+                          .read(repositoryControllerProvider.notifier)
+                          .toggleTopicFilter(topic.id),
+                    );
+                  }).toList(),
                 ),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(localizations.doneAction),
+              ),
+            ),
+          ],
         ),
       );
     },
@@ -452,10 +439,10 @@ class _RepositoryFilterSummaryRow extends StatelessWidget {
     final wilayaSummary = data.selectedWilayaId == null
         ? localizations.repositoryAllWilayas
         : data.wilayas
-                .where((wilaya) => wilaya.id == data.selectedWilayaId)
-                .firstOrNull
-                ?.name ??
-            localizations.repositoryAllWilayas;
+                  .where((wilaya) => wilaya.id == data.selectedWilayaId)
+                  .firstOrNull
+                  ?.name ??
+              localizations.repositoryAllWilayas;
 
     return Row(
       children: [

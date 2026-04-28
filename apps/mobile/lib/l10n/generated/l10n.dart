@@ -579,10 +579,10 @@ class S {
     );
   }
 
-  /// `Manage trust, preferences, language, theme, and alerts from one clear place.`
+  /// `Manage your profile, verification, preferences, and alerts from one reliable account center.`
   String get accountHeroBody {
     return Intl.message(
-      'Manage trust, preferences, language, theme, and alerts from one clear place.',
+      'Manage your profile, verification, preferences, and alerts from one reliable account center.',
       name: 'accountHeroBody',
       desc: '',
       args: [],
@@ -619,10 +619,10 @@ class S {
     );
   }
 
-  /// `Keep your name, institution, academic role, and location accurate so event and trust workflows stay aligned.`
+  /// `Keep your identity, institution, role, and location accurate for smoother event and verification workflows.`
   String get editProfileBody {
     return Intl.message(
-      'Keep your name, institution, academic role, and location accurate so event and trust workflows stay aligned.',
+      'Keep your identity, institution, role, and location accurate for smoother event and verification workflows.',
       name: 'editProfileBody',
       desc: '',
       args: [],
@@ -674,10 +674,10 @@ class S {
     return Intl.message('Security', name: 'securityTitle', desc: '', args: []);
   }
 
-  /// `Protect your account access and keep your credentials current from a dedicated security surface.`
+  /// `Review password access and account protection from one dedicated security screen.`
   String get securityBody {
     return Intl.message(
-      'Protect your account access and keep your credentials current from a dedicated security surface.',
+      'Review password access and account protection from one dedicated security screen.',
       name: 'securityBody',
       desc: '',
       args: [],
@@ -714,10 +714,10 @@ class S {
     );
   }
 
-  /// `Adjust appearance, language, and alert behavior without leaving the app flow.`
+  /// `Choose language, appearance, and alert behavior without leaving your main workflow.`
   String get preferencesBody {
     return Intl.message(
-      'Adjust appearance, language, and alert behavior without leaving the app flow.',
+      'Choose language, appearance, and alert behavior without leaving your main workflow.',
       name: 'preferencesBody',
       desc: '',
       args: [],
@@ -754,10 +754,10 @@ class S {
     );
   }
 
-  /// `Control how the app handles topic alerts and open system settings if Android has already blocked notifications.`
+  /// `Manage topic alerts here, and open system settings if notifications are blocked on your device.`
   String get notificationPreferencesBody {
     return Intl.message(
-      'Control how the app handles topic alerts and open system settings if Android has already blocked notifications.',
+      'Manage topic alerts here, and open system settings if notifications are blocked on your device.',
       name: 'notificationPreferencesBody',
       desc: '',
       args: [],
@@ -784,20 +784,20 @@ class S {
     );
   }
 
-  /// `Topic alerts are available when you subscribe to relevant subjects.`
+  /// `Topic alerts are ready when you subscribe to relevant research subjects.`
   String get notificationsEnabledBody {
     return Intl.message(
-      'Topic alerts are available when you subscribe to relevant subjects.',
+      'Topic alerts are ready when you subscribe to relevant research subjects.',
       name: 'notificationsEnabledBody',
       desc: '',
       args: [],
     );
   }
 
-  /// `Enable notifications so important topic alerts can reach you on time.`
+  /// `Enable notifications so important research alerts reach you on time.`
   String get notificationsDisabledBody {
     return Intl.message(
-      'Enable notifications so important topic alerts can reach you on time.',
+      'Enable notifications so important research alerts reach you on time.',
       name: 'notificationsDisabledBody',
       desc: '',
       args: [],
@@ -904,10 +904,10 @@ class S {
     );
   }
 
-  /// `Open profile, verification, saved events, and security tools from one clear section.`
+  /// `Open profile, security, verification, and saved research tools from one organized section.`
   String get researcherAccessBody {
     return Intl.message(
-      'Open profile, verification, saved events, and security tools from one clear section.',
+      'Open profile, security, verification, and saved research tools from one organized section.',
       name: 'researcherAccessBody',
       desc: '',
       args: [],
@@ -924,10 +924,10 @@ class S {
     );
   }
 
-  /// `Manage your research interests and notification topics.`
+  /// `Choose the research topics you want to follow and receive alerts for.`
   String get topicSubscriptionsBody {
     return Intl.message(
-      'Manage your research interests and notification topics.',
+      'Choose the research topics you want to follow and receive alerts for.',
       name: 'topicSubscriptionsBody',
       desc: '',
       args: [],
@@ -944,10 +944,10 @@ class S {
     );
   }
 
-  /// `Return to the events you shortlisted without rebuilding your search from scratch.`
+  /// `Return to the events you saved without rebuilding your search.`
   String get savedEventsBody {
     return Intl.message(
-      'Return to the events you shortlisted without rebuilding your search from scratch.',
+      'Return to the events you saved without rebuilding your search.',
       name: 'savedEventsBody',
       desc: '',
       args: [],
@@ -1104,40 +1104,40 @@ class S {
     );
   }
 
-  /// `Action needed`
+  /// `Action required`
   String get homeAttentionTitle {
     return Intl.message(
-      'Action needed',
+      'Action required',
       name: 'homeAttentionTitle',
       desc: '',
       args: [],
     );
   }
 
-  /// `Verification is still unfinished. Resolve it from Account so trust-gated researcher flows stay available.`
+  /// `Your verification is still incomplete. Finish it from Account to keep trusted researcher workflows available.`
   String get homeVerificationAttentionBody {
     return Intl.message(
-      'Verification is still unfinished. Resolve it from Account so trust-gated researcher flows stay available.',
+      'Your verification is still incomplete. Finish it from Account to keep trusted researcher workflows available.',
       name: 'homeVerificationAttentionBody',
       desc: '',
       args: [],
     );
   }
 
-  /// `Premium access is not active yet. Resolve billing from Account when you need repository or premium researcher access.`
+  /// `Premium access is not active yet. Complete billing from Account when you need repository or premium researcher access.`
   String get homeSubscriptionAttentionBody {
     return Intl.message(
-      'Premium access is not active yet. Resolve billing from Account when you need repository or premium researcher access.',
+      'Premium access is not active yet. Complete billing from Account when you need repository or premium researcher access.',
       name: 'homeSubscriptionAttentionBody',
       desc: '',
       args: [],
     );
   }
 
-  /// `Review your current access, see whether renewal is needed, and submit the next payment proof without leaving account flow.`
+  /// `Review your current access, check whether renewal is needed, and submit the next payment proof without leaving Account.`
   String get subscriptionOverviewBody {
     return Intl.message(
-      'Review your current access, see whether renewal is needed, and submit the next payment proof without leaving account flow.',
+      'Review your current access, check whether renewal is needed, and submit the next payment proof without leaving Account.',
       name: 'subscriptionOverviewBody',
       desc: '',
       args: [],
@@ -1328,10 +1328,10 @@ class S {
     );
   }
 
-  /// `Keep your trust, subscription, deadline, and submission state visible at a glance.`
+  /// `Keep verification, subscription, deadlines, and submission progress visible at a glance.`
   String get homeStateSummaryBody {
     return Intl.message(
-      'Keep your trust, subscription, deadline, and submission state visible at a glance.',
+      'Keep verification, subscription, deadlines, and submission progress visible at a glance.',
       name: 'homeStateSummaryBody',
       desc: '',
       args: [],
@@ -2636,10 +2636,10 @@ class S {
     );
   }
 
-  /// `Upload verification documents, review payment reports, and keep premium access moving from one secure place.`
+  /// `Upload verification documents, review payment reports, and manage premium access from one secure place.`
   String get trustOverviewBody {
     return Intl.message(
-      'Upload verification documents, review payment reports, and keep premium access moving from one secure place.',
+      'Upload verification documents, review payment reports, and manage premium access from one secure place.',
       name: 'trustOverviewBody',
       desc: '',
       args: [],
@@ -2786,10 +2786,10 @@ class S {
     );
   }
 
-  /// `These are the proofs you already submitted and the review decisions attached to each one.`
+  /// `Review the payment proofs you already submitted and the decision attached to each one.`
   String get paymentHistoryBody {
     return Intl.message(
-      'These are the proofs you already submitted and the review decisions attached to each one.',
+      'Review the payment proofs you already submitted and the decision attached to each one.',
       name: 'paymentHistoryBody',
       desc: '',
       args: [],
@@ -2806,10 +2806,10 @@ class S {
     );
   }
 
-  /// `Submit billing details and proof once so the team can validate your subscription access quickly and accurately.`
+  /// `Submit billing details and proof so the team can validate your subscription access quickly and accurately.`
   String get reportPaymentOverviewBody {
     return Intl.message(
-      'Submit billing details and proof once so the team can validate your subscription access quickly and accurately.',
+      'Submit billing details and proof so the team can validate your subscription access quickly and accurately.',
       name: 'reportPaymentOverviewBody',
       desc: '',
       args: [],
@@ -2886,10 +2886,10 @@ class S {
     );
   }
 
-  /// `Use this space to review your current subscription state, then submit a new payment proof whenever you need to activate or renew access.`
+  /// `Review your current subscription state here, then submit a new payment proof whenever you need to activate or renew access.`
   String get paymentTrustFlowHint {
     return Intl.message(
-      'Use this space to review your current subscription state, then submit a new payment proof whenever you need to activate or renew access.',
+      'Review your current subscription state here, then submit a new payment proof whenever you need to activate or renew access.',
       name: 'paymentTrustFlowHint',
       desc: '',
       args: [],
