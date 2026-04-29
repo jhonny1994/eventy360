@@ -36,36 +36,36 @@
 
 ## ما تحصل عليه ✨
 
-| &nbsp; | الميزة | ما تحصل عليه فعلاً |
-|:---:|:---|:---|
-| 🔍 | **اكتشاف الفعاليات** | تصفح النداءات البحثية النشطة وصفِّها حسب الموضوع والموقع، واحفظ ما يناسب مسارك لوقت لاحق |
-| 📄 | **تقديم الأبحاث** | قدِّم ملخصاتك وبحوثك الكاملة ومراجعاتك عبر مسار موحَّد وواضح الحالة في كل خطوة |
-| 🔔 | **تنبيهات بحثية ذكية** | اشترك في الموضوعات العلمية التي تهمك وتلقَّ إشعارات في اللحظة المناسبة |
-| ✅ | **توثيق الهوية الأكاديمية** | أثبت صفتك كباحث عبر مسار مستندي آمن ويُعالَج من فريق متخصص |
-| 📚 | **مكتبة الأبحاث** | تصفح الأبحاث المنشورة وابحث فيها وحمِّلها عبر روابط محمية |
-| 💳 | **الاشتراك والفوترة** | تابع مستوى وصولك وأرسل إثبات الدفع مباشرة من التطبيق دون مراسلات خارجية |
-| 🌙 | **وضع داكن وفاتح** | تجربة بصرية مريحة تتكيف تلقائياً مع إعدادات جهازك |
-| 🌐 | **ثلاث لغات** | العربية · الفرنسية · الإنجليزية مع دعم كامل لاتجاه الكتابة من اليمين إلى اليسار |
+<table dir="rtl" width="100%">
+<thead>
+<tr><th width="5%" align="center">&nbsp;</th><th width="22%" align="right">الميزة</th><th align="right">ما تحصل عليه فعلاً</th></tr>
+</thead>
+<tbody>
+<tr><td align="center">🔍</td><td align="right"><b>اكتشاف الفعاليات</b></td><td align="right">تصفح النداءات البحثية النشطة وصفِّها حسب الموضوع والموقع، واحفظ ما يناسب مسارك لوقت لاحق</td></tr>
+<tr><td align="center">📄</td><td align="right"><b>تقديم الأبحاث</b></td><td align="right">قدِّم ملخصاتك وبحوثك الكاملة ومراجعاتك عبر مسار موحَّد وواضح الحالة في كل خطوة</td></tr>
+<tr><td align="center">🔔</td><td align="right"><b>تنبيهات بحثية ذكية</b></td><td align="right">اشترك في الموضوعات العلمية التي تهمك وتلقَّ إشعارات في اللحظة المناسبة</td></tr>
+<tr><td align="center">✅</td><td align="right"><b>توثيق الهوية الأكاديمية</b></td><td align="right">أثبت صفتك كباحث عبر مسار مستندي آمن ويُعالَج من فريق متخصص</td></tr>
+<tr><td align="center">📚</td><td align="right"><b>مكتبة الأبحاث</b></td><td align="right">تصفح الأبحاث المنشورة وابحث فيها وحمِّلها عبر روابط محمية</td></tr>
+<tr><td align="center">💳</td><td align="right"><b>الاشتراك والفوترة</b></td><td align="right">تابع مستوى وصولك وأرسل إثبات الدفع مباشرة من التطبيق دون مراسلات خارجية</td></tr>
+<tr><td align="center">🌙</td><td align="right"><b>وضع داكن وفاتح</b></td><td align="right">تجربة بصرية مريحة تتكيف تلقائياً مع إعدادات جهازك</td></tr>
+<tr><td align="center">🌐</td><td align="right"><b>ثلاث لغات</b></td><td align="right">العربية · الفرنسية · الإنجليزية مع دعم كامل لاتجاه الكتابة من اليمين إلى اليسار</td></tr>
+</tbody>
+</table>
 
 <br/>
 
 ## المنصة متاحة على 📲
 
-<br/>
-
-</div>
-
-<div align="center">
-
-| | المنصة | الوصول |
-|:---:|:---|:---|
-| 🌐 | **الموقع الإلكتروني** | متاح الآن على [eventy360.vercel.app](https://eventy360.vercel.app) |
-| 📱 | **تطبيق Android** | [تحميل أحدث إصدار](https://github.com/jhonny1994/eventy360/releases/latest) من إصدارات GitHub |
-| 🍎 | **تطبيق iOS** | قريباً |
-
-</div>
-
-<div dir="rtl">
+<table dir="rtl" width="100%">
+<thead>
+<tr><th width="5%" align="center">&nbsp;</th><th width="28%" align="right">المنصة</th><th align="right">الوصول</th></tr>
+</thead>
+<tbody>
+<tr><td align="center">🌐</td><td align="right"><b>الموقع الإلكتروني</b></td><td align="right">متاح الآن على <a href="https://eventy360.vercel.app">eventy360.vercel.app</a></td></tr>
+<tr><td align="center">📱</td><td align="right"><b>تطبيق Android</b></td><td align="right"><a href="https://github.com/jhonny1994/eventy360/releases/latest">تحميل أحدث إصدار</a> من إصدارات GitHub</td></tr>
+<tr><td align="center">🍎</td><td align="right"><b>تطبيق iOS</b></td><td align="right">قريباً</td></tr>
+</tbody>
+</table>
 
 <br/>
 
@@ -98,19 +98,22 @@
 
 ---
 
-<details>
+<details dir="rtl">
 <summary><b>🛠 للمطورين — معلومات تقنية</b></summary>
 
 <br/>
 
 ### البنية التقنية
 
-| الطبقة | التقنيات |
-|:---|:---|
-| تطبيق الويب | Next.js 16 · React 19 · TypeScript · Tailwind CSS · next-intl |
-| التطبيق المحمول | Flutter · Dart — Android & iOS |
-| الخلفية | Supabase (PostgreSQL · Auth · Storage · Edge Functions · RLS) |
-| CI/CD | GitHub Actions مع بيئات نشر محمية |
+<table dir="rtl" width="100%">
+<thead><tr><th width="30%">الطبقة</th><th>التقنيات</th></tr></thead>
+<tbody>
+<tr><td><b>تطبيق الويب</b></td><td>Next.js 16 · React 19 · TypeScript · Tailwind CSS · next-intl</td></tr>
+<tr><td><b>التطبيق المحمول</b></td><td>Flutter · Dart — Android &amp; iOS</td></tr>
+<tr><td><b>الخلفية</b></td><td>Supabase (PostgreSQL · Auth · Storage · Edge Functions · RLS)</td></tr>
+<tr><td><b>CI/CD</b></td><td>GitHub Actions مع بيئات نشر محمية</td></tr>
+</tbody>
+</table>
 
 ### هيكل المستودع
 
