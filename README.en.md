@@ -32,6 +32,42 @@ No more juggling emails, paper forms, and scattered links. **Eventy360** puts yo
 
 <br/>
 
+## Screenshots
+
+### Web Experience
+
+<table width="100%">
+<tr>
+<td width="50%" align="center"><img src=".github/assets/screenshots/web%201%20home.png" alt="Web home page" width="100%"/><br/><b>Home</b></td>
+<td width="50%" align="center"><img src=".github/assets/screenshots/web%205%20events.png" alt="Web event discovery" width="100%"/><br/><b>Event Discovery</b></td>
+</tr>
+<tr>
+<td width="50%" align="center"><img src=".github/assets/screenshots/web%206%20event%20details.png" alt="Web event details" width="100%"/><br/><b>Event Details</b></td>
+<td width="50%" align="center"><img src=".github/assets/screenshots/web%207%20verification.png" alt="Web academic verification" width="100%"/><br/><b>Academic Verification</b></td>
+</tr>
+<tr>
+<td width="50%" align="center"><img src=".github/assets/screenshots/web%208%20subscription.png" alt="Web subscription and billing" width="100%"/><br/><b>Subscription & Billing</b></td>
+<td width="50%" align="center"><img src=".github/assets/screenshots/web%2011%20organizer%20event%20dashboard.png" alt="Web organizer event dashboard" width="100%"/><br/><b>Organizer Event Dashboard</b></td>
+</tr>
+</table>
+
+### Mobile Experience
+
+<table width="100%">
+<tr>
+<td width="33%" align="center"><img src=".github/assets/screenshots/mobile%202%20onboarding.png" alt="Mobile onboarding" width="75%"/><br/><b>Onboarding</b></td>
+<td width="33%" align="center"><img src=".github/assets/screenshots/mobile%205%20home.png" alt="Mobile home" width="75%"/><br/><b>Home</b></td>
+<td width="33%" align="center"><img src=".github/assets/screenshots/mobile%207%20events.png" alt="Mobile events" width="75%"/><br/><b>Events</b></td>
+</tr>
+<tr>
+<td width="33%" align="center"><img src=".github/assets/screenshots/mobile%2013%20event%20details.png" alt="Mobile event details" width="75%"/><br/><b>Event Details</b></td>
+<td width="33%" align="center"><img src=".github/assets/screenshots/mobile%2014%20abstract%20submission.png" alt="Mobile abstract submission" width="75%"/><br/><b>Abstract Submission</b></td>
+<td width="33%" align="center"><img src=".github/assets/screenshots/mobile%2012%20topics.png" alt="Mobile topic preferences" width="75%"/><br/><b>Topic Preferences</b></td>
+</tr>
+</table>
+
+<br/>
+
 ## ✨ What You Get
 
 | &nbsp; | Feature | What it actually means for you |

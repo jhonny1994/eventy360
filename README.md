@@ -22,47 +22,83 @@
 
 # إيفنتي 360
 
-### بيئة العمل البحثية الموحَّدة — من الفعالية إلى النشر في مكان واحد
+### منصة بحثية موحَّدة — من اكتشاف الفعاليات إلى النشر
 
 <br/>
 
 ## من نحن
 
-**إيفنتي 360** منصة رقمية متكاملة تُخصَّص للباحثين الجزائريين والعرب، تجمع في مكان واحد كل ما يحتاجه الباحث طوال دورة عمله البحثية: اكتشاف المؤتمرات والفعاليات العلمية، تقديم الأبحاث والملخصات، تتبع مراحل التحكيم لحظةً بلحظة، إدارة الاشتراكات، والاطلاع على مكتبة الأبحاث المنشورة.
+**إيفنتي 360** منصة رقمية متكاملة موجَّهة إلى الباحثين الجزائريين والعرب، تجمع في مكان واحد ما يحتاجه الباحث طوال رحلته العلمية: اكتشاف المؤتمرات والفعاليات الأكاديمية، تقديم الملخصات والأوراق البحثية، متابعة مراحل التحكيم أولاً بأول، إدارة الاشتراكات، والوصول إلى مكتبة الأبحاث المنشورة.
 
-انتهى عصر تشتيت الجهد بين بريد إلكتروني ونماذج ورقية وروابط مبعثرة. **إيفنتي 360** يضع مسارك البحثي بالكامل في راحة يدك.
+لا مزيد من التنقل بين رسائل البريد الإلكتروني، والنماذج الورقية، والروابط المتفرقة. مع **إيفنتي 360** يصبح مسارك البحثي أوضح، وأسهل متابعة، ومتاحاً من مكان واحد.
 
 <br/>
 
-## ما تحصل عليه ✨
+## لقطات من المنتج
+
+### الموقع الإلكتروني
+
+<table dir="rtl" width="100%">
+<tr>
+<td width="50%" align="center"><img src=".github/assets/screenshots/web%201%20home.png" alt="الصفحة الرئيسية للموقع الإلكتروني" width="100%"/><br/><b>الصفحة الرئيسية</b></td>
+<td width="50%" align="center"><img src=".github/assets/screenshots/web%205%20events.png" alt="صفحة تصفح الفعاليات في الموقع الإلكتروني" width="100%"/><br/><b>تصفح الفعاليات</b></td>
+</tr>
+<tr>
+<td width="50%" align="center"><img src=".github/assets/screenshots/web%206%20event%20details.png" alt="صفحة تفاصيل فعالية في الموقع الإلكتروني" width="100%"/><br/><b>تفاصيل الفعالية</b></td>
+<td width="50%" align="center"><img src=".github/assets/screenshots/web%207%20verification.png" alt="صفحة التحقق من الصفة الأكاديمية في الموقع الإلكتروني" width="100%"/><br/><b>التحقق الأكاديمي</b></td>
+</tr>
+<tr>
+<td width="50%" align="center"><img src=".github/assets/screenshots/web%208%20subscription.png" alt="صفحة إدارة الاشتراك والدفع في الموقع الإلكتروني" width="100%"/><br/><b>الاشتراك والدفع</b></td>
+<td width="50%" align="center"><img src=".github/assets/screenshots/web%2011%20organizer%20event%20dashboard.png" alt="لوحة إدارة فعالية للمنظم في الموقع الإلكتروني" width="100%"/><br/><b>لوحة إدارة الفعالية</b></td>
+</tr>
+</table>
+
+### تطبيق الهاتف
+
+<table dir="rtl" width="100%">
+<tr>
+<td width="33%" align="center"><img src=".github/assets/screenshots/mobile%202%20onboarding.png" alt="شاشات البدء في تطبيق الهاتف" width="75%"/><br/><b>شاشات البدء</b></td>
+<td width="33%" align="center"><img src=".github/assets/screenshots/mobile%205%20home.png" alt="الشاشة الرئيسية في تطبيق الهاتف" width="75%"/><br/><b>الشاشة الرئيسية</b></td>
+<td width="33%" align="center"><img src=".github/assets/screenshots/mobile%207%20events.png" alt="تصفح الفعاليات في تطبيق الهاتف" width="75%"/><br/><b>تصفح الفعاليات</b></td>
+</tr>
+<tr>
+<td width="33%" align="center"><img src=".github/assets/screenshots/mobile%2013%20event%20details.png" alt="تفاصيل فعالية في تطبيق الهاتف" width="75%"/><br/><b>تفاصيل الفعالية</b></td>
+<td width="33%" align="center"><img src=".github/assets/screenshots/mobile%2014%20abstract%20submission.png" alt="تقديم ملخص بحثي في تطبيق الهاتف" width="75%"/><br/><b>تقديم ملخص بحثي</b></td>
+<td width="33%" align="center"><img src=".github/assets/screenshots/mobile%2012%20topics.png" alt="إدارة الاهتمامات البحثية في تطبيق الهاتف" width="75%"/><br/><b>الاهتمامات البحثية</b></td>
+</tr>
+</table>
+
+<br/>
+
+## ماذا يقدّم لك إيفنتي 360؟ ✨
 
 <table dir="rtl" width="100%">
 <thead>
-<tr><th width="5%" align="center">&nbsp;</th><th width="22%" align="right">الميزة</th><th align="right">ما تحصل عليه فعلاً</th></tr>
+<tr><th width="5%" align="center">&nbsp;</th><th width="22%" align="right">الميزة</th><th align="right">القيمة العملية</th></tr>
 </thead>
 <tbody>
-<tr><td align="center">🔍</td><td align="right"><b>اكتشاف الفعاليات</b></td><td align="right">تصفح النداءات البحثية النشطة وصفِّها حسب الموضوع والموقع، واحفظ ما يناسب مسارك لوقت لاحق</td></tr>
-<tr><td align="center">📄</td><td align="right"><b>تقديم الأبحاث</b></td><td align="right">قدِّم ملخصاتك وبحوثك الكاملة ومراجعاتك عبر مسار موحَّد وواضح الحالة في كل خطوة</td></tr>
-<tr><td align="center">🔔</td><td align="right"><b>تنبيهات بحثية ذكية</b></td><td align="right">اشترك في الموضوعات العلمية التي تهمك وتلقَّ إشعارات في اللحظة المناسبة</td></tr>
-<tr><td align="center">✅</td><td align="right"><b>توثيق الهوية الأكاديمية</b></td><td align="right">أثبت صفتك كباحث عبر مسار مستندي آمن ويُعالَج من فريق متخصص</td></tr>
-<tr><td align="center">📚</td><td align="right"><b>مكتبة الأبحاث</b></td><td align="right">تصفح الأبحاث المنشورة وابحث فيها وحمِّلها عبر روابط محمية</td></tr>
-<tr><td align="center">💳</td><td align="right"><b>الاشتراك والفوترة</b></td><td align="right">تابع مستوى وصولك وأرسل إثبات الدفع مباشرة من التطبيق دون مراسلات خارجية</td></tr>
-<tr><td align="center">🌙</td><td align="right"><b>وضع داكن وفاتح</b></td><td align="right">تجربة بصرية مريحة تتكيف تلقائياً مع إعدادات جهازك</td></tr>
-<tr><td align="center">🌐</td><td align="right"><b>ثلاث لغات</b></td><td align="right">العربية · الفرنسية · الإنجليزية مع دعم كامل لاتجاه الكتابة من اليمين إلى اليسار</td></tr>
+<tr><td align="center">🔍</td><td align="right"><b>اكتشاف الفعاليات</b></td><td align="right">تصفح دعوات المشاركة العلمية النشطة، صفِّها حسب التخصص أو الموقع، واحفظ الفرص المناسبة لمسارك البحثي</td></tr>
+<tr><td align="center">📄</td><td align="right"><b>تقديم المشاركات البحثية</b></td><td align="right">قدّم الملخصات، والأوراق الكاملة، والنسخ المعدّلة ضمن مسار موحَّد يوضّح حالة كل خطوة</td></tr>
+<tr><td align="center">🔔</td><td align="right"><b>تنبيهات بحثية ذكية</b></td><td align="right">اشترك في المجالات العلمية التي تهمك وتلقَّ إشعارات مناسبة في الوقت المناسب</td></tr>
+<tr><td align="center">✅</td><td align="right"><b>التحقق من الصفة الأكاديمية</b></td><td align="right">وثّق صفتك كباحث عبر مسار آمن قائم على المستندات وتراجعه جهة مختصة</td></tr>
+<tr><td align="center">📚</td><td align="right"><b>مكتبة الأبحاث</b></td><td align="right">تصفح الأبحاث المنشورة، وابحث فيها، وحمّل ملفاتها عبر روابط وصول محمية</td></tr>
+<tr><td align="center">💳</td><td align="right"><b>الاشتراك والدفع</b></td><td align="right">تابع مستوى وصولك وأرسل إثبات الدفع مباشرة من داخل التطبيق دون مراسلات جانبية</td></tr>
+<tr><td align="center">🌙</td><td align="right"><b>الوضعان الفاتح والداكن</b></td><td align="right">واجهة مريحة بصرياً تتكيّف تلقائياً مع إعدادات جهازك</td></tr>
+<tr><td align="center">🌐</td><td align="right"><b>ثلاث لغات</b></td><td align="right">العربية · الفرنسية · الإنجليزية، مع دعم كامل لاتجاه الكتابة من اليمين إلى اليسار</td></tr>
 </tbody>
 </table>
 
 <br/>
 
-## المنصة متاحة على 📲
+## أين تتوفر المنصة؟ 📲
 
 <table dir="rtl" width="100%">
 <thead>
-<tr><th width="5%" align="center">&nbsp;</th><th width="28%" align="right">المنصة</th><th align="right">الوصول</th></tr>
+<tr><th width="5%" align="center">&nbsp;</th><th width="28%" align="right">المنصة</th><th align="right">طريقة الوصول</th></tr>
 </thead>
 <tbody>
 <tr><td align="center">🌐</td><td align="right"><b>الموقع الإلكتروني</b></td><td align="right">متاح الآن على <a href="https://eventy360.vercel.app">eventy360.vercel.app</a></td></tr>
-<tr><td align="center">📱</td><td align="right"><b>تطبيق Android</b></td><td align="right"><a href="https://github.com/jhonny1994/eventy360/releases/latest">تحميل أحدث إصدار</a> من إصدارات GitHub</td></tr>
+<tr><td align="center">📱</td><td align="right"><b>تطبيق Android</b></td><td align="right"><a href="https://github.com/jhonny1994/eventy360/releases/latest">حمّل أحدث إصدار</a> من صفحة إصدارات GitHub</td></tr>
 <tr><td align="center">🍎</td><td align="right"><b>تطبيق iOS</b></td><td align="right">قريباً</td></tr>
 </tbody>
 </table>
@@ -71,26 +107,26 @@
 
 ## الأمان والموثوقية 🛡
 
-المنصة مبنية على معايير أمان عالية تضمن حماية بياناتك وسلامة مساركم البحثي:
+بُنيت المنصة وفق معايير أمان عالية لحماية بياناتك وضمان سلامة مسارك البحثي:
 
-- كل ملف تُرفعه يمرّ عبر طلب موثَّق ويُفتح لاحقاً بروابط موقعة ذات مدة محدودة
-- نظام صلاحيات دقيق لا يُتيح أي بيانات إلا لمن يحق له الوصول
-- عمليات النشر والتحديثات تمر عبر بيئات محمية قبل وصولها إليك
-- توثيق الهوية والاشتراك يستلزمان مراجعة بشرية قبل منح الوصول المميز
+- كل ملف ترفعه يمر عبر طلب موثَّق، ثم يُتاح لاحقاً عبر روابط موقعة محدودة المدة
+- نظام صلاحيات دقيق لا يتيح البيانات إلا للمستخدمين المخوّلين
+- تمر عمليات النشر والتحديث عبر بيئات محمية قبل وصولها إلى المستخدمين
+- يخضع التحقق الأكاديمي والاشتراك لمراجعة بشرية قبل منح صلاحيات الوصول المميز
 
 <br/>
 
 ## الترخيص والاستخدام 🤝
 
-هذا المستودع مرئي للعموم لأغراض التقييم، ومعاينة المنتج، والشراكة المحتملة.  
-الكود المصدري والتوثيق وجميع المواد محمية بحقوق ملكية فكرية حصرية.  
-للاطلاع على تفاصيل الاستخدام المسموح به، راجع [PROPRIETARY-NOTICE.md](PROPRIETARY-NOTICE.md).
+هذا المستودع متاح للعرض العام لأغراض التقييم، ومعاينة المنتج، وبحث فرص الشراكة المحتملة.  
+يبقى الكود المصدري والتوثيق وسائر المواد محمية بحقوق ملكية فكرية حصرية.  
+للاطلاع على نطاق الاستخدام المسموح به، راجع [PROPRIETARY-NOTICE.md](PROPRIETARY-NOTICE.md).
 
 <br/>
 
 <div align="center">
 
-صُنع بشغف للمجتمع الأكاديمي الجزائري والعربي 🇩🇿
+صُنع بحب لخدمة المجتمع الأكاديمي الجزائري والعربي 🇩🇿
 
 </div>
 
@@ -103,15 +139,15 @@
 
 <br/>
 
-### البنية التقنية
+### المكوّنات التقنية
 
 <table dir="rtl" width="100%">
 <thead><tr><th width="30%">الطبقة</th><th>التقنيات</th></tr></thead>
 <tbody>
 <tr><td><b>تطبيق الويب</b></td><td>Next.js 16 · React 19 · TypeScript · Tailwind CSS · next-intl</td></tr>
-<tr><td><b>التطبيق المحمول</b></td><td>Flutter · Dart — Android &amp; iOS</td></tr>
-<tr><td><b>الخلفية</b></td><td>Supabase (PostgreSQL · Auth · Storage · Edge Functions · RLS)</td></tr>
-<tr><td><b>CI/CD</b></td><td>GitHub Actions مع بيئات نشر محمية</td></tr>
+<tr><td><b>تطبيق الهاتف</b></td><td>Flutter · Dart — Android &amp; iOS</td></tr>
+<tr><td><b>الواجهة الخلفية</b></td><td>Supabase (PostgreSQL · Auth · Storage · Edge Functions · RLS)</td></tr>
+<tr><td><b>التكامل والتسليم المستمران</b></td><td>GitHub Actions مع بيئات نشر محمية</td></tr>
 </tbody>
 </table>
 
@@ -121,10 +157,10 @@
 eventy360/
 ├── apps/
 │   ├── web/       # تطبيق Next.js — الصفحات العامة، لوحة الباحث، لوحة الإدارة
-│   └── mobile/    # تطبيق Flutter — مسار عمل الباحث الكامل
-├── supabase/      # المخططات، الدوال، RLS، وإعدادات التخزين
-├── docs/          # معمارية النظام، دليل التطوير، البيئات، وعمليات الإصدار
-└── .github/       # سير عمل CI، الأمان، سياسة الاعتمادات، CODEOWNERS
+│   └── mobile/    # تطبيق Flutter — رحلة الباحث الكاملة على الهاتف
+├── supabase/      # مخطط قاعدة البيانات، سياسات RLS، Edge Functions، وإعدادات التخزين
+├── docs/          # معمارية النظام، دليل التطوير، البيئات، وإجراءات الإصدار
+└── .github/       # سير عمل CI، الأمان، سياسة التبعيات البرمجية، CODEOWNERS
 ```
 
 ### تشغيل تطبيق الويب محلياً
@@ -135,7 +171,7 @@ pnpm install:web
 pnpm dev:web
 ```
 
-### تشغيل التطبيق المحمول محلياً
+### تشغيل تطبيق الهاتف محلياً
 
 ```bash
 cd apps/mobile

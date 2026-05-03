@@ -32,6 +32,42 @@ Fini les allers-retours entre e-mails, formulaires papier et liens éparpillés.
 
 <br/>
 
+## Captures d'écran
+
+### Expérience web
+
+<table width="100%">
+<tr>
+<td width="50%" align="center"><img src=".github/assets/screenshots/web%201%20home.png" alt="Accueil web" width="100%"/><br/><b>Accueil</b></td>
+<td width="50%" align="center"><img src=".github/assets/screenshots/web%205%20events.png" alt="Découverte d'événements web" width="100%"/><br/><b>Découverte d'événements</b></td>
+</tr>
+<tr>
+<td width="50%" align="center"><img src=".github/assets/screenshots/web%206%20event%20details.png" alt="Détails d'événement web" width="100%"/><br/><b>Détails d'événement</b></td>
+<td width="50%" align="center"><img src=".github/assets/screenshots/web%207%20verification.png" alt="Vérification académique web" width="100%"/><br/><b>Vérification académique</b></td>
+</tr>
+<tr>
+<td width="50%" align="center"><img src=".github/assets/screenshots/web%208%20subscription.png" alt="Abonnement et facturation web" width="100%"/><br/><b>Abonnement et facturation</b></td>
+<td width="50%" align="center"><img src=".github/assets/screenshots/web%2011%20organizer%20event%20dashboard.png" alt="Tableau de bord d'événement organisateur web" width="100%"/><br/><b>Tableau de bord organisateur</b></td>
+</tr>
+</table>
+
+### Expérience mobile
+
+<table width="100%">
+<tr>
+<td width="33%" align="center"><img src=".github/assets/screenshots/mobile%202%20onboarding.png" alt="Onboarding mobile" width="75%"/><br/><b>Onboarding</b></td>
+<td width="33%" align="center"><img src=".github/assets/screenshots/mobile%205%20home.png" alt="Accueil mobile" width="75%"/><br/><b>Accueil</b></td>
+<td width="33%" align="center"><img src=".github/assets/screenshots/mobile%207%20events.png" alt="Événements mobile" width="75%"/><br/><b>Événements</b></td>
+</tr>
+<tr>
+<td width="33%" align="center"><img src=".github/assets/screenshots/mobile%2013%20event%20details.png" alt="Détails d'événement mobile" width="75%"/><br/><b>Détails d'événement</b></td>
+<td width="33%" align="center"><img src=".github/assets/screenshots/mobile%2014%20abstract%20submission.png" alt="Soumission de résumé mobile" width="75%"/><br/><b>Soumission de résumé</b></td>
+<td width="33%" align="center"><img src=".github/assets/screenshots/mobile%2012%20topics.png" alt="Préférences de thématiques mobile" width="75%"/><br/><b>Préférences de thématiques</b></td>
+</tr>
+</table>
+
+<br/>
+
 ## ✨ Ce que vous obtenez
 
 | &nbsp; | Fonctionnalité | Ce que vous obtenez concrètement |
