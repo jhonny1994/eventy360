@@ -247,8 +247,7 @@ String? appRedirect({
 
   if (location == RoutePaths.splash ||
       location == RoutePaths.onboarding ||
-      isAuthRoute ||
-      location == RoutePaths.profileGate) {
+      isAuthRoute) {
     return RoutePaths.home;
   }
 

@@ -225,7 +225,12 @@ class SupabaseAuthRepository implements AuthRepository {
     required String email,
     required String password,
   }) async {
-    final response = await _auth.signUp(email: email, password: password);
+    final response = await _auth.signUp(
+      email: email,
+      password: password,
+      data: const {'user_type': 'researcher'},
+      emailRedirectTo: 'com.carbodex.eventy360://callback',
+    );
     final user = response.user;
     if (user == null || user.email == null) {
       throw AuthException('Sign up did not return a valid user.');
